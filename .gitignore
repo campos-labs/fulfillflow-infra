@@ -1,0 +1,54 @@
+# Terraform caches, state and potentially sensitive plans
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfplan.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+*.tfvars
+*.tfvars.json
+!*.example.tfvars
+!*.example.tfvars.json
+.terraformrc
+terraform.rc
+# Keep .terraform.lock.hcl versioned when Terraform is introduced.
+
+# Credentials and local environment
+.env
+.env.*
+!.env.example
+.azure/
+.kube/
+*kubeconfig*
+*.pem
+*.key
+*.pfx
+*.p12
+secrets/
+
+# Raw operational output; sanitized summaries may be tracked separately
+/artifacts/
+/results/
+/backups/
+/tmp/
+*.log
+*.dump
+
+# Local tooling
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
