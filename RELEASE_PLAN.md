@@ -25,18 +25,15 @@ autorização para uma operação já aprovada e inalterada.
 ## 2. Regras de execução deste plano
 
 1. Ler o estado atual e as seções pertinentes do DESIGN antes de cada incremento.
-   Seguir a [governança](https://github.com/campos-labs/.github/blob/main/CONTRIBUTING.md)
-   e a [política de segurança](https://github.com/campos-labs/.github/blob/main/SECURITY.md)
-   da organização, sem criar cópias locais desses documentos.
 2. Preservar a referência da aplicação e suas evidências. Correções rotineiras de
    documentação, caminhos, diagnóstico e automação pertencentes ao incremento
    podem avançar com testes focais; mudanças de contrato exigem decisão específica.
 3. Implementar e revisar por incremento, com testes desde a primeira mudança
    executável. Não interromper a cada arquivo; consolidar dúvidas que realmente
    mudem custo, acesso, persistência, arquitetura ou escopo.
-4. Usar Issues/PRs e revisão conforme a organização. Verificar proteção de `main`,
-   revisores e checks disponíveis no bootstrap; não afirmar que estão ativos sem
-   conferir, nem contornar regras. A CI da aplicação permanece no seu repositório.
+4. Integrar alterações diretamente na `main`, em commits por assunto, após revisão
+   do diff e validações pertinentes. Registrar o resultado da CI quando implementada.
+   A CI da aplicação permanece no seu repositório.
 5. Manter operação utilizável em PowerShell. Conferir executáveis instalados,
    versões, diretório corrente e caminhos com espaços. Não presumir `pwsh`, Azure
    CLI ou Terraform no PATH; não instalar/atualizar ferramentas silenciosamente.

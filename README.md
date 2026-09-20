@@ -40,11 +40,9 @@ congelados; não copia código de negócio nem campanhas históricas.
 | --- | --- |
 | [DESIGN.md](DESIGN.md) | Arquitetura alvo da base operacional, fronteiras e contratos de implantação |
 | [RELEASE_PLAN.md](RELEASE_PLAN.md) | Incrementos, validações, estado, pausa e alternativas ainda não aprovadas |
-| [Contribuição da organização](https://github.com/campos-labs/.github/blob/main/CONTRIBUTING.md) | Governança e fluxo de revisão |
-| [Segurança da organização](https://github.com/campos-labs/.github/blob/main/SECURITY.md) | Segredos, dados e relato de vulnerabilidades |
 
 Antes de alterar arquivos, consultar as seções pertinentes do DESIGN e o
-incremento autorizado no RELEASE_PLAN. Não há AGENTS.md ou CONTRIBUTING.md local.
+incremento autorizado no RELEASE_PLAN.
 
 ## Organização prevista
 

@@ -209,9 +209,9 @@ sem reenvio do webhook; `BLOCKED` exige rearme auditável pelo proprietário.
 
 GitHub Actions valida mudanças; a implantação inicial é acionada explicitamente
 e tem concorrência limitada por ambiente. Acesso Azure por OIDC ocorre somente em
-jobs confiáveis. PRs não confiáveis não recebem credenciais nem executam apply.
-Registrar se os controles são aplicados pela plataforma ou por procedimento;
-não presumir proteção de branch/environment disponível ou configurada.
+jobs confiáveis. Execuções não confiáveis não recebem credenciais nem executam apply.
+A implantação exige autorização do ambiente de destino; CI de validação não
+constitui autorização para provisionamento.
 
 Verificação funcional usa fluxo público, IDs exclusivos, HMAC e polling limitado.
 Não reenviar automaticamente um evento para transformar timeout em sucesso.
