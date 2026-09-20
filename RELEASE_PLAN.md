@@ -9,8 +9,8 @@ comparativa autorizada nesta etapa.
 
 | Etapa | Estado |
 | --- | --- |
-| Base documental | Concluída nesta revisão; sem infraestrutura executável |
-| I — Preparação e validação local | Não iniciado |
+| Base documental | Concluída; responsabilidades preservadas |
+| I — Preparação e validação local | Preparação local validada; aceite do ambiente pendente; CI registrada por SHA |
 | II — Bootstrap Azure e imagens | Não iniciado |
 | III — AKS e implantação | Não iniciado |
 | IV — Aceite funcional e pausa | Não iniciado |
@@ -60,7 +60,8 @@ autorização para uma operação já aprovada e inalterada.
 sem provisionamento Azure.
 
 - Conferir ferramentas e fixar versões compatíveis de Terraform/provider,
-  Azure CLI, kubectl e helpers realmente necessários. Não depender de versões
+  kubectl e helpers realmente necessários. Fixar Azure CLI antes do preflight
+  conectado, sem instalá-la como requisito da validação offline. Não depender de versões
   `latest`; registrar locks quando houver implementação.
 - Definir assinatura, região, quotas, teto de gasto e período de operação;
   dimensionar nós/discos com margem para sistema, rollout e Jobs. Não transportar
@@ -82,6 +83,32 @@ quando houver scripts PowerShell. Validação estática não comprova deploy.
 **Aceite:** CI do commit aprovada, decisões do ambiente registradas, planos de
 bootstrap e configuração revisáveis, sem segredos. Falta de ferramenta ou quota
 é pendência explícita, não aprovação substituída por mocks.
+
+### Estado da preparação
+
+Preparados dois roots Terraform (backend e ambiente), locks Windows/Linux,
+manifests separados em fundações/migrações/runtime, ficha sem valores de assinatura,
+verificador público de conclusão/duplicata e CI de validação sem credenciais cloud.
+O exemplo de runtime tem imagem inválida e seletor que impede agendamento.
+Não existe workflow de deploy, overlay de ambiente aprovado ou imagem publicada.
+
+Versões e hashes ficam em `config/toolchain.json` e nos locks. Os testes do
+verificador usam transporte controlado; Terraform usa provider simulado somente
+em planos. Nenhum desses resultados constitui execução funcional no AKS.
+
+Validação local: 48 testes sem skips, incluindo PowerShell real e caminhos com
+espaços; Ruff/formatação; 34 objetos renderizados com schemas estritos; Terraform
+fmt/validate e 16 planos simulados aprovados. Os testes Terraform de ambiente
+selecionam recursos por limitação do mock de `kubelet_identity`; a atribuição
+`AcrPull` precisa de conferência real posterior, conforme [infra/README.md](infra/README.md).
+A CI registra o resultado por SHA; o aceite ambiental permanece separado.
+
+O aceite permanece dependente de: assinatura/benefício e saldo efetivos, região,
+quotas/SKUs, janela e teto de gasto, capacidade alocável, conectividade do executor,
+aprovação da proposta de endpoint, canal de secrets e destino protegido de evidências.
+A preferência operacional é terminar os preparativos locais antes de consumir
+recursos Azure. Valores ausentes em `config/environment.json` não são defaults.
+Não iniciar II nem transformar a autorização de preparação em autorização de gasto.
 
 ## 4. Incremento II — Bootstrap Azure e imagens
 
@@ -241,4 +268,4 @@ neste plano inicial.
 | Convite/acessos da equipe | Adiados para o marco de pausa |
 | Alternativa posterior | Não selecionada |
 | Campanha comparativa | Não autorizada |
-| Tag/release de infraestrutura | Não autorizada nesta entrega documental |
+| Tag/release de infraestrutura | Não autorizada nesta preparação |

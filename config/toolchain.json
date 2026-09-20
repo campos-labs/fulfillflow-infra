@@ -1,0 +1,35 @@
+{
+  "python_minor": "3.12",
+  "uv": "0.12.7",
+  "terraform": "1.13.5",
+  "azurerm": "4.55.0",
+  "kubectl": "v1.35.3",
+  "kustomize_embedded": "v5.7.1",
+  "schema_version": "1.35.0",
+  "schema_commit": "491f6d0bac338516572de67fbd5ec4c510f7e657",
+  "azure_cli": {"version": null, "status": "deferred_until_cloud_preflight"},
+  "downloads": {
+    "windows_amd64": {
+      "terraform": {
+        "url": "https://releases.hashicorp.com/terraform/1.13.5/terraform_1.13.5_windows_amd64.zip",
+        "sha256": "73f97943c93f268ae2c645b2a737d552175aa64d00a5c8b8f5ccc5831c033c8a",
+        "archive_member": "terraform.exe"
+      },
+      "kubectl": {
+        "url": "https://dl.k8s.io/release/v1.35.3/bin/windows/amd64/kubectl.exe",
+        "sha256": "6c367f9c34be9a13a94eb523dd62006973e1d051adea7d6bcf800dde3f6e84df"
+      }
+    },
+    "linux_amd64": {
+      "terraform": {
+        "url": "https://releases.hashicorp.com/terraform/1.13.5/terraform_1.13.5_linux_amd64.zip",
+        "sha256": "0dbe3fcc268eb670801af6a6456799d1ae26e72e73797f6c6167e18aafd1fd9a",
+        "archive_member": "terraform"
+      },
+      "kubectl": {
+        "url": "https://dl.k8s.io/release/v1.35.3/bin/linux/amd64/kubectl",
+        "sha256": "fd31c7d7129260e608f6faf92d5984c3267ad0b5ead3bced2fe125686e286ad6"
+      }
+    }
+  }
+}

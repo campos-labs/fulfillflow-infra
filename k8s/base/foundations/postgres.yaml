@@ -1,0 +1,151 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: fulfillflow
+  ports:
+  - name: postgres
+    port: 5432
+    targetPort: postgres
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgres
+      app.kubernetes.io/part-of: fulfillflow
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postgres
+        app.kubernetes.io/part-of: fulfillflow
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 30
+      containers:
+      - name: postgres
+        image: postgres:18-trixie@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        ports:
+        - name: postgres
+          containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_DB
+          value: postgres
+        - name: PGDATA
+          value: /var/lib/postgresql/18/docker
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-bootstrap
+              key: POSTGRES_PASSWORD
+              optional: false
+        - name: CORE_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-bootstrap
+              key: CORE_DB_PASSWORD
+              optional: false
+        - name: TRACKING_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-bootstrap
+              key: TRACKING_DB_PASSWORD
+              optional: false
+        - name: NOTIFICATIONS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-bootstrap
+              key: NOTIFICATIONS_DB_PASSWORD
+              optional: false
+        resources:
+          requests:
+            cpu: '2'
+            memory: 2560Mi
+          limits:
+            cpu: '2'
+            memory: 2560Mi
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql
+        - name: socket
+          mountPath: /var/run/postgresql
+        - name: tmp
+          mountPath: /tmp
+        - name: init
+          mountPath: /docker-entrypoint-initdb.d
+          readOnly: true
+        startupProbe:
+          exec: &id001
+            command:
+            - pg_isready
+            - --host=127.0.0.1
+            - --username=postgres
+            - --dbname=postgres
+          timeoutSeconds: 5
+          periodSeconds: 5
+          failureThreshold: 60
+        readinessProbe:
+          exec: *id001
+          timeoutSeconds: 5
+          periodSeconds: 5
+          failureThreshold: 3
+      volumes:
+      - name: socket
+        emptyDir:
+          sizeLimit: 16Mi
+      - name: tmp
+        emptyDir:
+          sizeLimit: 16Mi
+      - name: init
+        configMap:
+          name: postgres-init
+          defaultMode: 365
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: fulfillflow-retain
+      resources:
+        requests:
+          storage: 32Gi

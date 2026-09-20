@@ -1,0 +1,16 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fulfillflow-retain
+  labels:
+    app.kubernetes.io/name: fulfillflow-retain
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+provisioner: disk.csi.azure.com
+parameters:
+  skuName: StandardSSD_LRS
+  cachingMode: None
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+volumeBindingMode: WaitForFirstConsumer

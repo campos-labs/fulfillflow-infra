@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fulfillflow
+  labels:
+    app.kubernetes.io/name: fulfillflow
+    app.kubernetes.io/part-of: fulfillflow
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: v1.35
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1

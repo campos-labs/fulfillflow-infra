@@ -1,0 +1,37 @@
+{
+  "status": "preparation_only",
+  "provisioning_authorized": false,
+  "application": {
+    "repository": "campos-labs/fulfillflow",
+    "tag": "v1.3.0-rc.1",
+    "commit": "9e3a135a00db218643633c7165d3106f0c8285e1",
+    "runtime_acr_digest": null
+  },
+  "azure": {
+    "subscription_id": null,
+    "tenant_id": null,
+    "region": null,
+    "offer_verified": false,
+    "available_credit_usd": null,
+    "credit_expiry": null,
+    "quota_verified": false
+  },
+  "cost": {
+    "authorized_cap": null,
+    "currency": null,
+    "planned_active_hours": null,
+    "estimate": null,
+    "policy": "finish_offline_preparation_before_provisioning"
+  },
+  "deployment": {
+    "namespace": "fulfillflow",
+    "kubernetes_version": null,
+    "node_sku": null,
+    "node_count": null,
+    "api_access_candidate": "public_endpoint_restricted_to_explicit_ipv4_hosts",
+    "api_access_approved": false,
+    "executor_connectivity": null,
+    "secret_delivery": null,
+    "backup_destination": null
+  }
+}

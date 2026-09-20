@@ -1,0 +1,3 @@
+# Concrete backend coordinates are prepared locally after authorization.
+backend.hcl
+*.backend.hcl

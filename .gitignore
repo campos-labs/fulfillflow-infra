@@ -40,6 +40,9 @@ secrets/
 *.dump
 
 # Local tooling
+.tools/
+.cache/
+.uv-cache/
 .venv/
 __pycache__/
 *.py[cod]

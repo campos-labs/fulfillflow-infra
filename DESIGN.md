@@ -2,8 +2,8 @@
 
 ## 1. Estado e autoridade
 
-Este documento define o alvo da implantação funcional no AKS com ACR. A entrega
-atual é documental; o estado de implementação pertence ao
+Este documento define o alvo da implantação funcional no AKS com ACR. O estado
+de implementação e as verificações executadas pertencem ao
 [RELEASE_PLAN.md](RELEASE_PLAN.md). Um requisito descrito aqui não comprova que o
 recurso já exista ou que sua verificação tenha sido executada.
 
@@ -44,7 +44,7 @@ Banco e broker únicos são pontos de falha compartilhados. Persistência e rein
 não constituem alta disponibilidade. Não acrescentar gateway, serviço de domínio,
 réplica ou operador apenas para aumentar a topologia.
 
-Manifests serão declarados em `k8s/`, com Kustomize para configuração por ambiente.
+Manifests são declarados em `k8s/`, com Kustomize para configuração por ambiente.
 Terraform gerencia os recursos Azure; o fluxo de implantação gerencia os recursos
 Kubernetes. Evitar dois controladores administrando o mesmo objeto.
 
@@ -93,9 +93,16 @@ restrição de origem, e como o executor chega a ele. Runner hospedado no GitHub
 não tem acesso implícito a uma rede privada. Não abrir o cluster a toda a internet
 para contornar conectividade. Registrar a escolha, o custo e suas limitações.
 
-Usar NetworkPolicies com matriz de tráfego: Core → APIs internas; cada processo →
+Usar NetworkPolicies com matriz de tráfego: Core → APIs internas; Tracking API →
+Core API para consultas do contrato congelado; cada processo →
 banco próprio; workers → broker; DNS e acessos operacionais estritamente necessários.
 As roles PostgreSQL continuam sendo a autoridade para isolamento entre bancos.
+
+O rascunho Terraform usa Azure CNI Overlay com Cilium e propõe API Kubernetes
+pública restrita a IPv4 individuais `/32`; não é escolha de conectividade já
+aprovada. Confirmar ranges sem sobreposição, DNS e executor com origem estável
+antes de criar o ambiente. O provider fixado não configura o modo RBAC/ABAC do
+ACR: verificar o modo efetivo antes de conceder validade ao contrato de pull.
 
 Secrets de runtime são injetados por mecanismo protegido definido antes do deploy;
 nenhum valor real em manifests, tfvars versionados, argumentos registrados ou logs.
@@ -143,8 +150,11 @@ persistência de PVC e existência de backup não comprovam recuperação verifi
 | Workers | `python -m fulfillflow.core.worker`, `python -m fulfillflow.tracking.worker`, `python -m fulfillflow.notifications.worker` |
 | Migrações | `alembic -c alembic_core.ini upgrade head`, `alembic -c alembic_tracking.ini upgrade head`, `alembic -c alembic_notifications.ini upgrade head` |
 
-Cada processo recebe `SERVICE_ROLE`, URL do banco e apenas os segredos/URLs
-necessários à sua responsabilidade. As APIs internas escutam na porta 8000;
+Cada processo recebe `SERVICE_ROLE`, URL do banco e os segredos/URLs necessários
+à sua responsabilidade e à validação de settings da referência. Essa validação
+também exige os segredos HTTP do serviço nos workers, mesmo sem seu uso no fluxo
+AMQP. A matriz em [k8s/README.md](k8s/README.md) registra esses requisitos, sem
+copiar valores locais. As APIs internas escutam na porta 8000;
 workers não expõem HTTP. Não copiar integralmente os blocos de ambiente do Compose.
 
 Preparar bancos e broker; executar Jobs de migração por proprietário; verificar
@@ -190,6 +200,14 @@ não são dimensionamento de nós nem capacidade comprovada. Definir requests,
 limits, espaço para sistema/rollout/Jobs e número de nós antes do provisionamento.
 Começar pelos limites funcionais da referência e registrar qualquer ajuste de
 implantação antes do aceite. Não alegar equivalência com campanhas anteriores.
+
+O exemplo inicial usa requests iguais aos limites da tabela, mais 0,5 CPU/384 MiB
+por Job ativo; a capacidade alocável dos nós precisa comportar esses valores e
+o sistema. Rollout da aplicação usa `maxSurge: 0`, `maxUnavailable: 1`, com possível
+indisponibilidade. PVCs de 32 GiB e 16 GiB em StandardSSD_LRS, retenção `Retain`,
+são proposta ainda sujeita a custo e validação CSI. Não dimensionar nós apenas pela
+memória nem reduzir recursos para caber em crédito presumido. A proposta Terraform
+reserva um nó de surge para upgrade; esse custo temporário também entra na revisão.
 
 Manter os parâmetros iniciais da aplicação: pools API 2/0 e worker 3/0,
 prefetch 8, lotes 20, polling 500 ms, lease 30 s e confirm timeout 5 s. A soma

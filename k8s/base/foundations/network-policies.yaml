@@ -1,0 +1,327 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+  labels:
+    app.kubernetes.io/name: default-deny
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+spec:
+  podSelector:
+    matchLabels: {}
+  policyTypes:
+  - Ingress
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: dns
+  labels:
+    app.kubernetes.io/name: dns
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+spec:
+  podSelector:
+    matchLabels: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: database-clients
+  labels:
+    app.kubernetes.io/name: database-clients
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+spec:
+  podSelector:
+    matchLabels:
+      fulfillflow.io/database-client: 'true'
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: postgres
+          app.kubernetes.io/part-of: fulfillflow
+    ports:
+    - protocol: TCP
+      port: 5432
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: postgres-ingress
+  labels:
+    app.kubernetes.io/name: postgres-ingress
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: postgres
+      app.kubernetes.io/part-of: fulfillflow
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          fulfillflow.io/database-client: 'true'
+    ports:
+    - protocol: TCP
+      port: 5432
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: amqp-clients
+  labels:
+    app.kubernetes.io/name: amqp-clients
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+spec:
+  podSelector:
+    matchLabels:
+      fulfillflow.io/amqp-client: 'true'
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: rabbitmq
+          app.kubernetes.io/part-of: fulfillflow
+    ports:
+    - protocol: TCP
+      port: 5672
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: rabbitmq-ingress
+  labels:
+    app.kubernetes.io/name: rabbitmq-ingress
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: rabbitmq
+      app.kubernetes.io/part-of: fulfillflow
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          fulfillflow.io/amqp-client: 'true'
+    ports:
+    - protocol: TCP
+      port: 5672
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: core-to-internal
+  labels:
+    app.kubernetes.io/name: core-to-internal
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: core
+      app.kubernetes.io/part-of: fulfillflow
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: tracking
+          app.kubernetes.io/part-of: fulfillflow
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: notifications
+          app.kubernetes.io/part-of: fulfillflow
+    ports:
+    - protocol: TCP
+      port: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: tracking-from-core
+  labels:
+    app.kubernetes.io/name: tracking-from-core
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: tracking
+      app.kubernetes.io/part-of: fulfillflow
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: core
+          app.kubernetes.io/part-of: fulfillflow
+    ports:
+    - protocol: TCP
+      port: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: notifications-from-core
+  labels:
+    app.kubernetes.io/name: notifications-from-core
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: notifications
+      app.kubernetes.io/part-of: fulfillflow
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: core
+          app.kubernetes.io/part-of: fulfillflow
+    ports:
+    - protocol: TCP
+      port: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: tracking-to-core
+  labels:
+    app.kubernetes.io/name: tracking-to-core
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: tracking
+      app.kubernetes.io/part-of: fulfillflow
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: core
+          app.kubernetes.io/part-of: fulfillflow
+    ports:
+    - protocol: TCP
+      port: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: core-from-tracking
+  labels:
+    app.kubernetes.io/name: core-from-tracking
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: core
+      app.kubernetes.io/part-of: fulfillflow
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: tracking
+          app.kubernetes.io/part-of: fulfillflow
+    ports:
+    - protocol: TCP
+      port: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: core-from-operations
+  labels:
+    app.kubernetes.io/name: core-from-operations
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: core
+      app.kubernetes.io/part-of: fulfillflow
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          fulfillflow.io/operational-client: 'true'
+    ports:
+    - protocol: TCP
+      port: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: operations-to-core
+  labels:
+    app.kubernetes.io/name: operations-to-core
+    app.kubernetes.io/part-of: fulfillflow
+  annotations:
+    fulfillflow.io/application-source: 9e3a135a00db218643633c7165d3106f0c8285e1
+spec:
+  podSelector:
+    matchLabels:
+      fulfillflow.io/operational-client: 'true'
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: core
+          app.kubernetes.io/part-of: fulfillflow
+    ports:
+    - protocol: TCP
+      port: 8000

@@ -1,0 +1,5 @@
+# Add as backend.tf ONLY for the separately authorized local-to-remote migration.
+# Keep backend identifiers in an ignored backend.hcl file, never credentials.
+terraform {
+  backend "azurerm" {}
+}

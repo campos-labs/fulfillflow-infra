@@ -7,5 +7,10 @@
 *.json text eol=lf
 *.ps1 text eol=lf
 *.sh text eol=lf
+*.py text eol=lf
+*.toml text eol=lf
+*.lock text eol=lf
+*.example text eol=lf
+*.conf text eol=lf
 .gitignore text eol=lf
 .gitattributes text eol=lf
