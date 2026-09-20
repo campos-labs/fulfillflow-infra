@@ -181,11 +181,10 @@ A preparação independente segue por esta ordem:
 2. Preparar publicação por digest, acesso ao registry e backend, com permissões
    propostas antes de qualquer concessão. ACR/backend também geram custos e não
    serão criados antecipadamente apenas para aguardar cota.
-3. Ensaiar Kubernetes local somente em cluster/contexto explicitamente isolado,
-   com engine disponível, imagens identificadas, volumes novos e propriedade
-   verificada. O inventário atual não encontrou kind/k3d/minikube no PATH nem
-   engine Docker Linux acessível. Não habilitar Kubernetes Desktop, alterar seus
-   recursos ou instalar outra distribuição automaticamente.
+3. Priorizar a validação da topologia reduzida diretamente na Azure, sem criar
+   recursos nesta preparação. Kubernetes local/kind não faz parte do caminho
+   atual. Docker Linux voltou a responder; recursos históricos permanecem
+   preservados e não serão usados como ambiente de implantação.
 4. Confirmar cota, suporte e custo; só então preparar o plano Azure executável.
 5. Após implantação, executar o aceite IV antes da pausa A/B. Evidência local não
    substitui pull ACR, identidade Azure, RBAC, CNI/NetworkPolicies, CSI/PVCs e
@@ -194,6 +193,32 @@ A preparação independente segue por esta ordem:
 Sem novo pedido de redução dos requests: os 1900m precisam de validação funcional,
 não de redução sucessiva para contornar cotas de VMs. A indisponibilidade do portal
 ou do engine local não autoriza declarar um incremento de implantação concluído.
+
+### Janela funcional reduzida e manutenção
+
+Preparar uma janela curta na nuvem, sem upgrades ou rotação planejada dos nós.
+A configuração atual fixa versão e quantidade de nós, desliga autoscaling e usa
+`node_os_upgrade_channel = "None"`. Isso não garante ausência de intervenção ou
+reparo pelo serviço e não constitui política permanente de atualização.
+
+Manter `max_surge = "1"`: não substituir por zero no pool System. A documentação
+[de rolling upgrades](https://learn.microsoft.com/en-us/azure/aks/upgrade-aks-node-pools-rolling)
+exclui `maxUnavailable` desses pools. Com um nó de quatro vCPUs, o upgrade com
+surge exigiria oito vCPUs na região e na família, acima das cotas observadas.
+A implantação inicial continua condicionada à aceitação da topologia pela Azure;
+ausência de margem de manutenção deve constar do aceite e ser resolvida antes
+de prolongar a operação ou iniciar as alternativas A/B.
+
+Antes de cada apply, revisar se há atualização, substituição ou rotação do pool,
+inclusive uso de `temporary_name_for_rotation`. Essas ações ficam fora da janela
+funcional proposta e exigem nova revisão de quota/custo. Falha de capacidade não
+autoriza retries, troca de SKU ou aumento automático. Não confundir o surge de
+pods nos Deployments com o surge de nós do AKS.
+
+Próxima verificação: SKU elegível, versão AKS e validação de configuração no
+provedor, sem criação de recursos; validação prévia não reserva capacidade.
+Azure CLI não foi encontrada no PATH nesta conferência. Nenhuma solicitação de
+cota concluída ou implantação é inferida da configuração local.
 
 ## 4. Incremento II — Bootstrap Azure e imagens
 

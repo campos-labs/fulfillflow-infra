@@ -207,7 +207,10 @@ o sistema. Rollout da aplicação usa `maxSurge: 0`, `maxUnavailable: 1`, com po
 indisponibilidade. PVCs de 32 GiB e 16 GiB em StandardSSD_LRS, retenção `Retain`,
 são proposta ainda sujeita a custo e validação CSI. Não dimensionar nós apenas pela
 memória nem reduzir recursos para caber em crédito presumido. A proposta Terraform
-reserva um nó de surge para upgrade; esse custo temporário também entra na revisão.
+configura um nó adicional durante upgrade; não mantém esse nó alocado normalmente.
+Quota e custo temporários entram na revisão. Uma janela funcional sem upgrades
+planejados não garante ausência de reparos nem autoriza operação permanente sem
+margem de manutenção. Rotação do pool exige revisão explícita do plano Terraform.
 
 O perfil separado `k8s/overlays/reduced-functional` reduz somente requests de CPU:
 150m por API/worker, 750m para PostgreSQL, 250m para RabbitMQ e 250m por Job.
