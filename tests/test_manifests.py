@@ -57,6 +57,48 @@ class ManifestContracts(unittest.TestCase):
         ]
         cls.policies = [item for item in cls.documents if item["kind"] == "NetworkPolicy"]
 
+    def test_reduced_profile_changes_only_cpu_requests_and_profile_annotation(self):
+        executable = (
+            os.environ.get("KUBECTL")
+            or os.environ.get("KUBECTL_PATH")
+            or str(ROOT / ".tools/kubectl" / ("kubectl.exe" if os.name == "nt" else "kubectl"))
+        )
+        rendered = subprocess.run(
+            [executable, "kustomize", str(K8S / "overlays/reduced-functional")],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        reduced = {
+            (d["kind"], d["metadata"]["name"]): d for d in yaml.safe_load_all(rendered.stdout)
+        }
+        self.assertEqual(set(reduced), set(self.by_key))
+        runtime_cpu = 0
+        for key, original in self.by_key.items():
+            expected = copy.deepcopy(original)
+            expected["metadata"].setdefault("annotations", {})[
+                "fulfillflow.io/resource-profile"
+            ] = "reduced-functional-unverified"
+            if key[0] in {"Deployment", "StatefulSet", "Job"}:
+                expected["spec"]["template"]["metadata"].setdefault("annotations", {})[
+                    "fulfillflow.io/resource-profile"
+                ] = "reduced-functional-unverified"
+                cpu = (
+                    "750m"
+                    if key[1] == "postgres"
+                    else "250m"
+                    if key[1] == "rabbitmq" or key[0] == "Job"
+                    else "150m"
+                )
+                expected["spec"]["template"]["spec"]["containers"][0]["resources"]["requests"][
+                    "cpu"
+                ] = cpu
+                if key[0] != "Job":
+                    runtime_cpu += int(cpu[:-1])
+            self.assertEqual(reduced[key], expected, key)
+        self.assertEqual(runtime_cpu, 1900)
+
     def container(self, name, kind="Deployment"):
         return self.by_key[kind, name]["spec"]["template"]["spec"]["containers"][0]
 

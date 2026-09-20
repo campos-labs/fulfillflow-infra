@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../example/foundations
+commonAnnotations:
+  fulfillflow.io/resource-profile: reduced-functional-unverified
+patches:
+- target:
+    kind: StatefulSet
+    name: postgres
+  patch: '[{"op": "replace", "path": "/spec/template/spec/containers/0/resources/requests/cpu",
+    "value": "750m"}]'
+- target:
+    kind: StatefulSet
+    name: rabbitmq
+  patch: '[{"op": "replace", "path": "/spec/template/spec/containers/0/resources/requests/cpu",
+    "value": "250m"}]'

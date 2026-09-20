@@ -209,6 +209,18 @@ são proposta ainda sujeita a custo e validação CSI. Não dimensionar nós ape
 memória nem reduzir recursos para caber em crédito presumido. A proposta Terraform
 reserva um nó de surge para upgrade; esse custo temporário também entra na revisão.
 
+O perfil separado `k8s/overlays/reduced-functional` reduz somente requests de CPU:
+150m por API/worker, 750m para PostgreSQL, 250m para RabbitMQ e 250m por Job.
+Mantém limits, memória, réplicas, imagens, pools, probes e prazos da base. Os valores
+são candidatos para fluxo funcional sequencial, não mínimos medidos. Requests do
+runtime somam 1900m; limits continuam em 5500m. Sob contenção, menor reserva de CPU
+pode aumentar latência; não implica redução proporcional de consumo ou cobrança.
+O perfil herda o bloqueio de agendamento do exemplo e ainda não autoriza deploy.
+Compatibilidade do pool AKS, quotas, capacidade alocável, componentes de sistema
+e política de upgrade devem ser resolvidas antes da implantação. A existência do
+perfil não comprova suporte a um cluster de nó único. Estado e critérios de
+avaliação estão no RELEASE_PLAN.
+
 Manter os parâmetros iniciais da aplicação: pools API 2/0 e worker 3/0,
 prefetch 8, lotes 20, polling 500 ms, lease 30 s e confirm timeout 5 s. A soma
 dos pools cresce com réplicas; banco e broker também podem limitar a operação.

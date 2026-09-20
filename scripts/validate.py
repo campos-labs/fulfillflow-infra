@@ -107,19 +107,21 @@ def validate(kubectl: Path, terraform: Path, output: Path) -> dict:
     validate_documents()
     output.mkdir(parents=True, exist_ok=False)
     rendered = []
-    for phase in ("foundations", "migrations", "runtime"):
-        manifest = run([str(kubectl), "kustomize", f"k8s/overlays/example/{phase}"])
-        documents = [item for item in yaml.safe_load_all(manifest) if item is not None]
-        for item in documents:
-            jsonschema.validate(item, load_schema(item, config))
-        digest = save_manifest(output / f"{phase}.yaml", manifest)
-        rendered.append(
-            {
-                "phase": phase,
-                "objects": len(documents),
-                "sha256": digest,
-            }
-        )
+    for profile in ("example", "reduced-functional"):
+        for phase in ("foundations", "migrations", "runtime"):
+            manifest = run([str(kubectl), "kustomize", f"k8s/overlays/{profile}/{phase}"])
+            documents = [item for item in yaml.safe_load_all(manifest) if item is not None]
+            for item in documents:
+                jsonschema.validate(item, load_schema(item, config))
+            digest = save_manifest(output / f"{profile}-{phase}.yaml", manifest)
+            rendered.append(
+                {
+                    "profile": profile,
+                    "phase": phase,
+                    "objects": len(documents),
+                    "sha256": digest,
+                }
+            )
     run([str(terraform), "fmt", "-check", "-recursive", "infra"])
     for directory in ("bootstrap", "environment"):
         prefix = [str(terraform), f"-chdir=infra/{directory}"]

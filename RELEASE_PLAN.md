@@ -110,6 +110,60 @@ A preferência operacional é terminar os preparativos locais antes de consumir
 recursos Azure. Valores ausentes em `config/environment.json` não são defaults.
 Não iniciar II nem transformar a autorização de preparação em autorização de gasto.
 
+### Perfil provisório de recursos reduzidos — preparação autorizada
+
+Preparar uma implantação funcional econômica sem alterar a aplicação congelada.
+O perfil `k8s/overlays/reduced-functional` é separado do exemplo original e mantém
+seus bloqueios de agendamento e imagem. Não é um ambiente aprovado para apply.
+
+| Processo | Request CPU candidato | Limit CPU preservado | Memória request/limit |
+| --- | --- | --- | --- |
+| Cada API/worker (seis) | 150m | 500m | 384 MiB |
+| PostgreSQL | 750m | 2000m | 2560 MiB |
+| RabbitMQ | 250m | 500m | 512 MiB |
+| Cada Job de migration | 250m | 500m | 384 MiB |
+
+Runtime: 1900m/5376 MiB reservados, contra 5500m/5376 MiB no exemplo original.
+Executar migrations sequencialmente antes do runtime; a soma conservadora com um
+Job adicional seria 2150m/5760 MiB, sem overhead Kubernetes. Não apresentar esses
+requests como mínimos essenciais comprovados: são valores iniciais a validar com
+jornada sequencial, recuperação e observação de CPU/throttling/memória. A redução
+não altera limits, contratos, pools, polling, probes, deadlines, persistência ou
+réplicas. Não relaxar verificações para obter aprovação.
+
+**Bloqueio ambiental em 20/09/2026:** o portal mostrou total regional de 6 vCPUs em
+Brazil South e East US 2; DSv5 com cota zero nas duas. Em Brazil South, DDSv4 e DSv4
+mostraram 4 vCPUs por família e ajuste indisponível no portal. Cotas não comprovam
+SKU alocável. Misturar famílias não aumenta o total regional.
+
+A [documentação de pools de sistema](https://learn.microsoft.com/en-us/azure/aks/use-system-pools)
+lista dois nós e SKU de pelo menos quatro vCPUs nas restrições, embora a introdução
+qualifique parte da orientação como produção. Não assumir exceção de nó único
+nem usar apenas a validação permissiva do Terraform como prova de suporte.
+Confirmar o contrato aplicável à versão/região antes de selecionar nós. A proposta
+anterior de dois nós de quatro vCPUs requer 8 vCPUs, ou 12 com o surge configurado.
+Reduzir requests não elimina essa pendência; não desabilitar proteção de upgrade
+nem mudar assinatura/benefício automaticamente.
+
+**Antes de apply:** confirmar suporte, quota de família e regional, SKU, capacidade
+alocável por nó e requests dos componentes do sistema, espaço para Jobs/rollout,
+rede, secrets, persistência e custo real. Crédito preservado para etapa posterior:
+US$40; isso não autoriza consumir o restante. Nenhum novo teto/janela de gasto foi
+aprovado. A estimativa anterior de dois nós não vale como preço do perfil reduzido.
+
+**Aceite delimitado:** manter todos os cenários funcionais da seção 6 aplicáveis
+à topologia aprovada, com origem e limitações. Registrar como pendentes quaisquer
+cenários não executáveis; não declarar IV integralmente concluído por aceite
+parcial. Reinício de pod não comprova tolerância à perda de nó. Sem avaliação de
+capacidade, estabilidade prolongada, HA, autoscaling ou comparação com históricos.
+Se a implantação não couber sem mudança estrutural ou enfraquecimento do aceite,
+interromper provisionamento e apresentar alternativas de cota/topologia.
+
+**Pausa A/B:** revisar dimensionamento, quotas, requests, limites e instrumentação
+antes de decidir o caminho. Ampliar recursos exige nova identidade e verificação
+funcional; resultados do perfil provisório não migram automaticamente para uma
+campanha posterior. Preparação offline pode prosseguir mesmo com apply bloqueado.
+
 ## 4. Incremento II — Bootstrap Azure e imagens
 
 **Pré-condição:** incremento I aceito; alvo, custo e permissões das operações

@@ -173,3 +173,9 @@ de `infrastructure/rabbitmq-v13.json`, removendo todos os três hashes locais; n
 muda ACLs, bindings, durabilidade ou filas classic. Digests upstream de PostgreSQL
 e RabbitMQ foram copiados do Compose congelado, sem substituição por tags mutáveis.
 Nenhum código de negócio da aplicação foi copiado.
+
+## Perfil funcional reduzido
+
+`overlays/reduced-functional` herda o exemplo bloqueado e reduz apenas requests
+de CPU. Valores, critérios e pendências estão no [RELEASE_PLAN](../RELEASE_PLAN.md).
+Não é um overlay liberado para implantação nem comprovação de capacidade no AKS.
