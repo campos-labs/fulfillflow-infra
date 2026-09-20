@@ -164,6 +164,37 @@ antes de decidir o caminho. Ampliar recursos exige nova identidade e verificaç�
 funcional; resultados do perfil provisório não migram automaticamente para uma
 campanha posterior. Preparação offline pode prosseguir mesmo com apply bloqueado.
 
+### Continuidade sem cota — 20/09/2026
+
+A solicitação de 12 vCPUs para DSv5 em East US 2 foi autorizada. O portal indicou
+indisponibilidade regional da família e encaminhou ao suporte. O formulário de
+suporte falhou ao carregar, inclusive após atualização: **nenhum pedido foi enviado,
+nenhum protocolo recebido e nenhuma aprovação/recusa foi emitida**. Não tratar
+essa falha de interface como inelegibilidade comprovada da assinatura. DDSv4 tem
+aumento desabilitado no portal por classificação legacy. Não converter a oferta,
+abrir pedidos duplicados ou registrar outros provedores como tentativa de correção.
+
+A preparação independente segue por esta ordem:
+
+1. Revisar e renderizar configuração, imagens/commands, secrets obrigatórios e
+   sequência foundations → migrations → runtime. Manter os exemplos bloqueados.
+2. Preparar publicação por digest, acesso ao registry e backend, com permissões
+   propostas antes de qualquer concessão. ACR/backend também geram custos e não
+   serão criados antecipadamente apenas para aguardar cota.
+3. Ensaiar Kubernetes local somente em cluster/contexto explicitamente isolado,
+   com engine disponível, imagens identificadas, volumes novos e propriedade
+   verificada. O inventário atual não encontrou kind/k3d/minikube no PATH nem
+   engine Docker Linux acessível. Não habilitar Kubernetes Desktop, alterar seus
+   recursos ou instalar outra distribuição automaticamente.
+4. Confirmar cota, suporte e custo; só então preparar o plano Azure executável.
+5. Após implantação, executar o aceite IV antes da pausa A/B. Evidência local não
+   substitui pull ACR, identidade Azure, RBAC, CNI/NetworkPolicies, CSI/PVCs e
+   recuperação observados no AKS.
+
+Sem novo pedido de redução dos requests: os 1900m precisam de validação funcional,
+não de redução sucessiva para contornar cotas de VMs. A indisponibilidade do portal
+ou do engine local não autoriza declarar um incremento de implantação concluído.
+
 ## 4. Incremento II — Bootstrap Azure e imagens
 
 **Pré-condição:** incremento I aceito; alvo, custo e permissões das operações

@@ -179,3 +179,34 @@ Nenhum código de negócio da aplicação foi copiado.
 `overlays/reduced-functional` herda o exemplo bloqueado e reduz apenas requests
 de CPU. Valores, critérios e pendências estão no [RELEASE_PLAN](../RELEASE_PLAN.md).
 Não é um overlay liberado para implantação nem comprovação de capacidade no AKS.
+
+## Sequência operacional preparada, ainda não executada
+
+Antes de aplicar, registrar contexto e namespace exatos, SHA da infraestrutura,
+digests ACR, perfil de recursos, propriedade dos volumes e destino de evidências.
+Recusar exemplos bloqueados, imagens inválidas e contexto diferente do aprovado.
+Não usar o contexto corrente implicitamente em uma futura automação.
+
+1. Conferir acesso e capacidade alocável; exportar inventário sanitizado. Reservar
+   CPU/memória dos componentes do sistema além dos workloads. Não inferir capacidade
+   por soma dos limits nem por quota disponível da assinatura.
+2. Preparar namespace e secrets pelo canal protegido aprovado. Não incluir seus
+   valores em `kubectl` argv, transcripts, logs ou artefatos de CI. Aplicar fundações
+   e verificar banco/broker antes de migrations, preservando eventos e logs de falha.
+3. Executar cada Job de migration separadamente: Core, Tracking e Notifications.
+   A renderização conjunta da pasta não autoriza aplicação simultânea dos Jobs.
+   Conferir os heads documentados e parar na primeira falha; não apagar/recriar Job
+   nem volume automaticamente. Uma tentativa sucessora terá identidade própria.
+4. Aplicar runtime com uma réplica por processo. Verificar rollout/prontidão com
+   prazo finito, depois executar o verificador funcional existente por túnel local
+   autenticado. Readiness e fila vazia não substituem conclusão do evento.
+5. Exportar identificação, resultados, eventos e logs sanitizados, sem secrets.
+   Preservar falhas e estados pendentes. Só retomar após classificação do problema;
+   não executar o smoke de novo para ocultar timeout da tentativa anterior.
+6. Ao encerrar a janela, inventariar recursos ainda cobrados e verificar a cópia
+   independente antes de qualquer remoção autorizada. Parar pods não encerra custos
+   de nós, discos, ACR ou rede. Não automatizar exclusão de PVCs ou resource groups.
+
+O ensaio local futuro deve manter uma configuração própria para armazenamento/rede,
+sem mudar o alvo AKS nem rotular como validada uma integração específica da Azure.
+Não há comando de apply ou carga liberado nesta preparação.
