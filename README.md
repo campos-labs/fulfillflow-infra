@@ -1,7 +1,8 @@
 # FulfillFlow Infra
 
 Infraestrutura e operação do [FulfillFlow](https://github.com/campos-labs/fulfillflow)
-no Azure Kubernetes Service (AKS), com imagens no Azure Container Registry (ACR).
+com alvo no Azure Kubernetes Service (AKS) e imagens no Azure Container Registry
+(ACR), além de um ambiente Kind para preparação funcional local.
 
 **Estado: aceite funcional local em Kind concluído; pausa para reavaliação.**
 Jornada, duplicata, conflito, retomada e persistência foram verificadas no ambiente
@@ -51,10 +52,10 @@ incremento autorizado no RELEASE_PLAN.
 | Caminho | Conteúdo |
 | --- | --- |
 | [infra/](infra/README.md) | Bootstrap e ambiente Terraform; planos com provider simulado nos testes |
-| [k8s/](k8s/README.md) | Fundações, migrações e runtime; exemplo Kustomize sem agendamento |
+| [k8s/](k8s/README.md) | Operação por fases, contrato de secrets, overlay Kind e exemplos AKS bloqueados |
 | `.github/workflows/` | Validação Linux/Windows sem credenciais Azure |
 | `scripts/` | Preparação de ferramentas, validação e verificador funcional |
-| `config/` | Versões fixadas e ficha do ambiente ainda não aprovado |
+| `config/` | Versões fixadas, configuração Kind e ficha com campos Azure ainda pendentes |
 | `tests/` | Contratos de rede/manifest e falhas do verificador/launchers |
 
 ## Validação local
@@ -82,12 +83,12 @@ outro diretório, `scripts/Invoke-Validation.ps1` recebe `-Python` com o caminho
 completo do Python da `.venv` e `-OutputDirectory` com um destino novo. Os parâmetros
 opcionais `-Kubectl` e `-Terraform` também recebem caminhos completos.
 
-O verificador `scripts/verify_flow.py` está preparado, mas **não foi executado contra
-implantação**. Quando houver ambiente autorizado, criará dados sintéticos, observará
-Tracking/Order e Notifications separadamente e verificará uma duplicata intencional.
-Não é gerador de carga nem teste de capacidade; exige workers, migrações e segredos
-da implantação. Sua evidência identifica a referência esperada, sem atestar por si
-só qual imagem está em execução.
+O verificador `scripts/verify_flow.py` foi executado no Kind: cria dados sintéticos,
+observa Tracking/Order e Notifications separadamente e verifica uma duplicata
+intencional. Exige workers, migrações e segredo do carrier. Não é gerador de carga
+nem atesta, isoladamente, a imagem executada. Identidade, resultados e limites do
+ensaio estão no [RELEASE_PLAN](RELEASE_PLAN.md); operação e retomada do ambiente
+preservado estão em [k8s/README.md](k8s/README.md).
 
 Schemas Kubernetes são os arquivos estritos 1.35.0 do projeto comunitário
 `yannh/kubernetes-json-schema`, fixados por commit. Essa validação e os planos
@@ -96,13 +97,13 @@ quotas, custo, pull ou funcionamento dos volumes.
 
 ## Limites da primeira entrega
 
-- AKS e ACR; nenhuma plataforma alternativa nesta etapa.
+- AKS e ACR como alvo de nuvem; Kind como ambiente funcional local, sem equivalência com AKS.
 - Réplicas fixas, sem HPA/KEDA, Argo CD ou rollback automatizado.
 - PostgreSQL e RabbitMQ persistentes com uma instância cada, sem promessa de HA.
 - Acesso restrito; a aplicação não fornece autenticação de usuários.
 - Aceitação HTTP 202, pod pronto ou fila vazia não comprovam conclusão de negócio.
 - Verificações funcionais delimitadas; campanhas extensas continuam fora do escopo.
 
-Próximo passo: concluir a ficha [config/environment.json](config/environment.json)
-por consultas de leitura e revisão de custo/acesso, conforme
-[RELEASE_PLAN.md](RELEASE_PLAN.md). Nenhum saldo ou benefício presumido autoriza gasto.
+Próximo passo: revisar o ambiente e a alternativa de continuidade previstos no
+[RELEASE_PLAN](RELEASE_PLAN.md#9-decisão-e-retomada). O cluster local está preservado
+e parado; essa pausa não autoriza nova implantação, campanha ou consumo Azure.

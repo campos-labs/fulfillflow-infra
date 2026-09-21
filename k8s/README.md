@@ -14,7 +14,7 @@ real só poderá ser preparado após decisões do ambiente, aprovação de custo
 proveniência das imagens e contrato protegido de secrets. Trocar apenas a imagem
 não satisfaz essas condições.
 
-## Estrutura e ordem futura
+## Estrutura e ordem de implantação
 
 | Fase | Conteúdo | Condição para avançar |
 | --- | --- | --- |
@@ -41,8 +41,8 @@ Renderização local, a partir da raiz deste repositório:
 ## Contrato de secrets
 
 Não há objetos Secret, hashes locais ou valores secretos versionados. Todos os
-`secretKeyRef` e volumes de Secret são obrigatórios. O canal de injeção e sua
-retenção ainda dependem da decisão do ambiente; os nomes abaixo definem a interface.
+`secretKeyRef` e volumes de Secret são obrigatórios. No Kind, a injeção usou stdin e arquivos externos com ACL restrita; a solução
+Azure ainda depende da decisão do ambiente; os nomes abaixo definem a interface.
 Os arquivos protegidos, DSNs e hashes não podem aparecer em logs, argumentos com
 valores, manifests versionados ou artefatos públicos. Base64 não protege um segredo.
 
@@ -101,13 +101,13 @@ env são fixos até a recriação do pod. Não há automação de rotação nest
 
 ## Recursos, segurança e saúde
 
-Requests igualam os limites funcionais: cada API/worker `500m`/`384Mi`, PostgreSQL
+Na base e em `overlays/example`, requests igualam os limites funcionais: cada API/worker `500m`/`384Mi`, PostgreSQL
 `2`/`2560Mi`, RabbitMQ `500m`/`512Mi`. Total persistente: 5,5 CPU/5376 MiB; cada Job
 adiciona `500m`/`384Mi` enquanto ativo. São valores provisórios para revisão, não
 capacidade de nós comprovada. Rollout usa `maxSurge: 0`, `maxUnavailable: 1`; aceita
 indisponibilidade com uma réplica e não promete HA. Não há HPA ou autoscaling.
 
-PVCs provisórios: PostgreSQL 32 GiB e RabbitMQ 16 GiB, Azure Disk CSI
+No alvo AKS, PVCs provisórios: PostgreSQL 32 GiB e RabbitMQ 16 GiB, Azure Disk CSI
 `StandardSSD_LRS`, binding `WaitForFirstConsumer`, reclaim `Retain`, retenção de
 PVC ao excluir/escalar StatefulSet. StorageClass é recurso global e requer
 permissão delimitada; seu nome/propriedade e os tamanhos precisam constar na
@@ -123,8 +123,8 @@ APIs/workers/Jobs usam UID/GID `10001:10001` conforme Dockerfile congelado;
 PostgreSQL usa `999:999`, RabbitMQ Alpine `100:101`, de acordo com as receitas
 oficiais [PostgreSQL](https://github.com/docker-library/postgres/blob/master/18/trixie/Dockerfile)
 e [RabbitMQ Alpine](https://github.com/docker-library/rabbitmq/blob/master/Dockerfile-alpine.template).
-A confirmação sobre os digests exatos e o driver CSI requer smoke do incremento
-seguinte. `fsGroup` dá escrita aos volumes; root filesystem é somente leitura,
+Os processos e permissões de volume foram exercitados no Kind. Isso não verifica
+o driver CSI nem as permissões dos volumes no AKS. `fsGroup` dá escrita aos volumes; root filesystem é somente leitura,
 capabilities são removidas, seccomp é padrão, token da ServiceAccount não é montado.
 `/tmp` é emptyDir gravável para heartbeat; PostgreSQL tem socket gravável próprio.
 
@@ -143,7 +143,10 @@ da aplicação congelada; não criar env vars ineficazes para esses valores.
 
 ## Rede
 
-Default deny ingress/egress cobre o namespace. DNS permite somente TCP/UDP 53 para
+Os manifests declaram default deny ingress/egress para o namespace. Kindnet na
+versão fixada suporta essas políticas, mas os testes de tráfego permitido/bloqueado
+ainda não foram executados. A CI confere os seletores declarados, não o isolamento.
+A regra de DNS permite somente TCP/UDP 53 para
 pods `k8s-app=kube-dns` no namespace `kube-system`; revisar se o AKS aprovado usar
 outro DNS/LocalDNS. Clientes SQL são os seis processos e os três Jobs. Somente os
 três workers alcançam AMQP. Core API alcança Tracking/Notifications; Tracking API
@@ -177,10 +180,11 @@ Nenhum código de negócio da aplicação foi copiado.
 ## Perfil funcional reduzido
 
 `overlays/reduced-functional` herda o exemplo bloqueado e reduz apenas requests
-de CPU. Valores, critérios e pendências estão no [RELEASE_PLAN](../RELEASE_PLAN.md).
+de CPU. Valores estão no [DESIGN](../DESIGN.md#7-recursos-e-conclusão-assíncrona);
+critérios e pendências estão no [RELEASE_PLAN](../RELEASE_PLAN.md).
 Não é um overlay liberado para implantação nem comprovação de capacidade no AKS.
 
-## Sequência operacional preparada, ainda não executada
+## Sequência operacional AKS — ainda não executada
 
 Antes de aplicar, registrar contexto e namespace exatos, SHA da infraestrutura,
 digests ACR, perfil de recursos, propriedade dos volumes e destino de evidências.
@@ -207,9 +211,8 @@ Não usar o contexto corrente implicitamente em uma futura automação.
    independente antes de qualquer remoção autorizada. Parar pods não encerra custos
    de nós, discos, ACR ou rede. Não automatizar exclusão de PVCs ou resource groups.
 
-O ensaio local futuro deve manter uma configuração própria para armazenamento/rede,
-sem mudar o alvo AKS nem rotular como validada uma integração específica da Azure.
-O apply local está restrito ao overlay Kind autorizado. Apply Azure e carga extensa permanecem pendentes.
+Essa sequência é o procedimento planejado para AKS; sua implantação e seus
+requisitos Azure continuam pendentes. O ambiente Kind usa as diferenças abaixo.
 
 ## Caminho Kind local
 
@@ -219,8 +222,8 @@ bloqueado e o alvo AKS permanecem intactos. Configuração do nó em
 Usar kubeconfig dedicado em todos os comandos; aplicar foundations, migrations
 sequenciais e runtime somente depois de injetar secrets exclusivos e carregar a
 imagem da referência. O agregado serve para renderização, não apply simultâneo.
-Não excluir cluster/PVCs nem executar limpeza global. NetworkPolicies não têm
-enforcement comprovado com Kindnet; armazenamento local não valida Azure Disk.
+Não excluir cluster/PVCs nem executar limpeza global. Enforcement das
+NetworkPolicies não foi ensaiado; armazenamento local não valida Azure Disk.
 
 ### Instalação e operação local
 
@@ -235,8 +238,9 @@ Sequência de reprodução (somente em ambiente novo): exportar o SHA congelado 
 criar cluster com `config/kind-local.yaml`, carregar a imagem com Kind e conferir seu
 ID. Injetar os secrets exclusivos pelo contrato acima, via stdin e armazenamento
 protegido, antes de aplicar foundations. Aplicar cada migration separadamente,
-conferir conclusão/head e só então aplicar runtime. O artefato local contém os
-manifests efetivamente aplicados e os procedimentos de aceite.
+conferir conclusão/head e só então aplicar runtime. O pacote registrado no RELEASE_PLAN contém os manifests aplicados e o procedimento
+de aceite. Os helpers adicionais desse ensaio têm caminhos locais; não constituem
+um instalador portátil ou pipeline de recuperação versionado.
 
 Não executar essa sequência para retomar o cluster preservado: iniciar o mesmo
 container do nó, conferir contexto/identidades e reaplicar foundations/runtime
@@ -244,6 +248,7 @@ para restaurar réplicas. Jobs e secrets já existem. Túnel do Core somente em
 `127.0.0.1`; o verificador usa `scripts/verify_flow.py`, segredo em variável de
 ambiente do processo e diretório novo por execução. Não usar credenciais em argv.
 
-O nó está parado no marco de pausa. Reiniciar Docker não constitui autorização
-para campanha ou alteração de escopo. Não excluir o nó: os volumes locais estão
-associados a ele. Dumps exportados não foram restaurados em ambiente independente.
+Para pausar, exportar evidências, escalar os workloads dedicados a zero e parar o
+container do nó, preservando-o. Não o excluir: os volumes locais estão associados
+a ele. Reiniciar Docker não autoriza campanha ou mudança de escopo. O estado atual
+e a situação de backup/restauração pertencem ao RELEASE_PLAN.

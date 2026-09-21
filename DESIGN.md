@@ -2,8 +2,9 @@
 
 ## 1. Estado e autoridade
 
-Este documento define o alvo da implantação funcional no AKS com ACR. O estado
-de implementação e as verificações executadas pertencem ao
+Este documento define o alvo da implantação funcional no AKS com ACR e as
+diferenças permitidas no ambiente Kind da seção 10. O estado de implementação e
+as verificações executadas pertencem ao
 [RELEASE_PLAN.md](RELEASE_PLAN.md). Um requisito descrito aqui não comprova que o
 recurso já exista ou que sua verificação tenha sido executada.
 
@@ -50,7 +51,7 @@ Kubernetes. Evitar dois controladores administrando o mesmo objeto.
 
 ## 3. Imagens e proveniência
 
-ACR é o registry obrigatório. A implantação usa referências `image@sha256:...`,
+No AKS, ACR é o registry obrigatório. A implantação usa referências `image@sha256:...`,
 sem `latest` ou dependência de tags mutáveis. Registrar para cada imagem: origem,
 commit, target do Dockerfile, hash do lock, plataforma e digest de registry.
 Um ID local Docker não é um digest publicado no ACR.
@@ -98,7 +99,7 @@ Core API para consultas do contrato congelado; cada processo →
 banco próprio; workers → broker; DNS e acessos operacionais estritamente necessários.
 As roles PostgreSQL continuam sendo a autoridade para isolamento entre bancos.
 
-O rascunho Terraform usa Azure CNI Overlay com Cilium e propõe API Kubernetes
+A configuração Terraform usa Azure CNI Overlay com Cilium e propõe API Kubernetes
 pública restrita a IPv4 individuais `/32`; não é escolha de conectividade já
 aprovada. Confirmar ranges sem sobreposição, DNS e executor com origem estável
 antes de criar o ambiente. O provider fixado não configura o modo RBAC/ABAC do
@@ -268,25 +269,17 @@ previstos na aplicação e reconciliação normal do Kubernetes permanecem disti
 
 ## 9. Limites e evolução
 
-O marco inicial demonstra implantação, fluxo e recuperação delimitada no AKS.
-Não demonstra HA, SLA de produção, capacidade, estabilidade prolongada ou solução
-dos incidentes históricos da aplicação/ferramenta de medição.
+O aceite deve identificar o ambiente efetivamente exercitado: Kind ou AKS.
+O aceite local não encerra as verificações específicas da nuvem. Nenhum dos dois
+marcos, isoladamente, demonstra HA, SLA de produção, capacidade, estabilidade
+prolongada ou solução dos incidentes históricos da aplicação/ferramenta de medição.
 
 HPA/KEDA, cluster autoscaler, Argo CD, canary/blue-green, rollback automatizado,
 testes extensos e novos provedores de entrega não fazem parte da base aprovada.
 As duas alternativas posteriores constam somente no RELEASE_PLAN; a seleção
 exige decisão e atualização dos contratos afetados antes da implementação.
 
-## 10. Referências operacionais
-
-- [Identidade e acesso no AKS](https://learn.microsoft.com/en-us/azure/aks/concepts-identity)
-- [Integração AKS e ACR](https://learn.microsoft.com/en-us/azure/aks/cluster-container-registry-integration)
-- [GitHub Actions e Azure por OIDC](https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect)
-- [Backend Azure Blob do Terraform](https://developer.hashicorp.com/terraform/language/backend/azurerm)
-- [Probes Kubernetes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
-- [Budgets Azure](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets)
-
-## 11. Ambiente local de preparação
+## 10. Ambiente local de preparação
 
 Kind é um ambiente adicional autorizado para o aceite funcional local e a pausa
 prevista no RELEASE_PLAN. A aplicação congelada e a topologia de serviços não
@@ -295,9 +288,21 @@ credenciais próprias e imagem carregada localmente com `imagePullPolicy: Never`
 Imagem por tag local exige conferência do ID/digest carregado; não é digest ACR.
 API Kubernetes e port-forward ficam em loopback e usam kubeconfig dedicado.
 
-Não há equivalência de persistência, isolamento ou identidade com AKS. Kindnet
-padrão não valida enforcement de NetworkPolicies; ACR, Entra/OIDC, RBAC Azure,
-Azure Disk e Cilium continuam pendentes. Preservar políticas nos manifests sem
-alegar seu funcionamento local. Recursos históricos nunca são montados/reutilizados.
-Excluir o cluster pode perder os PVCs; exportação/backup precede qualquer remoção.
-Versões e exceção temporária de cgroup ficam em `config/kind-toolchain.json`.
+O perfil usa os requests reduzidos da seção 7, preservando limits e memória. Não há
+equivalência de persistência, isolamento ou identidade com AKS. O Kindnet incluído na
+versão fixada tem suporte a NetworkPolicies; comprovar isolamento exige testar tráfego
+permitido e bloqueado, não apenas aplicar os objetos. ACR, Entra/OIDC, RBAC Azure, Azure
+Disk e Cilium exigem verificação na nuvem. Recursos históricos nunca são
+montados/reutilizados. Excluir o cluster pode perder os PVCs; exportação/backup precede
+qualquer remoção. Versões e exceção temporária de cgroup ficam em
+`config/kind-toolchain.json`.
+
+## 11. Referências operacionais
+
+- [Identidade e acesso no AKS](https://learn.microsoft.com/en-us/azure/aks/concepts-identity)
+- [Integração AKS e ACR](https://learn.microsoft.com/en-us/azure/aks/cluster-container-registry-integration)
+- [GitHub Actions e Azure por OIDC](https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect)
+- [Backend Azure Blob do Terraform](https://developer.hashicorp.com/terraform/language/backend/azurerm)
+- [Probes Kubernetes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
+- [Budgets Azure](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets)
+- [Controlador de NetworkPolicies no Kind 0.30.0](https://github.com/kubernetes-sigs/kind/blob/v0.30.0/images/kindnetd/cmd/kindnetd/main.go)

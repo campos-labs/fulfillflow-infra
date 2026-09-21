@@ -13,66 +13,40 @@ comparativa autorizada nesta etapa.
 | Etapa | Estado |
 | --- | --- |
 | Base documental | Concluída; responsabilidades preservadas |
-| I — Preparação e validação local | Preparação local validada; aceite do ambiente pendente; CI registrada por SHA |
+| I — Preparação e validação | Código e CI aprovados; seleção e aceite do ambiente Azure pendentes |
+| L1–L4 — Caminho Kind | Aceite funcional local concluído; ambiente preservado e parado |
 | II — Bootstrap Azure e imagens | Não iniciado |
 | III — AKS e implantação | Não iniciado |
 | IV — Aceite funcional e pausa | Não iniciado |
 | Alternativas A/B | Propostas para revisão; não aprovadas para implementação |
 
-As etapas I–IV compõem o escopo aprovado de preparação. A criação deste repositório
-não autoriza gasto, atribuição de permissões, alteração da aplicação ou remoção de
-dados. Antes das operações correspondentes, apresentar os recursos/configurações
-concretos e confirmar autorização no limite necessário. Não solicitar novamente
-autorização para uma operação já aprovada e inalterada.
+O caminho local está encerrado no marco L4. Os incrementos Azure permanecem
+planejados, sem retomada automática. Mudanças de custo, acesso, aplicação ou
+retenção exigem escopo concreto autorizado; preservar autorizações já concedidas
+e não solicitar novamente aprovação para operações inalteradas.
 
-### Caminho local autorizado — 20/09/2026
+### Caminho local — aceite em 21/09/2026
 
-Esta decisão substitui a exclusão anterior de Kind e permite chegar à pausa de
-reavaliação com **aceite funcional local**, sem exigir implantação prévia no AKS.
-O alvo Azure permanece AKS + ACR; os incrementos II/III de nuvem e seu aceite IV
-continuam pendentes. Não apresentar evidências locais como conclusão desses gates.
+O caminho Kind permite a pausa com aceite funcional local, sem exigir implantação
+prévia no AKS. Não encerra os incrementos II–IV de nuvem. A seleção ambiental Azure
+e seu bloqueio estão registrados na seção 3.
 
-As validações Azure encontraram política de regiões permitidas e recusa explícita
-de D4s_v3 pelo AKS em Canada Central. Nenhum recurso cobrado foi criado nessas
-tentativas. As regiões permitidas consultadas foram Brazil South, Canada Central,
-North Central US, Mexico Central e Spain Central. Novas buscas/provisionamentos
-Azure ficam suspensos neste caminho; não converter a assinatura ou criar trial.
+Etapas executadas:
 
-Sequência autorizada até a pausa:
+1. **L1 — Cluster isolado:** Kind portátil e imagem de nó fixados, checksum
+   conferido, kubeconfig próprio e API em loopback; recursos alheios preservados.
+2. **L2 — Implantação local:** imagem do SHA congelado reconstruída sem alterar
+   aplicação/lock; credenciais exclusivas, PVCs novos e migrations sequenciais
+   antes das três APIs e três workers.
+3. **L3 — Aceite local:** cenários da seção 6 com dados sintéticos novos, prazos
+   finitos e evidências por cenário; nenhuma campanha ou comparação com AKS.
+4. **L4 — Pausa:** identidade, resultados e limites consolidados; evidências e
+   dumps exportados; workloads e nó parados, com dados preservados.
 
-1. **L1 — Cluster isolado:** instalar Kind portátil com checksum verificado,
-   fixar imagem do nó, usar kubeconfig próprio e API em loopback. Inventariar
-   Docker/recursos disponíveis e preservar containers, imagens e volumes alheios.
-2. **L2 — Implantação local:** construir a imagem do SHA congelado sem alterar
-   aplicação/lock; carregar no Kind e registrar ID/digest efetivo. Usar overlay
-   próprio, credenciais aleatórias exclusivas, PVCs novos, bancos/roles e broker;
-   executar migrations em sequência antes das três APIs e três workers.
-3. **L3 — Aceite local:** executar os cenários funcionais da seção 6 com dados
-   sintéticos novos, prazos finitos e evidências por cenário. Falha leva a
-   diagnóstico; correções pequenas podem avançar, preservando a tentativa original.
-   Não iniciar campanha, comparar desempenho ou alegar equivalência com AKS.
-4. **L4 — Pausa:** consolidar identidade, resultados, limitações e recuperação dos
-   dados; parar a evolução antes de escolher A/B. Parar o container dedicado após
-   exportar evidências, preservando-o e seus dados; não executar prune/delete cluster.
-
-Perfil: um nó local, réplicas fixas, requests reduzidos já definidos e nenhum novo
-corte de memória. A capacidade local é compartilhada com Docker/WSL e outros
-programas. Kind 0.30.0/Kubernetes 1.34.0 são fixados para compatibilidade com o
-cgroup v1 observado; não constituem recomendação de versão para a nuvem.
-Se essa combinação não iniciar, registrar o bloqueio antes de mudar Docker/WSL.
-
-O provisionador local-path substitui Azure Disk somente neste overlay. Dados
-dependem do container do nó: Retain não garante sobrevivência à exclusão do cluster
-nem backup. Kindnet padrão não comprova enforcement de NetworkPolicies; objetos
-podem ser aplicados, mas isolamento de rede fica explicitamente não validado.
-ACR, OIDC/Entra, RBAC Azure, CSI, Cilium e custos/quotas permanecem gates da nuvem.
-
-Na pausa, avaliar: (a) manter o escopo Kubernetes local e revisar as afirmações;
-(b) preservar local como preparação e validar/coletar no AKS em janela curta com
-assinatura viável; (c) encerrar no aceite funcional. Escolher separadamente A ou B,
-com orçamento, prazo, esforço máximo e métricas pré-definidos. Uma mudança para
-K3s/VM ou outro provedor exige decisão, não é fallback automático. Não manter
-duas campanhas nem iniciar carga extensa para compensar a indisponibilidade Azure.
+O perfil e suas diferenças em relação ao AKS são definidos no DESIGN, seções 7 e
+10; ferramentas em `config/kind-toolchain.json`. A execução usou Docker/WSL com
+cgroup v1 e Kubernetes 1.34.0, em janela delimitada. Não é recomendação de versão
+para a nuvem nem ensaio de capacidade do notebook.
 
 **Estado observado: L1–L3 concluídos; L4 atingido, evolução pausada.**
 Kind iniciou, oito componentes ficaram prontos e os três heads foram verificados:
@@ -92,19 +66,28 @@ congelado, sem alteração de código/lock; identidade no pacote de evidências.
 Verificações: 54 testes Python, Ruff/formatação, nove renderizações com schemas e
 16 testes Terraform com provider simulado aprovados. Admissão e execução reais
 ocorreram no API server local 1.34.0; schemas estáticos permanecem 1.35.0.
-CI remota deve ser vinculada ao commit final; teste local não equivale a CI.
+A [CI Linux/Windows](https://github.com/campos-labs/fulfillflow-infra/actions/runs/35564908760)
+foi aprovada no SHA de infraestrutura `d98adda9a27a3b6d0adb1b55e5cc51c674ce20d9`.
+Ela executa validações estáticas, unitárias e planos simulados; os cenários no
+cluster foram executados localmente, fora da CI.
 
-Pacote local não versionado: `artifacts/kind-functional-01/summary.json`, cenários,
-observações JSONL, manifests efetivos, heads, imagens e checksums. Cópia adicional
-foi conferida no mesmo computador. Dumps dos três bancos foram exportados em
+Pacote local não versionado: `artifacts/kind-functional-01/summary.json`,
+`acceptance-results.json`, observações JSONL, manifests efetivos, heads, imagens e
+`checksums.json` (23 arquivos). O fechamento está em
+`artifacts/kind-functional-01-closure.json`. `acceptance_local.py` registra o
+procedimento adicional de recuperação; contém caminhos locais e não é um runner
+portátil ou etapa da CI. Cópia adicional foi conferida no mesmo computador. Dumps dos três bancos foram exportados em
 diretório protegido fora do Git; restauração independente não foi exercitada.
 Não chamar cópia no mesmo host de proteção contra perda do equipamento.
 
-Para a pausa, Deployments/StatefulSets ficam em zero e o container dedicado do
-nó é parado, sem excluir PVCs, volumes ou recursos históricos. Retomada requer
-iniciar esse mesmo nó e reaplicar somente foundations/runtime do overlay local,
-após conferir identidade, kubeconfig e credenciais existentes; não recriar secrets,
-não repetir migrations concluídas nem apagar o cluster como rotina.
+NetworkPolicies têm suporte no Kind fixado, mas os cenários de permissão/bloqueio
+de tráfego não foram ensaiados. Essa lacuna permanece distinta das verificações
+Azure e não invalida os resultados funcionais delimitados acima.
+
+Na pausa, os seis Deployments e os dois StatefulSets foram escalados a zero e o
+container `fulfillflow-local-01-control-plane` foi parado. PVCs, imagens, recursos
+históricos e credenciais foram preservados. A retomada do mesmo ambiente segue
+[k8s/README.md](k8s/README.md#instalação-e-operação-local); não é nova instalação.
 
 **Decisão seguinte pendente:** ambiente da avaliação (local ou janela AKS), caminho
 A/B, orçamento/esforço e critérios. Sem campanha, trial, conversão de assinatura,
@@ -178,137 +161,62 @@ Preparados dois roots Terraform (backend e ambiente), locks Windows/Linux,
 manifests separados em fundações/migrações/runtime, ficha sem valores de assinatura,
 verificador público de conclusão/duplicata e CI de validação sem credenciais cloud.
 O exemplo de runtime tem imagem inválida e seletor que impede agendamento.
-Não existe workflow de deploy, overlay de ambiente aprovado ou imagem publicada.
+O overlay Kind tem aceite local; não existe workflow de deploy Azure, overlay
+AKS aprovado ou imagem publicada no ACR.
 
 Versões e hashes ficam em `config/toolchain.json` e nos locks. Os testes do
 verificador usam transporte controlado; Terraform usa provider simulado somente
 em planos. Nenhum desses resultados constitui execução funcional no AKS.
 
-Validação local: 48 testes sem skips, incluindo PowerShell real e caminhos com
-espaços; Ruff/formatação; 34 objetos renderizados com schemas estritos; Terraform
-fmt/validate e 16 planos simulados aprovados. Os testes Terraform de ambiente
+Os resultados atuais e a CI estão na seção 1. Os testes Terraform de ambiente
 selecionam recursos por limitação do mock de `kubelet_identity`; a atribuição
-`AcrPull` precisa de conferência real posterior, conforme [infra/README.md](infra/README.md).
-A CI registra o resultado por SHA; o aceite ambiental permanece separado.
+`AcrPull` exige conferência real posterior, conforme [infra/README.md](infra/README.md).
 
-O aceite permanece dependente de: assinatura/benefício e saldo efetivos, região,
+O aceite ambiental Azure depende de assinatura/benefício e saldo efetivos, região,
 quotas/SKUs, janela e teto de gasto, capacidade alocável, conectividade do executor,
-aprovação da proposta de endpoint, canal de secrets e destino protegido de evidências.
-A preferência operacional é terminar os preparativos locais antes de consumir
-recursos Azure. Valores ausentes em `config/environment.json` não são defaults.
-Não iniciar II nem transformar a autorização de preparação em autorização de gasto.
+endpoint, canal de secrets e destino protegido de evidências. Os campos Azure
+ausentes em `config/environment.json` não são defaults nem registro das consultas
+históricas. A preparação não autoriza provisionamento durante a pausa.
 
-### Perfil provisório de recursos reduzidos — preparação autorizada
+### Recursos e seleção ambiental Azure
 
-Preparar uma implantação funcional econômica sem alterar a aplicação congelada.
-O perfil `k8s/overlays/reduced-functional` é separado do exemplo original e mantém
-seus bloqueios de agendamento e imagem. Não é um ambiente aprovado para apply.
+`k8s/overlays/reduced-functional` mantém os bloqueios de agendamento e imagem do
+exemplo AKS. Seus requests são os definidos no DESIGN, seção 7, também usados no
+Kind: 1900m/5376 MiB de runtime e 250m/384 MiB por Job. Não são mínimos medidos;
+o aceite sequencial local não demonstra capacidade, ausência de throttling ou
+comportamento sob carga. Ampliar recursos exige nova identidade e verificação.
 
-| Processo | Request CPU candidato | Limit CPU preservado | Memória request/limit |
-| --- | --- | --- | --- |
-| Cada API/worker (seis) | 150m | 500m | 384 MiB |
-| PostgreSQL | 750m | 2000m | 2560 MiB |
-| RabbitMQ | 250m | 500m | 512 MiB |
-| Cada Job de migration | 250m | 500m | 384 MiB |
+**Consultas encerradas em 20/09/2026:** cotas positivas não identificaram, por si
+só, um candidato alocável. As validações encontraram restrição de regiões e recusa
+explícita de `Standard_D4s_v3` pelo AKS em Canada Central. As regiões permitidas
+consultadas foram Brazil South, Canada Central, North Central US, Mexico Central
+e Spain Central. A tentativa de pedido de cota pelo portal não gerou protocolo;
+falha de interface não é aprovação nem recusa de suporte. Nenhum recurso cobrado
+do projeto foi criado nessas tentativas.
 
-Runtime: 1900m/5376 MiB reservados, contra 5500m/5376 MiB no exemplo original.
-Executar migrations sequencialmente antes do runtime; a soma conservadora com um
-Job adicional seria 2150m/5760 MiB, sem overhead Kubernetes. Não apresentar esses
-requests como mínimos essenciais comprovados: são valores iniciais a validar com
-jornada sequencial, recuperação e observação de CPU/throttling/memória. A redução
-não altera limits, contratos, pools, polling, probes, deadlines, persistência ou
-réplicas. Não relaxar verificações para obter aprovação.
+As instruções superadas de busca e suporte permanecem no histórico Git. Novas
+buscas, provisionamentos, conversão de assinatura e trials ficam suspensos até
+a decisão da seção 9. A reserva de US$40 para etapa posterior permanece como
+restrição de planejamento, não autorização para consumir o restante do saldo.
+Créditos, quotas, disponibilidade e preços devem ser reconferidos na retomada.
 
-**Bloqueio ambiental em 20/09/2026:** o portal mostrou total regional de 6 vCPUs em
-Brazil South e East US 2; DSv5 com cota zero nas duas. Em Brazil South, DDSv4 e DSv4
-mostraram 4 vCPUs por família e ajuste indisponível no portal. Cotas não comprovam
-SKU alocável. Misturar famílias não aumenta o total regional.
+Antes de apply Azure, confirmar suporte ao pool/versão, quotas regional e de
+família, SKU, capacidade alocável, componentes de sistema, Jobs, rede, secrets,
+armazenamento e custo. Menor request de pods não reduz a cota de vCPUs dos nós.
+Não adotar nó único ou reduzir proteções de manutenção para contornar um bloqueio.
 
-A [documentação de pools de sistema](https://learn.microsoft.com/en-us/azure/aks/use-system-pools)
-lista dois nós e SKU de pelo menos quatro vCPUs nas restrições, embora a introdução
-qualifique parte da orientação como produção. Não assumir exceção de nó único
-nem usar apenas a validação permissiva do Terraform como prova de suporte.
-Confirmar o contrato aplicável à versão/região antes de selecionar nós. A proposta
-anterior de dois nós de quatro vCPUs requer 8 vCPUs, ou 12 com o surge configurado.
-Reduzir requests não elimina essa pendência; não desabilitar proteção de upgrade
-nem mudar assinatura/benefício automaticamente.
+### Manutenção da proposta AKS
 
-**Antes de apply:** confirmar suporte, quota de família e regional, SKU, capacidade
-alocável por nó e requests dos componentes do sistema, espaço para Jobs/rollout,
-rede, secrets, persistência e custo real. Crédito preservado para etapa posterior:
-US$40; isso não autoriza consumir o restante. Nenhum novo teto/janela de gasto foi
-aprovado. A estimativa anterior de dois nós não vale como preço do perfil reduzido.
+A proposta mantém nós fixos, autoscaling desabilitado,
+`node_os_upgrade_channel = "None"` e `max_surge = "1"`. A janela funcional não
+inclui upgrades ou rotação planejados; isso não impede reparos do serviço nem
+constitui política permanente de atualização. Incluir o nó temporário nas cotas
+e no custo antes de autorizar manutenção.
 
-**Aceite delimitado:** manter todos os cenários funcionais da seção 6 aplicáveis
-à topologia aprovada, com origem e limitações. Registrar como pendentes quaisquer
-cenários não executáveis; não declarar IV integralmente concluído por aceite
-parcial. Reinício de pod não comprova tolerância à perda de nó. Sem avaliação de
-capacidade, estabilidade prolongada, HA, autoscaling ou comparação com históricos.
-Se a implantação não couber sem mudança estrutural ou enfraquecimento do aceite,
-interromper provisionamento e apresentar alternativas de cota/topologia.
-
-**Pausa A/B:** revisar dimensionamento, quotas, requests, limites e instrumentação
-antes de decidir o caminho. Ampliar recursos exige nova identidade e verificação
-funcional; resultados do perfil provisório não migram automaticamente para uma
-campanha posterior. Preparação offline pode prosseguir mesmo com apply bloqueado.
-
-### Continuidade sem cota — decisão anterior de 20/09/2026
-
-Registro histórico, substituído pelo caminho local da seção 1.
-
-A solicitação de 12 vCPUs para DSv5 em East US 2 foi autorizada. O portal indicou
-indisponibilidade regional da família e encaminhou ao suporte. O formulário de
-suporte falhou ao carregar, inclusive após atualização: **nenhum pedido foi enviado,
-nenhum protocolo recebido e nenhuma aprovação/recusa foi emitida**. Não tratar
-essa falha de interface como inelegibilidade comprovada da assinatura. DDSv4 tem
-aumento desabilitado no portal por classificação legacy. Não converter a oferta,
-abrir pedidos duplicados ou registrar outros provedores como tentativa de correção.
-
-A preparação independente segue por esta ordem:
-
-1. Revisar e renderizar configuração, imagens/commands, secrets obrigatórios e
-   sequência foundations → migrations → runtime. Manter os exemplos bloqueados.
-2. Preparar publicação por digest, acesso ao registry e backend, com permissões
-   propostas antes de qualquer concessão. ACR/backend também geram custos e não
-   serão criados antecipadamente apenas para aguardar cota.
-3. Priorizar a validação da topologia reduzida diretamente na Azure, sem criar
-   recursos nesta preparação. A exclusão de Kubernetes local/kind desta decisão histórica foi substituída
-   pelo caminho local autorizado na seção 1. Docker Linux voltou a responder; recursos históricos permanecem
-   preservados e não serão usados como ambiente de implantação.
-4. Confirmar cota, suporte e custo; só então preparar o plano Azure executável.
-5. Após implantação, executar o aceite IV antes da pausa A/B. Evidência local não
-   substitui pull ACR, identidade Azure, RBAC, CNI/NetworkPolicies, CSI/PVCs e
-   recuperação observados no AKS.
-
-Sem novo pedido de redução dos requests: os 1900m precisam de validação funcional,
-não de redução sucessiva para contornar cotas de VMs. A indisponibilidade do portal
-ou do engine local não autoriza declarar um incremento de implantação concluído.
-
-### Janela funcional reduzida e manutenção
-
-Preparar uma janela curta na nuvem, sem upgrades ou rotação planejada dos nós.
-A configuração atual fixa versão e quantidade de nós, desliga autoscaling e usa
-`node_os_upgrade_channel = "None"`. Isso não garante ausência de intervenção ou
-reparo pelo serviço e não constitui política permanente de atualização.
-
-Manter `max_surge = "1"`: não substituir por zero no pool System. A documentação
-[de rolling upgrades](https://learn.microsoft.com/en-us/azure/aks/upgrade-aks-node-pools-rolling)
-exclui `maxUnavailable` desses pools. Com um nó de quatro vCPUs, o upgrade com
-surge exigiria oito vCPUs na região e na família, acima das cotas observadas.
-A implantação inicial continua condicionada à aceitação da topologia pela Azure;
-ausência de margem de manutenção deve constar do aceite e ser resolvida antes
-de prolongar a operação ou iniciar as alternativas A/B.
-
-Antes de cada apply, revisar se há atualização, substituição ou rotação do pool,
-inclusive uso de `temporary_name_for_rotation`. Essas ações ficam fora da janela
-funcional proposta e exigem nova revisão de quota/custo. Falha de capacidade não
-autoriza retries, troca de SKU ou aumento automático. Não confundir o surge de
-pods nos Deployments com o surge de nós do AKS.
-
-Próxima verificação: SKU elegível, versão AKS e validação de configuração no
-provedor, sem criação de recursos; validação prévia não reserva capacidade.
-Azure CLI não foi encontrada no PATH nesta conferência. Nenhuma solicitação de
-cota concluída ou implantação é inferida da configuração local.
+Revisar qualquer atualização, substituição ou uso de `temporary_name_for_rotation`
+no plano Terraform. Falta de capacidade exige reavaliação, sem troca automática
+de SKU ou retry. Surge de nós é distinto de `maxSurge` dos Deployments. Os detalhes
+da configuração e encerramento pertencem a [infra/README.md](infra/README.md).
 
 ## 4. Incremento II — Bootstrap Azure e imagens
 
@@ -375,6 +283,7 @@ habilitar injeção contínua de falhas ou carga extensa.
 | Persistência | Recriação controlada de pod de banco/broker preserva dados e identidade, com retorno funcional verificado |
 | Consulta indisponível | Diagnóstico distingue erro de consulta, prazo esgotado, rejeição e pendência; não converte falha em lista vazia/sucesso |
 
+Estes critérios servem ao aceite local L3 e, em execução própria, ao IV no AKS.
 Não alegar falha exatamente após commit/ACK apenas por matar um pod em horário
 aproximado. Usar evidência que localize o ponto ou limitar a conclusão à retomada
 observada. Testes existentes da aplicação são complementares, não execução no AKS.
@@ -449,9 +358,15 @@ positivo para aceitar os resultados nem ajustar margem após observá-los.
 
 ## 9. Decisão e retomada
 
-Na pausa, a equipe revisa custo, prazo, observabilidade disponível e riscos
-demonstrados na preparação. Pode escolher A, B, outro recorte delimitado ou encerrar
-no aceite funcional. Não selecionar a alternativa apenas por um piloto favorável.
+Na pausa atual, decidir primeiro o ambiente: continuar em Kubernetes local,
+usar Kind como preparação e validar no AKS em janela curta com assinatura viável,
+ou encerrar no aceite funcional. Uma troca para VM/K3s ou outro provedor requer
+decisão própria. Local não comprova integrações Azure e não deve gerar uma segunda
+campanha apenas para compensar sua indisponibilidade.
+
+Se houver continuidade, escolher separadamente A, B ou outro recorte delimitado,
+considerando custo, prazo, observabilidade e riscos observados. Não selecionar a
+alternativa apenas por um piloto favorável.
 
 Registrar aqui a decisão, justificativa, escopo excluído, requisitos adicionais,
 limite de esforço e critérios de interrupção. Atualizar o DESIGN somente para
@@ -464,8 +379,11 @@ neste plano inicial.
 | Decisão | Estado |
 | --- | --- |
 | Ambiente comum AKS + ACR, réplicas fixas | Aprovado como alvo; execução pendente |
-| Assinatura, região, orçamento, SKUs e conectividade | A definir no incremento I |
-| Segredos, retenção e acesso do executor | A definir antes do deploy |
+| Ambiente Kind | Aceite funcional concluído; nó parado e dados preservados |
+| Ambiente da continuidade | Local, janela AKS ou encerramento: decisão pendente |
+| Assinatura, região, orçamento, SKUs e conectividade Azure | Seleção executável pendente; consultas históricas não autorizam apply |
+| Segredos, retenção e acesso do executor | Configurados localmente; solução Azure pendente |
+| Cópia independente e restauração | Não verificadas; cópia no mesmo host e dumps preservados |
 | Convite/acessos da equipe | Adiados para o marco de pausa |
 | Alternativa posterior | Não selecionada |
 | Campanha comparativa | Não autorizada |
