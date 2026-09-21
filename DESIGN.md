@@ -285,3 +285,19 @@ exige decisão e atualização dos contratos afetados antes da implementação.
 - [Backend Azure Blob do Terraform](https://developer.hashicorp.com/terraform/language/backend/azurerm)
 - [Probes Kubernetes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
 - [Budgets Azure](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets)
+
+## 11. Ambiente local de preparação
+
+Kind é um ambiente adicional autorizado para o aceite funcional local e a pausa
+prevista no RELEASE_PLAN. A aplicação congelada e a topologia de serviços não
+mudam. O overlay `k8s/overlays/kind-local` usa um único nó, local-path com Retain,
+credenciais próprias e imagem carregada localmente com `imagePullPolicy: Never`.
+Imagem por tag local exige conferência do ID/digest carregado; não é digest ACR.
+API Kubernetes e port-forward ficam em loopback e usam kubeconfig dedicado.
+
+Não há equivalência de persistência, isolamento ou identidade com AKS. Kindnet
+padrão não valida enforcement de NetworkPolicies; ACR, Entra/OIDC, RBAC Azure,
+Azure Disk e Cilium continuam pendentes. Preservar políticas nos manifests sem
+alegar seu funcionamento local. Recursos históricos nunca são montados/reutilizados.
+Excluir o cluster pode perder os PVCs; exportação/backup precede qualquer remoção.
+Versões e exceção temporária de cgroup ficam em `config/kind-toolchain.json`.

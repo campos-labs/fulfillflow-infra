@@ -1,0 +1,8 @@
+{
+  "kind": "v0.30.0",
+  "windows_amd64_url": "https://github.com/kubernetes-sigs/kind/releases/download/v0.30.0/kind-windows-amd64",
+  "windows_amd64_sha256": "a75fed2b6964d877461cc145b37e997ac0f59a63bd02a750134ac25378f78ce7",
+  "kubernetes": "v1.34.0",
+  "node_image": "kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a",
+  "reason": "Bounded local compatibility rehearsal on the existing cgroup v1 Docker host; not an AKS version recommendation."
+}

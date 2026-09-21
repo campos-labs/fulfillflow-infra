@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../../base/foundations
+commonAnnotations:
+  fulfillflow.io/environment: kind-local-only
+patches:
+- target:
+    kind: StorageClass
+  patch: '[{"op": "replace", "path": "/provisioner", "value": "rancher.io/local-path"},
+    {"op": "remove", "path": "/parameters"}, {"op": "replace", "path": "/allowVolumeExpansion",
+    "value": false}]'
+- target:
+    kind: StatefulSet
+    name: postgres
+  patch: '[{"op": "replace", "path": "/spec/template/spec/containers/0/resources/requests/cpu",
+    "value": "750m"}]'
+- target:
+    kind: StatefulSet
+    name: rabbitmq
+  patch: '[{"op": "replace", "path": "/spec/template/spec/containers/0/resources/requests/cpu",
+    "value": "250m"}]'
+- target:
+    kind: Namespace
+  patch: '[{"op": "replace", "path": "/metadata/labels/pod-security.kubernetes.io~1enforce-version",
+    "value": "v1.34"}]'

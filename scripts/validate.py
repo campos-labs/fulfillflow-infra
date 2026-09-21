@@ -107,7 +107,7 @@ def validate(kubectl: Path, terraform: Path, output: Path) -> dict:
     validate_documents()
     output.mkdir(parents=True, exist_ok=False)
     rendered = []
-    for profile in ("example", "reduced-functional"):
+    for profile in ("example", "reduced-functional", "kind-local"):
         for phase in ("foundations", "migrations", "runtime"):
             manifest = run([str(kubectl), "kustomize", f"k8s/overlays/{profile}/{phase}"])
             documents = [item for item in yaml.safe_load_all(manifest) if item is not None]

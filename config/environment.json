@@ -1,5 +1,5 @@
 {
-  "status": "preparation_only",
+  "status": "local_functional_accepted_cloud_pending",
   "provisioning_authorized": false,
   "application": {
     "repository": "campos-labs/fulfillflow",
@@ -33,5 +33,15 @@
     "executor_connectivity": null,
     "secret_delivery": null,
     "backup_destination": null
+  },
+  "local": {
+    "platform": "kind",
+    "cluster": "fulfillflow-local-01",
+    "node_count": 1,
+    "kubernetes": "v1.34.0",
+    "acceptance": "functional_only",
+    "paused": true,
+    "network_policy_enforcement": "not_verified",
+    "evidence": "artifacts/kind-functional-01/summary.json"
   }
 }

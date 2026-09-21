@@ -1,9 +1,9 @@
-# Manifests: validação local, implantação bloqueada
+# Manifests: alvo AKS e ambiente Kind local
 
 A referência auditada é `campos-labs/fulfillflow`, `v1.3.0-rc.1`, SHA
-`9e3a135a00db218643633c7165d3106f0c8285e1`. Esta estrutura não foi aplicada a
-cluster. Renderizar não verifica pull, DNS, permissões de volume, inicialização,
-saúde, migrações ou recuperação no AKS.
+`9e3a135a00db218643633c7165d3106f0c8285e1`. O overlay Kind foi executado
+em cluster local. Os exemplos AKS continuam bloqueados; o ensaio local não verifica
+pull ACR, identidade, isolamento de rede ou armazenamento/recuperação no AKS.
 
 `overlays/example` é exclusivamente de validação. A imagem runtime
 `example.azurecr.io.invalid/fulfillflow/runtime@sha256:` seguida de 64 zeros é
@@ -209,4 +209,41 @@ Não usar o contexto corrente implicitamente em uma futura automação.
 
 O ensaio local futuro deve manter uma configuração própria para armazenamento/rede,
 sem mudar o alvo AKS nem rotular como validada uma integração específica da Azure.
-Não há comando de apply ou carga liberado nesta preparação.
+O apply local está restrito ao overlay Kind autorizado. Apply Azure e carga extensa permanecem pendentes.
+
+## Caminho Kind local
+
+`overlays/kind-local` é o caminho local autorizado no RELEASE_PLAN. O exemplo
+bloqueado e o alvo AKS permanecem intactos. Configuração do nó em
+`config/kind-local.yaml`, versões/checksum em `config/kind-toolchain.json`.
+Usar kubeconfig dedicado em todos os comandos; aplicar foundations, migrations
+sequenciais e runtime somente depois de injetar secrets exclusivos e carregar a
+imagem da referência. O agregado serve para renderização, não apply simultâneo.
+Não excluir cluster/PVCs nem executar limpeza global. NetworkPolicies não têm
+enforcement comprovado com Kindnet; armazenamento local não valida Azure Disk.
+
+### Instalação e operação local
+
+Kind é portátil em `.tools/kind/kind.exe`, sem alteração de PATH. O binário é
+verificado pelo SHA-256 em `config/kind-toolchain.json`. Docker Linux precisa estar
+ativo; não ativar o Kubernetes próprio do Docker Desktop para este caminho.
+O cluster criado é `fulfillflow-local-01`; usar kubeconfig dedicado, sem substituir
+o arquivo global. Nenhum histórico de PostgreSQL/Compose é montado nele.
+
+Sequência de reprodução (somente em ambiente novo): exportar o SHA congelado com
+`git archive`, construir o target `runtime` com tag `fulfillflow-kind-runtime:source-9e3a135a00db`,
+criar cluster com `config/kind-local.yaml`, carregar a imagem com Kind e conferir seu
+ID. Injetar os secrets exclusivos pelo contrato acima, via stdin e armazenamento
+protegido, antes de aplicar foundations. Aplicar cada migration separadamente,
+conferir conclusão/head e só então aplicar runtime. O artefato local contém os
+manifests efetivamente aplicados e os procedimentos de aceite.
+
+Não executar essa sequência para retomar o cluster preservado: iniciar o mesmo
+container do nó, conferir contexto/identidades e reaplicar foundations/runtime
+para restaurar réplicas. Jobs e secrets já existem. Túnel do Core somente em
+`127.0.0.1`; o verificador usa `scripts/verify_flow.py`, segredo em variável de
+ambiente do processo e diretório novo por execução. Não usar credenciais em argv.
+
+O nó está parado no marco de pausa. Reiniciar Docker não constitui autorização
+para campanha ou alteração de escopo. Não excluir o nó: os volumes locais estão
+associados a ele. Dumps exportados não foram restaurados em ambiente independente.

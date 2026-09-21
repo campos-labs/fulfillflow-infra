@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../../base/runtime
+commonAnnotations:
+  fulfillflow.io/environment: kind-local-only
+patches:
+- target:
+    kind: Deployment
+  patch: '[{"op": "replace", "path": "/spec/template/spec/containers/0/resources/requests/cpu",
+    "value": "150m"}, {"op": "add", "path": "/spec/template/spec/containers/0/imagePullPolicy",
+    "value": "Never"}]'
+images:
+- name: example.azurecr.io.invalid/fulfillflow/runtime
+  newName: fulfillflow-kind-runtime
+  newTag: source-9e3a135a00db

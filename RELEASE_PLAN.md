@@ -2,6 +2,9 @@
 
 ## 1. Objetivo, estado e limites
 
+**Estado atual: aceite funcional local em Kind concluído; pausa de reavaliação.**
+Os estados II–IV abaixo referem-se exclusivamente ao alvo Azure ainda pendente.
+
 Entregar uma base reproduzível no AKS, com ACR, réplicas fixas e verificação do
 fluxo assíncrono da referência definida no [DESIGN.md](DESIGN.md). Parar no aceite
 funcional para decidir o escopo posterior. Não há meta de capacidade nem campanha
@@ -21,6 +24,91 @@ não autoriza gasto, atribuição de permissões, alteração da aplicação ou 
 dados. Antes das operações correspondentes, apresentar os recursos/configurações
 concretos e confirmar autorização no limite necessário. Não solicitar novamente
 autorização para uma operação já aprovada e inalterada.
+
+### Caminho local autorizado — 20/09/2026
+
+Esta decisão substitui a exclusão anterior de Kind e permite chegar à pausa de
+reavaliação com **aceite funcional local**, sem exigir implantação prévia no AKS.
+O alvo Azure permanece AKS + ACR; os incrementos II/III de nuvem e seu aceite IV
+continuam pendentes. Não apresentar evidências locais como conclusão desses gates.
+
+As validações Azure encontraram política de regiões permitidas e recusa explícita
+de D4s_v3 pelo AKS em Canada Central. Nenhum recurso cobrado foi criado nessas
+tentativas. As regiões permitidas consultadas foram Brazil South, Canada Central,
+North Central US, Mexico Central e Spain Central. Novas buscas/provisionamentos
+Azure ficam suspensos neste caminho; não converter a assinatura ou criar trial.
+
+Sequência autorizada até a pausa:
+
+1. **L1 — Cluster isolado:** instalar Kind portátil com checksum verificado,
+   fixar imagem do nó, usar kubeconfig próprio e API em loopback. Inventariar
+   Docker/recursos disponíveis e preservar containers, imagens e volumes alheios.
+2. **L2 — Implantação local:** construir a imagem do SHA congelado sem alterar
+   aplicação/lock; carregar no Kind e registrar ID/digest efetivo. Usar overlay
+   próprio, credenciais aleatórias exclusivas, PVCs novos, bancos/roles e broker;
+   executar migrations em sequência antes das três APIs e três workers.
+3. **L3 — Aceite local:** executar os cenários funcionais da seção 6 com dados
+   sintéticos novos, prazos finitos e evidências por cenário. Falha leva a
+   diagnóstico; correções pequenas podem avançar, preservando a tentativa original.
+   Não iniciar campanha, comparar desempenho ou alegar equivalência com AKS.
+4. **L4 — Pausa:** consolidar identidade, resultados, limitações e recuperação dos
+   dados; parar a evolução antes de escolher A/B. Parar o container dedicado após
+   exportar evidências, preservando-o e seus dados; não executar prune/delete cluster.
+
+Perfil: um nó local, réplicas fixas, requests reduzidos já definidos e nenhum novo
+corte de memória. A capacidade local é compartilhada com Docker/WSL e outros
+programas. Kind 0.30.0/Kubernetes 1.34.0 são fixados para compatibilidade com o
+cgroup v1 observado; não constituem recomendação de versão para a nuvem.
+Se essa combinação não iniciar, registrar o bloqueio antes de mudar Docker/WSL.
+
+O provisionador local-path substitui Azure Disk somente neste overlay. Dados
+dependem do container do nó: Retain não garante sobrevivência à exclusão do cluster
+nem backup. Kindnet padrão não comprova enforcement de NetworkPolicies; objetos
+podem ser aplicados, mas isolamento de rede fica explicitamente não validado.
+ACR, OIDC/Entra, RBAC Azure, CSI, Cilium e custos/quotas permanecem gates da nuvem.
+
+Na pausa, avaliar: (a) manter o escopo Kubernetes local e revisar as afirmações;
+(b) preservar local como preparação e validar/coletar no AKS em janela curta com
+assinatura viável; (c) encerrar no aceite funcional. Escolher separadamente A ou B,
+com orçamento, prazo, esforço máximo e métricas pré-definidos. Uma mudança para
+K3s/VM ou outro provedor exige decisão, não é fallback automático. Não manter
+duas campanhas nem iniciar carga extensa para compensar a indisponibilidade Azure.
+
+**Estado observado: L1–L3 concluídos; L4 atingido, evolução pausada.**
+Kind iniciou, oito componentes ficaram prontos e os três heads foram verificados:
+`1301_core`, `1203_tracking`, `1301_notifications`. Imagem reconstruída do SHA
+congelado, sem alteração de código/lock; identidade no pacote de evidências.
+
+| Cenário local | Resultado e limite |
+| --- | --- |
+| Jornada + duplicata | 202 → Tracking concluído → Order FULFILLED → Notification SIMULATED; uma duplicata preservou identidades e efeito único |
+| Core worker parado | Evento admitido permaneceu pendente e concluiu após retomada, sem novo webhook; parada anterior à admissão, não exatamente após ACK |
+| Mesmo ID, outro conteúdo assinado | 409 e registro original preservado; efeitos continuaram únicos |
+| Notifications pausado | Tracking/Order concluíram com simulação pendente; retomada concluiu sem novo webhook |
+| Broker recriado com trabalho pendente | Novo UID, mesmo PVC, conclusão posterior única; cenário combinado, sem atribuição causal isolada ao broker |
+| API Notifications parada | Consulta retornou 503, sem lista vazia; observação retomada preservou o evento |
+| PostgreSQL recriado | Novo UID, mesmos PVCs, identidades/resultados/efeitos preservados; não representa falha do host |
+
+Verificações: 54 testes Python, Ruff/formatação, nove renderizações com schemas e
+16 testes Terraform com provider simulado aprovados. Admissão e execução reais
+ocorreram no API server local 1.34.0; schemas estáticos permanecem 1.35.0.
+CI remota deve ser vinculada ao commit final; teste local não equivale a CI.
+
+Pacote local não versionado: `artifacts/kind-functional-01/summary.json`, cenários,
+observações JSONL, manifests efetivos, heads, imagens e checksums. Cópia adicional
+foi conferida no mesmo computador. Dumps dos três bancos foram exportados em
+diretório protegido fora do Git; restauração independente não foi exercitada.
+Não chamar cópia no mesmo host de proteção contra perda do equipamento.
+
+Para a pausa, Deployments/StatefulSets ficam em zero e o container dedicado do
+nó é parado, sem excluir PVCs, volumes ou recursos históricos. Retomada requer
+iniciar esse mesmo nó e reaplicar somente foundations/runtime do overlay local,
+após conferir identidade, kubeconfig e credenciais existentes; não recriar secrets,
+não repetir migrations concluídas nem apagar o cluster como rotina.
+
+**Decisão seguinte pendente:** ambiente da avaliação (local ou janela AKS), caminho
+A/B, orçamento/esforço e critérios. Sem campanha, trial, conversão de assinatura,
+provisionamento Azure, tag ou release de infraestrutura neste marco.
 
 ## 2. Regras de execução deste plano
 
@@ -164,7 +252,9 @@ antes de decidir o caminho. Ampliar recursos exige nova identidade e verificaç�
 funcional; resultados do perfil provisório não migram automaticamente para uma
 campanha posterior. Preparação offline pode prosseguir mesmo com apply bloqueado.
 
-### Continuidade sem cota — 20/09/2026
+### Continuidade sem cota — decisão anterior de 20/09/2026
+
+Registro histórico, substituído pelo caminho local da seção 1.
 
 A solicitação de 12 vCPUs para DSv5 em East US 2 foi autorizada. O portal indicou
 indisponibilidade regional da família e encaminhou ao suporte. O formulário de
@@ -182,8 +272,8 @@ A preparação independente segue por esta ordem:
    propostas antes de qualquer concessão. ACR/backend também geram custos e não
    serão criados antecipadamente apenas para aguardar cota.
 3. Priorizar a validação da topologia reduzida diretamente na Azure, sem criar
-   recursos nesta preparação. Kubernetes local/kind não faz parte do caminho
-   atual. Docker Linux voltou a responder; recursos históricos permanecem
+   recursos nesta preparação. A exclusão de Kubernetes local/kind desta decisão histórica foi substituída
+   pelo caminho local autorizado na seção 1. Docker Linux voltou a responder; recursos históricos permanecem
    preservados e não serão usados como ambiente de implantação.
 4. Confirmar cota, suporte e custo; só então preparar o plano Azure executável.
 5. Após implantação, executar o aceite IV antes da pausa A/B. Evidência local não
@@ -297,7 +387,8 @@ e verificar cópia independente das evidências e dados necessários; lacunas de
 backup/restauração permanecem explícitas. Atualizar README apenas com comandos
 realmente executáveis e estados observados.
 
-**Marco de pausa:** infraestrutura funcional aceita e pacote rastreável entregue.
+**Marco de pausa:** aceite funcional local (L4) ou aceite no AKS, sempre identificado
+como tal, e pacote rastreável entregue. L4 pode ocorrer antes dos incrementos Azure.
 Parar antes de ativar A/B, iniciar campanha, ampliar recursos ou publicar release.
 O aceite funcional pode ser registrado mesmo com limites conhecidos, desde que
 nenhum requisito funcional obrigatório tenha falhado ou sido silenciosamente pulado.

@@ -3,9 +3,11 @@
 Infraestrutura e operação do [FulfillFlow](https://github.com/campos-labs/fulfillflow)
 no Azure Kubernetes Service (AKS), com imagens no Azure Container Registry (ACR).
 
-**Estado: preparação local implementada; aceite do ambiente pendente.** Terraform,
-manifests de exemplo, CI de validação e verificador funcional estão disponíveis.
-Nenhum recurso Azure foi provisionado; ainda não há comando de implantação liberado.
+**Estado: aceite funcional local em Kind concluído; pausa para reavaliação.**
+Jornada, duplicata, conflito, retomada e persistência foram verificadas no ambiente
+local isolado. Terraform e o alvo AKS + ACR permanecem preparados, com implantação
+Azure pendente. NetworkPolicies/identidade/armazenamento Azure não foram validados
+pelo ensaio local. Escopo e evidências estão no [RELEASE_PLAN](RELEASE_PLAN.md).
 
 ## Objetivo
 
