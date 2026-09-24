@@ -252,3 +252,33 @@ Para pausar, exportar evidências, escalar os workloads dedicados a zero e parar
 container do nó, preservando-o. Não o excluir: os volumes locais estão associados
 a ele. Reiniciar Docker não autoriza campanha ou mudança de escopo. O estado atual
 e a situação de backup/restauração pertencem ao RELEASE_PLAN.
+
+## Procedimento A1 — implementação pendente
+
+O incremento aprovado é definido no RELEASE_PLAN §7 e segue os contratos do
+DESIGN §8.1–8.4. Esta seção descreve a sequência a implementar; não acrescenta
+um comando disponível. O piloto usa Kind e uma alteração em um único Deployment.
+
+1. Conferir ferramentas, contexto, namespace, imagens e recursos dedicados. Retomar
+   o ambiente preservado pelo procedimento acima e verificar sua referência saudável;
+   preparação de ambiente novo, quando necessária, é separada do piloto. Não excluir
+   ou reutilizar recursos históricos, regenerar secrets ou repetir migrations concluídas.
+2. Registrar o workload-alvo, configuração saudável restaurável e candidata,
+   consumidores de qualquer configuração compartilhada e comandos de restauração.
+   Renderizar/conferir o diff restrito ao runtime e preservar configuração não sensível.
+3. Preparar destino novo por tentativa, expectativa, prazos, IDs e consultas de
+   conferência. Executar o cenário saudável e a falha selecionada em tentativas
+   separadas, com a referência saudável restabelecida entre elas.
+4. Aplicar somente a mudança delimitada; registrar geração, ReplicaSet, pods,
+   imagem/configuração efetivas, rollout e probes. Conferir a revisão exercitada
+   antes de atribuir resultado funcional; nenhuma mutação automática para reparar falha.
+5. Observar conclusão por etapa e preservar o veredito separado do julgamento do
+   cenário. Na falha prevista, seguir o encerramento preparado; na inesperada, parar
+   mutações e diagnosticar. Não reenviar eventos nem substituir registros anteriores.
+6. Restaurar explicitamente a revisão/configuração saudável e conferir tanto os
+   eventos aceitos durante o piloto quanto um novo evento identificado. Registrar
+   pendências e eventuais falhas de restauração. Exportar evidências e parar os
+   recursos dedicados, preservando dados. Parar para a decisão prevista no plano.
+
+O procedimento não instala HPA/KEDA, rollback automático ou novas ferramentas de
+observabilidade. Comandos portáveis serão incluídos após implementação e verificação.

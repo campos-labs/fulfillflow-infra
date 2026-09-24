@@ -241,9 +241,12 @@ sem reenvio do webhook; `BLOCKED` exige rearme auditável pelo proprietário.
 
 ## 8. Implantação e evidências operacionais
 
-GitHub Actions valida mudanças; a implantação inicial é acionada explicitamente
-e tem concorrência limitada por ambiente. Acesso Azure por OIDC ocorre somente em
-jobs confiáveis. Execuções não confiáveis não recebem credenciais nem executam apply.
+GitHub Actions valida mudanças. A operação local usa Python 3.12 para orquestração
+e evidências, PowerShell 7 como entrada e kubectl/Kustomize para workloads, com as
+versões fixadas no repositório. Terraform permanece restrito à infraestrutura Azure.
+Implantação é acionada explicitamente e tem concorrência limitada por ambiente.
+Acesso Azure por OIDC ocorre somente em jobs confiáveis. Execuções não confiáveis
+não recebem credenciais nem executam apply.
 A implantação exige autorização do ambiente de destino; CI de validação não
 constitui autorização para provisionamento.
 
@@ -262,10 +265,85 @@ Prometheus e tracing amplos permanecem fora do aceite inicial.
 
 Relatórios pequenos e sanitizados podem ser versionados. Dados brutos ficam em
 armazenamento controlado, com inventário, hashes e retenção definidos; um caminho
-ignorado pelo Git não equivale a backup. Falha encerra a operação, preserva
-diagnósticos e exige classificação antes de nova tentativa em destino identificado.
+ignorado pelo Git não equivale a backup. Falha inesperada interrompe mutações e
+exige diagnóstico antes de nova tentativa em destino identificado; falhas deliberadas
+seguem o encerramento definido na seção 8.4.
 Repetições automáticas do cenário inteiro são proibidas; retries internos
 previstos na aplicação e reconciliação normal do Kubernetes permanecem distintos.
+
+### 8.1. A1 — Verificação de uma revisão de runtime
+
+Separar implantação, observação funcional e restauração. A1 detecta e registra;
+seu veredito nunca aciona rollback, rearme, reenvio de evento ou reparo automático.
+O encerramento do piloto inclui restauração manual explícita e conferência do
+funcionamento; não equivale a uma política de recuperação automática.
+
+Cada tentativa altera um único Deployment, mantendo os demais workloads, réplicas,
+recursos, probes e contratos da aplicação congelada. A mudança experimental não
+inclui foundations, bootstrap, migrações, esquema, edição manual de dados ou rotação
+de credenciais.
+Configuração compartilhada não pode ser alterada como se afetasse só um consumidor;
+usar referência específica do workload ou interromper diante de impacto mais amplo.
+Fixar previamente revisão saudável restaurável, candidata, efeito esperado,
+critérios e prazos. Não enfraquecer probes para favorecer a verificação funcional.
+
+### 8.2. Identidade e portabilidade
+
+Receber caminhos de executáveis, kubeconfig, contexto, namespace e destino de
+evidências explicitamente; nunca depender de caminhos pessoais ou contexto corrente.
+Recusar contexto divergente, exemplos AKS bloqueados e operações concorrentes no
+mesmo ambiente. Separar configuração Kind/AKS sem criar um framework multiprovedor.
+Criação inicial e retomada são operações distintas; não reinicializar volumes ou
+secrets existentes para resolver falha de implantação.
+
+Registrar identificador da tentativa, SHAs, imagem esperada e efetiva, hash do
+manifest/configuração não sensível, revisão do Deployment, ReplicaSet e UIDs dos
+pods exercitados. Referências de secrets são opacas; não exportar valores, hashes
+de segredos ou kubeconfig. Imagem sozinha não identifica mudança de configuração.
+Antes de atribuir sucesso à candidata, comprovar convergência da revisão e ausência
+de execução concorrente da revisão anterior no workload-alvo. Se a candidata não
+iniciar, registrar essa falha; sucesso por réplicas antigas não a valida.
+
+### 8.3. Observação e julgamento
+
+Registrar separadamente rollout, admissão, conclusão Tracking/Order e simulação
+Notifications. Para eventos cujo resultado esperado inclui notificação, o fluxo
+completo exige ambas as conclusões. Falha em Notifications não apaga sucesso de
+Tracking. Preservar identidades e efeitos únicos pelos contratos existentes.
+
+O resultado da implantação pode ser aprovado, reprovado ou inconclusivo; etapas
+não executadas permanecem identificadas. Requisito não atendido no prazo só é
+afirmado com observação suficiente: consulta indisponível ou resposta de admissão
+perdida exige registrar a incerteza. Timeout não prova perda do evento.
+Separar esse resultado do julgamento do cenário contra sua expectativa prévia:
+uma falha esperada corretamente detectada aprova o teste, nunca a implantação.
+
+Conferir o resultado com registros/consultas existentes além do booleano final do
+verificador, sem construir outro sistema de observação. Preservar o diagnóstico
+das probes e do rollout para avaliar informação adicional ou sobreposição.
+Não exigir vantagem de A1 nem mudar o cenário após observar o resultado.
+
+Usar relógio monotônico para durações e UTC para correlação; não subtrair relógios
+monotônicos de processos distintos. Fixar prazos finitos por etapa e limite total
+antes da tentativa. Durações observadas incluem polling e são distintas dos
+timestamps de negócio. Timeouts não entram como durações de sucesso.
+O registro mínimo relaciona tentativa, revisão, evento, oferta, aceitação conhecida
+ou incerta, conclusões, falhas de consulta e pendência final. Não é carga comparativa.
+
+### 8.4. Encerramento e preservação
+
+Na primeira falha inesperada, parar mutações do cenário e preservar evidências;
+uma falha deliberada prevista segue somente a observação e o encerramento definidos.
+A restauração é uma ação explícita separada, com alvo e configuração conhecidos,
+não um efeito do veredito. Pode usar comando assistido pelo operador, sem política
+autônoma de rollback. Restaurar imagem e configuração pertinente, não apenas a tag;
+registrar falha de restauração sem declarar sucesso ou repetir automaticamente.
+
+Depois da restauração, observar os eventos já aceitos durante o cenário sem
+reentregá-los e identificar separadamente um evento novo de verificação. Este não
+comprova recuperação das pendências anteriores. Trabalho BLOCKED exige o rearme
+auditável previsto na aplicação, fora da ação automática de A1. Preservar lacunas,
+finalizar o registro e parar os recursos dedicados conforme o procedimento local.
 
 ## 9. Limites e evolução
 
@@ -276,14 +354,16 @@ prolongada ou solução dos incidentes históricos da aplicação/ferramenta de 
 
 HPA/KEDA, cluster autoscaler, Argo CD, canary/blue-green, rollback automatizado,
 testes extensos e novos provedores de entrega não fazem parte da base aprovada.
-As duas alternativas posteriores constam somente no RELEASE_PLAN; a seleção
-exige decisão e atualização dos contratos afetados antes da implementação.
+A1 limita-se à verificação definida na seção 8. Recuperação automática (A2) e
+autoescalonamento (B) são alternativas posteriores no RELEASE_PLAN, sujeitas a
+decisão e atualização dos contratos afetados antes da implementação.
 
 ## 10. Ambiente local de preparação
 
-Kind é um ambiente adicional autorizado para o aceite funcional local e a pausa
-prevista no RELEASE_PLAN. A aplicação congelada e a topologia de serviços não
-mudam. O overlay `k8s/overlays/kind-local` usa um único nó, local-path com Retain,
+Kind é o ambiente de preparação funcional e do piloto A1 delimitado no
+RELEASE_PLAN. O ambiente da avaliação comparativa permanece por decidir. A aplicação
+congelada e a topologia de serviços não mudam. O overlay `k8s/overlays/kind-local`
+usa um único nó, local-path com Retain,
 credenciais próprias e imagem carregada localmente com `imagePullPolicy: Never`.
 Imagem por tag local exige conferência do ID/digest carregado; não é digest ACR.
 API Kubernetes e port-forward ficam em loopback e usam kubeconfig dedicado.

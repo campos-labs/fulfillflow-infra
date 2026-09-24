@@ -4,19 +4,20 @@ Infraestrutura e operação do [FulfillFlow](https://github.com/campos-labs/fulf
 com alvo no Azure Kubernetes Service (AKS) e imagens no Azure Container Registry
 (ACR), além de um ambiente Kind para preparação funcional local.
 
-**Estado: aceite funcional local em Kind concluído; pausa para reavaliação.**
-Jornada, duplicata, conflito, retomada e persistência foram verificadas no ambiente
-local isolado. Terraform e o alvo AKS + ACR permanecem preparados, com implantação
-Azure pendente. NetworkPolicies/identidade/armazenamento Azure não foram validados
-pelo ensaio local. Escopo e evidências estão no [RELEASE_PLAN](RELEASE_PLAN.md).
+**Estado: aceite funcional local concluído; continuação até A1 planejada.**
+O próximo incremento prepara operação portátil, registros e verificação de uma
+revisão de runtime, com piloto curto em Kind e nova pausa. Essa automação ainda
+não está implementada. O aceite anterior permanece preservado; AKS/ACR e a escolha
+do ambiente da comparação continuam pendentes. Escopo, evidências e limitações
+estão no [RELEASE_PLAN](RELEASE_PLAN.md).
 
 ## Objetivo
 
 Preparar uma implantação funcional reproduzível, com réplicas fixas, persistência,
-acesso restrito e verificação da conclusão do fluxo assíncrono. O trabalho para em
-um marco de aceite operacional antes da decisão entre implantação/recuperação e
-autoescalonamento. Essas alternativas estão separadas no plano e não autorizam
-implementação antecipada.
+acesso restrito e verificação da conclusão do fluxo assíncrono. A1 detectará e
+registrará o resultado da implantação; o piloto termina com restauração manual
+explícita. Recuperação automática e autoescalonamento permanecem alternativas
+posteriores, sujeitas à decisão na pausa.
 
 ## Referência da aplicação
 
@@ -95,7 +96,7 @@ Schemas Kubernetes são os arquivos estritos 1.35.0 do projeto comunitário
 Terraform com mocks não comprovam disponibilidade da versão no AKS, permissões,
 quotas, custo, pull ou funcionamento dos volumes.
 
-## Limites da primeira entrega
+## Limites do escopo atual
 
 - AKS e ACR como alvo de nuvem; Kind como ambiente funcional local, sem equivalência com AKS.
 - Réplicas fixas, sem HPA/KEDA, Argo CD ou rollback automatizado.
@@ -104,6 +105,8 @@ quotas, custo, pull ou funcionamento dos volumes.
 - Aceitação HTTP 202, pod pronto ou fila vazia não comprovam conclusão de negócio.
 - Verificações funcionais delimitadas; campanhas extensas continuam fora do escopo.
 
-Próximo passo: revisar o ambiente e a alternativa de continuidade previstos no
-[RELEASE_PLAN](RELEASE_PLAN.md#9-decisão-e-retomada). O cluster local está preservado
-e parado; essa pausa não autoriza nova implantação, campanha ou consumo Azure.
+Próximo passo: implementar o incremento delimitado na seção 7 do
+[RELEASE_PLAN](RELEASE_PLAN.md#7-incremento-ativo--base-comum-e-a1). Os comandos
+acima continuam sendo de validação; nenhum launcher A1 está disponível ainda.
+O ambiente local permanece preservado e parado até a execução preparada do
+incremento. Não há campanha ou provisionamento Azure autorizado nesta etapa.
