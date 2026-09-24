@@ -255,10 +255,10 @@ e a situação de backup/restauração pertencem ao RELEASE_PLAN.
 
 ## Procedimento A1
 
-O incremento aprovado é definido no RELEASE_PLAN §7 e segue DESIGN §8.1–8.4.
-A automação foi exercitada no piloto Kind registrado no plano, incluindo restauração
-e pausa. Usa Kind existente e uma alteração em um único Deployment; não cria cluster,
-secrets ou migrations. Novas execuções dependem da decisão de continuidade.
+A interface A1 segue DESIGN §8.1–8.4 e foi exercitada no piloto registrado no
+RELEASE_PLAN §7, incluindo restauração e pausa. Usa Kind existente e uma alteração
+em um único Deployment; não cria cluster, secrets ou migrations. Sua reutilização
+em A2 segue o plano atual, sem mudar os efeitos dos comandos abaixo.
 
 Interface: `scripts/Invoke-A1.ps1 -Python <executável> -Config <arquivo.json>
 -OutputDirectory <destino-novo> -Mode <modo>`. O equivalente Python é
@@ -309,8 +309,21 @@ Sequência operacional, quando autorizada:
 6. Restaurar explicitamente a revisão/configuração saudável e conferir tanto os
    eventos aceitos durante o piloto quanto um novo evento identificado. Registrar
    pendências e eventuais falhas de restauração. Exportar evidências e parar os
-   recursos dedicados, preservando dados. Parar para a decisão prevista no plano.
+   recursos dedicados, preservando dados. Respeitar o encerramento previsto no plano.
 
-O procedimento não instala HPA/KEDA, rollback automático ou novas ferramentas de
-observabilidade. Os testes automatizados da interface não substituem sua execução
-integrada nem validam uma implantação AKS.
+O procedimento A1 não instala HPA/KEDA, rollback automático ou novas ferramentas
+de observabilidade. Seus testes não substituem a execução integrada nem validam AKS.
+
+## A2 — Preparação da operação
+
+A restauração automatizada e a comparação em Kind estão planejadas no RELEASE_PLAN
+§7, sob DESIGN §8.5; ainda não há launcher A2 implementado. `attempt` continua sem
+rollback e `restore` continua sendo comando explícito. Não encadear esses comandos
+em uma política improvisada ou tratar erro de consulta como autorização para reparar.
+
+Reutilizar ferramentas, kubeconfig dedicado e imagens conferidas do laboratório.
+Antes da janela, conferir Docker, porta da API, contexto/UID, recursos e ausência de
+carga concorrente. Novas tentativas usam destinos/IDs exclusivos; não apagar volumes,
+repetir bootstrap ou reiniciar migrations para preparar a comparação. Política,
+critérios de julgamento e protocolo ficam nos documentos responsáveis; este guia
+receberá apenas a interface executável e os procedimentos verificados durante A2-I.

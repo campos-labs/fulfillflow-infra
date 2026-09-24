@@ -1,22 +1,18 @@
 # FulfillFlow Infra
 
 Infraestrutura e operação do [FulfillFlow](https://github.com/campos-labs/fulfillflow)
-com alvo no Azure Kubernetes Service (AKS) e imagens no Azure Container Registry
-(ACR), além de um ambiente Kind para preparação funcional local.
+em Kubernetes, com laboratório Kind e configuração de referência para AKS/ACR.
 
-**Estado: A1 concluído em Kind; pausa para reavaliação.** Revisão saudável,
-falha de inicialização delimitada e restauração explícita foram verificadas com a
-aplicação congelada. O laboratório está parado, com dados e evidências preservados.
-Recuperação automática, autoescalonamento e ambiente da comparação continuam por
-decidir. Escopo, evidências e limitações estão no [RELEASE_PLAN](RELEASE_PLAN.md).
+**Estado: A1 concluído; A2 planejado em Kind, ainda não implementado.** O laboratório
+está parado, com dados e evidências preservados. Escopo, resultados e os dois
+incrementos de entrega estão no [RELEASE_PLAN](RELEASE_PLAN.md).
 
 ## Objetivo
 
-Preparar uma implantação funcional reproduzível, com réplicas fixas, persistência,
-acesso restrito e verificação da conclusão do fluxo assíncrono. A1 detecta e
-registra o resultado da implantação; o piloto termina com restauração manual
-explícita. Recuperação automática e autoescalonamento permanecem alternativas
-posteriores, sujeitas à decisão na pausa.
+Implantar a aplicação congelada com réplicas fixas e verificar a conclusão do fluxo
+assíncrono. A1 detecta e registra; A2 acrescentará restauração automatizada delimitada
+e comparação com acionamento explícito, usando a mesma verificação. Kind será o
+ambiente da comparação; AKS/ACR e autoescalonamento são extensões opcionais.
 
 ## Referência da aplicação
 
@@ -97,16 +93,17 @@ quotas, custo, pull ou funcionamento dos volumes.
 
 ## Limites do escopo atual
 
-- AKS e ACR como alvo de nuvem; Kind como ambiente funcional local, sem equivalência com AKS.
-- Réplicas fixas, sem HPA/KEDA, Argo CD ou rollback automatizado.
+- Kind como ambiente principal; verificações AKS/ACR pendentes e fora da entrega A2.
+- Réplicas fixas, sem HPA/KEDA ou Argo CD. A restauração automática A2 está planejada;
+  os comandos A1 atuais continuam exigindo restauração explícita.
 - PostgreSQL e RabbitMQ persistentes com uma instância cada, sem promessa de HA.
 - Acesso restrito; a aplicação não fornece autenticação de usuários.
 - Aceitação HTTP 202, pod pronto ou fila vazia não comprovam conclusão de negócio.
 - Verificações funcionais delimitadas; campanhas extensas continuam fora do escopo.
 
-Próximo passo: decidir a continuidade na seção 9 do
-[RELEASE_PLAN](RELEASE_PLAN.md#9-decisão-e-retomada). A interface
-`scripts/Invoke-A1.ps1` e sua configuração estão descritas em [k8s/README.md](k8s/README.md#procedimento-a1).
-O piloto não demonstrou vantagem de detecção sobre o estado nativo do pod para a
-falha escolhida, nem capacidade ou estabilidade prolongada. Novos ensaios,
-recuperação automática e provisionamento Azure dependem da decisão na pausa.
+Próximo passo: implementar A2-I, seguido da comparação e encerramento A2-II,
+conforme o [RELEASE_PLAN](RELEASE_PLAN.md#7-evolução-local--aceite-a1-e-entrega-a2).
+A interface existente `scripts/Invoke-A1.ps1` está descrita em
+[k8s/README.md](k8s/README.md#procedimento-a1); ainda não há comando A2 disponível.
+O piloto A1 não demonstrou vantagem de detecção sobre o estado nativo do pod,
+capacidade ou estabilidade prolongada. As novas medições não estão realizadas.

@@ -2,9 +2,10 @@
 
 ## 1. Estado e autoridade
 
-Este documento define o alvo da implantação funcional no AKS com ACR e as
-diferenças permitidas no ambiente Kind da seção 10. O estado de implementação e
-as verificações executadas pertencem ao
+Este documento define a base operacional e o contrato A2 de restauração
+automatizada em Kind. A configuração AKS/ACR permanece como alvo de nuvem
+opcional, fora da entrega A2; as diferenças locais estão na seção 10.
+O estado de implementação e as verificações executadas pertencem ao
 [RELEASE_PLAN.md](RELEASE_PLAN.md). Um requisito descrito aqui não comprova que o
 recurso já exista ou que sua verificação tenha sido executada.
 
@@ -24,10 +25,11 @@ no build de infraestrutura.
 
 ## 2. Topologia aprovada
 
-Um ambiente isolado em uma região Azure, AKS com capacidade de nós explícita e
-fixa, ACR privado e namespace dedicado. A primeira implantação usa uma réplica
-de cada processo da aplicação. Contagens de nós e SKUs dependem do dimensionamento
-e orçamento aprovados, não da quantidade de componentes desejada.
+A topologia de serviços abaixo é comum ao Kind e ao alvo Azure. A2 usa o ambiente
+local da seção 10, com réplicas fixas. No alvo Azure, usar uma região, AKS com
+capacidade de nós explícita e fixa, ACR privado e namespace dedicado. A primeira
+implantação usa uma réplica de cada processo da aplicação. Contagens de nós e
+SKUs dependem do dimensionamento e orçamento aprovados.
 
 | Componente | Controlador previsto | Responsabilidade |
 | --- | --- | --- |
@@ -268,8 +270,9 @@ armazenamento controlado, com inventário, hashes e retenção definidos; um cam
 ignorado pelo Git não equivale a backup. Falha inesperada interrompe mutações e
 exige diagnóstico antes de nova tentativa em destino identificado; falhas deliberadas
 seguem o encerramento definido na seção 8.4.
-Repetições automáticas do cenário inteiro são proibidas; retries internos
-previstos na aplicação e reconciliação normal do Kubernetes permanecem distintos.
+Retries ou reposição automática de tentativa falha são proibidos. As repetições
+planejadas de A2 seguem o protocolo fixado; retries internos da aplicação e
+reconciliação normal do Kubernetes permanecem distintos.
 
 ### 8.1. A1 — Verificação de uma revisão de runtime
 
@@ -334,16 +337,71 @@ ou incerta, conclusões, falhas de consulta e pendência final. Não é carga co
 
 Na primeira falha inesperada, parar mutações do cenário e preservar evidências;
 uma falha deliberada prevista segue somente a observação e o encerramento definidos.
-A restauração é uma ação explícita separada, com alvo e configuração conhecidos,
-não um efeito do veredito. Pode usar comando assistido pelo operador, sem política
-autônoma de rollback. Restaurar imagem e configuração pertinente, não apenas a tag;
-registrar falha de restauração sem declarar sucesso ou repetir automaticamente.
+Em A1 e na condição explícita de A2, restauração é comando separado, com alvo e
+configuração conhecidos, nunca efeito automático do veredito. A única exceção
+automatizada é a política restrita da seção 8.5. Restaurar imagem e configuração
+pertinente, não apenas a tag; registrar falha de restauração sem declarar sucesso
+ou repetir automaticamente.
 
 Depois da restauração, observar os eventos já aceitos durante o cenário sem
 reentregá-los e identificar separadamente um evento novo de verificação. Este não
 comprova recuperação das pendências anteriores. Trabalho BLOCKED exige o rearme
-auditável previsto na aplicação, fora da ação automática de A1. Preservar lacunas,
+auditável previsto na aplicação, fora dos procedimentos de restauração A1/A2. Preservar lacunas,
 finalizar o registro e parar os recursos dedicados conforme o procedimento local.
+
+### 8.5. A2 — Restauração automatizada de runtime em Kind
+
+A2 reutiliza a identidade, observação e restauração de A1. Não modifica a semântica
+de seus comandos nem o aceite congelado. Comparar duas condições com o mesmo
+detector, aplicação, cenário, prazos e verificação de resultado: restauração por
+acionamento explícito e restauração acionada automaticamente. A diferença estudada
+é o acionamento da recuperação; não atribuir ganho de detecção a essa automação.
+
+O alvo único é `notifications-worker`. São permitidas a revisão saudável marcada
+por tentativa e a falha de inicialização `DB_POOL_SIZE=0`, já exercitada em A1.
+Demais workloads, réplicas, imagens, probes, recursos e referências de secrets
+permanecem estáveis. Não adicionar outra falha para procurar resultado favorável.
+
+Na condição automática, restaurar uma única vez somente após reprovação definitiva
+da candidata por falha de inicialização, com identidade e diagnóstico conferidos.
+O nome do cenário ou o resultado esperado não bastam para disparar a política.
+Aprovação não dispara restauração; timeout de observação, perda de conectividade,
+resultado inconclusivo ou aceitação desconhecida não autorizam rollback automático.
+Preservar o diagnóstico e interromper a sequência nessas situações.
+
+Antes de aplicar a candidata, persistir intenção, identidade da tentativa e
+referência saudável sanitizada e restaurável. Antes de restaurar, verificar
+contexto, UID do namespace/Deployment, template candidato e referências estáveis;
+proteger a operação contra concorrência e atualização de terceiro, com comparação
+atômica no patch. Recusar configuração externa alterada ou restauração de outro
+ambiente. Não usar `rollout undo` sem identificar a configuração correspondente.
+
+Registrar intenção, envio e resultado da restauração em journal durável. Se o
+executor interromper após envio incerto, a retomada explícita reconcilia o estado
+observado antes de qualquer mutação. Se o template saudável já estiver aplicado,
+apenas verificar. Não reaplicar cegamente, repetir a tentativa inteira ou declarar
+sucesso por ausência de erro. Falha de restauração encerra a sequência e exige
+diagnóstico; nenhuma cadeia automática de reparos é permitida.
+
+Restauração de template não reverte banco, efeitos de negócio, migrations, volumes
+ou secrets. Não fazer rearme de BLOCKED, reentrega de webhook ou edição de estados.
+Só declarar recuperação funcional após comprovar identidade saudável e um evento
+novo concluído em Tracking/Order e Notifications SIMULATED, com duplicata sem novo
+efeito. Eventos previamente admitidos, quando existirem, são observados por leitura
+e classificados separadamente. Na falha de startup escolhida, nenhum evento será
+oferecido à candidata defeituosa: não há ensaio de recuperação de trabalho pendente.
+
+Separar veredito da implantação candidata, resultado da política, recuperação e
+julgamento do cenário. Uma restauração bem-sucedida não aprova a implantação
+defeituosa. O cenário saudável mede também restaurações indevidas; seu retorno à
+base é limpeza explícita fora do intervalo de avaliação da política.
+
+Um observador comum registra aplicação da candidata, detecção, solicitação e envio
+da restauração, convergência e conclusão de negócio, usando relógio monotônico
+coerente por duração e UTC para correlação. Identificar ator humano/agente/script
+do acionamento explícito; execução por agente não mede tempo de reação humana.
+Não acrescentar espera artificial à condição explícita. Métricas, ordem e quantidade
+de repetições pertencem ao protocolo no RELEASE_PLAN.
 
 ## 9. Limites e evolução
 
@@ -352,17 +410,18 @@ O aceite local não encerra as verificações específicas da nuvem. Nenhum dos 
 marcos, isoladamente, demonstra HA, SLA de produção, capacidade, estabilidade
 prolongada ou solução dos incidentes históricos da aplicação/ferramenta de medição.
 
-HPA/KEDA, cluster autoscaler, Argo CD, canary/blue-green, rollback automatizado,
-testes extensos e novos provedores de entrega não fazem parte da base aprovada.
-A1 limita-se à verificação definida na seção 8. Recuperação automática (A2) e
-autoescalonamento (B) são alternativas posteriores no RELEASE_PLAN, sujeitas a
-decisão e atualização dos contratos afetados antes da implementação.
+A2 permite somente a recuperação automatizada da seção 8.5 e sua comparação
+delimitada em Kind. HPA/KEDA, cluster autoscaler, Argo CD, canary/blue-green,
+campanhas de capacidade e novos provedores de entrega continuam fora do escopo.
+Autoescalonamento (B) e implantação Azure são extensões opcionais posteriores;
+não são condições para concluir A2.
 
-## 10. Ambiente local de preparação
+## 10. Ambiente local e avaliação em Kind
 
-Kind é o ambiente de preparação funcional e do piloto A1 delimitado no
-RELEASE_PLAN. O ambiente da avaliação comparativa permanece por decidir. A aplicação
-congelada e a topologia de serviços não mudam. O overlay `k8s/overlays/kind-local`
+Kind é o ambiente principal do aceite e da comparação A2, além da preparação
+funcional já realizada. Ambas as condições usam o mesmo ambiente; não misturar
+tempos locais com resultados futuros de AKS. A aplicação congelada e a topologia
+de serviços não mudam. O overlay `k8s/overlays/kind-local`
 usa um único nó, local-path com Retain,
 credenciais próprias e imagem carregada localmente com `imagePullPolicy: Never`.
 Imagem por tag local exige conferência do ID/digest carregado; não é digest ACR.

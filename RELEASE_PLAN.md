@@ -2,30 +2,29 @@
 
 ## 1. Objetivo, estado e limites
 
-**Estado atual: L1–L4 e o piloto A1 em Kind concluídos; pausa para reavaliação.**
-O escopo autorizado em 24/09/2026 foi encerrado após restauração e parada do laboratório. Os estados II–IV abaixo referem-se ao
-alvo Azure ainda pendente; não são requisitos para reconhecer o aceite local.
+**Estado atual: A1 concluído; A2 em Kind selecionado e planejado em dois incrementos.**
+A2 ainda não está implementado nem medido. A preparação documental não representa
+execução: o laboratório permanece parado e as evidências L4/A1 estão preservadas.
 
-Preparar operação reproduzível e verificação do fluxo assíncrono da referência
-definida no [DESIGN.md](DESIGN.md), mantendo AKS/ACR como alvo de nuvem. O escopo
-concluído foi base comum → A1 → piloto curto em Kind → pausa. Não incluiu recuperação
-automática, escala, meta de capacidade ou campanha comparativa.
+O ciclo atual entrega restauração automatizada delimitada e comparação com
+acionamento explícito, mantendo a aplicação congelada e réplicas fixas. Kind é o
+ambiente principal; AKS/ACR e autoescalonamento (B) são extensões opcionais, sem
+bloquear o encerramento. Os incrementos II–IV de Azure abaixo permanecem reservados
+à nuvem e são distintos dos dois incrementos A2 da seção 7.
 
 | Etapa | Estado |
 | --- | --- |
-| Base documental | Concluída; responsabilidades preservadas |
-| I — Preparação e validação | Código e CI aprovados; seleção e aceite do ambiente Azure pendentes |
-| L1–L4 — Caminho Kind | Aceite funcional local concluído; ambiente preservado e parado |
-| II — Bootstrap Azure e imagens | Não iniciado |
-| III — AKS e implantação | Não iniciado |
-| IV — Aceite funcional e pausa | Não iniciado |
-| Base comum + A1 | Aceite do piloto em Kind concluído; recursos parados e preservados |
-| A2/B e ambiente da comparação | Decisão adiada para a pausa após A1 |
+| Base documental e validação estática | Concluídas; plano A2 atualizado |
+| L1–L4 e A1 | Aceites locais concluídos; laboratório parado e dados preservados |
+| A2-I — Política de restauração e piloto | Planejado; implementação pendente |
+| A2-II — Comparação delimitada e encerramento | Planejado; depende do aceite A2-I |
+| II–IV — Azure | Não iniciados; opcionais, fora do ciclo atual |
+| B — Autoescalonamento | Não selecionado; fora do ciclo atual |
 
-O aceite L4 e suas evidências permanecem congelados. A seção 7 registra o aceite
-A1; a continuidade depende da decisão na seção 9. Incrementos Azure, novas buscas de capacidade e campanhas permanecem
-suspensos. Não solicitar novamente aprovação para operações já autorizadas e
-inalteradas; novas fronteiras de custo, acesso, aplicação ou dados exigem decisão.
+As condições e os limites aprovados estão na seção 7 e no DESIGN §8.5. Resolver
+ajustes pequenos dentro do incremento; mudanças de aplicação, cenário, permissões,
+custos ou dados exigem reavaliação. Campanhas extensas de desempenho da aplicação
+continuam suspensas; a comparação A2 é operacional e delimitada.
 
 ### Caminho local — aceite em 21/09/2026
 
@@ -91,10 +90,9 @@ container `fulfillflow-local-01-control-plane` foi parado. PVCs, imagens, recurs
 históricos e credenciais foram preservados. A retomada do mesmo ambiente segue
 [k8s/README.md](k8s/README.md#instalação-e-operação-local); não é nova instalação.
 
-O A1 concluído na seção 7 não altera o aceite anterior. Ambiente da
-avaliação, A2/B, orçamento/esforço e protocolo serão decididos após A1. Não há
-campanha, trial, conversão de assinatura, provisionamento Azure ou publicação
-de tag/release autorizados neste incremento.
+O A1 concluído e o planejamento A2 na seção 7 não alteram o aceite anterior.
+Trials, conversão de assinatura, provisionamento Azure e publicação de tag/release
+continuam fora da execução local aprovada.
 
 ## 2. Regras de execução deste plano
 
@@ -302,8 +300,8 @@ realmente executáveis e estados observados.
 
 **Marco de pausa:** aceite funcional local (L4) ou aceite no AKS, sempre identificado
 como tal, e pacote rastreável entregue. L4 pode ocorrer antes dos incrementos Azure.
-L4 e A1 foram atingidos; a continuidade depende da seção 9. Não iniciar A2/B,
-campanha, ampliação de recursos ou publicação de release sem decisão posterior.
+L4 e A1 foram atingidos; a continuidade local escolhida é A2, na seção 7.
+Não iniciar B, ampliar recursos, provisionar Azure ou publicar release neste ciclo.
 O aceite funcional pode ser registrado mesmo com limites conhecidos, desde que
 nenhum requisito funcional obrigatório tenha falhado ou sido silenciosamente pulado.
 
@@ -312,9 +310,9 @@ para autorização e verificação conjunta. Não associar permissão de colabor
 GitHub a permissão automática na Azure. Definir se recursos serão mantidos, parados
 ou removidos; pausa não autoriza consumo indefinido nem destruição de dados.
 
-## 7. Base comum e A1 — aceite funcional
+## 7. Evolução local — aceite A1 e entrega A2
 
-**Aceite integrado concluído; parado na pausa prevista, sem autorização para A2/B.** Escopo entregue:
+**A1 concluído; sua pausa foi encerrada pela escolha de A2 em Kind.** Escopo A1 entregue:
 operação portátil, registro funcional e verificação de uma revisão, conforme
 DESIGN §8.1–8.4. A1 não é a avaliação completa da alternativa A e não escolhe
 antecipadamente o ambiente da coleta. Aplicação, locks e referências congeladas
@@ -355,83 +353,100 @@ novo cluster ou alteração de reservas do sistema. Não foi demonstrada relaç�
 com trabalho em outra branch ou com uma atualização específica. O diagnóstico
 anterior permanece em `artifacts/a1-preflight-01/`.
 
-### Entrega contínua com etapas internas
+### A2 — Escopo escolhido e forma de execução
 
-| Etapa | Entrega | Verificação necessária |
-| --- | --- | --- |
-| Base operacional | Scripts versionados sem caminhos pessoais; configuração externa; preparação/retomada e encerramento separados | Contexto errado, concorrência, saída de subprocesso, prazo, destino existente e caminhos com espaços |
-| Registro funcional | Identidades e resultados por etapa/evento, reaproveitando o verificador existente | Aceitação perdida/incerta, consulta indisponível, timeout, duplicidade e pendências anteriores versus eventos novos |
-| A1 | Aplicação delimitada de revisão e verificação funcional, sem recuperação automática | Revisão candidata identificada; rejeição de sucesso obtido pela revisão antiga; classificação separada da implantação e do teste |
-| Piloto e encerramento | Um cenário saudável e uma falha reversível, seguidos de restauração manual explícita | Registros independentes do veredito; revisão saudável restaurada; situação dos eventos aceitos e recursos preservados |
+Comparar o acionamento explícito da restauração com o acionamento automático,
+usando a mesma verificação A1, referência saudável e aplicação congelada. O detector
+fica igual nas duas condições: avaliar recuperação e intervenção, sem alegar ganho
+de detecção. Reutilizar ferramentas e contratos existentes, conforme DESIGN §8.5.
+Não acrescentar Argo CD, HPA/KEDA, ACR ou workflow de deploy remoto a este aceite.
 
-Executar como um único incremento de trabalho, com commits por assunto e checks
-entre etapas, sem aprovações a cada arquivo. Resolver ajustes pequenos de scripts,
-diagnóstico, testes e documentação dentro do contrato. Integrar na main após
-revisão e validação; não abrir branches permanentes A/B. Uma futura tag poderá
-identificar o marco funcional, mas não é requisito para o piloto nem autorização
-de publicação nesta etapa.
+São dois incrementos, com commits por assunto na main, sem branches permanentes
+por condição. Quando iniciada a execução A2, concluir ambos sequencialmente se os
+critérios abaixo passarem; a transição técnica não exige uma rodada de aprovação
+por arquivo ou ensaio. Esta atualização é apenas documental: nenhuma execução A2
+foi realizada. Comandos novos só entram no guia operacional quando implementados.
 
-### Piloto delimitado
+### A2-I — Política de restauração e piloto integrado
 
-Definir cedo o workload e a mudança candidata: configuração reversível de um
-Deployment, referência saudável restaurável, efeito esperado e confirmação da
-revisão exercitada. Verificar consumidores de configurações compartilhadas antes
-de alterar qualquer referência. Não atualizar foundations, broker, banco ou
-migrations como parte da mudança experimental do runtime.
+1. Acrescentar o acionamento automático ao fluxo operacional, mantendo a interface
+   explícita A1. Usar journal persistente, exclusão mútua, identidade, prazos e
+   restauração restrita a `notifications-worker`; não reconstruir a aplicação.
+2. Implementar o observador comum e resultados separados de candidata, cenário e
+   recuperação. Conferir asserções por identidade, logs e consultas preservadas,
+   além do veredito do executor.
+3. Testar disparo correto e ausência de disparo em sucesso/inconclusão; configuração
+   alterada por terceiro, contexto/UID incorretos, concorrência, falha de escrita,
+   interrupção antes/depois do patch, resultado de envio desconhecido, timeout e
+   falha da própria restauração. Retomada não repete mutações já confirmadas.
+4. Executar quatro pilotos curtos no Kind real: duas condições × saudável/falha de
+   startup. Restaurar a base entre tentativas. Não reutilizar resultados A1 na coleta.
+   Correção de defeito gera evidência sucessora; não mudar a falha para obter vantagem.
+5. Consolidar a configuração efetiva do protocolo abaixo, executáveis, imagem,
+   prazos, relógios e coleta. Validar caminhos com espaços/PowerShell real, testes
+   pertinentes, Ruff, documentos e CI Linux/Windows no SHA final.
 
-Selecionar um cenário saudável e um de falha, com IDs, consultas de conferência,
-prazos e restauração definidos antes da execução. Avaliar se A1 acrescenta
-informação ou sobrepõe probes/rollout; ambos são resultados válidos. Não procurar
-sucessivamente falhas para obter superioridade nem alterar a aplicação/probes.
-Se nenhum cenário compatível puder ser preparado, registrar a lacuna e antecipar
-a pausa. Uma tentativa interrompida ou inconclusiva permanece preservada; correções
-rotineiras podem originar tentativa sucessora sem virar busca aberta de cenários.
+**Aceite:** na falha confirmada, a política restaura uma vez e comprova o fluxo
+completo; na saudável, não restaura indevidamente. Guardas recusam identidade
+incorreta/inconclusão, e envio interrompido é reconciliado antes de mutação. Ambos
+os procedimentos têm evidências comparáveis. Falha esperada continua sendo
+implantação reprovada, mesmo após recuperação. Pilotos ficam fora da comparação.
 
-Restauração manual integra o encerramento autorizado: execução explícita separada
-do veredito, sem nova confirmação para a ação já definida. Verificar pendências
-aceitas e fluxo novo separadamente. Falha nessa restauração ou necessidade de
-rearme fora do procedimento exige diagnóstico e comunicação, não sucesso presumido.
+### A2-II — Comparação delimitada e encerramento
 
-### Validação, aceite e nova pausa
+Antes da primeira repetição, congelar o protocolo efetivo em artefato sanitizado
+com hash, SHA executado e ordem completa. Aplicar o mesmo protocolo às duas
+condições; não alterar critérios após observar a comparação.
 
-- Testes unitários focais desde a implementação; PowerShell real para os launchers,
-  Ruff, renderização/schema e CI Linux/Windows conforme os arquivos afetados.
-  Rodar integração curta no Kind real para implantação, observação e encerramento;
-  mocks não substituem evidência do piloto. Não repetir suítes sem motivo concreto.
-- Usar checkout/caminho de execução limpo para conferir portabilidade e documentar
-  pré-requisitos. Não afirmar reprodução em outra máquina se ela não foi executada.
-  Não exigir um framework genérico ou automação de nuvem para este aceite.
-- Preservar pacote novo com SHAs, identidades, configuração sanitizada, observações,
-  julgamento por cenário e limitações. Vincular CI ao SHA final; comandos executáveis
-  entram no README/k8s somente após implementação e validação.
-- Encerrar com referência saudável restaurada, pendências classificadas, evidências
-  exportadas e recursos dedicados parados. Preservar dados, segredos e artefatos L4;
-  lacunas de backup/restauração independente continuam explícitas.
+| Item | Definição |
+| --- | --- |
+| Condições | R-explicita: veredito e comando separado de restauração; R-auto: mesma verificação e política DESIGN §8.5 |
+| Cenários | Revisão saudável marcada; falha `DB_POOL_SIZE=0` apenas em `notifications-worker` |
+| Amostra | Cinco pares por cenário, cada par com as duas condições: 20 tentativas previstas; pilotos excluídos |
+| Ordem | Para cada cenário, alternar a primeira condição por par; inverter o início no segundo cenário. Fixar a lista antes da coleta |
+| Ambiente | Mesmo Kind, host, imagens, réplicas, recursos e probes; sem builds/carga concorrente alheia. Não parar recursos de terceiros automaticamente |
+| Base entre tentativas | Identidade saudável restaurada, ausência de pendências das tentativas anteriores e estado dos oito workloads conferido |
+| Dados | IDs sintéticos novos por tentativa; sem apagar volumes/histórico. Registrar ordem e estado acumulado como limite, sem alegar independência estatística |
+| Prazos iniciais | 90 s por rollout/fluxo, polling de 1 s e 600 s por tentativa incluindo recuperação; reservar prazo próprio para encerramento. Confirmar no piloto e congelar antes da coleta |
+| Limite de execução | Até 4 h de janela comparativa, incluindo preparação e encerramento; reservar tempo para restaurar/parar. Não iniciar outra tentativa sem margem |
 
-**Interagir antes do marco somente se:** houver mudança de contrato/stack/aplicação,
-impacto em mais de um workload, necessidade de novos recursos/custo/permissões,
-risco aos dados, restauração malsucedida ou bloqueio concreto que exija decisão.
-Demais ajustes continuam automaticamente dentro do incremento.
+Registrar o ator do acionamento explícito e o intervalo entre detecção e comando.
+Não impor atraso artificial. Quando executado por agente/script, apresentar como
+acionamento explícito assistido, sem inferir tempo de reação humana ou produtividade.
+Instrumentar também a condição explícita, mantendo sua restauração dependente
+de comando separado. No cenário saudável, a limpeza final não conta
+como recuperação automática nem integra o tempo de conclusão da candidata.
 
-**Pausa obrigatória:** entregar o piloto e avaliar utilidade, limitações e esforço
-restante antes de implementar A2, B ou coleta comparativa. Aceitar ausência de
-benefício adicional quando sustentada pelo piloto; falha do verificador ou lacuna
-de identidade é defeito a corrigir, não evidência favorável.
+**Métricas:** decisão correta por cenário; restaurações indevidas; intervenções;
+tempo de aplicação até detecção; intervalo detecção–solicitação de restauração;
+tempo de solicitação até configuração saudável e até conclusão funcional. Registrar
+também duração total e custo temporal da verificação saudável. Separar tempo técnico
+de espera pelo acionamento. Não rotular essas medidas como MTBF/SLA de produção.
 
-### A2 — Recuperação automatizada e comparação posterior
+Fornecer tabela por tentativa e resumo por cenário/condição: contagens e denominadores,
+mediana, mínimo/máximo e diferenças por par quando ambos forem comparáveis. Preservar
+falhas, timeouts e inconclusões; não convertê-los em durações de sucesso, descartá-los
+silenciosamente ou prometer significância estatística com cinco pares. Não juntar
+cenários diferentes numa média única. A falha de startup não mede retomada de eventos
+aceitos durante indisponibilidade; o evento posterior apenas comprova funcionamento.
 
-**Não aprovado para implementação.** Possível continuação: procedimento básico
-com acompanhamento e restauração manual versus implantação com verificação e
-recuperação automatizada. Instrumentação observa ambas as condições. Acrescentar
-detecção e recuperação juntas permite concluir sobre o conjunto, não seus efeitos
-isolados. Manter réplicas fixas, revisão/configuração restauráveis e schemas
-compatíveis; rollback de Deployment não restaura dados ou todo o ambiente.
+Interromper na primeira falha inesperada ou limite de janela. Não substituir
+repetições automaticamente. Corrigir defeitos pequenos com testes; se mudarem executor
+ou protocolo após o início da coleta, preservar a série parcial e voltar ao piloto,
+sem misturar SHAs/protocolos. Uma coleta incompleta termina com resultados parciais e
+lacuna explícita; não iniciar rodadas sucessivas para completar a quota.
 
-Antes de executar, fixar cenários e critérios de decisão correta, detecção,
-recuperação funcional, intervenções, falsos alarmes e custo da verificação saudável.
-Separar reação humana da execução técnica; falha bloqueada sem indisponibilidade
-também é resultado. Falhas induzidas não estimam MTBF de produção. Argo CD e novas
-estratégias de atualização não são pré-requisitos.
+**Aceite e fechamento:** resultados rastreáveis, revisão saudável restaurada,
+pendências classificadas, evidências exportadas com hashes e confirmação de leitura,
+workloads/nó parados e dados preservados. Registrar separadamente entrega funcional
+e comparação completa/incompleta. Atualizar README, plano e comandos, vinculando CI
+ao SHA final. Cópia no mesmo host não é backup independente; não excluir dados para
+encerrar. Nova pausa após A2; sem tag/release, B ou implantação Azure automática.
+
+**Acionar o usuário somente se:** houver mudança de aplicação/stack/contrato,
+necessidade de outro cenário/workload, custo/permissão novo, risco aos dados,
+restauração malsucedida, bloqueio de ambiente ou coleta interrompida que exija nova
+janela. Ausência de benefício da automação é resultado válido e não pede reparo.
 
 ## 8. Alternativa B — Autoescalonamento e processamento
 
@@ -457,42 +472,29 @@ de capacidade; manter usuários virtuais iguais também não fixa a carga oferec
 Polling e instrumentação entram na identidade do protocolo. Não exigir benefício
 positivo para aceitar os resultados nem ajustar margem após observá-los.
 
-## 9. Decisão e retomada
+## 9. Decisão e encerramento do ciclo
 
-Na pausa após A1, decidir o ambiente da avaliação: continuar em Kubernetes local,
-usar Kind como preparação e validar no AKS em janela curta com assinatura viável,
-ou encerrar no aceite funcional. Uma troca para VM/K3s ou outro provedor requer
-decisão própria. Local não comprova integrações Azure e não deve gerar uma segunda
-campanha apenas para compensar sua indisponibilidade.
-
-Se houver continuidade, escolher separadamente A2, B ou outro recorte delimitado,
-considerando custo, prazo, observabilidade e riscos observados. Não selecionar a
-alternativa apenas por um piloto favorável.
-
-Registrar aqui a decisão, justificativa, escopo excluído, requisitos adicionais,
-limite de esforço e critérios de interrupção. Atualizar o DESIGN somente para
-contratos aprovados e decompor o trabalho escolhido em incrementos executáveis.
-A1 e seus pilotos locais podem anteceder essa escolha. Evidência complementar no
-AKS não transporta tempos locais para a nuvem. Se a comparação principal ocorrer
-no AKS, implantar e validar o procedimento ali antes da coleta. Não comparar
-procedimento básico no Kind com aprimorado no AKS. Se B suceder A1/A2, manter o
-mesmo procedimento de implantação nas condições de réplicas fixas e automáticas.
-
-Antes de coleta comparativa, fixar cenários, identidades, ordem, repetições, métricas,
-agregação e tratamento de falhas/timeouts. Pilotos e tentativas inválidas ficam
-preservados e separados; não há número de repetições ou significância garantidos
-neste plano inicial.
+Decisão de 24/09/2026: concluir A2 em Kind, preservando A1 e a aplicação congelada.
+O recorte concentra a avaliação no acionamento da restauração e sua confirmação
+funcional. Não depende de vantagem de detecção, acesso ao AKS ou estudo de escala.
+O protocolo e os dois incrementos estão na seção 7; os invariantes, no DESIGN §8.5.
 
 | Decisão | Estado |
 | --- | --- |
-| Ambiente comum AKS + ACR, réplicas fixas | Aprovado como alvo; execução pendente |
-| Ambiente Kind | Aceite funcional concluído; nó parado e dados preservados |
-| Base comum + A1 | Aceite do piloto em Kind concluído; pausa atingida |
-| Ambiente da avaliação comparativa | Local, janela AKS ou encerramento: decidir após A1 |
-| Assinatura, região, orçamento, SKUs e conectividade Azure | Seleção executável pendente; consultas históricas não autorizam apply |
-| Segredos, retenção e acesso do executor | Configurados localmente; solução Azure pendente |
-| Cópia independente e restauração | Não verificadas; cópia no mesmo host e dumps preservados |
-| Convite/acessos da equipe | Pendentes; não condicionam o incremento local |
-| A2 ou B | Não selecionados; decisão após piloto A1 |
-| Campanha comparativa | Não autorizada |
-| Tag/release de infraestrutura | Não autorizada nesta preparação |
+| Kind | Ambiente principal das duas condições A2; laboratório atualmente parado |
+| A1 | Aceite congelado; não incorporar seus pilotos como repetições A2 |
+| A2 | Escopo e plano definidos; implementação e coleta pendentes |
+| B — Autoescalonamento | Extensão não selecionada |
+| AKS/ACR | Extensão opcional, sem provisionamento, publicação de imagens ou gasto neste ciclo |
+| Assinatura/região/cotas/custo Azure | Reavaliar somente se a extensão for escolhida; consultas não autorizam apply |
+| Cópia independente/restauração de backup | Não verificadas; manter ressalva e dados preservados |
+| Convite/acessos da equipe | Pendentes; não condicionam execução local assistida |
+| Campanhas extensas da aplicação | Suspensas; separadas da comparação operacional A2 |
+| Tag/release de infraestrutura | Não incluída nesta entrega |
+
+Na pausa final, decidir encerrar com os resultados locais ou propor uma extensão
+delimitada. Se houver verificação posterior no AKS, registrá-la separadamente:
+ela não transforma medidas Kind em medidas de nuvem nem comprova equivalência.
+Uma comparação no AKS exige executar ambas as condições ali; não comparar controle
+local com procedimento automático na nuvem. Não abrir uma segunda campanha apenas
+para compensar a indisponibilidade do serviço.
