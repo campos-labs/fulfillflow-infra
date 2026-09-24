@@ -53,10 +53,14 @@ Kubernetes. Evitar dois controladores administrando o mesmo objeto.
 
 ## 3. Imagens e proveniência
 
-No AKS, ACR é o registry obrigatório. A implantação usa referências `image@sha256:...`,
+Na extensão Azure deste projeto, ACR é o registry escolhido. Não é requisito do A2
+local nem exigência universal do AKS. A implantação usa referências `image@sha256:...`,
 sem `latest` ou dependência de tags mutáveis. Registrar para cada imagem: origem,
 commit, target do Dockerfile, hash do lock, plataforma e digest de registry.
-Um ID local Docker não é um digest publicado no ACR.
+Um ID local Docker não é um digest publicado no ACR. No A2, carregar e conferir
+as imagens locais é suficiente; não provisionar registry nem credenciais Azure.
+A rastreabilidade deriva da referência congelada, identidade efetiva e configuração,
+sem depender da presença de um serviço de nuvem.
 
 APIs, workers e Jobs podem compartilhar a mesma imagem `runtime`, mudando comando
 e configuração. Não exigir uma imagem diferente por processo. Preservar o

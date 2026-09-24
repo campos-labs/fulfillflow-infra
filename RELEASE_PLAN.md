@@ -3,7 +3,7 @@
 ## 1. Objetivo, estado e limites
 
 **Estado atual: A1 concluído; A2 em Kind selecionado e planejado em dois incrementos.**
-A2 ainda não está implementado nem medido. A preparação documental não representa
+A2-I está implementado e em validação; pilotos e comparação ainda pendentes. Isso não representa
 execução: o laboratório permanece parado e as evidências L4/A1 estão preservadas.
 
 O ciclo atual entrega restauração automatizada delimitada e comparação com
@@ -16,7 +16,7 @@ bloquear o encerramento. Os incrementos II–IV de Azure abaixo permanecem reser
 | --- | --- |
 | Base documental e validação estática | Concluídas; plano A2 atualizado |
 | L1–L4 e A1 | Aceites locais concluídos; laboratório parado e dados preservados |
-| A2-I — Política de restauração e piloto | Planejado; implementação pendente |
+| A2-I — Política de restauração e piloto | Implementado; testes locais aprovados e piloto pendente |
 | A2-II — Comparação delimitada e encerramento | Planejado; depende do aceite A2-I |
 | II–IV — Azure | Não iniciados; opcionais, fora do ciclo atual |
 | B — Autoescalonamento | Não selecionado; fora do ciclo atual |
@@ -360,6 +360,8 @@ usando a mesma verificação A1, referência saudável e aplicação congelada. 
 fica igual nas duas condições: avaliar recuperação e intervenção, sem alegar ganho
 de detecção. Reutilizar ferramentas e contratos existentes, conforme DESIGN §8.5.
 Não acrescentar Argo CD, HPA/KEDA, ACR ou workflow de deploy remoto a este aceite.
+ACR pertence à extensão Azure; A2 usa as imagens locais verificadas. Publicação
+em registry não é critério de validade da comparação de recuperação.
 
 São dois incrementos, com commits por assunto na main, sem branches permanentes
 por condição. Quando iniciada a execução A2, concluir ambos sequencialmente se os
@@ -483,7 +485,7 @@ O protocolo e os dois incrementos estão na seção 7; os invariantes, no DESIGN
 | --- | --- |
 | Kind | Ambiente principal das duas condições A2; laboratório atualmente parado |
 | A1 | Aceite congelado; não incorporar seus pilotos como repetições A2 |
-| A2 | Escopo e plano definidos; implementação e coleta pendentes |
+| A2 | A2-I em validação; comparação A2-II pendente |
 | B — Autoescalonamento | Extensão não selecionada |
 | AKS/ACR | Extensão opcional, sem provisionamento, publicação de imagens ou gasto neste ciclo |
 | Assinatura/região/cotas/custo Azure | Reavaliar somente se a extensão for escolhida; consultas não autorizam apply |

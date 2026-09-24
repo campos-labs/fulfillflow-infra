@@ -314,16 +314,42 @@ Sequência operacional, quando autorizada:
 O procedimento A1 não instala HPA/KEDA, rollback automático ou novas ferramentas
 de observabilidade. Seus testes não substituem a execução integrada nem validam AKS.
 
-## A2 — Preparação da operação
+## A2 — Operação delimitada
 
-A restauração automatizada e a comparação em Kind estão planejadas no RELEASE_PLAN
-§7, sob DESIGN §8.5; ainda não há launcher A2 implementado. `attempt` continua sem
-rollback e `restore` continua sendo comando explícito. Não encadear esses comandos
-em uma política improvisada ou tratar erro de consulta como autorização para reparar.
+A interface A2 reutiliza a configuração local A1 e segue DESIGN §8.5. O aceite
+integrado e a comparação são registrados separadamente no RELEASE_PLAN §7.
+ACR não é necessário: o Kind usa a imagem local verificada, sem publicação externa.
 
-Reutilizar ferramentas, kubeconfig dedicado e imagens conferidas do laboratório.
-Antes da janela, conferir Docker, porta da API, contexto/UID, recursos e ausência de
-carga concorrente. Novas tentativas usam destinos/IDs exclusivos; não apagar volumes,
-repetir bootstrap ou reiniciar migrations para preparar a comparação. Política,
-critérios de julgamento e protocolo ficam nos documentos responsáveis; este guia
-receberá apenas a interface executável e os procedimentos verificados durante A2-I.
+Interface: `scripts/Invoke-A2.ps1 -Python <executável> -Config <arquivo.json>
+-OutputDirectory <destino-novo> -Mode <modo>`. O equivalente Python é
+`scripts/a2.py --config <arquivo.json> --output <destino-novo> --mode <modo>`.
+
+| Modo | Efeito |
+| --- | --- |
+| `run -Condition auto -Scenario healthy` | Verifica a candidata saudável; não restaura automaticamente |
+| `run -Condition auto -Scenario invalid-pool` | Restaura uma vez somente após rejeição de startup comprovada; verifica conclusão funcional |
+| `run -Condition explicit -Scenario <cenário>` | Usa o mesmo observador; na falha elegível aguarda solicitação separada dentro do prazo |
+| `request -Source <tentativa> -Actor <human/agent/script>` | Registra solicitação atômica em outro terminal; não altera o cluster diretamente |
+| `recover -Source <tentativa> -Actor <ator>` | Encerramento explícito ou reconciliação após interrupção; exige destino novo e valida identidade/configuração |
+
+Usar A1 `resume`/`pause` para o ciclo de vida do laboratório existente. O segredo
+continua entrando apenas pela variável de processo `CARRIER_ALPHA_WEBHOOK_SECRET`.
+`request` dispensa esse segredo e não disputa o lock mantido pelo observador.
+Registrar o ator real; acionamento por script/agente não mede reação humana.
+
+Cada execução usa destino novo. O journal registra intenção antes de mutação e
+etapas de decisão/recuperação. Após interrupção, preservar a tentativa: uma intenção
+antiga com resultado incerto não autoriza reenviar o patch. Aceitação HTTP desconhecida
+não autoriza reenviar evento. `recover` pode recusar a retomada e exigir diagnóstico.
+Não editar o journal para destravar a operação.
+
+No cenário saudável, chamar `recover` explicitamente para a limpeza entre tentativas;
+essa limpeza não conta como recuperação automática. O comando confere evento anterior
+por consulta, quando identificável, e um fluxo novo com duplicata controlada. Repetir
+uma recuperação já iniciada somente observa seu evento conhecido; não cria substituto.
+Uma candidata rejeitada continua rejeitada mesmo quando sua restauração é aprovada.
+
+Antes dos pilotos, conferir Docker, porta da API, contexto/UID, recursos e ausência
+de carga concorrente. Não excluir volumes, repetir bootstrap/migrations ou modificar
+probes. Parar na primeira falha inesperada, preservar evidências e encerrar o laboratório.
+Os quatro pilotos A2-I não são repetições da comparação A2-II.

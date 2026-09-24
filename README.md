@@ -3,14 +3,14 @@
 Infraestrutura e operação do [FulfillFlow](https://github.com/campos-labs/fulfillflow)
 em Kubernetes, com laboratório Kind e configuração de referência para AKS/ACR.
 
-**Estado: A1 concluído; A2 planejado em Kind, ainda não implementado.** O laboratório
+**Estado: A1 concluído; A2-I implementado, com piloto integrado pendente.** O laboratório
 está parado, com dados e evidências preservados. Escopo, resultados e os dois
 incrementos de entrega estão no [RELEASE_PLAN](RELEASE_PLAN.md).
 
 ## Objetivo
 
 Implantar a aplicação congelada com réplicas fixas e verificar a conclusão do fluxo
-assíncrono. A1 detecta e registra; A2 acrescentará restauração automatizada delimitada
+assíncrono. A1 detecta e registra; A2 acrescenta restauração automatizada delimitada
 e comparação com acionamento explícito, usando a mesma verificação. Kind será o
 ambiente da comparação; AKS/ACR e autoescalonamento são extensões opcionais.
 
@@ -22,7 +22,7 @@ ambiente da comparação; AKS/ACR e autoescalonamento são extensões opcionais.
 | Tag | `v1.3.0-rc.1` |
 | Commit | `9e3a135a00db218643633c7165d3106f0c8285e1` |
 | Estado | Pré-release funcional; capacidade e estabilidade prolongada não avaliadas |
-| Imagens no ACR | Publicação e digests ainda pendentes |
+| Imagens no ACR | Somente na extensão Azure; publicação pendente e dispensável no A2 |
 
 Core, Tracking e Notifications têm API e worker próprios. A base prevê seis
 processos de aplicação, uma instância PostgreSQL com três bancos/roles e uma
