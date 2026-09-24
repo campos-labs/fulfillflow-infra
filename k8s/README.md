@@ -256,9 +256,9 @@ e a situação de backup/restauração pertencem ao RELEASE_PLAN.
 ## Procedimento A1
 
 O incremento aprovado é definido no RELEASE_PLAN §7 e segue DESIGN §8.1–8.4.
-A automação está implementada e testada sem cluster; seu piloto real ainda está
-pendente pelo bloqueio da porta local registrado no plano. Usa Kind existente e
-uma alteração em um único Deployment; não cria cluster, secrets ou migrations.
+A automação foi exercitada no piloto Kind registrado no plano, incluindo restauração
+e pausa. Usa Kind existente e uma alteração em um único Deployment; não cria cluster,
+secrets ou migrations. Novas execuções dependem da decisão de continuidade.
 
 Interface: `scripts/Invoke-A1.ps1 -Python <executável> -Config <arquivo.json>
 -OutputDirectory <destino-novo> -Mode <modo>`. O equivalente Python é
@@ -284,9 +284,11 @@ O segredo do webhook entra somente pela variável de processo
 Resultado `scenario_passed=true` não significa implantação aprovada: o cenário de
 falha pode passar com `deployment_verdict=rejected`. Falta de evidência permanece
 inconclusiva. `restore` é sempre uma chamada explícita; não é acionado por `attempt`.
-Não executar no cluster anterior enquanto a porta estiver indisponível.
+Antes de retomar no Windows, conferir se a porta da API continua livre e publicada
+pelo Docker. Se estiver reservada pelo sistema, interromper; não excluir reservas
+ou recriar o cluster preservado como reparo automático.
 
-Sequência do piloto, após resolver o ambiente:
+Sequência operacional, quando autorizada:
 
 1. Conferir ferramentas, contexto, namespace, imagens e recursos dedicados. Retomar
    o ambiente preservado pelo procedimento acima e verificar sua referência saudável;

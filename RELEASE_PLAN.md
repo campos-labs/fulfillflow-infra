@@ -2,14 +2,13 @@
 
 ## 1. Objetivo, estado e limites
 
-**Estado atual: aceite local L1–L4 concluído; automação da base comum/A1
-implementada e testada sem cluster; piloto integrado pendente.** A decisão de 24/09/2026 autoriza
-avançar até o piloto A1 e uma nova pausa. Os estados II–IV abaixo referem-se ao
-alvo Azure ainda pendente; não condicionam o início desse trabalho local.
+**Estado atual: L1–L4 e o piloto A1 em Kind concluídos; pausa para reavaliação.**
+O escopo autorizado em 24/09/2026 foi encerrado após restauração e parada do laboratório. Os estados II–IV abaixo referem-se ao
+alvo Azure ainda pendente; não são requisitos para reconhecer o aceite local.
 
 Preparar operação reproduzível e verificação do fluxo assíncrono da referência
 definida no [DESIGN.md](DESIGN.md), mantendo AKS/ACR como alvo de nuvem. O escopo
-ativo é base comum → A1 → piloto curto em Kind → pausa. Não inclui recuperação
+concluído foi base comum → A1 → piloto curto em Kind → pausa. Não incluiu recuperação
 automática, escala, meta de capacidade ou campanha comparativa.
 
 | Etapa | Estado |
@@ -20,11 +19,11 @@ automática, escala, meta de capacidade ou campanha comparativa.
 | II — Bootstrap Azure e imagens | Não iniciado |
 | III — AKS e implantação | Não iniciado |
 | IV — Aceite funcional e pausa | Não iniciado |
-| Base comum + A1 | Automação implementada; piloto bloqueado pela porta local do cluster |
+| Base comum + A1 | Aceite do piloto em Kind concluído; recursos parados e preservados |
 | A2/B e ambiente da comparação | Decisão adiada para a pausa após A1 |
 
-O aceite L4 e suas evidências permanecem congelados. A continuação local é limitada
-à seção 7. Incrementos Azure, novas buscas de capacidade e campanhas permanecem
+O aceite L4 e suas evidências permanecem congelados. A seção 7 registra o aceite
+A1; a continuidade depende da decisão na seção 9. Incrementos Azure, novas buscas de capacidade e campanhas permanecem
 suspensos. Não solicitar novamente aprovação para operações já autorizadas e
 inalteradas; novas fronteiras de custo, acesso, aplicação ou dados exigem decisão.
 
@@ -92,7 +91,7 @@ container `fulfillflow-local-01-control-plane` foi parado. PVCs, imagens, recurs
 históricos e credenciais foram preservados. A retomada do mesmo ambiente segue
 [k8s/README.md](k8s/README.md#instalação-e-operação-local); não é nova instalação.
 
-A continuação aprovada na seção 7 não altera o aceite anterior. Ambiente da
+O A1 concluído na seção 7 não altera o aceite anterior. Ambiente da
 avaliação, A2/B, orçamento/esforço e protocolo serão decididos após A1. Não há
 campanha, trial, conversão de assinatura, provisionamento Azure ou publicação
 de tag/release autorizados neste incremento.
@@ -303,7 +302,7 @@ realmente executáveis e estados observados.
 
 **Marco de pausa:** aceite funcional local (L4) ou aceite no AKS, sempre identificado
 como tal, e pacote rastreável entregue. L4 pode ocorrer antes dos incrementos Azure.
-L4 foi atingido; sua continuação limita-se ao A1 da seção 7. Não iniciar A2/B,
+L4 e A1 foram atingidos; a continuidade depende da seção 9. Não iniciar A2/B,
 campanha, ampliação de recursos ou publicação de release sem decisão posterior.
 O aceite funcional pode ser registrado mesmo com limites conhecidos, desde que
 nenhum requisito funcional obrigatório tenha falhado ou sido silenciosamente pulado.
@@ -313,40 +312,48 @@ para autorização e verificação conjunta. Não associar permissão de colabor
 GitHub a permissão automática na Azure. Definir se recursos serão mantidos, parados
 ou removidos; pausa não autoriza consumo indefinido nem destruição de dados.
 
-## 7. Incremento ativo — Base comum e A1
+## 7. Base comum e A1 — aceite funcional
 
-**Autorizado até o piloto local e nova pausa; aceite integrado ainda pendente.** Entregar
+**Aceite integrado concluído; parado na pausa prevista, sem autorização para A2/B.** Escopo entregue:
 operação portátil, registro funcional e verificação de uma revisão, conforme
 DESIGN §8.1–8.4. A1 não é a avaliação completa da alternativa A e não escolhe
 antecipadamente o ambiente da coleta. Aplicação, locks e referências congeladas
 permanecem intactos; sem novas ferramentas de produção.
 
-### Estado da preparação A1
+### Aceite A1 em Kind — 24/09/2026
 
-Implementados `scripts/a1.py`, `a1_runtime.py`, `a1_flow.py` e `Invoke-A1.ps1`:
-configuração externa, contexto/UID explícitos, exclusão mútua por ambiente, prazos,
-identidade da revisão/pods, registros sanitizados e restauração em comando separado.
-O verificador existente é reutilizado; a aplicação e os manifests permanecem intactos.
-As 78 verificações locais passaram, incluindo 24 casos A1 e PowerShell real; Ruff
-e formatação aprovados. Essas verificações não comprovam o comportamento no cluster.
+Referência executada: `033c5834af1c267f9cb48c1555368f489c54177d`, com
+[CI Linux/Windows aprovada](https://github.com/campos-labs/fulfillflow-infra/actions/runs/35959820295).
+As 78 verificações locais passaram, incluindo 24 casos A1 e PowerShell real;
+Ruff/formatação aprovados. Importação, proveniência e launcher também foram
+conferidos em checkout limpo com espaços no caminho, no mesmo host.
 
-Piloto escolhido antes da execução: revisão saudável marcada por tentativa e
-`DB_POOL_SIZE=0` exclusivamente no `notifications-worker`. Espera-se rejeição de
-inicialização pela validação da aplicação; rollout/probes podem detectar a falha.
-Não iniciar observação funcional contra uma candidata que não iniciou. O cenário
-saudável e a restauração exigem conclusão Tracking/Order e Notifications SIMULATED.
+| Etapa observada | Resultado |
+| --- | --- |
+| Retomada | Oito workloads prontos, com volumes/secrets existentes e migrations sem repetição |
+| Revisão saudável | Candidata identificada; Tracking/Order e Notifications SIMULATED; duplicata sem efeito adicional |
+| Restauração da revisão saudável | Hash do template original restabelecido; evento anterior conferido por leitura e evento novo concluído |
+| DB_POOL_SIZE=0 no notifications-worker | Rejeição de inicialização confirmada no pod; implantação reprovada e cenário esperado aprovado |
+| Restauração após falha | Template original restabelecido e novo fluxo completo aprovado |
+| Encerramento | Oito workloads conferidos saudáveis antes da pausa, depois escalados a zero; nó parado, PVCs preservados |
 
-Em 24/09, a retomada encontrou a porta `52438` do cluster anterior dentro da faixa
-TCP `52401–52500` excluída pelo Windows. A API respondia dentro do container, mas
-não pelo host. Um reinício do nó e um do Docker Desktop não resolveram; ao iniciar
-novamente, o Docker recusou explicitamente o bind. O nó ficou parado; os oito
-workloads já estavam em zero antes dessas operações. Containers, PVCs e evidências
-L4 foram preservados; nenhuma tentativa A1 ou alteração de workload foi executada.
+Foram três eventos novos concluídos e três duplicatas intencionais verificadas.
+Nenhum evento foi oferecido durante a falha de inicialização: a observação funcional
+nessa condição foi explicitamente não executada. O cenário não demonstra benefício
+adicional de detecção sobre o estado nativo do pod, nem recuperação de trabalho
+aceito enquanto a candidata estava defeituosa. Não é campanha comparativa.
 
-**Decisão de ambiente pendente:** novo Kind isolado em porta fixa livre, preservando
-integralmente o anterior, ou adiar o piloto. Não remover reservas de porta do Windows,
-recriar o cluster histórico ou declarar o incremento aceito com testes simulados.
-Essa interrupção antecede a pausa de avaliação prevista após o piloto.
+Pacote local: `artifacts/a1-pilot-01/summary.json`, observações, identidades,
+templates de restauração e `checksums.json`; exportação `artifacts/a1-pilot-01.zip`.
+A configuração local com caminhos privados não integra a exportação. A aplicação,
+imagens, manifests e evidências L4 permaneceram intactos. A cópia continua no mesmo
+host; restauração independente de backup não foi verificada.
+
+O bloqueio anterior da porta 52438 cessou após reinício do host: ela deixou a faixa
+reservada do Windows e a API voltou a responder. O mesmo Kind foi utilizado, sem
+novo cluster ou alteração de reservas do sistema. Não foi demonstrada relação causal
+com trabalho em outra branch ou com uma atualização específica. O diagnóstico
+anterior permanece em `artifacts/a1-preflight-01/`.
 
 ### Entrega contínua com etapas internas
 
@@ -480,7 +487,7 @@ neste plano inicial.
 | --- | --- |
 | Ambiente comum AKS + ACR, réplicas fixas | Aprovado como alvo; execução pendente |
 | Ambiente Kind | Aceite funcional concluído; nó parado e dados preservados |
-| Base comum + A1 | Automação testada; ambiente para piloto aguarda decisão |
+| Base comum + A1 | Aceite do piloto em Kind concluído; pausa atingida |
 | Ambiente da avaliação comparativa | Local, janela AKS ou encerramento: decidir após A1 |
 | Assinatura, região, orçamento, SKUs e conectividade Azure | Seleção executável pendente; consultas históricas não autorizam apply |
 | Segredos, retenção e acesso do executor | Configurados localmente; solução Azure pendente |
