@@ -3,7 +3,7 @@
 Infraestrutura e operação do [FulfillFlow](https://github.com/campos-labs/fulfillflow)
 em Kubernetes, com laboratório Kind e configuração de referência para AKS/ACR.
 
-**Estado: A1 concluído; A2-I implementado, com piloto integrado pendente.** O laboratório
+**Estado: A1 e A2-I concluídos em Kind; comparação A2-II pendente.** O laboratório
 está parado, com dados e evidências preservados. Escopo, resultados e os dois
 incrementos de entrega estão no [RELEASE_PLAN](RELEASE_PLAN.md).
 
@@ -94,16 +94,16 @@ quotas, custo, pull ou funcionamento dos volumes.
 ## Limites do escopo atual
 
 - Kind como ambiente principal; verificações AKS/ACR pendentes e fora da entrega A2.
-- Réplicas fixas, sem HPA/KEDA ou Argo CD. A restauração automática A2 está planejada;
+- Réplicas fixas, sem HPA/KEDA ou Argo CD. A restauração automática A2 foi verificada nos quatro pilotos;
   os comandos A1 atuais continuam exigindo restauração explícita.
 - PostgreSQL e RabbitMQ persistentes com uma instância cada, sem promessa de HA.
 - Acesso restrito; a aplicação não fornece autenticação de usuários.
 - Aceitação HTTP 202, pod pronto ou fila vazia não comprovam conclusão de negócio.
 - Verificações funcionais delimitadas; campanhas extensas continuam fora do escopo.
 
-Próximo passo: implementar A2-I, seguido da comparação e encerramento A2-II,
+Próximo passo: congelar o protocolo e executar a comparação delimitada A2-II,
 conforme o [RELEASE_PLAN](RELEASE_PLAN.md#7-evolução-local--aceite-a1-e-entrega-a2).
-A interface existente `scripts/Invoke-A1.ps1` está descrita em
-[k8s/README.md](k8s/README.md#procedimento-a1); ainda não há comando A2 disponível.
-O piloto A1 não demonstrou vantagem de detecção sobre o estado nativo do pod,
-capacidade ou estabilidade prolongada. As novas medições não estão realizadas.
+As interfaces A1 e A2 estão descritas em [k8s/README.md](k8s/README.md).
+Os quatro pilotos A2-I confirmaram a política e o encerramento, sem demonstrar
+vantagem comparativa, capacidade ou estabilidade prolongada. As medições A2-II
+ainda não foram realizadas.

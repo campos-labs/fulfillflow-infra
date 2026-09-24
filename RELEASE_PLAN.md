@@ -2,9 +2,9 @@
 
 ## 1. Objetivo, estado e limites
 
-**Estado atual: A1 concluído; A2 em Kind selecionado e planejado em dois incrementos.**
-A2-I está implementado e em validação; pilotos e comparação ainda pendentes. Isso não representa
-execução: o laboratório permanece parado e as evidências L4/A1 estão preservadas.
+**Estado atual: A1 e A2-I concluídos em Kind; comparação A2-II pendente.**
+O laboratório está parado, com dados e evidências preservados. Os quatro pilotos
+A2-I não são repetições da comparação e não demonstram vantagem entre condições.
 
 O ciclo atual entrega restauração automatizada delimitada e comparação com
 acionamento explícito, mantendo a aplicação congelada e réplicas fixas. Kind é o
@@ -16,8 +16,8 @@ bloquear o encerramento. Os incrementos II–IV de Azure abaixo permanecem reser
 | --- | --- |
 | Base documental e validação estática | Concluídas; plano A2 atualizado |
 | L1–L4 e A1 | Aceites locais concluídos; laboratório parado e dados preservados |
-| A2-I — Política de restauração e piloto | Implementado; testes locais aprovados e piloto pendente |
-| A2-II — Comparação delimitada e encerramento | Planejado; depende do aceite A2-I |
+| A2-I — Política de restauração e piloto | Concluído; quatro pilotos e validações aprovados |
+| A2-II — Comparação delimitada e encerramento | Preparado para próxima etapa; coleta não iniciada |
 | II–IV — Azure | Não iniciados; opcionais, fora do ciclo atual |
 | B — Autoescalonamento | Não selecionado; fora do ciclo atual |
 
@@ -364,10 +364,9 @@ ACR pertence à extensão Azure; A2 usa as imagens locais verificadas. Publicaç
 em registry não é critério de validade da comparação de recuperação.
 
 São dois incrementos, com commits por assunto na main, sem branches permanentes
-por condição. Quando iniciada a execução A2, concluir ambos sequencialmente se os
-critérios abaixo passarem; a transição técnica não exige uma rodada de aprovação
-por arquivo ou ensaio. Esta atualização é apenas documental: nenhuma execução A2
-foi realizada. Comandos novos só entram no guia operacional quando implementados.
+por condição. Esta entrega encerra A2-I; A2-II permanece como próximo incremento.
+Ajustes rotineiros não exigem aprovação por arquivo ou ensaio. Comandos executáveis
+estão no guia k8s; critérios e resultados ficam neste plano.
 
 ### A2-I — Política de restauração e piloto integrado
 
@@ -393,6 +392,53 @@ completo; na saudável, não restaura indevidamente. Guardas recusam identidade
 incorreta/inconclusão, e envio interrompido é reconciliado antes de mutação. Ambos
 os procedimentos têm evidências comparáveis. Falha esperada continua sendo
 implantação reprovada, mesmo após recuperação. Pilotos ficam fora da comparação.
+
+### Aceite A2-I em Kind — 24/09/2026
+
+Referência executada: `80c591bbbaaeb2a518fe52d82aa2df489f4e57cb`, com
+[CI Linux/Windows aprovada](https://github.com/campos-labs/fulfillflow-infra/actions/runs/36067024538).
+Passaram 102 testes locais, incluindo 24 casos A2 e launcher PowerShell real;
+Ruff/formatação, nove renderizações com validação de schema e planos Terraform simulados
+aprovados. A primeira execução Linux da CI perdeu a conexão com o registry
+Terraform; somente esse job foi reexecutado, no mesmo SHA, e passou.
+
+| Piloto | Candidata | Acionamento e encerramento |
+| --- | --- | --- |
+| Automático / saudável | Aprovada | Nenhuma restauração automática; limpeza explícita aprovada |
+| Explícito / saudável | Aprovada | Nenhuma restauração automática; limpeza explícita aprovada |
+| Automático / invalid-pool | Rejeitada por startup | Uma restauração automática; fluxo posterior aprovado |
+| Explícito / invalid-pool | Rejeitada por startup | Comando separado por script; uma restauração e fluxo posterior aprovado |
+
+Seis eventos novos concluíram Tracking/Order e Notifications `SIMULATED`, com seis
+duplicatas sem efeito adicional. Dois eventos anteriores foram novamente observados
+somente por GET. Consultas públicas preservadas confirmaram os estados e contagens,
+além dos vereditos do executor. Nas falhas de startup, nenhum evento foi oferecido
+antes da restauração; não se demonstrou recuperação de trabalho aceito durante a falha.
+O acionamento explícito por script não representa tempo de reação humana.
+
+A referência original dos seis Deployments e os metadados de configuração/secrets
+foram conferidos ao final; oito workloads estavam prontos e dois PVCs `Bound`.
+Depois, as réplicas foram reduzidas a zero e o nó parado, preservando dados. Não
+houve alteração da aplicação, reconstrução de imagens, migrations ou acesso Azure.
+Falhas de processo, escrita e envio incerto foram verificadas com injeção controlada
+nos testes; os pilotos não simularam término forçado do coordenador real.
+
+Prazos efetivos: operação 600 s, rollout/fluxo 90 s cada e polling de 1 s, com
+relógio monotônico por processo e UTC para correlação. Recuperação em processo
+separado é identificada e não permite subtrair relógios monotônicos de processos
+diferentes. Mesma imagem, réplicas, recursos e probes da referência A1.
+
+Evidências locais: `artifacts/a2-pilot-01/summary.json`, journals, consultas,
+identidades, restaurações, `final-health.json` e `checksums.sha256`.
+Exportação: `artifacts/a2-pilot-01.zip`, com 149 arquivos originais e manifesto;
+leitura e hashes conferidos. SHA-256 do ZIP:
+`1331af8284af89cec85f0b2903fd3985c0778f63b6d339c4fe07a387917504f2`.
+Configuração privada/kubeconfig e valores de secrets não integram a exportação.
+A cópia permanece no mesmo host e não comprova backup independente.
+
+**A2-I aceito.** Nenhuma repetição A2-II foi iniciada. Os quatro pilotos não
+sustentam superioridade entre condições, capacidade ou estabilidade prolongada.
+Próxima etapa: congelar a ordem e o protocolo sanitizado antes da comparação abaixo.
 
 ### A2-II — Comparação delimitada e encerramento
 
@@ -485,7 +531,7 @@ O protocolo e os dois incrementos estão na seção 7; os invariantes, no DESIGN
 | --- | --- |
 | Kind | Ambiente principal das duas condições A2; laboratório atualmente parado |
 | A1 | Aceite congelado; não incorporar seus pilotos como repetições A2 |
-| A2 | A2-I em validação; comparação A2-II pendente |
+| A2 | A2-I aceito; comparação A2-II pendente |
 | B — Autoescalonamento | Extensão não selecionada |
 | AKS/ACR | Extensão opcional, sem provisionamento, publicação de imagens ou gasto neste ciclo |
 | Assinatura/região/cotas/custo Azure | Reavaliar somente se a extensão for escolhida; consultas não autorizam apply |
