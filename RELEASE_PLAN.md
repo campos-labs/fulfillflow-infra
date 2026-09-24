@@ -17,7 +17,7 @@ bloquear o encerramento. Os incrementos II–IV de Azure abaixo permanecem reser
 | Base documental e validação estática | Concluídas; plano A2 atualizado |
 | L1–L4 e A1 | Aceites locais concluídos; laboratório parado e dados preservados |
 | A2-I — Política de restauração e piloto | Concluído; quatro pilotos e validações aprovados |
-| A2-II — Comparação delimitada e encerramento | Preparado para próxima etapa; coleta não iniciada |
+| A2-II — Comparação delimitada e encerramento | Executor preparado para execução manual; coleta não iniciada |
 | II–IV — Azure | Não iniciados; opcionais, fora do ciclo atual |
 | B — Autoescalonamento | Não selecionado; fora do ciclo atual |
 
@@ -441,6 +441,22 @@ sustentam superioridade entre condições, capacidade ou estabilidade prolongada
 Próxima etapa: congelar a ordem e o protocolo sanitizado antes da comparação abaixo.
 
 ### A2-II — Comparação delimitada e encerramento
+
+**Executor preparado; coleta não iniciada.** `Invoke-A2Comparison.ps1` fornece
+conferência sem mutação e execução manual única; parâmetros e encerramento estão
+no guia k8s. Reutiliza a política A2-I, com lock durante toda a janela, referência
+limpa conferida e ordem congelada antes da primeira tentativa. Vinte testes novos
+verificam a coordenação, exportação parcial, prazo, energia e comando separado em
+processo real; essas verificações não são a comparação no cluster.
+
+A síntese inclui custo da verificação saudável, restaurações indevidas, detecção,
+acionamento, recuperação e intervenções. Não há novos cenários ou workloads.
+Acionamento explícito é assistido por script, com polling de solicitação de 0,1 s;
+observação mantém 1 s, sem atraso artificial. Reservar 1.800 s da janela para
+limpeza, verificações e parada; não iniciar tentativa sem essa margem mais 600 s.
+O guard temporário do Windows não modifica energia persistentemente nem garante
+continuidade diante de suspensão deliberada. Registrar configuração efetiva e
+mudanças detectadas; não presumir monitoramento contínuo do host.
 
 Antes da primeira repetição, congelar o protocolo efetivo em artefato sanitizado
 com hash, SHA executado e ordem completa. Aplicar o mesmo protocolo às duas

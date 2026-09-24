@@ -353,3 +353,43 @@ Antes dos pilotos, conferir Docker, porta da API, contexto/UID, recursos e ausê
 de carga concorrente. Não excluir volumes, repetir bootstrap/migrations ou modificar
 probes. Parar na primeira falha inesperada, preservar evidências e encerrar o laboratório.
 Os quatro pilotos A2-I não são repetições da comparação A2-II.
+
+## A2-II — Comparação por comando único
+
+`scripts/Invoke-A2Comparison.ps1 -SettingsFile <arquivo-local.json> -Mode Check`
+faz a conferência inicial sem iniciar o Kind ou criar o destino de coleta.
+`-Mode Execute` retoma o laboratório existente, congela o protocolo, executa as
+20 tentativas e tenta parar o ambiente ao concluir ou interromper. A política A2-I
+permanece inalterada; não há reposição automática, novo cluster ou recurso Azure.
+
+O arquivo local, fora do Git, contém caminhos absolutos: `python`, `config`
+(configuração A1 conferida), `output` (destino novo), `secret_file` (JSON privado
+existente, campo `alpha`) e `expected_sha` (commit limpo aprovado). Valores de
+segredos nunca entram nesse arquivo nem nos argumentos. O launcher carrega o segredo
+apenas no ambiente do processo e restaura a variável anterior ao sair.
+
+Manter Docker Desktop disponível, alimentação AC, tampa aberta e sessão ativa;
+não executar builds, outras cargas ou modificar arquivos/configurações durante a
+janela. O executor recusa containers concorrentes, confere energia entre tentativas
+e inibe temporariamente o desligamento ocioso de tela/sistema no Windows. Não altera
+o plano persistente nem impede suspensão deliberada, fechamento da tampa ou falha
+do host. Não é monitoramento contínuo de energia/sessão durante cada tentativa.
+
+O acionamento explícito usa subprocesso independente, identificado como `script`;
+o observador continua responsável pela restauração. A espera de solicitação usa
+polling de 0,1 s; a observação A2-I mantém 1 s. Não há atraso artificial. Os tempos
+de limpeza das candidatas saudáveis ficam fora da avaliação da política.
+
+São até quatro horas, reservando 30 minutos para limpeza, verificações e pausa.
+Uma falha inesperada interrompe a série: não restaurar automaticamente um resultado
+incerto. A pausa preserva o estado e pode deixar configuração candidata para análise.
+Se a própria pausa falhar, o resumo registra isso; não presumir que o nó parou.
+Encerrar o terminal à força pode impedir finalização/exportação.
+
+Saídas: `protocol.json`, hash do protocolo, pastas por tentativa, journals,
+`attempts.csv`, `summary.json`, `checksums.sha256` e ZIP ao lado do destino.
+O resumo separa aprovação do cenário, aptidão para agregação, erro operacional e
+encerramento. Pares incompletos não entram nas diferenças; falhas não viram tempos
+de sucesso. Saída zero exige as 20 tentativas e encerramento aprovado.
+Se houver erro, preservar tudo e não repetir o comando ou trocar o destino para
+completar a quota. Consultar o diagnóstico antes de qualquer nova execução.
