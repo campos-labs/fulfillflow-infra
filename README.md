@@ -4,10 +4,11 @@ Infraestrutura e operação do [FulfillFlow](https://github.com/campos-labs/fulf
 com alvo no Azure Kubernetes Service (AKS) e imagens no Azure Container Registry
 (ACR), além de um ambiente Kind para preparação funcional local.
 
-**Estado: aceite funcional local concluído; continuação até A1 planejada.**
-O próximo incremento prepara operação portátil, registros e verificação de uma
-revisão de runtime, com piloto curto em Kind e nova pausa. Essa automação ainda
-não está implementada. O aceite anterior permanece preservado; AKS/ACR e a escolha
+**Estado: aceite funcional local preservado; automação A1 em validação, piloto pendente.**
+Os comandos de operação e verificação de uma revisão estão implementados e cobertos
+por testes automatizados. O piloto em Kind ainda não foi executado: a porta do
+cluster preservado foi reservada pelo Windows. O aceite anterior permanece preservado;
+AKS/ACR e a escolha
 do ambiente da comparação continuam pendentes. Escopo, evidências e limitações
 estão no [RELEASE_PLAN](RELEASE_PLAN.md).
 
@@ -105,8 +106,9 @@ quotas, custo, pull ou funcionamento dos volumes.
 - Aceitação HTTP 202, pod pronto ou fila vazia não comprovam conclusão de negócio.
 - Verificações funcionais delimitadas; campanhas extensas continuam fora do escopo.
 
-Próximo passo: implementar o incremento delimitado na seção 7 do
-[RELEASE_PLAN](RELEASE_PLAN.md#7-incremento-ativo--base-comum-e-a1). Os comandos
-acima continuam sendo de validação; nenhum launcher A1 está disponível ainda.
-O ambiente local permanece preservado e parado até a execução preparada do
-incremento. Não há campanha ou provisionamento Azure autorizado nesta etapa.
+Próximo passo: viabilizar o ambiente e executar o piloto da seção 7 do
+[RELEASE_PLAN](RELEASE_PLAN.md#7-incremento-ativo--base-comum-e-a1). A interface
+`scripts/Invoke-A1.ps1` e sua configuração estão descritas em [k8s/README.md](k8s/README.md#procedimento-a1).
+Os testes automatizados não substituem o aceite integrado. O cluster anterior está
+preservado e parado; nenhum piloto, campanha ou provisionamento Azure foi realizado
+nesta etapa.

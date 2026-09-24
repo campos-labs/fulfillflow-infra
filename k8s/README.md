@@ -253,11 +253,40 @@ container do nó, preservando-o. Não o excluir: os volumes locais estão associ
 a ele. Reiniciar Docker não autoriza campanha ou mudança de escopo. O estado atual
 e a situação de backup/restauração pertencem ao RELEASE_PLAN.
 
-## Procedimento A1 — implementação pendente
+## Procedimento A1
 
-O incremento aprovado é definido no RELEASE_PLAN §7 e segue os contratos do
-DESIGN §8.1–8.4. Esta seção descreve a sequência a implementar; não acrescenta
-um comando disponível. O piloto usa Kind e uma alteração em um único Deployment.
+O incremento aprovado é definido no RELEASE_PLAN §7 e segue DESIGN §8.1–8.4.
+A automação está implementada e testada sem cluster; seu piloto real ainda está
+pendente pelo bloqueio da porta local registrado no plano. Usa Kind existente e
+uma alteração em um único Deployment; não cria cluster, secrets ou migrations.
+
+Interface: `scripts/Invoke-A1.ps1 -Python <executável> -Config <arquivo.json>
+-OutputDirectory <destino-novo> -Mode <modo>`. O equivalente Python é
+`scripts/a1.py --config <arquivo.json> --output <destino-novo> --mode <modo>`.
+
+| Modo | Efeito |
+| --- | --- |
+| `status` | Confere contexto, UID, ferramentas e inventário sem alterar workloads |
+| `resume` | Inicia somente o nó existente e restaura réplicas, sem repetir bootstrap/migrations |
+| `attempt -Scenario healthy` | Marca uma revisão saudável, verifica sua identidade e o fluxo completo |
+| `attempt -Scenario invalid-pool` | Altera apenas DB_POOL_SIZE do notifications-worker e verifica a falha de inicialização esperada |
+| `restore -Source <tentativa>` | Restaura a configuração salva, observa evento anterior quando identificável e confere um evento novo |
+| `pause` | Escala workloads dedicados a zero, aguarda parada e interrompe o nó, preservando dados |
+
+O exemplo [a1.example.json](../config/a1.example.json) é deliberadamente incompleto.
+Criar a configuração real fora do Git: caminhos absolutos das ferramentas/kubeconfig,
+contexto, nome do nó, UID observado do namespace e imageID local conferido. Não copiar
+UID/digest de outra implantação. Prazos padrão: 600 s por operação, 90 s por rollout,
+90 s por fluxo; polling de 1 s. Cada comando exige destino novo e não repete mutações.
+O segredo do webhook entra somente pela variável de processo
+`CARRIER_ALPHA_WEBHOOK_SECRET`, nunca por argumento ou arquivo versionado.
+
+Resultado `scenario_passed=true` não significa implantação aprovada: o cenário de
+falha pode passar com `deployment_verdict=rejected`. Falta de evidência permanece
+inconclusiva. `restore` é sempre uma chamada explícita; não é acionado por `attempt`.
+Não executar no cluster anterior enquanto a porta estiver indisponível.
+
+Sequência do piloto, após resolver o ambiente:
 
 1. Conferir ferramentas, contexto, namespace, imagens e recursos dedicados. Retomar
    o ambiente preservado pelo procedimento acima e verificar sua referência saudável;
@@ -281,4 +310,5 @@ um comando disponível. O piloto usa Kind e uma alteração em um único Deploym
    recursos dedicados, preservando dados. Parar para a decisão prevista no plano.
 
 O procedimento não instala HPA/KEDA, rollback automático ou novas ferramentas de
-observabilidade. Comandos portáveis serão incluídos após implementação e verificação.
+observabilidade. Os testes automatizados da interface não substituem sua execução
+integrada nem validam uma implantação AKS.

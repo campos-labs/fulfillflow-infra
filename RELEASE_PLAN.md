@@ -2,8 +2,8 @@
 
 ## 1. Objetivo, estado e limites
 
-**Estado atual: aceite local L1–L4 concluído; base comum e A1 planejados para
-execução em um incremento, ainda não implementado.** A decisão de 24/09/2026 autoriza
+**Estado atual: aceite local L1–L4 concluído; automação da base comum/A1
+implementada e testada sem cluster; piloto integrado pendente.** A decisão de 24/09/2026 autoriza
 avançar até o piloto A1 e uma nova pausa. Os estados II–IV abaixo referem-se ao
 alvo Azure ainda pendente; não condicionam o início desse trabalho local.
 
@@ -20,7 +20,7 @@ automática, escala, meta de capacidade ou campanha comparativa.
 | II — Bootstrap Azure e imagens | Não iniciado |
 | III — AKS e implantação | Não iniciado |
 | IV — Aceite funcional e pausa | Não iniciado |
-| Base comum + A1 | Planejamento aprovado; implementação e piloto pendentes |
+| Base comum + A1 | Automação implementada; piloto bloqueado pela porta local do cluster |
 | A2/B e ambiente da comparação | Decisão adiada para a pausa após A1 |
 
 O aceite L4 e suas evidências permanecem congelados. A continuação local é limitada
@@ -315,11 +315,38 @@ ou removidos; pausa não autoriza consumo indefinido nem destruição de dados.
 
 ## 7. Incremento ativo — Base comum e A1
 
-**Autorizado até o piloto local e nova pausa; execução ainda pendente.** Entregar
+**Autorizado até o piloto local e nova pausa; aceite integrado ainda pendente.** Entregar
 operação portátil, registro funcional e verificação de uma revisão, conforme
 DESIGN §8.1–8.4. A1 não é a avaliação completa da alternativa A e não escolhe
 antecipadamente o ambiente da coleta. Aplicação, locks e referências congeladas
 permanecem intactos; sem novas ferramentas de produção.
+
+### Estado da preparação A1
+
+Implementados `scripts/a1.py`, `a1_runtime.py`, `a1_flow.py` e `Invoke-A1.ps1`:
+configuração externa, contexto/UID explícitos, exclusão mútua por ambiente, prazos,
+identidade da revisão/pods, registros sanitizados e restauração em comando separado.
+O verificador existente é reutilizado; a aplicação e os manifests permanecem intactos.
+As 78 verificações locais passaram, incluindo 24 casos A1 e PowerShell real; Ruff
+e formatação aprovados. Essas verificações não comprovam o comportamento no cluster.
+
+Piloto escolhido antes da execução: revisão saudável marcada por tentativa e
+`DB_POOL_SIZE=0` exclusivamente no `notifications-worker`. Espera-se rejeição de
+inicialização pela validação da aplicação; rollout/probes podem detectar a falha.
+Não iniciar observação funcional contra uma candidata que não iniciou. O cenário
+saudável e a restauração exigem conclusão Tracking/Order e Notifications SIMULATED.
+
+Em 24/09, a retomada encontrou a porta `52438` do cluster anterior dentro da faixa
+TCP `52401–52500` excluída pelo Windows. A API respondia dentro do container, mas
+não pelo host. Um reinício do nó e um do Docker Desktop não resolveram; ao iniciar
+novamente, o Docker recusou explicitamente o bind. O nó ficou parado; os oito
+workloads já estavam em zero antes dessas operações. Containers, PVCs e evidências
+L4 foram preservados; nenhuma tentativa A1 ou alteração de workload foi executada.
+
+**Decisão de ambiente pendente:** novo Kind isolado em porta fixa livre, preservando
+integralmente o anterior, ou adiar o piloto. Não remover reservas de porta do Windows,
+recriar o cluster histórico ou declarar o incremento aceito com testes simulados.
+Essa interrupção antecede a pausa de avaliação prevista após o piloto.
 
 ### Entrega contínua com etapas internas
 
@@ -453,7 +480,7 @@ neste plano inicial.
 | --- | --- |
 | Ambiente comum AKS + ACR, réplicas fixas | Aprovado como alvo; execução pendente |
 | Ambiente Kind | Aceite funcional concluído; nó parado e dados preservados |
-| Base comum + A1 | Autorizados em Kind; implementação/piloto pendentes |
+| Base comum + A1 | Automação testada; ambiente para piloto aguarda decisão |
 | Ambiente da avaliação comparativa | Local, janela AKS ou encerramento: decidir após A1 |
 | Assinatura, região, orçamento, SKUs e conectividade Azure | Seleção executável pendente; consultas históricas não autorizam apply |
 | Segredos, retenção e acesso do executor | Configurados localmente; solução Azure pendente |

@@ -1,0 +1,15 @@
+{
+  "kubectl": "C:/tools/kubectl.exe",
+  "docker": "C:/tools/docker.exe",
+  "kubeconfig": "C:/private/lab.kubeconfig",
+  "context": "kind-REPLACE",
+  "namespace": "fulfillflow",
+  "namespace_uid": "REPLACE_WITH_OBSERVED_NAMESPACE_UID",
+  "node": "REPLACE-control-plane",
+  "image": "fulfillflow-kind-runtime:source-9e3a135a00db",
+  "image_id": "REPLACE_WITH_VERIFIED_LOCAL_IMAGE_ID",
+  "operation_seconds": 600,
+  "rollout_seconds": 90,
+  "flow_seconds": 90,
+  "poll_seconds": 1
+}
