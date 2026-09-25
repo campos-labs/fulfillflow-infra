@@ -2,7 +2,7 @@
 
 ## 1. Objetivo, estado e limites
 
-**Estado atual: A1/A2 concluídos; complementos A autorizados, em preparação.**
+**Estado atual: A1/A2 concluídos; complementos A implementados e pilotos aprovados.**
 O laboratório está parado, com dados e evidências preservados. Os quatro pilotos
 A2-I não são repetições da comparação e não demonstram vantagem entre condições.
 
@@ -18,11 +18,11 @@ bloquear o encerramento. Os incrementos II–IV de Azure abaixo permanecem reser
 | L1–L4 e A1 | Aceites locais concluídos; laboratório parado e dados preservados |
 | A2-I — Política de restauração e piloto | Concluído; quatro pilotos e validações aprovados |
 | A2-II — Comparação delimitada e encerramento | Série 03 completa: 20/20; encerramento conferido e pausa atingida |
-| Complementos A — pendência e inconclusão | Executor e testes implementados; pilotos integrados pendentes |
+| Complementos A — pendência e inconclusão | Três pilotos do pacote 02 aprovados; avaliação de nove tentativas ainda não executada |
 | II–IV — Azure | Não iniciados; opcionais, fora do ciclo atual |
 | B — Autoescalonamento | Não selecionado; fora do ciclo atual |
 
-As condições e os limites aprovados estão na seção 7 e no DESIGN §8.5. Resolver
+As condições e os limites aprovados estão nas seções 7/7.1 e no DESIGN §§8.5–8.6. Resolver
 ajustes pequenos dentro do incremento; mudanças de aplicação, cenário, permissões,
 custos ou dados exigem reavaliação. Campanhas extensas de desempenho da aplicação
 continuam suspensas; a comparação A2 é operacional e delimitada.
@@ -677,11 +677,41 @@ resultado favorável. Os dados também podem mostrar sobreposição entre os sin
 5. Conferir artefatos/hash e leitura, configuração final e pausa dos recursos próprios.
    Consolidar resultados e limites e pausar novamente; sem B, AKS, tag ou release.
 
-**Estado:** executor e launcher implementados; 144 testes locais aprovados,
-Ruff/formatação, nove renderizações/schemas e planos Terraform simulados aprovados.
-Pilotos integrados e CI do novo SHA ainda pendentes; não há nova execução real
-demonstrada nesta seção. Na primeira passagem da suíte faltou indicar o caminho
-do kubectl já instalado; corrigido o ambiente, sem alterar manifests ou testes.
+**Aceite dos pilotos em 25/09/2026:** executor e launcher implementados;
+[CI Linux/Windows aprovada](https://github.com/campos-labs/fulfillflow-infra/actions/runs/36194884814)
+no SHA `cfbb03c044d7bb3b95aa8a422d9b9fac54d5124c`, com 145 testes por
+ambiente, Ruff/formatação, renderizações/schemas e planos Terraform simulados.
+A validação local completa anterior teve 144 casos; o caso adicional e os demais
+15 testes focais passaram localmente e integram a CI. Não houve mudança de imagem,
+aplicação, probes, recursos ou acesso Azure.
+
+| Piloto do pacote 02 | Resultado |
+| --- | --- |
+| Pendência / explicit | Evento publicado e não recebido antes da autorização; conclusão após restauração, só por GET, com efeito único |
+| Pendência / auto | Mesma preparação e resultado; uma restauração acionada pela política |
+| Inconclusão / auto | 503 injetado no transporte do observador após aceitação; zero intenção/envio de restauração durante a avaliação, configuração preservada e retomada GET aprovada |
+
+Nos dois pilotos de pendência, Notifications foi observada como SIMULATED antes
+da convergência completa da revisão: diferenças observadas de -14,734 s e
+-15,359 s. São sinais distintos com consultas/polling; não é prova de inadequação
+das probes nem comparação com a latência sequencial medida na série A2 anterior.
+Com apenas um piloto por condição, não concluir vantagem ou significância.
+
+Pacote: `artifacts/a-complements-pilot-02/`, 3/3 pilotos, 264,36 s incluindo
+retomada/encerramento. Manifest, hashes e conteúdo do ZIP conferidos. SHA-256 do ZIP:
+`8af5bdee830bfa7d2ef3e353d405450e9274f9925a98da73ad4685df2e9771e0`.
+Configuração saudável restaurada, recursos dedicados parados e dados preservados.
+O pacote 01 fica preservado separadamente: passou funcionalmente, mas o resumo
+herdava a identificação `invalid-pool` do mecanismo A2 em vez de `pending`.
+A correção foi testada antes do pacote sucessor, sem mudar critérios ou reescrever
+os originais. Pilotos não entram nos denominadores da avaliação.
+
+**Próximo passo:** avaliação manual de nove tentativas em destino novo, com o
+mesmo código dos pilotos, protocolo fixado e CI do SHA de execução aprovada. O
+launcher confere o pacote de pilotos e recusa código divergente, sobrescrita ou
+reposição automática. Nova pausa após a conferência da avaliação; B/AKS permanecem
+fora do incremento. A avaliação ainda não foi executada.
+
 A retomada durável já foi verificada na aplicação: a contribuição deste complemento
 é vinculá-la à implantação defeituosa e à política operacional, não atribuir à
 infraestrutura a persistência ou a idempotência implementadas pelos serviços.

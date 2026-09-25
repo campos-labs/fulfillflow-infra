@@ -6,7 +6,8 @@ em Kubernetes, com laboratório Kind e configuração de referência para AKS/AC
 **Estado: A1 e A2 concluídos em Kind; comparação de 20 tentativas conferida.** O laboratório
 está parado, com dados e evidências preservados. Escopo, resultados e os dois
 incrementos de entrega estão no [RELEASE_PLAN](RELEASE_PLAN.md). Os complementos
-de pendência e observação inconclusiva estão em preparação, com protocolo separado.
+de pendência e observação inconclusiva têm três pilotos aprovados e protocolo
+separado; a avaliação de nove tentativas permanece pendente.
 
 ## Objetivo
 
