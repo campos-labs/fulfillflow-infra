@@ -33,6 +33,62 @@ from scripts.a1_runtime import (
 )
 from scripts.verify_flow import EXPECTED_APPLICATION_SHA, Failure, SafeParser
 
+DIAGNOSTIC_SECONDS = 5
+
+
+def configuration_diagnostic(runtime: Runtime, record: dict, output: Path) -> bool:
+    """A terminated pod can be observable before its log is available."""
+    pod = record["pods"][0]
+    observations = []
+    previous_deadline = runtime.deadline
+    started = runtime.clock()
+    runtime.deadline = min(previous_deadline, started + DIAGNOSTIC_SECONDS)
+
+    def same_identity():
+        current = runtime.snapshot()
+        check(
+            current["deployment_uid"] == record["deployment_uid"]
+            and current["template_hash"] == record["template_hash"]
+            and len(current["pods"]) == 1
+            and current["pods"][0]["uid"] == pod["uid"]
+            and not current["pods"][0]["deleting"]
+            and current["pods"][0]["containers"][0]["image_id"] == runtime.config.image_id,
+            "DIAGNOSTIC_IDENTITY_CHANGED",
+        )
+
+    try:
+        while runtime.clock() < runtime.deadline:
+            same_identity()
+            logs = runtime.kubectl("logs", pod["name"], "--tail=80", "--limit-bytes=12000")
+            same_identity()
+            confirmed = "db_pool_size" in logs and "greater than or equal to 1" in logs
+            observations.append(
+                {
+                    "elapsed_seconds": runtime.clock() - started,
+                    "empty": not logs.strip(),
+                    "text_hash": digest(logs),
+                    "characters": len(logs),
+                    "db_pool_validation_observed": confirmed,
+                }
+            )
+            if logs.strip():
+                return confirmed  # An unrelated nonempty error never authorizes restoration.
+            remaining = runtime.deadline - runtime.clock()
+            if remaining > 0:
+                runtime.sleep(min(runtime.config.poll_seconds, remaining))
+        return False
+    finally:
+        runtime.deadline = previous_deadline
+        write_json(
+            output / "diagnostic-observations.json",
+            {
+                "pod_uid": pod["uid"],
+                "maximum_seconds": DIAGNOSTIC_SECONDS,
+                "samples": observations,
+                "raw_log_exported": False,
+            },
+        )
+
 
 def revision(template: dict, attempt: str, scenario: str) -> dict:
     candidate = copy.deepcopy(template)
@@ -90,9 +146,7 @@ def attempt(runtime: Runtime, output: Path, scenario: str, secret: str) -> dict:
     check(all(p["attempt"] == attempt_id for p in record["pods"]), "CANDIDATE_NOT_EXERCISED")
     if scenario == "invalid-pool":
         check(candidate_crashed(record, runtime.config), "EXPECTED_STARTUP_FAILURE_NOT_OBSERVED")
-        pod = record["pods"][0]["name"]
-        logs = runtime.kubectl("logs", pod, "--tail=80", "--limit-bytes=12000")
-        confirmed = "db_pool_size" in logs and "greater than or equal to 1" in logs
+        confirmed = configuration_diagnostic(runtime, record, output)
         write_json(
             output / "configuration-error.json",
             {

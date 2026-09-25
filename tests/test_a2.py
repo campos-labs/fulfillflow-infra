@@ -151,6 +151,46 @@ class PolicyTests(unittest.TestCase):
             self.invoke("healthy")
         self.assertEqual(len(self.runtime.patches), 1)
 
+    def test_empty_log_then_validation_waits_without_reapplying_candidate(self):
+        original = self.runtime.kubectl
+        logs = iter(["", "db_pool_size greater than or equal to 1"])
+        now = [0.0]
+        self.runtime.clock = lambda: now[0]
+        self.runtime.sleep = lambda seconds: now.__setitem__(0, now[0] + seconds)
+        self.runtime.kubectl = lambda *args: next(logs) if args[0] == "logs" else original(*args)
+        result = self.invoke()
+        self.assertTrue(result["scenario_passed"])
+        self.assertEqual(len(self.runtime.patches), 2)
+        samples = a2.read(self.root / "diagnostic-observations.json")["samples"]
+        self.assertEqual([x["empty"] for x in samples], [True, False])
+
+    def test_permanently_empty_log_is_bounded_and_never_restores(self):
+        self.runtime.diagnostic = ""
+        now = [0.0]
+        self.runtime.clock = lambda: now[0]
+        self.runtime.sleep = lambda seconds: now.__setitem__(0, now[0] + seconds)
+        with self.assertRaisesRegex(Failure, "EXPECTED_CONFIGURATION_DIAGNOSTIC_MISSING"):
+            self.invoke()
+        self.assertEqual(now[0], a1.DIAGNOSTIC_SECONDS)
+        self.assertEqual(len(self.runtime.patches), 1)
+        self.assertFalse(self.runtime.journal.phases("restore_send_intent"))
+
+    def test_log_identity_change_refuses_even_matching_message(self):
+        original = self.runtime.snapshot
+        calls = [0]
+
+        def changed():
+            item = original()
+            calls[0] += 1
+            if calls[0] >= 4:
+                item["pods"][0]["uid"] = "replacement"
+            return item
+
+        self.runtime.snapshot = changed
+        with self.assertRaisesRegex(Failure, "DIAGNOSTIC_IDENTITY_CHANGED"):
+            self.invoke()
+        self.assertEqual(len(self.runtime.patches), 1)
+
     def test_missing_diagnostic_does_not_trigger_policy(self):
         self.runtime.diagnostic = "other failure"
         with self.assertRaisesRegex(Failure, "EXPECTED_CONFIGURATION_DIAGNOSTIC_MISSING"):

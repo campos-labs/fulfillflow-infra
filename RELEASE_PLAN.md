@@ -458,6 +458,29 @@ O guard temporário do Windows não modifica energia persistentemente nem garant
 continuidade diante de suspensão deliberada. Registrar configuração efetiva e
 mudanças detectadas; não presumir monitoramento contínuo do host.
 
+#### Série parcial 01 e correção de leitura de log
+
+A execução em `artifacts/a2-comparison-01`, referência `9acb798`, terminou após
+dez tentativas saudáveis aprovadas e interrupção da tentativa 11, a primeira com
+`invalid-pool`. O pod encerrou com código 1, mas a leitura não confirmou o texto
+esperado. Nenhuma restauração automática foi autorizada; a pausa preservou o
+estado com réplicas zero e nó parado. A série é incompleta e permanece separada.
+
+Uma reprodução delimitada observou log vazio imediatamente após a terminação e,
+um segundo depois, o diagnóstico esperado no mesmo pod. O log original não foi
+preservado, portanto a reprodução demonstra a corrida do executor, sem recuperar
+os bytes daquela leitura. Registros em `artifacts/a2-interruption-review-01`.
+
+A correção permite somente reler log vazio por até cinco segundos, dentro do prazo
+da operação, conferindo UID do Deployment/pod, template e imagem antes/depois.
+Erro não vazio diferente, identidade alterada ou diagnóstico ausente continuam
+bloqueando a política. Não há reaplicação da candidata ou reenvio de evento.
+A espera integra a detecção nas duas condições e consta no protocolo sucessor.
+
+O template saudável salvo foi restaurado com réplicas zero, sem eventos de negócio.
+Validar as duas condições de falha em pilotos sucessores antes de liberar uma série
+nova completa; não completar a tentativa 11 isoladamente ou misturar SHAs.
+
 Antes da primeira repetição, congelar o protocolo efetivo em artefato sanitizado
 com hash, SHA executado e ordem completa. Aplicar o mesmo protocolo às duas
 condições; não alterar critérios após observar a comparação.

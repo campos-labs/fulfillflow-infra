@@ -369,6 +369,8 @@ class ObservationTests(unittest.TestCase):
 class AttemptTests(unittest.TestCase):
     def runtime(self):
         runtime = Mock(spec=Runtime)
+        runtime.clock = lambda: 0.0
+        runtime.deadline = 600.0
         runtime.config = config()
         runtime.inventory.return_value = {
             "core": {"replicas": 1},
@@ -388,6 +390,7 @@ class AttemptTests(unittest.TestCase):
             ][MARKER]
             record["attempt"] = record["pods"][0]["attempt"]
             record["pods"][0]["containers"][0].update(ready=False, exit_code=1)
+            runtime.snapshot.return_value = record
             return record
 
         runtime.wait_target.side_effect = wait
@@ -491,6 +494,8 @@ class AttemptTests(unittest.TestCase):
 class LifecycleTests(unittest.TestCase):
     def runtime(self, replicas):
         runtime = Mock(spec=Runtime)
+        runtime.clock = lambda: 0.0
+        runtime.deadline = 600.0
         runtime.config = config()
         runtime.deadline = 600
         runtime.clock = Mock(return_value=0)

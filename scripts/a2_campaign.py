@@ -432,6 +432,7 @@ def campaign(
                 "poll": 1,
                 "closure_reserve": RESERVE,
                 "explicit_request_poll": 0.1,
+                "startup_empty_log_wait": a1.DIAGNOSTIC_SECONDS,
             },
             "actor": "script",
             "scope": "Kind A2-II, no Azure or application load campaign",
