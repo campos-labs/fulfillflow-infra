@@ -2,7 +2,7 @@
 
 ## 1. Objetivo, estado e limites
 
-**Estado atual: A1 e A2-I concluídos em Kind; comparação A2-II parcial.**
+**Estado atual: A1, A2-I e A2-II concluídos em Kind; pausa para reavaliação.**
 O laboratório está parado, com dados e evidências preservados. Os quatro pilotos
 A2-I não são repetições da comparação e não demonstram vantagem entre condições.
 
@@ -17,7 +17,7 @@ bloquear o encerramento. Os incrementos II–IV de Azure abaixo permanecem reser
 | Base documental e validação estática | Concluídas; plano A2 atualizado |
 | L1–L4 e A1 | Aceites locais concluídos; laboratório parado e dados preservados |
 | A2-I — Política de restauração e piloto | Concluído; quatro pilotos e validações aprovados |
-| A2-II — Comparação delimitada e encerramento | Série 01 parcial; sucessora preparada para execução manual |
+| A2-II — Comparação delimitada e encerramento | Série 03 completa: 20/20; encerramento conferido e pausa atingida |
 | II–IV — Azure | Não iniciados; opcionais, fora do ciclo atual |
 | B — Autoescalonamento | Não selecionado; fora do ciclo atual |
 
@@ -364,7 +364,7 @@ ACR pertence à extensão Azure; A2 usa as imagens locais verificadas. Publicaç
 em registry não é critério de validade da comparação de recuperação.
 
 São dois incrementos, com commits por assunto na main, sem branches permanentes
-por condição. Esta entrega encerra A2-I; A2-II permanece como próximo incremento.
+por condição. Ambos foram concluídos; a pausa de reavaliação está atingida.
 Ajustes rotineiros não exigem aprovação por arquivo ou ensaio. Comandos executáveis
 estão no guia k8s; critérios e resultados ficam neste plano.
 
@@ -438,11 +438,11 @@ A cópia permanece no mesmo host e não comprova backup independente.
 
 **A2-I aceito.** Naquele aceite, nenhuma repetição A2-II havia sido iniciada. Os quatro pilotos não
 sustentam superioridade entre condições, capacidade ou estabilidade prolongada.
-Próxima etapa: congelar a ordem e o protocolo sanitizado antes da comparação abaixo.
+A comparação posterior e seu protocolo congelado estão registrados abaixo.
 
 ### A2-II — Comparação delimitada e encerramento
 
-**Primeira série interrompida; correção e pilotos sucessores aprovados.** `Invoke-A2Comparison.ps1` fornece
+**Aceite concluído na série 03; séries 01 e 02 preservadas como parciais.** `Invoke-A2Comparison.ps1` fornece
 conferência sem mutação e execução manual única; parâmetros e encerramento estão
 no guia k8s. Reutiliza a política A2-I, com lock durante toda a janela, referência
 limpa conferida e ordem congelada antes da primeira tentativa. Vinte testes novos
@@ -525,11 +525,57 @@ e consulta posterior ficam fora da comparação. Arquivos originais novamente
 conferidos sem mudança; diagnóstico e pilotos exportados com hashes e leitura
 verificada. As cópias permanecem no mesmo host.
 
-Uma eventual série completa usa `artifacts/a2-comparison-03.local.json`, SHA final
-limpo com CI aprovada e destino novo `artifacts/a2-comparison-03`. Não completar
-isoladamente as tentativas restantes, misturar séries ou iniciar automaticamente
-rodadas para obter a quota. O encerramento com resultados parciais permanece
-possível, com denominadores e exclusões explícitos.
+A configuração sucessora `artifacts/a2-comparison-03.local.json` foi executada
+uma vez, no destino novo abaixo. As tentativas restantes da série 02 não foram
+completadas isoladamente nem incorporadas à sucessora.
+
+#### Série 03 — Aceite A2-II e pausa
+
+Execução em 25/09/2026 UTC, referência
+`08a68234932557f29c65911cab17f850adc4b23d`, com
+[CI da referência medida aprovada](https://github.com/campos-labs/fulfillflow-infra/actions/runs/36088273634).
+Aplicação mantida em `9e3a135a00db218643633c7165d3106f0c8285e1`.
+**20/20 tentativas utilizáveis**, cinco pares por cenário. Dez candidatas
+saudáveis aprovadas sem restauração pela política; dez falhas `invalid-pool`
+rejeitadas, cada uma restaurada uma vez com confirmação funcional. A limpeza
+explícita das candidatas saudáveis fica fora desses tempos e não é falso rollback.
+
+| Mediana em segundos (n=5 por condição) | Explícito por script | Automático |
+| --- | ---: | ---: |
+| Saudável: aplicação até decisão funcional | 21,735 | 21,547 |
+| Falha: aplicação até detecção | 6,203 | 6,188 |
+| Falha: detecção até solicitação de restauração | 1,078 | 0,062 |
+| Falha: solicitação até configuração saudável | 18,765 | 18,797 |
+| Falha: solicitação até confirmação funcional | 21,906 | 21,937 |
+| Falha: aplicação até encerramento da política | 29,094 | 27,016 |
+
+Medianas recalculadas a partir das tentativas; mínimo/máximo, diferenças por par
+e denominadores estão no resumo original. As medianas das etapas não devem ser
+somadas como se pertencessem à mesma repetição. O acionamento automático reduziu
+a espera pelo comando neste executor; a recuperação após solicitação apresentou
+medianas próximas. Isso não mede reação humana, não isola vantagem de detecção
+e não demonstra superioridade geral, significância estatística, HA ou desempenho
+no AKS. O cenário impede startup e não oferece evento antes da restauração.
+
+Conferência: 638 arquivos e respectivas entradas no ZIP; hash do protocolo;
+235 registros de journal encadeados; identidades, CSV, durações por processo,
+agregações e diferenças pareadas. Trinta fluxos novos concluíram com duplicata
+sem efeito adicional; dez consultas posteriores preservaram eventos anteriores.
+A base final coincide com a inicial; pausa com réplicas zero e nó efetivamente
+parado, mantendo PVCs/dados. A execução levou 918,813 s, incluindo preparação e
+encerramento, sem novas execuções durante a revisão.
+
+Fontes: `artifacts/a2-comparison-03/{protocol.json,attempts.csv,summary.json,checksums.sha256}`;
+revisão em `artifacts/a2-comparison-review-03/review.json`. Pacote
+`artifacts/a2-comparison-03.zip`, SHA-256
+`fc0c5896a32a23944873c296d85256162d52769b33b2d1bbbb56d2b51cb66676`.
+Leitura do ZIP e hashes conferidos; cópia no mesmo host não é backup independente.
+As séries 01/02 e os pilotos permanecem separados, sem reclassificação retroativa.
+
+**A2 encerrado; pausa de reavaliação atingida.** Não repetir a comparação, iniciar B,
+provisionar Azure ou publicar tag/release automaticamente. Próxima decisão: encerrar
+com o recorte local ou autorizar uma extensão delimitada. O protocolo abaixo fica
+preservado como referência da execução concluída.
 
 Antes da primeira repetição, congelar o protocolo efetivo em artefato sanitizado
 com hash, SHA executado e ordem completa. Aplicar o mesmo protocolo às duas
@@ -620,7 +666,7 @@ O protocolo e os dois incrementos estão na seção 7; os invariantes, no DESIGN
 | --- | --- |
 | Kind | Ambiente principal das duas condições A2; laboratório atualmente parado |
 | A1 | Aceite congelado; não incorporar seus pilotos como repetições A2 |
-| A2 | A2-I aceito; comparação A2-II pendente |
+| A2 | A2-I e A2-II aceitos; série 03 completa, pausa atingida |
 | B — Autoescalonamento | Extensão não selecionada |
 | AKS/ACR | Extensão opcional, sem provisionamento, publicação de imagens ou gasto neste ciclo |
 | Assinatura/região/cotas/custo Azure | Reavaliar somente se a extensão for escolhida; consultas não autorizam apply |

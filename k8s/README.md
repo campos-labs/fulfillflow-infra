@@ -356,6 +356,11 @@ Os quatro pilotos A2-I não são repetições da comparação A2-II.
 
 ## A2-II — Comparação por comando único
 
+**Ciclo concluído; comandos abaixo são referência operacional.** A série 03 foi
+conferida com 20/20 tentativas e ambiente parado. Não repetir para este aceite;
+resultados e pausa estão no [RELEASE_PLAN](../RELEASE_PLAN.md). Uma futura execução
+exige decisão, referência e destino próprios, sem sobrescrever as séries existentes.
+
 `scripts/Invoke-A2Comparison.ps1 -SettingsFile <arquivo-local.json> -Mode Check`
 faz a conferência inicial sem iniciar o Kind ou criar o destino de coleta.
 `-Mode Execute` retoma o laboratório existente, congela o protocolo, executa as

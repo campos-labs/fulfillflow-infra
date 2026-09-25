@@ -3,7 +3,7 @@
 Infraestrutura e operação do [FulfillFlow](https://github.com/campos-labs/fulfillflow)
 em Kubernetes, com laboratório Kind e configuração de referência para AKS/ACR.
 
-**Estado: A1 e A2-I concluídos em Kind; comparação A2-II parcial, com sucessora preparada para execução manual.** O laboratório
+**Estado: A1 e A2 concluídos em Kind; comparação de 20 tentativas conferida.** O laboratório
 está parado, com dados e evidências preservados. Escopo, resultados e os dois
 incrementos de entrega estão no [RELEASE_PLAN](RELEASE_PLAN.md).
 
@@ -11,7 +11,7 @@ incrementos de entrega estão no [RELEASE_PLAN](RELEASE_PLAN.md).
 
 Implantar a aplicação congelada com réplicas fixas e verificar a conclusão do fluxo
 assíncrono. A1 detecta e registra; A2 acrescenta restauração automatizada delimitada
-e comparação com acionamento explícito, usando a mesma verificação. Kind será o
+e comparação com acionamento explícito, usando a mesma verificação. Kind foi o
 ambiente da comparação; AKS/ACR e autoescalonamento são extensões opcionais.
 
 ## Referência da aplicação
@@ -94,18 +94,18 @@ quotas, custo, pull ou funcionamento dos volumes.
 ## Limites do escopo atual
 
 - Kind como ambiente principal; verificações AKS/ACR pendentes e fora da entrega A2.
-- Réplicas fixas, sem HPA/KEDA ou Argo CD. A restauração automática A2 foi verificada nos quatro pilotos;
+- Réplicas fixas, sem HPA/KEDA ou Argo CD. A restauração automática A2 foi verificada em pilotos e comparação delimitada;
   os comandos A1 atuais continuam exigindo restauração explícita.
 - PostgreSQL e RabbitMQ persistentes com uma instância cada, sem promessa de HA.
 - Acesso restrito; a aplicação não fornece autenticação de usuários.
 - Aceitação HTTP 202, pod pronto ou fila vazia não comprovam conclusão de negócio.
 - Verificações funcionais delimitadas; campanhas extensas continuam fora do escopo.
 
-A comparação A2-II permanece incompleta após duas séries interrompidas.
-Uma execução nova usa configuração e destino próprios com
-`scripts/Invoke-A2Comparison.ps1`; o executor congela o protocolo antes da coleta,
-conforme o [RELEASE_PLAN](RELEASE_PLAN.md#7-evolução-local--aceite-a1-e-entrega-a2).
-As interfaces A1 e A2 estão descritas em [k8s/README.md](k8s/README.md).
-Os quatro pilotos A2-I confirmaram a política e o encerramento, sem demonstrar
-vantagem comparativa, capacidade ou estabilidade prolongada. As séries parciais A2-II permanecem separadas; diagnóstico, correções e limites
-constam no plano, sem aprovação retroativa de tentativas inconclusivas.
+A série A2-II 03 concluiu 20/20 tentativas, com cinco pares por cenário; as séries
+parciais anteriores permanecem separadas. Resultados, proveniência e limitações
+estão no [RELEASE_PLAN](RELEASE_PLAN.md#7-evolução-local--aceite-a1-e-entrega-a2).
+As interfaces operacionais estão em [k8s/README.md](k8s/README.md).
+
+O ciclo está pausado para reavaliação. Não há nova execução necessária para este
+aceite; AKS/ACR e autoescalonamento dependem de decisão posterior. A comparação
+local não comprova capacidade, estabilidade prolongada ou desempenho na nuvem.
