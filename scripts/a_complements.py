@@ -488,7 +488,8 @@ def execute(
                 flush=True,
             )
             result = one_attempt(config, config_path, folder, case, secret, provenance)
-            row.update(result)
+            # Preserve the complement identity; the underlying fault remains in attempt evidence.
+            row.update({**result, **case})
             if case["scenario"] == "inconclusive":
                 campaign.cleanup(config, folder, secret)
             check(campaign.health(Runtime(config)) == baseline, "BASELINE_NOT_RESTORED")
@@ -550,6 +551,14 @@ def validate_pilot(source: Path | None, config: Config, provenance: dict) -> Non
         and len(summary["attempts"]) == 3
         and all(row["usable"] and row["scenario_passed"] for row in summary["attempts"]),
         "PILOT_NOT_COMPLETE",
+    )
+    check(
+        [
+            {k: row[k] for k in ("number", "scenario", "pair", "condition")}
+            for row in summary["attempts"]
+        ]
+        == order(True),
+        "PILOT_ROWS_DIFFER_FROM_PROTOCOL",
     )
     check(protocol["environment"] == config.identity(), "PILOT_ENVIRONMENT_CHANGED")
     check(

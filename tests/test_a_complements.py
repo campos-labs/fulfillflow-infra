@@ -264,7 +264,10 @@ class ComplementsTests(unittest.TestCase):
             self.root,
             {
                 "complete": True,
-                "attempts": [{"usable": True, "scenario_passed": True} for _ in range(3)],
+                "attempts": [
+                    {**case, "usable": True, "scenario_passed": True}
+                    for case in complements.order(True)
+                ],
             },
         )
         self.addCleanup(self.root.with_suffix(".zip").unlink)
@@ -359,7 +362,7 @@ class ComplementsTests(unittest.TestCase):
                     args[2].mkdir()
                     if failure:
                         raise flow.Failure("UNEXPECTED")
-                    return {"scenario_passed": True}
+                    return {"scenario_passed": True, "scenario": "invalid-pool"}
 
                 attempt = stack.enter_context(
                     patch.object(
@@ -374,6 +377,13 @@ class ComplementsTests(unittest.TestCase):
                 self.assertEqual(result["complete"], not failure)
                 self.assertEqual(len(result["attempts"]), 1 if failure else 3)
                 self.assertEqual(attempt.call_count, 1 if failure else 3)
+                self.assertEqual(
+                    [row["scenario"] for row in result["attempts"]],
+                    [
+                        case["scenario"]
+                        for case in complements.order(True)[: len(result["attempts"])]
+                    ],
+                )
                 self.assertTrue(result["shutdown"]["scenario_passed"])
                 pause.assert_called_once()
 
