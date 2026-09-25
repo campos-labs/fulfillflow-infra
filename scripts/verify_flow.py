@@ -422,6 +422,7 @@ class Verifier:
 
     def tracking(self, inbox_id: str, path: str, shipment_id: str) -> str:
         self.phase = "tracking_observation"
+        observed_event_id = None
         while True:
             record = self.get(path)
             require(
@@ -436,6 +437,7 @@ class Verifier:
             if status == "PROCESSED":
                 require(progress == "COMPLETED")
                 event_id = identifier(record.get("tracking_event_id"))
+                require(observed_event_id is None or event_id == observed_event_id)
                 result = record.get("result")
                 require(isinstance(result, dict))
                 require(result.get("kind") == "applied" and result.get("result") == "APPLIED")
@@ -454,7 +456,14 @@ class Verifier:
                 )
                 return event_id
             require(status == "RECEIVED" and progress in ("QUEUED", "AWAITING_RESULT"))
-            require(record.get("result") is None and record.get("tracking_event_id") is None)
+            require(record.get("result") is None and record.get("completed_at") is None)
+            # The frozen API reads inbox and event separately under READ COMMITTED.
+            # An event ID may become visible before this projection reports completion.
+            pending_id = record.get("tracking_event_id")
+            if pending_id is not None:
+                pending_id = identifier(pending_id)
+                require(observed_event_id is None or pending_id == observed_event_id)
+                observed_event_id = pending_id
             self.evidence.emit("tracking_pending", progress=progress)
             self.pause()
 

@@ -101,10 +101,11 @@ quotas, custo, pull ou funcionamento dos volumes.
 - Aceitação HTTP 202, pod pronto ou fila vazia não comprovam conclusão de negócio.
 - Verificações funcionais delimitadas; campanhas extensas continuam fora do escopo.
 
-Próximo passo: executar manualmente a comparação delimitada A2-II com
+A comparação A2-II permanece incompleta após duas séries interrompidas.
+Uma execução nova usa configuração e destino próprios com
 `scripts/Invoke-A2Comparison.ps1`; o executor congela o protocolo antes da coleta,
 conforme o [RELEASE_PLAN](RELEASE_PLAN.md#7-evolução-local--aceite-a1-e-entrega-a2).
 As interfaces A1 e A2 estão descritas em [k8s/README.md](k8s/README.md).
 Os quatro pilotos A2-I confirmaram a política e o encerramento, sem demonstrar
-vantagem comparativa, capacidade ou estabilidade prolongada. A primeira série A2-II foi interrompida; seus resultados permanecem separados
-da execução sucessora.
+vantagem comparativa, capacidade ou estabilidade prolongada. As séries parciais A2-II permanecem separadas; diagnóstico, correções e limites
+constam no plano, sem aprovação retroativa de tentativas inconclusivas.

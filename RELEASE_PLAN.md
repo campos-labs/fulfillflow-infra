@@ -489,8 +489,31 @@ preservados. Os pilotos não entram na comparação.
 A série 01 teve 348 arquivos conferidos pelos checksums: dez tentativas saudáveis,
 20 fluxos novos concluídos, 20 duplicatas e dez consultas de eventos anteriores.
 Esses resultados são parciais; não completar a tentativa 11 isoladamente nem
-misturar SHAs. Usar configuração local sucessora `artifacts/a2-comparison-02.local.json`
-e destino novo `artifacts/a2-comparison-02`, mantendo os anteriores intactos.
+misturar SHAs. A configuração sucessora `artifacts/a2-comparison-02.local.json`
+foi executada no destino `artifacts/a2-comparison-02`, descrito abaixo.
+
+#### Série parcial 02 e projeção intermediária de Tracking
+
+A série `artifacts/a2-comparison-02`, referência `6ee2093`, encerrou na tentativa
+18 com `ATTEMPT_FAILED`. Os 576 arquivos do manifesto foram conferidos: dez
+tentativas saudáveis e sete `invalid-pool` utilizáveis; cinco pares saudáveis e
+três pares de falha completos. A tentativa 18 restaurou a configuração uma vez,
+mas a observação do evento novo terminou inconclusiva (`SCHEMA_UNEXPECTED`).
+Não houve reclassificação, reposição ou mistura com a série 01.
+
+A resposta preservada mostra `RECEIVED`/`AWAITING_RESULT`, resultado e conclusão
+nulos, com `tracking_event_id` já preenchido. Na aplicação congelada, `get_inbox`
+lê inbox, evento e progresso separadamente sob `READ COMMITTED`: a finalização
+concorrente permite essa projeção intermediária. O verificador exigia ID nulo e
+interrompeu indevidamente a observação. A correção aceita o UUID intermediário,
+continua aguardando o terminal e exige identidade consistente no resultado final;
+ID isolado não comprova conclusão. Aplicação, imagem, prazos e política de
+restauração permanecem iguais. Quatro regressões e 129 testes locais passaram.
+
+Diagnóstico em `artifacts/a2-interruption-review-02`. Conferência posterior do
+evento aceito será somente leitura, separada da medição original. Pilotos da
+correção ficam fora da comparação; qualquer nova série exige destino e SHA
+próprios, sem completar isoladamente as tentativas restantes.
 
 Antes da primeira repetição, congelar o protocolo efetivo em artefato sanitizado
 com hash, SHA executado e ordem completa. Aplicar o mesmo protocolo às duas

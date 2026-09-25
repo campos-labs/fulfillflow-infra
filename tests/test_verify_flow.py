@@ -68,6 +68,7 @@ class PublicApi:
         self.query_status = 200
         self.extra_notification = False
         self.bad_tracking_identity = False
+        self.pending_event_id = None
         self.tracking_code = None
         self.event_id = None
 
@@ -136,7 +137,7 @@ class PublicApi:
                     "carrier_code": self.carrier,
                     "status": status,
                     "progress": progress,
-                    "tracking_event_id": EVENT if state == "PROCESSED" else None,
+                    "tracking_event_id": EVENT if state == "PROCESSED" else self.pending_event_id,
                     "completed_at": STAMP if state == "PROCESSED" else None,
                     "result": {
                         "kind": "applied",
@@ -328,6 +329,50 @@ class FlowTests(unittest.TestCase):
         self.assertFalse(verifier.tracking_completed)
         self.assertEqual(len(api.webhooks), 1)
         self.assertTrue(all(0 < request[4] <= 2 for request in api.requests))
+
+    def test_pending_projection_with_event_id_waits_for_terminal_result(self):
+        # Recorded series-02 attempt 18: READ COMMITTED queries can straddle finalization.
+        api = PublicApi(tracking=["AWAITING_RESULT", "PROCESSED"])
+        api.pending_event_id = EVENT
+        verifier, api, clock = self.verifier(api)
+        verifier.run()
+        self.assertGreater(clock.elapsed, 0)
+        self.assertTrue(verifier.tracking_completed and verifier.duplicate_verified)
+        self.assertEqual(len(api.webhooks), 2)
+        kinds = [item["phase"] for item in self.records()]
+        self.assertLess(kinds.index("tracking_pending"), kinds.index("tracking_completed"))
+
+    def test_pending_event_id_alone_never_proves_completion(self):
+        api = PublicApi(tracking=["AWAITING_RESULT"])
+        api.pending_event_id = EVENT
+        verifier, api, _ = self.verifier(api, deadline_seconds=2)
+        with self.assertRaises(flow.Failure) as caught:
+            verifier.run()
+        self.assertEqual(caught.exception.code, "OBSERVATION_DEADLINE")
+        self.assertTrue(verifier.accepted)
+        self.assertFalse(verifier.tracking_completed or verifier.duplicate_verified)
+        self.assertEqual(len(api.webhooks), 1)
+
+    def test_malformed_pending_event_id_stops_without_resend(self):
+        api = PublicApi(tracking=["AWAITING_RESULT", "PROCESSED"])
+        api.pending_event_id = "not-a-uuid"
+        verifier, api, _ = self.verifier(api)
+        with self.assertRaises(flow.Failure) as caught:
+            verifier.run()
+        self.assertEqual(caught.exception.code, "SCHEMA_UNEXPECTED")
+        self.assertFalse(verifier.tracking_completed)
+        self.assertEqual(len(api.webhooks), 1)
+
+    def test_terminal_event_id_must_match_observed_pending_identity(self):
+        api = PublicApi(tracking=["AWAITING_RESULT", "PROCESSED"])
+        api.pending_event_id = REQUEST
+        verifier, api, clock = self.verifier(api)
+        with self.assertRaises(flow.Failure) as caught:
+            verifier.run()
+        self.assertEqual(caught.exception.code, "SCHEMA_UNEXPECTED")
+        self.assertGreater(clock.elapsed, 0)
+        self.assertFalse(verifier.tracking_completed)
+        self.assertEqual(len(api.webhooks), 1)
 
     def test_query_503_preserves_acceptance_and_stops_on_first_failure(self):
         api = PublicApi()
