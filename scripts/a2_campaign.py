@@ -361,11 +361,11 @@ def power_identity() -> dict:
     }
 
 
-def export(root: Path, summary: dict) -> None:
+def export(root: Path, summary: dict, *, csv_fields: list[str] | None = None) -> None:
     write_json(root / "summary.json", summary)
     rows = summary["attempts"]
     with (root / "attempts.csv").open("x", encoding="utf-8", newline="") as stream:
-        fields = [
+        fields = csv_fields or [
             "number",
             "scenario",
             "pair",

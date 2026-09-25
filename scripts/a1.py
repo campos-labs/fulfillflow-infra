@@ -118,7 +118,9 @@ def stable_pod(before: dict, after: dict) -> None:
     )
 
 
-def attempt(runtime: Runtime, output: Path, scenario: str, secret: str) -> dict:
+def attempt(
+    runtime: Runtime, output: Path, scenario: str, secret: str, *, flow_verifier=None
+) -> dict:
     before = runtime.inventory()
     check(all(v["replicas"] == 1 for v in before.values()), "RUNTIME_NOT_STARTED")
     deployment = runtime.get("deployment/" + TARGET)
@@ -164,7 +166,7 @@ def attempt(runtime: Runtime, output: Path, scenario: str, secret: str) -> dict:
             "additional_functional_information": "not_demonstrated",
         }
     else:
-        result = a1_flow.verify(runtime, output / "flow", secret)
+        result = (flow_verifier or a1_flow.verify)(runtime, output / "flow", secret)
         after = runtime.snapshot()
         stable_pod(record, after)
         result = {

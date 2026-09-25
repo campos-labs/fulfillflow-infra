@@ -5,7 +5,8 @@ em Kubernetes, com laboratório Kind e configuração de referência para AKS/AC
 
 **Estado: A1 e A2 concluídos em Kind; comparação de 20 tentativas conferida.** O laboratório
 está parado, com dados e evidências preservados. Escopo, resultados e os dois
-incrementos de entrega estão no [RELEASE_PLAN](RELEASE_PLAN.md).
+incrementos de entrega estão no [RELEASE_PLAN](RELEASE_PLAN.md). Os complementos
+de pendência e observação inconclusiva estão em preparação, com protocolo separado.
 
 ## Objetivo
 
@@ -106,6 +107,6 @@ parciais anteriores permanecem separadas. Resultados, proveniência e limitaçõ
 estão no [RELEASE_PLAN](RELEASE_PLAN.md#7-evolução-local--aceite-a1-e-entrega-a2).
 As interfaces operacionais estão em [k8s/README.md](k8s/README.md).
 
-O ciclo está pausado para reavaliação. Não há nova execução necessária para este
-aceite; AKS/ACR e autoescalonamento dependem de decisão posterior. A comparação
+A série concluída permanece preservada. Os complementos autorizados terão nova
+pausa após o aceite; AKS/ACR e autoescalonamento dependem de decisão posterior. A comparação
 local não comprova capacidade, estabilidade prolongada ou desempenho na nuvem.

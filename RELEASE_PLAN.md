@@ -2,7 +2,7 @@
 
 ## 1. Objetivo, estado e limites
 
-**Estado atual: A1, A2-I e A2-II concluídos em Kind; pausa para reavaliação.**
+**Estado atual: A1/A2 concluídos; complementos A autorizados, em preparação.**
 O laboratório está parado, com dados e evidências preservados. Os quatro pilotos
 A2-I não são repetições da comparação e não demonstram vantagem entre condições.
 
@@ -18,6 +18,7 @@ bloquear o encerramento. Os incrementos II–IV de Azure abaixo permanecem reser
 | L1–L4 e A1 | Aceites locais concluídos; laboratório parado e dados preservados |
 | A2-I — Política de restauração e piloto | Concluído; quatro pilotos e validações aprovados |
 | A2-II — Comparação delimitada e encerramento | Série 03 completa: 20/20; encerramento conferido e pausa atingida |
+| Complementos A — pendência e inconclusão | Executor e testes implementados; pilotos integrados pendentes |
 | II–IV — Azure | Não iniciados; opcionais, fora do ciclo atual |
 | B — Autoescalonamento | Não selecionado; fora do ciclo atual |
 
@@ -631,6 +632,60 @@ necessidade de outro cenário/workload, custo/permissão novo, risco aos dados,
 restauração malsucedida, bloqueio de ambiente ou coleta interrompida que exija nova
 janela. Ausência de benefício da automação é resultado válido e não pede reparo.
 
+## 7.1. Complementos A — um incremento com nova pausa
+
+Decisão de 25/09/2026: implementar os dois cenários do DESIGN §8.6, sem repetir,
+misturar ou reclassificar a série A2-03. Pergunta orientadora: **quais são os
+benefícios e limites da recuperação automatizada de implantações em Kubernetes?**
+Objetivos secundários: avaliar acionamento/tempo até conclusão do trabalho pendente
+e informação acrescentada pela observação funcional em relação à convergência da
+revisão. O recorte concreto é uma aplicação congelada, um workload e uma falha de
+configuração em Kind; não generalizar para qualquer implantação ou organização.
+
+### Protocolo fixado antes da execução
+
+| Item | Definição |
+| --- | --- |
+| Pilotos | Uma pendência por condição e uma inconclusão automática, separados da avaliação |
+| Avaliação | Três pares explicit/auto de pendência (seis tentativas) e três inconclusões; nove tentativas, não nove eventos independentes por lote |
+| Ordem | Pendência explicit/auto, auto/explicit, explicit/auto; depois três inconclusões |
+| Evento pendente | Um evento novo por tentativa; 202 confirmado, Tracking/Order concluídos, publicação SENT e processamento NOT_RECEIVED antes de liberar a política |
+| Sincronização | Preparação comum; detecção–autorização reportada separadamente. Nenhum atraso artificial exclusivo de uma condição |
+| Observação | Dois observadores paralelos iniciados antes da autorização: convergência da revisão saudável e fluxo GET do evento previamente aceito |
+| Prazos | Mesmos valores A2: 90 s por rollout/fluxo, polling 1 s, até 600 s por tentativa; janela total de 45 min, sem reposições |
+| Inconclusão | Uma resposta 503 gerada no transporte do observador ao consultar Notifications; restante do fluxo real; não derrubar serviço nem combinar falhas |
+| Abstenção | Política recusa recuperação; zero intenção/envio de restauração, UID/geração/template/referências preservados; GET posterior conclui os mesmos IDs |
+| Unidade | Tentativa/ambiente, com estado acumulado declarado; eventos de smoke e duplicatas intencionais não aumentam o número de repetições |
+
+Registrar contagens de aceitos, concluídos no prazo, pendentes/resultado desconhecido,
+efeitos únicos, acionamentos e abstenções por cenário. Preservar erros/timeout como
+tais. Registrar tempos brutos e intervalos de observação; n pequeno, sem promessa de
+significância ou vantagem. Publicar resultados por cenário/condição; nunca juntar
+com as vinte tentativas anteriores. Não escolher a pergunta final em função de um
+resultado favorável. Os dados também podem mostrar sobreposição entre os sinais.
+
+### Execução e aceite
+
+1. Reutilizar guardas, journal, restauração e contratos HTTP existentes; aplicação,
+   imagens, probes, limites e dependências permanecem congelados.
+2. Testar barreira de preparação, decisão sem evidência, retomada GET, preservação
+   de configuração, falhas dos observadores e limpeza. Validar PowerShell e CI.
+3. Executar os três pilotos reais em destino novo. Se houver falha inesperada,
+   preservar a tentativa e diagnosticar antes de qualquer sucessora; não repor.
+4. Somente depois de pilotos aprovados, liberar comando manual para nove tentativas
+   quando a janela for longa. Fixar SHA/protocolo; nenhum apply Azure ou build da aplicação.
+5. Conferir artefatos/hash e leitura, configuração final e pausa dos recursos próprios.
+   Consolidar resultados e limites e pausar novamente; sem B, AKS, tag ou release.
+
+**Estado:** executor e launcher implementados; 144 testes locais aprovados,
+Ruff/formatação, nove renderizações/schemas e planos Terraform simulados aprovados.
+Pilotos integrados e CI do novo SHA ainda pendentes; não há nova execução real
+demonstrada nesta seção. Na primeira passagem da suíte faltou indicar o caminho
+do kubectl já instalado; corrigido o ambiente, sem alterar manifests ou testes.
+A retomada durável já foi verificada na aplicação: a contribuição deste complemento
+é vinculá-la à implantação defeituosa e à política operacional, não atribuir à
+infraestrutura a persistência ou a idempotência implementadas pelos serviços.
+
 ## 8. Alternativa B — Autoescalonamento e processamento
 
 **Proposta não aprovada.** Avaliar como uma política de autoescalonamento afeta
@@ -666,7 +721,7 @@ O protocolo e os dois incrementos estão na seção 7; os invariantes, no DESIGN
 | --- | --- |
 | Kind | Ambiente principal das duas condições A2; laboratório atualmente parado |
 | A1 | Aceite congelado; não incorporar seus pilotos como repetições A2 |
-| A2 | A2-I e A2-II aceitos; série 03 completa, pausa atingida |
+| A2 | A2-I e A2-II aceitos; série 03 preservada; complementos autorizados na seção 7.1 |
 | B — Autoescalonamento | Extensão não selecionada |
 | AKS/ACR | Extensão opcional, sem provisionamento, publicação de imagens ou gasto neste ciclo |
 | Assinatura/região/cotas/custo Azure | Reavaliar somente se a extensão for escolhida; consultas não autorizam apply |

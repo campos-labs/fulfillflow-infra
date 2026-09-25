@@ -399,3 +399,32 @@ encerramento. Pares incompletos não entram nas diferenças; falhas não viram t
 de sucesso. Saída zero exige as 20 tentativas e encerramento aprovado.
 Se houver erro, preservar tudo e não repetir o comando ou trocar o destino para
 completar a quota. Consultar o diagnóstico antes de qualquer nova execução.
+
+## Complementos A — pendência e observação inconclusiva
+
+Protocolo e estado: RELEASE_PLAN §7.1; contratos: DESIGN §8.6. O executor
+`scripts/Invoke-AComplements.ps1` usa os mesmos campos locais do launcher A2
+(`python`, `config`, `output`, `secret_file`, `expected_sha`). `output` deve ser novo.
+Para avaliação, acrescentar `pilot_source`, apontando ao pacote completo dos três
+pilotos com checksums e a mesma implementação dos scripts. Não versionar settings,
+segredos ou caminhos locais.
+
+```powershell
+# Conferência sem mutação; caminhos de executáveis devem ser verificados.
+pwsh -NoProfile -File scripts/Invoke-AComplements.ps1 -SettingsFile <settings-local.json> -Mode Check -Stage pilot
+# Três pilotos; fora das nove tentativas de avaliação.
+pwsh -NoProfile -File scripts/Invoke-AComplements.ps1 -SettingsFile <settings-local.json> -Mode Execute -Stage pilot
+# Somente após pilotos e CI aprovados; outro settings/output, contendo pilot_source.
+pwsh -NoProfile -File scripts/Invoke-AComplements.ps1 -SettingsFile <settings-local.json> -Mode Execute -Stage evaluation
+```
+
+O launcher retoma somente o Kind identificado, exige AC no Windows, ausência de
+containers concorrentes, referência congelada e diretório novo. Para na primeira
+falha inesperada, preserva dados e tenta pausar o laboratório. Não há retry ou
+reposição. Se uma tentativa falhar, consultar `summary.json` e o journal antes de
+retomar: pausa de recursos não equivale a restauração de configuração.
+
+Os tempos de sinais paralelos incluem consultas/polling; o CSV dos complementos
+não integra as medianas A2 anteriores. A falha 503 é injeção identificada no
+transporte do observador, não indisponibilidade real da API. A abstenção é verificada
+antes da limpeza explícita. A retomada dos eventos anteriores usa apenas GET.

@@ -227,16 +227,40 @@ def request(source: Path, config: Config, actor: str) -> dict:
     return {"scenario_passed": True, "request_recorded": True, "actor": actor}
 
 
-def run(runtime: ObservedRuntime, output: Path, condition: str, scenario: str, secret: str) -> dict:
+def run(
+    runtime: ObservedRuntime,
+    output: Path,
+    condition: str,
+    scenario: str,
+    secret: str,
+    *,
+    prepare_recovery=None,
+    flow_verifier=None,
+) -> dict:
     journal = runtime.journal
     write_json(output / "references.json", {"metadata": references(runtime)})
-    result = a1.attempt(runtime, output, scenario, secret)
+    result = a1.attempt(runtime, output, scenario, secret, flow_verifier=flow_verifier)
     write_json(output / "attempt-result.json", result)
     journal.emit("candidate_decided", verdict=result["deployment_verdict"])
     if result["deployment_verdict"] == "approved":
         journal.emit("no_automatic_restore")
         return {**result, "policy_action": "none", "automatic_restore": False}
     check(eligible(output, runtime.config), "NO_DEFINITIVE_STARTUP_FAILURE")
+    if prepare_recovery is not None:
+        prepare_recovery(runtime, output, secret)
+        # Preparation may take time: revalidate the candidate before authorizing any action.
+        validate_source(runtime, output)
+        current = runtime.snapshot()
+        original = read(output / "candidate.json")
+        check(
+            current["deployment_uid"] == original["deployment_uid"]
+            and current["template_hash"] == original["template_hash"]
+            and [p["uid"] for p in current["pods"]] == [p["uid"] for p in original["pods"]]
+            and candidate_crashed(current, runtime.config),
+            "CANDIDATE_CHANGED_DURING_PREPARATION",
+        )
+        check(eligible(output, runtime.config), "NO_DEFINITIVE_STARTUP_FAILURE")
+        journal.emit("policy_authorized")
     if condition == "explicit":
         write_json(output / "awaiting-request.json", {"attempt_id": result["attempt_id"]})
         journal.emit("awaiting_explicit_request")

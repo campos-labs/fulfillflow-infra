@@ -392,8 +392,8 @@ ou secrets. Não fazer rearme de BLOCKED, reentrega de webhook ou edição de es
 Só declarar recuperação funcional após comprovar identidade saudável e um evento
 novo concluído em Tracking/Order e Notifications SIMULATED, com duplicata sem novo
 efeito. Eventos previamente admitidos, quando existirem, são observados por leitura
-e classificados separadamente. Na falha de startup escolhida, nenhum evento será
-oferecido à candidata defeituosa: não há ensaio de recuperação de trabalho pendente.
+e classificados separadamente. Na campanha A2 original, nenhum evento foi oferecido
+durante a falha de startup; o complemento da seção 8.6 tem protocolo próprio.
 
 Separar veredito da implantação candidata, resultado da política, recuperação e
 julgamento do cenário. Uma restauração bem-sucedida não aprova a implantação
@@ -407,6 +407,48 @@ do acionamento explícito; execução por agente não mede tempo de reação hum
 Não acrescentar espera artificial à condição explícita. Métricas, ordem e quantidade
 de repetições pertencem ao protocolo no RELEASE_PLAN.
 
+### 8.6. Complementos A — pendência e observação inconclusiva
+
+Preservar a série A2 concluída. Dois cenários separados usam a mesma aplicação,
+workload, falha de startup, política e guarda de identidade. Não combinar falha de
+implantação com falha de consulta na mesma tentativa.
+
+**Pendência:** após confirmar a candidata `DB_POOL_SIZE=0`, admitir um evento novo,
+confirmar Tracking/Order e observar publicação `SENT` com Notifications ainda
+`NOT_RECEIVED`. Isso evidencia trabalho aguardando consumo; não demonstra que o
+worker defeituoso recebeu/processou a mensagem nem persistência após ACK nele.
+Somente então liberar o acionamento da restauração, com preparação comum às duas
+condições. Registrar separadamente detecção, preparação, autorização e acionamento.
+O acionamento explícito continua sendo comando separado por script, sem espera
+artificial e sem representar reação humana. Revalidar identidade antes da mutação.
+
+Observar o evento anterior exclusivamente por GET, sem reentrega ou rearme. A
+infraestrutura restaura a configuração; a aplicação durável retoma o trabalho; o
+verificador confirma resultado e efeito único. O evento novo de smoke da restauração
+continua identificado separadamente e não substitui a verificação da pendência.
+
+Desde antes da autorização, observar em paralelo o workload e o evento pendente.
+Usar relógio monotônico do mesmo processo, UTC, início/fim das consultas e polling
+declarado. O sinal de infraestrutura é a convergência da revisão saudável (réplicas,
+geração observada, ausência da antiga e container pronto), com UID do pod; não
+rotulá-lo como horário exato da transição Kubernetes `Ready`. Não somar atrasos de
+consultas sequenciais como se fossem diferença intrínseca entre prontidão e negócio.
+O consumo AMQP não é interrompido automaticamente por readiness falsa. Diferenças
+observadas entre sinais não demonstram inadequação das probes.
+
+**Inconclusão:** candidata saudável, evento com aceitação confirmada e uma falha
+503 injetada no transporte do observador para consulta de Notifications. Identificar
+a injeção explicitamente; serviços, armazenamento e Kubernetes são reais, mas ela
+não equivale a uma queda real da API. A política existente deve recusar restauração.
+Comprovar ausência de intenção/envio de patch de restauração e preservação de UID,
+geração, template e referências de configuração; não confiar apenas no veredito.
+Retirar a injeção e retomar GET sobre os mesmos IDs. Limpeza explícita da candidata
+marcada ocorre depois dessas asserções, fora do intervalo avaliado.
+
+Falha inesperada interrompe a sequência, preservando estado e evidências para
+recuperação explícita. Nenhuma reposição automática ou alteração de critério após
+observar resultados. Prazos, ordem e denominadores ficam no RELEASE_PLAN.
+
 ## 9. Limites e evolução
 
 O aceite deve identificar o ambiente efetivamente exercitado: Kind ou AKS.
@@ -414,8 +456,8 @@ O aceite local não encerra as verificações específicas da nuvem. Nenhum dos 
 marcos, isoladamente, demonstra HA, SLA de produção, capacidade, estabilidade
 prolongada ou solução dos incidentes históricos da aplicação/ferramenta de medição.
 
-A2 permite somente a recuperação automatizada da seção 8.5 e sua comparação
-delimitada em Kind. HPA/KEDA, cluster autoscaler, Argo CD, canary/blue-green,
+A2 e seus complementos permitem somente a recuperação das seções 8.5–8.6 e
+sua avaliação delimitada em Kind. HPA/KEDA, cluster autoscaler, Argo CD, canary/blue-green,
 campanhas de capacidade e novos provedores de entrega continuam fora do escopo.
 Autoescalonamento (B) e implantação Azure são extensões opcionais posteriores;
 não são condições para concluir A2.
