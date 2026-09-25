@@ -510,10 +510,26 @@ continua aguardando o terminal e exige identidade consistente no resultado final
 ID isolado não comprova conclusão. Aplicação, imagem, prazos e política de
 restauração permanecem iguais. Quatro regressões e 129 testes locais passaram.
 
-Diagnóstico em `artifacts/a2-interruption-review-02`. Conferência posterior do
-evento aceito será somente leitura, separada da medição original. Pilotos da
-correção ficam fora da comparação; qualquer nova série exige destino e SHA
-próprios, sem completar isoladamente as tentativas restantes.
+Diagnóstico em `artifacts/a2-interruption-review-02`. A consulta posterior,
+somente leitura, confirmou Tracking concluído, Order `FULFILLED` e Notification
+`SIMULATED` para o mesmo evento. Nenhum webhook foi reenviado. O horário de
+conclusão original permanece desconhecido; a consulta posterior não aprova a
+tentativa interrompida nem recupera sua duração.
+
+Dois pilotos em `artifacts/a2-pilot-03`, no SHA
+`e787ce548e69884237db1cdc95d42ebf25bcaa25`, passaram com
+[CI Linux/Windows aprovada](https://github.com/campos-labs/fulfillflow-infra/actions/runs/36087898372).
+Cada condição restaurou uma vez e verificou um novo fluxo e sua duplicata.
+A base original foi conferida; workloads/nó parados, dados preservados. Pilotos
+e consulta posterior ficam fora da comparação. Arquivos originais novamente
+conferidos sem mudança; diagnóstico e pilotos exportados com hashes e leitura
+verificada. As cópias permanecem no mesmo host.
+
+Uma eventual série completa usa `artifacts/a2-comparison-03.local.json`, SHA final
+limpo com CI aprovada e destino novo `artifacts/a2-comparison-03`. Não completar
+isoladamente as tentativas restantes, misturar séries ou iniciar automaticamente
+rodadas para obter a quota. O encerramento com resultados parciais permanece
+possível, com denominadores e exclusões explícitos.
 
 Antes da primeira repetição, congelar o protocolo efetivo em artefato sanitizado
 com hash, SHA executado e ordem completa. Aplicar o mesmo protocolo às duas
