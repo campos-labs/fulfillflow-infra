@@ -3,11 +3,10 @@
 Infraestrutura e operação do [FulfillFlow](https://github.com/campos-labs/fulfillflow)
 em Kubernetes, com laboratório Kind e configuração de referência para AKS/ACR.
 
-**Estado: A1 e A2 concluídos em Kind; comparação de 20 tentativas conferida.** O laboratório
-está parado, com dados e evidências preservados. Escopo, resultados e os dois
-incrementos de entrega estão no [RELEASE_PLAN](RELEASE_PLAN.md). Os complementos
-de pendência e observação inconclusiva têm três pilotos aprovados e protocolo
-separado; a avaliação de nove tentativas permanece pendente.
+**Estado: A1/A2 e complementos concluídos em Kind; pausa de reavaliação atingida.**
+A comparação de 20 tentativas e a avaliação complementar de nove tentativas foram
+conferidas separadamente. O laboratório está parado, com dados e evidências
+preservados. Escopo, resultados e limites estão no [RELEASE_PLAN](RELEASE_PLAN.md).
 
 ## Objetivo
 
@@ -108,6 +107,7 @@ parciais anteriores permanecem separadas. Resultados, proveniência e limitaçõ
 estão no [RELEASE_PLAN](RELEASE_PLAN.md#7-evolução-local--aceite-a1-e-entrega-a2).
 As interfaces operacionais estão em [k8s/README.md](k8s/README.md).
 
-A série concluída permanece preservada. Os complementos autorizados terão nova
-pausa após o aceite; AKS/ACR e autoescalonamento dependem de decisão posterior. A comparação
-local não comprova capacidade, estabilidade prolongada ou desempenho na nuvem.
+As séries concluídas permanecem preservadas separadamente. A retomada de trabalho
+pendente e a abstenção diante de observação inconclusiva foram verificadas no
+protocolo dos complementos. AKS/ACR e autoescalonamento dependem de decisão posterior;
+os resultados locais não comprovam capacidade, estabilidade prolongada ou desempenho na nuvem.

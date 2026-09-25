@@ -2,7 +2,7 @@
 
 ## 1. Objetivo, estado e limites
 
-**Estado atual: A1/A2 concluídos; complementos A implementados e pilotos aprovados.**
+**Estado atual: A1/A2 e complementos A concluídos; pausa de reavaliação atingida.**
 O laboratório está parado, com dados e evidências preservados. Os quatro pilotos
 A2-I não são repetições da comparação e não demonstram vantagem entre condições.
 
@@ -18,7 +18,7 @@ bloquear o encerramento. Os incrementos II–IV de Azure abaixo permanecem reser
 | L1–L4 e A1 | Aceites locais concluídos; laboratório parado e dados preservados |
 | A2-I — Política de restauração e piloto | Concluído; quatro pilotos e validações aprovados |
 | A2-II — Comparação delimitada e encerramento | Série 03 completa: 20/20; encerramento conferido e pausa atingida |
-| Complementos A — pendência e inconclusão | Três pilotos do pacote 02 aprovados; avaliação de nove tentativas ainda não executada |
+| Complementos A — pendência e inconclusão | Avaliação 01 completa: 9/9; registros conferidos; pilotos separados; pausa atingida |
 | II–IV — Azure | Não iniciados; opcionais, fora do ciclo atual |
 | B — Autoescalonamento | Não selecionado; fora do ciclo atual |
 
@@ -706,11 +706,60 @@ herdava a identificação `invalid-pool` do mecanismo A2 em vez de `pending`.
 A correção foi testada antes do pacote sucessor, sem mudar critérios ou reescrever
 os originais. Pilotos não entram nos denominadores da avaliação.
 
-**Próximo passo:** avaliação manual de nove tentativas em destino novo, com o
-mesmo código dos pilotos, protocolo fixado e CI do SHA de execução aprovada. O
-launcher confere o pacote de pilotos e recusa código divergente, sobrescrita ou
-reposição automática. Nova pausa após a conferência da avaliação; B/AKS permanecem
-fora do incremento. A avaliação ainda não foi executada.
+### Avaliação 01 — aceite e pausa em 25/09/2026
+
+Nove tentativas concluídas sem reposição em `artifacts/a-complements-evaluation-01/`,
+491,265 s incluindo retomada e encerramento. Referência executada:
+`f7a6111bffd2e2ce736a1560dbd957dadb6cb806`, com
+[CI aprovada nesse SHA](https://github.com/campos-labs/fulfillflow-infra/actions/runs/36195418341).
+Aplicação e imagem preservadas conforme `protocol.json`; scripts iguais aos pilotos 02.
+
+| Cenário | Resultado observado |
+| --- | --- |
+| Pendência / explicit | 3/3 eventos publicados e NOT_RECEIVED antes da autorização; conclusão dos mesmos IDs após restauração, retomada somente GET e efeito único |
+| Pendência / auto | 3/3 com a mesma preparação e conclusão; uma restauração por tentativa |
+| Inconclusão / auto | 3/3 respostas 503 injetadas no observador; zero intenção/envio de restauração durante a política, configuração preservada e consulta posterior dos mesmos IDs aprovada |
+
+Nove smokes adicionais com duplicatas intencionais passaram no encerramento das
+respectivas tentativas; não aumentam a amostra. A limpeza explícita das candidatas
+saudáveis ocorreu depois da abstenção, fora da janela de decisão da política.
+
+Medianas descritivas dos três pares de pendência; tempos em segundos:
+
+| Intervalo observado | Explicit por script | Auto |
+| --- | ---: | ---: |
+| Autorização da política → solicitação de restauração | 1,016 | 0,016 |
+| Solicitação → primeira observação de SIMULATED | 3,813 | 3,765 |
+| Autorização → primeira observação de SIMULATED | 4,828 | 3,781 |
+
+Diferenças pareadas auto menos explicit no último intervalo: -1,078, -1,031 e
+-1,078 s. O ganho observado concentra-se no acionamento do subprocesso com polling;
+não mede reação humana. A diferença após solicitação é pequena frente ao polling
+de 1 s e não sustenta processamento mais rápido ou significância estatística.
+
+Nos seis casos, SIMULATED foi observado entre 14,172 e 15,594 s antes da
+convergência completa da revisão saudável (mediana de 15,406 s). Os observadores
+paralelos começaram antes da autorização e os tempos foram conciliados ao journal.
+Convergência inclui revisão, imagem, réplicas e readiness; não é o instante exato
+de transição de Pod Ready. Os sinais respondem a condições diferentes; não foi
+isolada a causa do intervalo, nem demonstrada inadequação das probes. O campo
+herdado `additional_functional_information=not_demonstrated` refere-se à detecção
+da falha de startup, já feita por diagnóstico; os sinais paralelos são adicionais.
+Não comparar diretamente estes tempos com a observação sequencial da série A2-03.
+
+Conferência: 379 arquivos do manifesto, conteúdo do ZIP, 123 registros encadeados,
+proveniência, ordem, retomadas GET, efeitos únicos e tempos derivados aprovados.
+SHA-256 do ZIP: `19317e812794fd0b117836fca93f61d29853ed0d9f4d13ed1b4a5b3d6bbfedda`.
+Base final igual à inicial; workloads pausados, nó confirmado parado e dados
+preservados. Resumos em `summary.json`/`attempts.csv`; conferência derivada em
+`artifacts/a-complements-evaluation-review-01/review.json`. Cópias no mesmo host
+não comprovam backup independente.
+
+**Incremento encerrado; nova pausa atingida.** Preservar separadamente A2-03,
+pilotos e avaliação dos complementos. Não repetir campanhas, abrir B, implantar
+AKS/ACR ou publicar tag/release automaticamente. Resultados sustentam o aceite
+funcional do protocolo delimitado; não estimam confiabilidade em produção,
+capacidade ou estabilidade prolongada.
 
 A retomada durável já foi verificada na aplicação: a contribuição deste complemento
 é vinculá-la à implantação defeituosa e à política operacional, não atribuir à
@@ -751,7 +800,7 @@ O protocolo e os dois incrementos estão na seção 7; os invariantes, no DESIGN
 | --- | --- |
 | Kind | Ambiente principal das duas condições A2; laboratório atualmente parado |
 | A1 | Aceite congelado; não incorporar seus pilotos como repetições A2 |
-| A2 | A2-I e A2-II aceitos; série 03 preservada; complementos autorizados na seção 7.1 |
+| A2 | A2-I, A2-II e complementos aceitos; série 03 e avaliação 01 preservadas separadamente; pausa atingida |
 | B — Autoescalonamento | Extensão não selecionada |
 | AKS/ACR | Extensão opcional, sem provisionamento, publicação de imagens ou gasto neste ciclo |
 | Assinatura/região/cotas/custo Azure | Reavaliar somente se a extensão for escolhida; consultas não autorizam apply |

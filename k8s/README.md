@@ -402,6 +402,10 @@ completar a quota. Consultar o diagnóstico antes de qualquer nova execução.
 
 ## Complementos A — pendência e observação inconclusiva
 
+**Ciclo encerrado:** avaliação 01 conferida, 9/9 tentativas; laboratório parado.
+Os comandos abaixo documentam a interface. Não repetir a série concluída;
+nova execução depende de protocolo/destino próprios e decisão após a pausa.
+
 Protocolo e estado: RELEASE_PLAN §7.1; contratos: DESIGN §8.6. O executor
 `scripts/Invoke-AComplements.ps1` usa os mesmos campos locais do launcher A2
 (`python`, `config`, `output`, `secret_file`, `expected_sha`). `output` deve ser novo.
