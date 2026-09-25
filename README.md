@@ -3,7 +3,7 @@
 Infraestrutura e operação do [FulfillFlow](https://github.com/campos-labs/fulfillflow)
 em Kubernetes, com laboratório Kind e configuração de referência para AKS/ACR.
 
-**Estado: A1 e A2-I concluídos em Kind; comparação A2-II pendente.** O laboratório
+**Estado: A1 e A2-I concluídos em Kind; comparação A2-II parcial, com sucessora preparada para execução manual.** O laboratório
 está parado, com dados e evidências preservados. Escopo, resultados e os dois
 incrementos de entrega estão no [RELEASE_PLAN](RELEASE_PLAN.md).
 
@@ -106,5 +106,5 @@ Próximo passo: executar manualmente a comparação delimitada A2-II com
 conforme o [RELEASE_PLAN](RELEASE_PLAN.md#7-evolução-local--aceite-a1-e-entrega-a2).
 As interfaces A1 e A2 estão descritas em [k8s/README.md](k8s/README.md).
 Os quatro pilotos A2-I confirmaram a política e o encerramento, sem demonstrar
-vantagem comparativa, capacidade ou estabilidade prolongada. As medições A2-II
-ainda não foram realizadas.
+vantagem comparativa, capacidade ou estabilidade prolongada. A primeira série A2-II foi interrompida; seus resultados permanecem separados
+da execução sucessora.

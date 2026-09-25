@@ -2,7 +2,7 @@
 
 ## 1. Objetivo, estado e limites
 
-**Estado atual: A1 e A2-I concluídos em Kind; comparação A2-II pendente.**
+**Estado atual: A1 e A2-I concluídos em Kind; comparação A2-II parcial.**
 O laboratório está parado, com dados e evidências preservados. Os quatro pilotos
 A2-I não são repetições da comparação e não demonstram vantagem entre condições.
 
@@ -17,7 +17,7 @@ bloquear o encerramento. Os incrementos II–IV de Azure abaixo permanecem reser
 | Base documental e validação estática | Concluídas; plano A2 atualizado |
 | L1–L4 e A1 | Aceites locais concluídos; laboratório parado e dados preservados |
 | A2-I — Política de restauração e piloto | Concluído; quatro pilotos e validações aprovados |
-| A2-II — Comparação delimitada e encerramento | Executor preparado para execução manual; coleta não iniciada |
+| A2-II — Comparação delimitada e encerramento | Série 01 parcial; sucessora preparada para execução manual |
 | II–IV — Azure | Não iniciados; opcionais, fora do ciclo atual |
 | B — Autoescalonamento | Não selecionado; fora do ciclo atual |
 
@@ -436,13 +436,13 @@ leitura e hashes conferidos. SHA-256 do ZIP:
 Configuração privada/kubeconfig e valores de secrets não integram a exportação.
 A cópia permanece no mesmo host e não comprova backup independente.
 
-**A2-I aceito.** Nenhuma repetição A2-II foi iniciada. Os quatro pilotos não
+**A2-I aceito.** Naquele aceite, nenhuma repetição A2-II havia sido iniciada. Os quatro pilotos não
 sustentam superioridade entre condições, capacidade ou estabilidade prolongada.
 Próxima etapa: congelar a ordem e o protocolo sanitizado antes da comparação abaixo.
 
 ### A2-II — Comparação delimitada e encerramento
 
-**Executor preparado; coleta não iniciada.** `Invoke-A2Comparison.ps1` fornece
+**Primeira série interrompida; correção e pilotos sucessores aprovados.** `Invoke-A2Comparison.ps1` fornece
 conferência sem mutação e execução manual única; parâmetros e encerramento estão
 no guia k8s. Reutiliza a política A2-I, com lock durante toda a janela, referência
 limpa conferida e ordem congelada antes da primeira tentativa. Vinte testes novos
@@ -478,8 +478,19 @@ bloqueando a política. Não há reaplicação da candidata ou reenvio de evento
 A espera integra a detecção nas duas condições e consta no protocolo sucessor.
 
 O template saudável salvo foi restaurado com réplicas zero, sem eventos de negócio.
-Validar as duas condições de falha em pilotos sucessores antes de liberar uma série
-nova completa; não completar a tentativa 11 isoladamente ou misturar SHAs.
+Dois pilotos sucessores (`artifacts/a2-pilot-02`) passaram no SHA
+`69deab7df1f62a863f13bddfca2beda5f1d4dab8`, com
+[CI Linux/Windows aprovada](https://github.com/campos-labs/fulfillflow-infra/actions/runs/36082397857)
+e 125 testes locais. Ambos observaram log vazio inicialmente, confirmaram o
+diagnóstico na leitura seguinte e restauraram uma única vez; dois novos fluxos e
+duplicatas passaram. A base original foi conferida, depois pausada com dados
+preservados. Os pilotos não entram na comparação.
+
+A série 01 teve 348 arquivos conferidos pelos checksums: dez tentativas saudáveis,
+20 fluxos novos concluídos, 20 duplicatas e dez consultas de eventos anteriores.
+Esses resultados são parciais; não completar a tentativa 11 isoladamente nem
+misturar SHAs. Usar configuração local sucessora `artifacts/a2-comparison-02.local.json`
+e destino novo `artifacts/a2-comparison-02`, mantendo os anteriores intactos.
 
 Antes da primeira repetição, congelar o protocolo efetivo em artefato sanitizado
 com hash, SHA executado e ordem completa. Aplicar o mesmo protocolo às duas

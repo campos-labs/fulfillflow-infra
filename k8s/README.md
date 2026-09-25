@@ -377,7 +377,8 @@ do host. Não é monitoramento contínuo de energia/sessão durante cada tentati
 
 O acionamento explícito usa subprocesso independente, identificado como `script`;
 o observador continua responsável pela restauração. A espera de solicitação usa
-polling de 0,1 s; a observação A2-I mantém 1 s. Não há atraso artificial. Os tempos
+polling de 0,1 s; a observação A2-I mantém 1 s. A leitura de log vazio de startup pode aguardar até 5 s, com identidade conferida;
+isso integra a detecção e não repete a implantação. Não há atraso artificial. Os tempos
 de limpeza das candidatas saudáveis ficam fora da avaliação da política.
 
 São até quatro horas, reservando 30 minutos para limpeza, verificações e pausa.
