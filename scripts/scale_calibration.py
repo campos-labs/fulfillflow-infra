@@ -523,7 +523,12 @@ def main():
             )
         )
     except Exception as error:
-        print(json.dumps({"complete": False, "error": type(error).__name__}))
+        detail = {"complete": False, "error": type(error).__name__}
+        if isinstance(error, FileNotFoundError):
+            detail["missing"] = Path(error.filename).name if error.filename else "unidentified"
+        elif isinstance(error, RuntimeError):
+            detail["code"] = str(error)
+        print(json.dumps(detail))
         return 1
     return 0
 

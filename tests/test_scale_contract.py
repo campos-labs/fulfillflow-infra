@@ -8,9 +8,28 @@ from unittest.mock import patch
 
 from scripts.scale_calibration import exclusive, records, verify_images
 from scripts.scale_contract import metric, outcome, schedule
+from scripts.scale_environment import executable
 
 
 class ScaleContracts(unittest.TestCase):
+    def test_missing_executable_identifies_name(self):
+        with patch("scripts.scale_environment.shutil.which", return_value=None):
+            with self.assertRaises(FileNotFoundError) as caught:
+                executable("missing-tool")
+        self.assertEqual(caught.exception.filename, "missing-tool")
+
+    def test_windows_docker_fallback_without_path_mutation(self):
+        with (
+            patch("scripts.scale_environment.shutil.which", return_value=None),
+            patch("scripts.scale_environment.WINDOWS", True),
+            patch("scripts.scale_environment.Path.is_file", return_value=True),
+        ):
+            self.assertTrue(
+                executable("docker")
+                .replace("\\", "/")
+                .endswith("Docker/Docker/resources/bin/docker.exe")
+            )
+
     def test_schedule_keeps_open_arrival_offsets(self):
         self.assertEqual(
             schedule([{"seconds": 2, "rate": 2}, {"seconds": 1, "rate": 1}]), [0, 0.5, 1, 1.5, 2]

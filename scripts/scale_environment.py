@@ -7,6 +7,7 @@ import hashlib
 import json
 import os
 import secrets
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -19,13 +20,27 @@ from k8s.prepare_rabbitmq_definitions import build_definitions
 from scripts.scale_contract import CLUSTER, SOURCE, write
 
 ROOT = Path(__file__).resolve().parents[1]
+WINDOWS = os.name == "nt"
 IMAGE = "fulfillflow-kind-runtime:source-9e3a135a00db"
 IMAGE_ID = "sha256:582a858debe2ff64d481e810b2d5ae5a1aba6a669516bca36a15eb12e77ec072"
 
 
+def executable(value):
+    name = str(value)
+    found = shutil.which(name)
+    if found:
+        return found
+    if WINDOWS and name in ("docker", "git"):
+        relative = {"docker": "Docker/Docker/resources/bin/docker.exe", "git": "Git/cmd/git.exe"}
+        candidate = Path(os.environ.get("ProgramFiles", "C:/Program Files")) / relative[name]
+        if candidate.is_file():
+            return str(candidate)
+    raise FileNotFoundError(2, "Executable not found", Path(name).name)
+
+
 def command(args, *, data=None, timeout=90):
     result = subprocess.run(
-        [str(x) for x in args],
+        [executable(args[0]), *[str(x) for x in args[1:]]],
         input=data,
         capture_output=True,
         text=True,
