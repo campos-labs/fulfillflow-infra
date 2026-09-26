@@ -488,6 +488,15 @@ A extensão de duração admite somente 45 s a 12/s com teto HTTP 16, mantendo
 para observar persistência da pressão; não alterar os perfis anteriores ou
 o prazo funcional. Não constitui comparação formal nem aciona KEDA.
 
+**Diagnóstico de capacidade adicional.** Após conferir acúmulo e margem no
+perfil de 16/s, permitir duas réplicas fixas somente com 30 s a 16/s, teto HTTP
+16 e 15 s a 2/s antes/depois (540 eventos). Mesmos recursos por pod, imagem,
+prazo e observador; identificar `fixed_replicas=2` e pasta `fixed-2`.
+Não envolve HPA/ScaledObject sobre o alvo. Exigir atribuição por pod para
+julgar participação, recursos totais e redução de pendência; não presumir
+ganho nem atribuir efeitos à automação. Uma sucessora exploratória não
+substitui repetições e preparação equivalentes de comparação formal.
+
 **Controle e sinal.** KEDA é a opção preferencial e integra-se ao HPA; não criar
 outro HPA independente sobre o mesmo alvo. Na condição fixa, o controlador não
 pode disputar réplicas com o executor. Na adaptativa, manifests de rotina e scripts

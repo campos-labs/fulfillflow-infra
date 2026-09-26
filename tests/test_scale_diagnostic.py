@@ -281,6 +281,42 @@ class CharacterizationSettingsTests(unittest.TestCase):
             ):
                 characterization_settings(base, rate, http_concurrency=concurrency, **flags)
 
+    def test_two_replicas_require_exact_bounded_profile_and_controlled_host(self):
+        from scripts.scale_contract import schedule
+        from scripts.scale_diagnostic import characterization_settings
+
+        base = {
+            "stages": [
+                {"seconds": 15, "rate": 2},
+                {"seconds": 30, "rate": 8},
+                {"seconds": 15, "rate": 2},
+            ],
+            "replicas": [1, 2],
+            "http_concurrency": 8,
+        }
+        flags = dict(
+            diagnostic=True,
+            reuse=True,
+            controlled=True,
+            extension=None,
+            http_concurrency=16,
+            fixed_replicas=2,
+        )
+        two = characterization_settings(base, 16, **flags)
+        one = characterization_settings(base, 16, **{**flags, "fixed_replicas": 1})
+        self.assertEqual(two, {**one, "replicas": [2]})
+        self.assertEqual(len(schedule(two["stages"], characterization=True)), 540)
+        for rate, override in [
+            (12, {}),
+            (16, {"http_concurrency": 8}),
+            (16, {"plateau_seconds": 45}),
+            (16, {"controlled": False}),
+            (16, {"extension": object()}),
+            (16, {"fixed_replicas": 3}),
+        ]:
+            with self.subTest(rate=rate, override=override), self.assertRaises(RuntimeError):
+                characterization_settings(base, rate, **{**flags, **override})
+
 
 class ExtendedPlateauTests(unittest.TestCase):
     def test_only_duration_changes_and_exact_600_event_limit(self):
@@ -419,3 +455,50 @@ class ResponseMetadataTests(unittest.TestCase):
             transport("GET", "http://localhost/api/v1/orders/id", {}, None, 2)
         metadata.assert_called_once()
         self.assertEqual(transport.records[0]["duration_seconds"], 1)
+
+
+class DiagnosticReviewReplicaTests(unittest.TestCase):
+    def test_review_uses_recorded_replica_directory_and_verifies_its_hashes(self):
+        import hashlib
+        import tempfile
+        from pathlib import Path
+
+        from scripts.review_scale_diagnostic import review
+
+        for replicas in (1, 2):
+            with self.subTest(replicas=replicas), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                folder = root / f"fixed-{replicas}"
+                folder.mkdir()
+                data = {
+                    "protocol.json": {"diagnostic": {"fixed_replicas": replicas}},
+                    "summary.json": {"complete": True},
+                    f"fixed-{replicas}/summary.json": {"initial_fixed_replicas": replicas},
+                    f"fixed-{replicas}/events.json": [],
+                    f"fixed-{replicas}/series.jsonl": {
+                        "monotonic": 1,
+                        "collection_end_monotonic": 2,
+                        "interval_overrun_seconds": 0,
+                        "inbox": {"eligible": 0, "oldest_eligible_seconds": 0},
+                        "throttling": {
+                            "counters": [],
+                            "request_start_monotonic": 1,
+                            "request_end_monotonic": 2,
+                        },
+                    },
+                }
+                for name, value in data.items():
+                    (root / name).write_text(json.dumps(value), encoding="utf-8")
+                (root / "checksums.sha256").write_text(
+                    "\n".join(
+                        hashlib.sha256((root / name).read_bytes()).hexdigest() + "  " + name
+                        for name in data
+                    ),
+                    encoding="utf-8",
+                )
+                result = review(root)
+                self.assertEqual(result["functional"]["initial_fixed_replicas"], replicas)
+                self.assertEqual(result["verified_files"], len(data))
+                (folder / "events.json").write_text("[{}]", encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "CHECKSUM_MISMATCH"):
+                    review(root)

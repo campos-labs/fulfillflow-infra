@@ -77,7 +77,11 @@ def review(source):
         ):
             raise ValueError("SOURCE_CHECKSUM_MISMATCH")
         count += 1
-    load = source / "fixed-1"
+    protocol = json.loads((source / "protocol.json").read_text())
+    replicas = protocol.get("diagnostic", {}).get("fixed_replicas", 1)
+    if type(replicas) is not int or replicas not in (1, 2):
+        raise ValueError("INVALID_DIAGNOSTIC_REPLICAS")
+    load = source / f"fixed-{replicas}"
     series = [json.loads(s) for s in (load / "series.jsonl").read_text().splitlines()]
     events = json.loads((load / "events.json").read_text())
     timings = [
@@ -91,7 +95,7 @@ def review(source):
         "source": str(source),
         "verified_files": count,
         "source_manifest_sha256": hashlib.sha256(manifest.read_bytes()).hexdigest(),
-        "protocol": json.loads((source / "protocol.json").read_text()),
+        "protocol": protocol,
         "execution": summary,
         "functional": json.loads((load / "summary.json").read_text()),
         "throttling_windows": windows(series),

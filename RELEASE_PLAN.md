@@ -16,8 +16,9 @@ acúmulo sustentado demonstrado no worker. A progressão encerrou por margem do
 host e um 503 de consulta cuja causa permanece indeterminada; ver
 [fechamento do diagnóstico](#fechamento-do-diagnóstico-de-consulta-e-memória).
 A sucessora manual preservou 4,55 GiB livres, 600/600 conclusões e consultas
-sem erro. Um diagnóstico fixo a 16/s está preparado, ainda não executado; ver
-[resultado e próximo passo](#resultado-manual-e-próximo-diagnóstico).
+sem erro. A sucessora a 16/s concluiu 540/540 e apresentou crescimento de
+pendência com margem do host. Preparada uma tentativa com duas réplicas fixas,
+sem aumentar a taxa; ver [resultado a 16/s](#resultado-a-16s-e-capacidade-adicional).
 
 ### Preparação conferida e próximo passo
 
@@ -987,6 +988,63 @@ pendência sustentada do worker e atendimento sem necessidade de expansão.
 Só a presença de trabalho escalável e margem sustenta avaliar capacidade
 adicional. Não há autorização automática para novas taxas, alteração de
 limiares, refatoração, KEDA ou AKS. Comparação formal continua na pausa.
+
+### Resultado a 16/s e capacidade adicional
+
+`scale-capacity-16-c16-01`, infraestrutura
+`3fbfd0f19afafa82de7331aa921b0cd933545769`, concluiu com 1.096 arquivos conferidos.
+Manifesto SHA-256: `cae2a73e2c6811c3e12d053d577d53f2d0759ef5faed35a6ffa57bfd573984cd`.
+Revisão e assessment locais ao lado da pasta original, com sufixos
+`-review.json` e `-assessment.json`; originais preservados.
+
+| Critério | Resultado |
+| --- | --- |
+| Planejados / oferecidos / aceitos / concluídos no prazo | 540 / 540 / 540 / 540 |
+| Consultas | 3.244 GETs, todos 200, sem erro de transporte |
+| Confirmação observada, mediana / p95 / máximo | 22,961 / 28,391 / 29,188 s |
+| Pendência elegível máxima / maior idade amostrada | 72 / 4,912 s |
+| Memória livre mínima do host / nó | 4,08 / 5,79 GiB |
+| Admissão HTTP no patamar, média / p95 | 0,459 / 0,828 s |
+| Máximo de pedidos ativos antes do despacho | 13, teto 16; maior atraso de agenda 0,032 s |
+
+Controle do host válido, 195 amostras, maior intervalo 1,016 s. Atribuição
+completa a um worker, mesmo UID e 33 reinícios antes/depois. Nenhum retry,
+bloqueio ou pendência ao final. Nó parado e volumes preservados.
+
+**Aprendizado novo:** entre aproximadamente 24 e 44 s após a primeira oferta,
+as amostras de pendência foram 12, 27, 43, 54 e 72; as idades cresceram de
+0,901 para 4,213 s. Nesse intervalo, o contador DONE avançou 258 em cerca de
+20 s (aproximadamente 12,9/s), com oferta pretendida de 16/s integralmente
+realizada. Isso descreve esta janela, não capacidade máxima universal.
+Após o patamar terminar aos 45 s, a coleta mostrou 37 pendências aos 48,89 s
+e zero aos 53,89 s; pequenas pendências posteriores pertencem à cauda a 2/s.
+Não confundir o esvaziamento da inbox com a confirmação do fluxo completo.
+
+O limite de oferta não restringiu esta tentativa. Existe agora pressão crescente
+no trabalho elegível do Core, com recursos do host disponíveis, justificando
+verificar capacidade adicional. Não demonstra que o worker seja o único gargalo.
+Os períodos com throttling no Core API (66,6%) e worker (48,1%) não são
+percentuais de CPU perdida nem isolam uma causa. O p95 observado ficou próximo
+da guarda de 30 s e a idade amostrada próxima de 5 s: não aumentar a carga.
+A coleta a cada 5 s não exclui ultrapassagem da idade entre amostras; KEDA não
+estava controlando o alvo e não se pode inferir seu acionamento nesta tentativa.
+
+**Sucessora preparada, ainda não executada:** `scale-capacity-16-c16-fixed2-01`,
+mesmos 540 eventos e perfil 15 s a 2/s, 30 s a 16/s, 15 s a 2/s, HTTP 16,
+observador v2 e prazo 60 s, com duas réplicas fixas. Recursos por pod mantidos;
+o total alocado aos workers aumenta. Preflight 5 GiB e guardas existentes
+preservados. Usar `artifacts/Invoke-ScaleFixedTwo.local.ps1` manualmente, com
+aplicativos de assistência fechados. Uma execução e encerramento, sem laço.
+
+Examinar participação de ambos os pods, crescimento/idade da pendência, drain,
+conclusão funcional, admissão/consulta e recursos totais. Esta verificação
+pergunta se capacidade adicional ajuda no perfil em que surgiu acúmulo; não
+mede benefício de KEDA. Banco preservado e ordem das tentativas impedem tratar
+uma diferença isolada como estimativa causal ou comparação formal.
+Se houver participação e melhora coerente, reavaliar a janela de resposta da
+política mantendo limiares; se não, investigar o limite compartilhado somente
+com os sinais coletados. Qualquer falha de guarda exige revisão. Não iniciar
+outra carga, refatoração ou AKS automaticamente.
 
 ### Depois da pausa — ainda não autorizado
 

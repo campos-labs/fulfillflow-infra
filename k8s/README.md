@@ -612,7 +612,14 @@ parâmetros permanecem iguais; consultar a justificativa e os limites no RELEASE
 A opção `-PlateauSeconds 45` exige `-PeakRate 12 -HttpConcurrency 16`,
 `-ControlledHost -ReuseTerminalReads` e mantém o teto de 600 eventos; o padrão
 continua em 30 s. A sucessora manual recuperou margem e concluiu sem erro HTTP;
-o próximo diagnóstico previsto usa 16/s por 30 s, teto HTTP 16 e 540 eventos.
+o diagnóstico a 16/s por 30 s, teto HTTP 16 e 540 eventos também concluiu.
 O 503 anterior permanece sem causa determinada. `complete=true` não substitui as guardas
 de progressão. Não reutilizar destinos nem executar outra carga antes de reavaliar
 os limites registrados no RELEASE_PLAN.
+
+O diagnóstico de capacidade adicional aceita `-FixedReplicas 2` somente com
+`-PeakRate 16 -HttpConcurrency 16 -PlateauSeconds 30`, controle do host e
+reutilização terminal. Usa pasta nova `fixed-2` dentro da saída da tentativa;
+o revisor identifica a condição pelo protocolo. O padrão continua uma réplica.
+Essa condição aumenta recursos totais dos workers, sem autoescalonamento;
+seguir objetivo e guardas no RELEASE_PLAN antes de qualquer execução.

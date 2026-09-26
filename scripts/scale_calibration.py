@@ -408,6 +408,7 @@ def _execute(
     peak_rate=8,
     http_concurrency=8,
     plateau_seconds=30,
+    fixed_replicas=1,
 ):
     if controlled_host and (not diagnostic or not reuse_terminal_reads):
         raise RuntimeError("CONTROLLED_REFERENCE_REQUIRES_REUSE_DIAGNOSTIC")
@@ -438,6 +439,7 @@ def _execute(
         extension=extension,
         http_concurrency=http_concurrency,
         plateau_seconds=plateau_seconds,
+        fixed_replicas=fixed_replicas,
     )
     if peak_rate != 8:
         work_deadline = time.monotonic() + 20 * 60
@@ -450,14 +452,14 @@ def _execute(
             "settings": settings,
             "identity": expected,
             "runtime_config_digest": RUNTIME_CONFIG,
-            "purpose": "fixed-one instrumentation diagnostic"
+            "purpose": "fixed-replica instrumentation diagnostic"
             if diagnostic
             else "KEDA bounded pilot"
             if extension
             else "calibration only",
             "diagnostic": {
                 "enabled": diagnostic,
-                "fixed_replicas": 1 if diagnostic else None,
+                "fixed_replicas": fixed_replicas if diagnostic else None,
                 "http_diagnostic_metadata_version": 2 if diagnostic else None,
                 "load_changed": peak_rate != 8,
                 "peak_rate": peak_rate,
@@ -561,13 +563,13 @@ def _execute(
                 )
             )
             print(
-                f"Diagnostic: {event_count} events, one fixed replica, throttling and HTTP timing",
+                f"Diagnostic: {event_count} events, {fixed_replicas} fixed replica(s), throttling and HTTP timing",
                 flush=True,
             )
             if not run_one(
                 private,
-                output / "fixed-1",
-                1,
+                output / f"fixed-{fixed_replicas}",
+                fixed_replicas,
                 settings,
                 values,
                 base,
@@ -695,6 +697,7 @@ def execute(
     peak_rate=8,
     http_concurrency=8,
     plateau_seconds=30,
+    fixed_replicas=1,
 ):
     if private.is_relative_to(output) or output.is_relative_to(private):
         raise RuntimeError("PRIVATE_OUTPUT_OVERLAP")
@@ -708,6 +711,7 @@ def execute(
             peak_rate=peak_rate,
             http_concurrency=http_concurrency,
             plateau_seconds=plateau_seconds,
+            fixed_replicas=fixed_replicas,
         )
 
 
@@ -721,6 +725,7 @@ def main():
     parser.add_argument("--peak-rate", type=int, choices=(8, 12, 16), default=8)
     parser.add_argument("--http-concurrency", type=int, choices=(8, 16), default=8)
     parser.add_argument("--plateau-seconds", type=int, choices=(30, 45), default=30)
+    parser.add_argument("--fixed-replicas", type=int, choices=(1, 2), default=1)
     args = parser.parse_args()
     try:
         execute(
@@ -732,6 +737,7 @@ def main():
             peak_rate=args.peak_rate,
             http_concurrency=args.http_concurrency,
             plateau_seconds=args.plateau_seconds,
+            fixed_replicas=args.fixed_replicas,
         )
         print(
             json.dumps(

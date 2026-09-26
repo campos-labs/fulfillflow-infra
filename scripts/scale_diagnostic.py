@@ -136,8 +136,13 @@ def characterization_settings(
     extension,
     http_concurrency=8,
     plateau_seconds=30,
+    fixed_replicas=1,
 ):
     """Keep the historical profile unchanged; allow only explicitly bounded successors."""
+    if type(fixed_replicas) is not int or fixed_replicas not in (1, 2):
+        raise RuntimeError("DIAGNOSTIC_REPLICAS_NOT_ALLOWED")
+    if fixed_replicas == 2 and (peak_rate != 16 or http_concurrency != 16 or plateau_seconds != 30):
+        raise RuntimeError("DIAGNOSTIC_TWO_REPLICA_PROFILE_NOT_ALLOWED")
     if plateau_seconds not in (30, 45) or (
         plateau_seconds == 45 and (peak_rate != 12 or http_concurrency != 16)
     ):
@@ -162,10 +167,10 @@ def characterization_settings(
             dict(s, rate=peak_rate, seconds=plateau_seconds) if i == 1 else dict(s)
             for i, s in enumerate(settings["stages"])
         ],
-        "replicas": [1],
+        "replicas": [fixed_replicas],
         "capacity_characterization": True,
         "http_concurrency": http_concurrency,
-        "purpose": "bounded fixed-one capacity characterization; not formal comparison",
+        "purpose": "bounded fixed-replica capacity characterization; not formal comparison",
     }
 
 
