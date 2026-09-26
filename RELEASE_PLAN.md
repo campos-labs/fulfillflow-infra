@@ -8,7 +8,7 @@ CI da branch habilitada. Bootstrap dedicado e smoke do instrumento concluídos;
 calibração com uma e duas réplicas executada, com uma oferta não realizada.
 Calibração 05 conferida: 300/300 eventos no prazo em cada condição, distribuição
 143/157 com duas réplicas e 620 checksums íntegros. Não comprova ganho de escala.
-Piloto mínimo KEDA em implementação; preparação real e carga ainda pendentes.
+Preparação KEDA conferida; piloto adaptativo com carga ainda pendente.
 A pausa final do incremento ainda não foi atingida. Sem nova tag, AKS ou ACR.
 
 ### Preparação conferida e próximo passo
@@ -42,19 +42,30 @@ A pausa final do incremento ainda não foi atingida. Sem nova tag, AKS ou ACR.
   Coleta independente abaixo de 0,32 s por ciclo nesse smoke; não extrapolar para
   a carga de 300 eventos. `smoke-03` parou antes da carga ao detectar pod anterior
   ainda em encerramento; adicionada espera limitada antes da preparação.
-- Calibração concluída: `scale-calibration-05`, mesmo perfil e limites de `04`.
-  Mudança apenas do instrumento; não agregar seus tempos aos anteriores como
-  comparação homogênea. Após execução, rever distribuição de trabalho, cadência
-  efetiva, custo amostrado e sinal de pendência. Nenhuma vantagem de duas réplicas
-  é pressuposta. Não instalar KEDA nem repetir automaticamente após essa coleta.
+- Calibração `scale-calibration-05` concluída e conferida. Duas réplicas
+  participaram do processamento, sem demonstrar ganho no perfil observado.
+  Não agregar tempos das calibrações anteriores como comparação homogênea.
+  A revisão autorizou a preparação KEDA delimitada abaixo.
 - Comando de referência no [guia Kubernetes](k8s/README.md#calibracao-de-concorrencia):
   300 eventos por condição, 1 depois 2 réplicas; 15 s a 2/s, 30 s a 8/s e 15 s a 2/s.
   Prazo funcional 60 s após aceite observado, observação 120 s por evento,
   concorrência HTTP 8 e consultas até 16. Preparação das entidades fora da oferta.
-- Rever sinal, conclusão, oferta não realizada e folga antes de KEDA. O teto de
-  120 minutos e até três execuções limita operação; não define tamanho amostral.
-  Conferir atribuição por réplica e custos amostrados do instrumento na sucessora.
+- O teto operacional da janela preparatória não define tamanho amostral.
   Não aumentar carga para forçar benefício nem alterar a aplicação congelada.
+- Preparação KEDA: `artifacts/keda-preparation-03`, infraestrutura `e1a95c0`.
+  Consulta saudável com valor zero, três observações de indisponibilidade durante
+  falha SQL deliberada e retorno da consulta saudável. HPA registrou
+  `FailedGetExternalMetric` e uma réplica durante a falha. A última condição HPA
+  ainda refletia o erro anterior; comprova-se retorno da métrica, não o instante
+  de reconciliação posterior do HPA. Nenhum evento de negócio oferecido.
+  ScaledObject/HPA removidos antes de restaurar uma réplica; nó parado e volumes
+  preservados. `01` interrompida por namespace imposto ao bundle; `02` na alteração
+  da consulta. Corrigidos namespaces e aplicação declarativa uniforme.
+  Tentativas preservadas, sem resultados de autoescalonamento sob carga.
+- Próximo passo manual: um piloto adaptativo com o mesmo perfil de 300 eventos,
+  seguido de 360 s sem nova oferta. Métrica indisponível fora da injeção torna a
+  observação incompleta; ausência de escala com métrica válida pode ser resultado.
+  Pausar após a execução, sem elevar carga ou alterar limiar automaticamente.
 
 A v1.0.0 permanece encerrada: aplicação v1.3.0-rc.1 congelada, configuração saudável
 conferida e laboratório parado, com dados e evidências preservados. Resultados e

@@ -505,7 +505,7 @@ Não executar a calibração fixa enquanto existir controlador de escala.
 
 A configuração é `config/keda-pilot.json`. Manifesto oficial core é baixado com hash
 conferido, sem instalar Helm ou webhook adicional. A instalação requer rede para
-GitHub/GHCR; não usa Azure. `keda-install.yaml`, `keda-identities.json`, `policy.json`,
+GitHub/GHCR; não usa Azure. `keda-install.yaml`, `keda-identities.json`, `policy.json`, `metric-availability.json`,
 `metric-fault-probe.json`, séries e logs permitidos sustentam a conferência.
 A credencial própria do scaler fica em `keda-reader.json` no diretório privado;
 não anexar esse diretório. Aplicativos empacotados no Windows podem redirecionar

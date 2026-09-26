@@ -10,7 +10,7 @@ tratadas separadamente. O último encerramento preservou dados e parou o laborat
 **Em implementação: viabilidade de autoescalonamento em Kind.**
 Bootstrap e smoke conferidos; calibração sucessora preparada com coleta independente
 e atribuição de processamento por pod. Resultados anteriores permanecem preservados.
-KEDA e piloto adaptativo ainda pendentes.
+Preparação KEDA e falha de métrica conferidas; piloto adaptativo com carga ainda pendente.
 A branch `feature/v1.1-autoscaling-kind` parte da v1.0.0. O
 [incremento planejado](RELEASE_PLAN.md#3-incremento-de-viabilidade-em-kind)
 termina com piloto limitado e pausa para reavaliação, antes de uma comparação formal.

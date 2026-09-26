@@ -413,16 +413,20 @@ class Pilot:
         return result
 
     def run(self, private, output, settings, values, base, expected, deadline):
+        print("KEDA: install and readiness", flush=True)
         self.install(private, output)
+        print("KEDA: metric fault and recovery probe (no business load)", flush=True)
         self.metric_probe(private, output)
         if self.prepare_only:
             write(output / "pilot-result.json", {"prepared": True, "load_executed": False})
             return
+        print("KEDA: adaptive workload with unchanged calibration profile", flush=True)
         ok = calibration.run_one(
             private, output / "adaptive", 1, settings, values, base, expected, deadline, policy=self
         )
         if not ok:
             raise RuntimeError("ADAPTIVE_FUNCTIONAL_OR_ATTRIBUTION_INCOMPLETE")
+        print("KEDA: post-load observation, 360 seconds", flush=True)
         idle = []
         until = time.monotonic() + self.pin["post_load_observation_seconds"]
         while time.monotonic() < until:
