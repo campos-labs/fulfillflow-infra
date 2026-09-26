@@ -41,6 +41,11 @@ def records(path):
     return [json.loads(line) for line in text.splitlines(keepends=True) if line.endswith("\n")]
 
 
+def load_journal_finished(records):
+    # This marker is flushed after every response. Process exit alone races a prior read.
+    return any(record.get("kind") == "load_finished" for record in records)
+
+
 def identity(private):
     expected = json.loads((private / "identity.json").read_text())
     node = json.loads(environment.command(["docker", "inspect", CLUSTER + "-control-plane"]))[0]
@@ -262,6 +267,7 @@ def run_one(private, folder, replicas, settings, values, base, expected, work_de
                     raise RuntimeError("LOAD_PROCESS_FAILED")
                 if (
                     child.poll() is not None
+                    and load_journal_finished(incoming)
                     and len(results) == len(admissions)
                     and all(r.get("completed_monotonic") for r in results.values())
                 ):

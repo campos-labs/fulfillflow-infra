@@ -18,6 +18,12 @@ A pausa final do incremento ainda não foi atingida. Sem nova tag, AKS ou ACR.
 - Primeiro smoke parou na identificação OCI, antes da carga. Corrigida distinção
   entre índice Docker `582a858d…`, manifest amd64 `ffb7d2d4…` e config `cc882fab…`:
   referências da mesma imagem importada, vinculada ao SHA congelado da aplicação.
+- Retomada: `scale-calibration-01` e `02` pararam antes da carga (API e túnel
+  na reinicialização); esperas limitadas corrigidas. `03` ofereceu 300 eventos e
+  recebeu 300 respostas 202, mas seu resumo omitiu as últimas 14 respostas por
+  corrida de leitura no fechamento. Série inválida como resultado de calibração;
+  registros originais preservados. O executor agora exige o marcador final do
+  gerador antes de encerrar a observação. Nenhuma dessas falhas comprova perda.
 - Próximo comando no [guia Kubernetes](k8s/README.md#calibracao-de-concorrencia):
   300 eventos por condição, 1 depois 2 réplicas; 15 s a 2/s, 30 s a 8/s e 15 s a 2/s.
   Prazo funcional 60 s após aceite observado, observação 120 s por evento,

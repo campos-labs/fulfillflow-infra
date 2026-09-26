@@ -6,7 +6,13 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
-from scripts.scale_calibration import exclusive, records, verify_images, wait_api
+from scripts.scale_calibration import (
+    exclusive,
+    load_journal_finished,
+    records,
+    verify_images,
+    wait_api,
+)
 from scripts.scale_contract import metric, outcome, schedule
 from scripts.scale_environment import executable
 
@@ -35,6 +41,11 @@ class ScaleContracts(unittest.TestCase):
                 with exclusive(private):
                     self.fail("entered missing directory")
             self.assertFalse(private.exists())
+
+    def test_process_exit_cannot_complete_an_older_journal_snapshot(self):
+        snapshot = [{"kind": "response", "status": 202}]
+        self.assertFalse(load_journal_finished(snapshot))
+        self.assertTrue(load_journal_finished(snapshot + [{"kind": "load_finished"}]))
 
     def test_missing_executable_identifies_name(self):
         with patch("scripts.scale_environment.shutil.which", return_value=None):
