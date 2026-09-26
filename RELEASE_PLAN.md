@@ -701,6 +701,39 @@ Escolher uma dessas perguntas, sem aumentar taxa, teto e réplicas conjuntamente
 não repetir toda a preparação. Não iniciar 16/s, KEDA ou AKS para resolver a
 restrição observada. Implementação validada por 208 testes e Ruff.
 
+### Repetição do perfil de admissão com maior folga do host
+
+`scale-admission-12-c16-02`, instrumento `e22ca88`, repetiu o mesmo perfil:
+15 s a 2/s, 30 s a 12/s e 15 s a 2/s, concorrência HTTP 16,
+uma réplica fixa e reutilização de leituras. Aplicação e recursos preservados.
+O fechamento de janelas foi informado antes da execução; ainda havia processos
+residuais do navegador. Não representa isolamento completo nem comparação causal.
+
+- 420/420 ofertas realizadas, aceitas e concluídas no prazo, com atribuição
+  ao worker; nenhuma oferta omitida e nenhuma pendência elegível/retry/blocked final.
+- Confirmação observada: mediana 17,914 s e p95 21,797 s; 2.528 GETs sem erro.
+- Máximo amostrado: 13 pendências elegíveis e idade de 1,253 s.
+- Memória disponível mínima no host: 2,182 GiB, contra 1,078 GiB anteriormente.
+  Energia/plano válidos nas 203 amostras, maior intervalo de 1,031 s.
+- 856 arquivos conferidos por hash; nó parado ao encerrar. KEDA não foi exercitado.
+
+A oferta completa foi reproduzida, mas não houve melhora dos tempos observados.
+As execuções preservam dados acumulados e diferem no estado do host; não isolam
+causalidade do navegador nem sustentam equivalência estatística. A idade abaixo de
+cinco segundos nas amostras não exclui picos intermediários.
+
+**Próximo passo:** recuperar margem confortável antes de ampliar a duração a 12/s.
+A guarda de 2 GiB passou, mas com apenas cerca de 186 MiB de folga; optou-se por
+não ampliar automaticamente a carga. Reiniciar o host é uma preparação recomendada,
+seguida de nova conferência de recursos, não correção da aplicação nem garantia de
+memória. Definir duração e total compatíveis com o teto existente de 600 eventos
+antes de alterar o protocolo; manter taxa, concorrência e réplica. Não repetir
+as calibrações anteriores ou iniciar 16/s para resolver essa margem.
+
+Evidências locais: `artifacts/scale-admission-12-c16-02`, conferência em
+`artifacts/scale-admission-12-c16-02-review.json` e derivação em
+`artifacts/scale-admission-12-c16-02-assessment.json`; ainda não publicadas como pacote.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da
