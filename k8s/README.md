@@ -537,7 +537,9 @@ $scalePrivate = Join-Path $env:LOCALAPPDATA 'Packages\OpenAI.Codex_2p2nqsd0c76g0
 
 `fixed-1/series.jsonl` acrescenta contadores cAdvisor e timestamps da fonte;
 `fixed-1/event-*/http-timings.json` contém tempos do transporte, status ou tipo
-de erro, sem corpo/headers/identificadores de URL. Tempos são exportados ao
+de erro, sem corpo completo, headers completos ou identificadores de URL.
+Na versão 2, inclui IDs UUID de correlação e códigos de problema permitidos;
+campos ausentes nas coletas anteriores não significam ausência de erro. Tempos são exportados ao
 encerramento; encerramento abrupto pode perder o buffer, sem autorizar inferir
 zero consultas. Aplicam-se as ressalvas e a pausa do RELEASE_PLAN.
 

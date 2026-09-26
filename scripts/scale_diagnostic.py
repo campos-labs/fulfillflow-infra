@@ -5,6 +5,7 @@ import math
 import re
 import time
 from urllib.parse import urlsplit
+from uuid import UUID
 
 from scripts import scale_environment as env
 from scripts.scale_contract import CLUSTER, TARGET, utc
@@ -178,6 +179,61 @@ def require_fixed_target(private):
         raise RuntimeError("DIAGNOSTIC_TARGET_HAS_SCALEDOBJECT")
 
 
+# Only controlled protocol metadata; never retain arbitrary response detail/body.
+PROBLEM_CODES = frozenset({"SERVICE_UNAVAILABLE", "DATABASE_UNAVAILABLE", "INTERNAL_ERROR"})
+
+
+def request_id(value):
+    if not isinstance(value, str) or len(value) > 36:
+        return None
+    try:
+        return str(UUID(value))
+    except ValueError:
+        return None
+
+
+def diagnostic_metadata(headers, response):
+    """Reuse an existing response without I/O or changing its interpretation."""
+    sent = {str(k).lower(): v for k, v in headers.items()}
+    received = {str(k).lower(): v for k, v in getattr(response, "headers", {}).items()}
+    result = {
+        "sent_request_id": request_id(sent.get("x-request-id")),
+        "response_request_id": request_id(received.get("x-request-id")),
+    }
+    if response.status < 400:
+        return result
+    result["problem_metadata_state"] = "unavailable"
+    body = getattr(response, "body", b"")
+    content_type = received.get("content-type", "")
+    if (
+        not isinstance(body, bytes)
+        or len(body) > 4096
+        or not isinstance(content_type, str)
+        or content_type.split(";", 1)[0].strip().lower() != "application/problem+json"
+    ):
+        return result
+    try:
+        problem = json.loads(body)
+    except (ValueError, UnicodeError, RecursionError):
+        result["problem_metadata_state"] = "invalid"
+        return result
+    if (
+        not isinstance(problem, dict)
+        or type(problem.get("status")) is not int
+        or problem["status"] != response.status
+    ):
+        result["problem_metadata_state"] = "invalid"
+        return result
+    code = problem.get("code")
+    result["problem_metadata_state"] = (
+        "recognized" if isinstance(code, str) and code in PROBLEM_CODES else "unrecognized_code"
+    )
+    if result["problem_metadata_state"] == "recognized":
+        result["problem_code"] = code
+    result["problem_request_id"] = request_id(problem.get("request_id"))
+    return result
+
+
 class TimedTransport:
     """Buffer timings per event; no extra fsync in the measured request path."""
 
@@ -206,12 +262,15 @@ class TimedTransport:
         }
         try:
             response = self.transport(method, url, headers, body, timeout)
+            row["end_monotonic"] = time.monotonic()
             row["http_status"] = response.status
+            row.update(diagnostic_metadata(headers, response))
             return response
         except Exception as error:
             row["error"] = type(error).__name__
             raise
         finally:
-            row["end_monotonic"] = time.monotonic()
+            if "end_monotonic" not in row:
+                row["end_monotonic"] = time.monotonic()
             row["duration_seconds"] = row["end_monotonic"] - row["start_monotonic"]
             self.records.append(row)

@@ -313,3 +313,91 @@ class ExtendedPlateauTests(unittest.TestCase):
                 ],
                 characterization=True,
             )
+
+
+class ResponseMetadataTests(unittest.TestCase):
+    def response(self, body, status=503, **headers):
+        return SimpleNamespace(
+            status=status,
+            body=body,
+            headers={"Content-Type": "application/problem+json", **headers},
+        )
+
+    def test_correlates_existing_response_without_retries_or_sensitive_fields(self):
+        uid = "12345678-1234-4567-89ab-123456789abc"
+        response = self.response(
+            json.dumps(
+                {
+                    "status": 503,
+                    "code": "SERVICE_UNAVAILABLE",
+                    "request_id": uid,
+                    "detail": "private-secret",
+                    "errors": ["private-secret"],
+                }
+            ).encode(),
+            **{"X-Request-ID": uid},
+        )
+        inner = Mock(return_value=response)
+        transport = TimedTransport(inner)
+        self.assertIs(
+            transport(
+                "GET",
+                "http://localhost/api/v1/carrier-events/private-inbox",
+                {"X-Request-ID": uid, "Authorization": "private-secret"},
+                None,
+                2,
+            ),
+            response,
+        )
+        inner.assert_called_once()
+        row = transport.records[0]
+        self.assertEqual(row["sent_request_id"], uid)
+        self.assertEqual(row["response_request_id"], uid)
+        self.assertEqual(row["problem_request_id"], uid)
+        self.assertEqual(row["problem_code"], "SERVICE_UNAVAILABLE")
+        self.assertNotIn("private", json.dumps(row))
+
+    def test_bad_or_unexpected_error_metadata_does_not_mask_original_status(self):
+        cases = [
+            b"not-json",
+            b"[]",
+            b'{"status":500,"code":"SERVICE_UNAVAILABLE"}',
+            b'{"status":503,"code":["private-secret"]}',
+            b'{"status":503,"code":"private-secret","request_id":"private-secret"}',
+            b"x" * 4097,
+            b"[" * 2000 + b"]" * 2000,
+        ]
+        for body in cases:
+            with self.subTest(body=body[:20]):
+                response = self.response(body, **{"X-Request-ID": "private-secret"})
+                transport = TimedTransport(Mock(return_value=response))
+                self.assertIs(
+                    transport("GET", "http://localhost/api/v1/orders/id", {}, None, 2), response
+                )
+                row = transport.records[0]
+                self.assertEqual(row["http_status"], 503)
+                self.assertNotIn("problem_code", row)
+                self.assertNotIn("private-secret", json.dumps(row))
+
+    def test_success_body_is_not_inspected_and_ids_are_not_conflated(self):
+        sent = "12345678-1234-4567-89ab-123456789abc"
+        received = "12345678-1234-4567-89ab-123456789abd"
+        response = self.response(b"private-secret", status=200, **{"X-Request-ID": received})
+        transport = TimedTransport(Mock(return_value=response))
+        transport("GET", "http://localhost/api/v1/orders/id", {"X-Request-ID": sent}, None, 2)
+        row = transport.records[0]
+        self.assertEqual(row["sent_request_id"], sent)
+        self.assertEqual(row["response_request_id"], received)
+        self.assertNotIn("problem_metadata_state", row)
+        self.assertNotIn("private-secret", json.dumps(row))
+
+    def test_http_duration_ends_before_metadata_extraction(self):
+        response = self.response(b"{}")
+        transport = TimedTransport(Mock(return_value=response))
+        with (
+            patch("scripts.scale_diagnostic.time.monotonic", side_effect=[10, 11]),
+            patch("scripts.scale_diagnostic.diagnostic_metadata", return_value={}) as metadata,
+        ):
+            transport("GET", "http://localhost/api/v1/orders/id", {}, None, 2)
+        metadata.assert_called_once()
+        self.assertEqual(transport.records[0]["duration_seconds"], 1)

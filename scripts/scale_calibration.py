@@ -458,6 +458,7 @@ def _execute(
             "diagnostic": {
                 "enabled": diagnostic,
                 "fixed_replicas": 1 if diagnostic else None,
+                "http_diagnostic_metadata_version": 2 if diagnostic else None,
                 "load_changed": peak_rate != 8,
                 "peak_rate": peak_rate,
                 "admission_concurrency_changed": http_concurrency != 8,

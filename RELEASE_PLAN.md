@@ -865,6 +865,41 @@ worker escolhido. KEDA continua preferencial, mas não há execução pendente
 nem motivo demonstrado para adicionar réplicas neste perfil. Mudança de host,
 recursos ou AKS será uma nova decisão de ambiente, não ajuste silencioso.
 
+### Exploração sucessora sem alterar a aplicação
+
+A sequência de carga anterior continua fechada. A exploração de alternativas
+prossegue com preparação sem carga; comparação formal continua pendente.
+
+1. **Diagnóstico na infraestrutura primeiro.** A aplicação congelada já entrega
+   correlação e envelope de problema. `TimedTransport` agora retém IDs UUID e
+   códigos em allowlist, sem corpos completos ou novas consultas. O protocolo
+   identifica `http_diagnostic_metadata_version=2`. Validado sem cluster por
+   213 testes, incluindo resposta inválida, privacidade e preservação do tempo HTTP.
+   Não houve tentativa de reproduzir o 503 nem alteração de evidências antigas.
+2. **Separar executor e ferramentas de assistência.** O snapshot ocioso
+   `artifacts/scale-idle-memory-exploration-01.json` encontrou cerca de 5,59 GiB
+   disponíveis e working sets agregados de 1,87 GiB na categoria de assistência.
+   Valores são atuais, sobrepostos e não provam liberação integral ao fechar
+   aplicativos ou causa da pressão anterior. Execução direta pelo PowerShell,
+   com tais ferramentas fechadas, é candidata a verificar margem preservando
+   recursos da aplicação. A próxima janela deve ter objetivo de ambiente/coleta,
+   perfil já definido e guardas mantidas; não aumento automático da demanda.
+3. **Aplicação apenas se persistir uma lacuna concreta.** A captura acima pode
+   distinguir envelopes, mas não expõe a categoria interna de toda falha HTTP.
+   Se necessário, avaliar logging estruturado restrito de serviço/operação,
+   correlação e classe de erro, em nova referência derivada da linha v1.3.
+   Não alterar tags, imagens congeladas ou v1.0/v1.1/v1.2; não modificar
+   timeouts, regras ou concorrência para eliminar um sintoma sem diagnóstico.
+   Uma nova imagem exige validação e nova identificação experimental, sem
+   misturar resultados anteriores como controles equivalentes.
+
+A calibração e o piloto fornecem evidência de concorrência funcional, integração
+e comportamento de não acionamento; os diagnósticos qualificam oferta, conclusão
+e limites de medição. Não sustentam superioridade quantitativa da política.
+Trocar de worker exige justificar seu trabalho escalável e validar seu sinal;
+não é atalho para obter escala. KEDA permanece preferencial. Refatoração,
+plataforma adicional de observabilidade e AKS não são requisitos desta preparação.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da

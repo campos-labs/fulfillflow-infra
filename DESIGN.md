@@ -452,6 +452,16 @@ devem ser somados aos recursos do nó, pois há sobreposição. Ausência/erro d
 interrompe o aceite; não vira zero. Tempos funcionais continuam limites superiores
 observados, não horários exatos da confirmação de negócio.
 
+No diagnóstico, a versão 2 dos metadados HTTP preserva UUIDs válidos de
+correlação enviados/recebidos, separadamente, e códigos de problema permitidos
+(`SERVICE_UNAVAILABLE`, `DATABASE_UNAVAILABLE`, `INTERNAL_ERROR`). Examina no
+máximo 4 KiB de envelope `application/problem+json` de resposta de erro, exigindo
+status correspondente; formato inválido ou código desconhecido tem estado explícito,
+sem copiar valores arbitrários. Não exporta corpo, detalhe, tokens ou cabeçalhos
+completos. Não faz nova consulta/retry nem muda o veredito funcional. A duração
+HTTP termina antes dessa extração; a versão do instrumento distingue coletas futuras.
+Esses metadados não recuperam retroativamente a causa de falhas anteriores.
+
 Atribuir processamento pelos logs `core/process/DONE` da aplicação congelada,
 correlacionados ao `request_id` do aceite, com UID e reinícios dos pods. Exigir
 uma correspondência por aceite e inventário estável; lacuna não demonstra perda.
