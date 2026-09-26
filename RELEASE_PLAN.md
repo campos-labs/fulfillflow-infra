@@ -900,6 +900,32 @@ Trocar de worker exige justificar seu trabalho escalável e validar seu sinal;
 não é atalho para obter escala. KEDA permanece preferencial. Refatoração,
 plataforma adicional de observabilidade e AKS não são requisitos desta preparação.
 
+### Verificação manual sucessora preparada
+
+Uma tentativa `scale-observability-12-45-01`, com a captura HTTP v2, avaliará
+margem do host e coleta em execução direta pelo PowerShell. Perfil preservado:
+15 s a 2/s, 45 s a 12/s, 15 s a 2/s; 600 eventos, uma réplica, HTTP 16,
+reutilização terminal, prazo funcional de 60 s e controle do host.
+Fechar aplicativos de assistência/navegadores antes da janela, sem builds ou
+outros clusters. O script local de conveniência
+`artifacts/Invoke-ScaleManualCheck.local.ps1` aceita `-CheckOnly`, não cria
+ambiente privado vazio, não sobrescreve evidência e para somente o cluster
+histórico previamente autorizado; outros containers impedem a carga.
+
+Exigir 5 GiB livres antes de iniciar: escolha conservadora de preparação para
+esta tentativa, considerando a redução de aproximadamente 2 GiB observada na
+execução anterior, a guarda de 2 GiB durante a janela e margem adicional.
+Não é requisito universal, prova de isolamento ou garantia de memória durante
+carga. O preflight separado registra esse critério e o SHA. Manter as guardas
+de progressão existentes; o launcher não interrompe imediatamente por atingir
+2 GiB, e `complete=true` continua exigindo revisão de memória, HTTP e resultados.
+
+O resultado servirá para decidir se a operação manual fornece margem suficiente
+neste perfil. Ausência de novo 503 não explica o anterior nem prova sua correção.
+Novo erro deve usar a correlação capturada, sem ciclo automático de reprodução.
+Não compara KEDA, não aumenta demanda/recursos e não altera a aplicação.
+Esta preparação não registra execução concluída.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da
