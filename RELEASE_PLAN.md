@@ -457,10 +457,10 @@ exigir que apareçam nessa sequência.
 
 ### Referência limpa antes da caracterização
 
-Preparada uma execução manual identificada: `scale-clean-reference-01`, uma
-réplica fixa e 300 eventos, `reuse_terminal_reads=true` e `controlled_host=true`.
-Sem nova taxa, alteração de recursos, política ou aplicação. Nesta entrega,
-comando preparado e instrumentação validada; coleta ainda não executada.
+Referência concluída em `scale-clean-reference-02`, após a interrupção
+preparatória de `01`: uma réplica fixa e 300 eventos,
+`reuse_terminal_reads=true` e `controlled_host=true`. Sem nova taxa, alteração
+de recursos, política ou aplicação.
 
 `host-conditions.jsonl` registra a cada segundo alimentação/bateria, CPU
 acumulada global e memória disponível. Perfil de energia conferido antes/depois.
@@ -496,7 +496,7 @@ pela presença dos três contadores nos seis componentes, consultando a cada 5 s
 `throttling-startup.jsonl`. Repetir somente indisponibilidade de métrica nessa etapa;
 valor inválido e erro de comando continuam interrompendo. Durante a carga, a coleta
 mantém a validação estrita, sem espera adicional, preenchimento com zero ou omissão
-de componentes. Destino da próxima referência: `scale-clean-reference-02`.
+de componentes. A referência sucessora foi `scale-clean-reference-02`.
 
 Verificação isolada de pré-requisitos em `throttling-startup-check-01`:
 12 consultas com ausências transitórias e a 13ª com os seis componentes
@@ -505,6 +505,44 @@ parado e volumes preservados. Confirma que a espera resolve a disponibilidade
 nessa inicialização, sem identificar a causa interna da exposição parcial nem
 substituir a referência controlada. Validação do ajuste: 204 testes aprovados,
 Ruff e verificação documental aprovados.
+
+### Resultado da referência controlada
+
+`scale-clean-reference-02`, instrumento `0795436`, manteve a referência da
+aplicação e o digest de configuração registrados no protocolo. Conferência
+local: `artifacts/scale-clean-reference-02-review.json`, 616 arquivos com hashes
+válidos. Originais preservados; estes pacotes continuam somente locais.
+
+| Medida | Resultado |
+| --- | --- |
+| Ofertas / aceites / conclusões no prazo | 300 / 300 / 300 |
+| Atribuição | Uma réplica; sem reinício entre as conferências |
+| GETs do observador | 1.812; todos HTTP 200 |
+| Aceite → confirmação observada | Mediana 5,125 s; p95 6,234 s |
+| Pendências elegíveis / idade máxima amostradas | 8 / 0,650 s |
+| Inbox ao final | Zero elegíveis, em retry ou bloqueadas |
+| Core API: períodos com throttling | 318/726 (43,80%), janela 79,101 s |
+| Core worker: períodos com throttling | 141/620 (22,74%), janela 67,696 s |
+| Host | 191 amostras válidas; maior intervalo 1,031 s; plano preservado |
+| Encerramento | Nó parado, volumes preservados |
+
+A espera inicial resolveu a ausência de métricas em 5,219 s nesta execução.
+As 14 coletas não excederam a cadência; atraso máximo de despacho de 0,015 s.
+Durante as seis observações internas ao patamar de 8/s, o contador de conclusões
+avançou aproximadamente 7,870/s. Pendências oscilaram de 4 a 8 e terminaram em
+7 nesse recorte; idade entre 0,392 e 0,650 s, sem crescimento monotônico. Os picos
+amostrados de CPU foram 0,491 no Core API e 0,288 no worker. Essas amostras não
+medem capacidade máxima nem isolam um gargalo; throttling não equivale a essa
+fração de CPU perdida. O controle amostrado do host não prova exclusividade.
+
+**Decisão:** referência suficiente, sem repetir o mesmo perfil. Uma réplica
+atendeu esta demanda; a coleta fixa não testa KEDA nem demonstra benefício de
+escalar. Encerrar ajustes do instrumento e definir a caracterização curta antes
+da próxima carga. Manter observador, recursos e réplica; variar somente demanda
+predefinida, com limites para gerador, observação e host. A proximidade do Core API
+ao limite torna especialmente importante distinguir pressão da entrada/consulta
+de acúmulo no worker. Não reduzir o limiar KEDA, adotar AKS ou executar
+comparação formal com base nesta referência.
 
 ### Depois da pausa — ainda não autorizado
 

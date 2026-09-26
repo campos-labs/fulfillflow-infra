@@ -591,4 +591,6 @@ Na inicialização, a pré-verificação aguarda os contadores de throttling por
 até 90 s, com consultas limitadas a 10 s. O diário `throttling-startup.jsonl`
 preserva ausências e disponibilidade; erro persistente termina antes da oferta.
 Essa espera não se aplica às amostras durante a carga. A tentativa `01` foi
-preservada; usar `scale-clean-reference-02` na próxima execução manual.
+preservada e `scale-clean-reference-02` concluiu a referência controlada. Não
+reutilizar essas pastas; a próxima carga depende do protocolo de caracterização
+registrado no RELEASE_PLAN.
