@@ -396,7 +396,16 @@ def wait_api(private, seconds=120):
     raise RuntimeError("KUBERNETES_API_STARTUP_TIMEOUT")
 
 
-def _execute(private, output, extension=None, diagnostic=False, reuse_terminal_reads=False):
+def _execute(
+    private,
+    output,
+    extension=None,
+    diagnostic=False,
+    reuse_terminal_reads=False,
+    controlled_host=False,
+):
+    if controlled_host and (not diagnostic or not reuse_terminal_reads):
+        raise RuntimeError("CONTROLLED_REFERENCE_REQUIRES_REUSE_DIAGNOSTIC")
     if reuse_terminal_reads and not diagnostic:
         raise RuntimeError("REUSE_REQUIRES_DIAGNOSTIC")
     if diagnostic and extension:
@@ -431,6 +440,7 @@ def _execute(private, output, extension=None, diagnostic=False, reuse_terminal_r
                 "enabled": diagnostic,
                 "fixed_replicas": 1 if diagnostic else None,
                 "load_changed": False,
+                "controlled_host": controlled_host,
                 "reuse_terminal_reads": reuse_terminal_reads,
             },
             **(
@@ -445,7 +455,14 @@ def _execute(private, output, extension=None, diagnostic=False, reuse_terminal_r
     with socket.socket() as probe:
         probe.bind(("127.0.0.1", port))
     tunnel = None
+    host = None
+    if controlled_host:
+        from scripts.scale_host import HostMonitor
+
+        host = HostMonitor(output)
     try:
+        if host:
+            host.start()
         environment.command(["docker", "start", CLUSTER + "-control-plane"])
         wait_api(private)
         environment.kubectl(
@@ -594,6 +611,14 @@ def _execute(private, output, extension=None, diagnostic=False, reuse_terminal_r
                 (output / "summary.json").write_text(
                     json.dumps(summary, indent=2), encoding="utf-8"
                 )
+            host_result = host.close() if host else None
+            if host_result and not host_result["valid"] and (output / "summary.json").exists():
+                summary = json.loads((output / "summary.json").read_text())
+                summary["complete"] = False
+                summary["host_conditions_valid"] = False
+                (output / "summary.json").write_text(
+                    json.dumps(summary, indent=2), encoding="utf-8"
+                )
         hashes = []
         for path in sorted(output.rglob("*")):
             if path.is_file():
@@ -605,6 +630,10 @@ def _execute(private, output, extension=None, diagnostic=False, reuse_terminal_r
         (output / "checksums.sha256").write_text("\n".join(hashes) + "\n", encoding="utf-8")
         if cleanup_error:
             raise RuntimeError("CONTROLLER_CLEANUP_FAILED")
+        if not stopped:
+            raise RuntimeError("NODE_SHUTDOWN_UNCONFIRMED")
+        if host_result and not host_result["valid"]:
+            raise RuntimeError("HOST_CONDITIONS_NOT_VALIDATED")
 
 
 @contextmanager
@@ -621,11 +650,17 @@ def exclusive(private):
         lock.unlink()
 
 
-def execute(private, output, diagnostic=False, reuse_terminal_reads=False):
+def execute(private, output, diagnostic=False, reuse_terminal_reads=False, controlled_host=False):
     if private.is_relative_to(output) or output.is_relative_to(private):
         raise RuntimeError("PRIVATE_OUTPUT_OVERLAP")
     with exclusive(private):
-        _execute(private, output, diagnostic=diagnostic, reuse_terminal_reads=reuse_terminal_reads)
+        _execute(
+            private,
+            output,
+            diagnostic=diagnostic,
+            reuse_terminal_reads=reuse_terminal_reads,
+            controlled_host=controlled_host,
+        )
 
 
 def main():
@@ -634,6 +669,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--diagnostic", action="store_true")
     parser.add_argument("--reuse-terminal-reads", action="store_true")
+    parser.add_argument("--controlled-host", action="store_true")
     args = parser.parse_args()
     try:
         execute(
@@ -641,6 +677,7 @@ def main():
             args.output.resolve(),
             diagnostic=args.diagnostic,
             reuse_terminal_reads=args.reuse_terminal_reads,
+            controlled_host=args.controlled_host,
         )
         print(
             json.dumps(

@@ -573,3 +573,16 @@ fixo usa o ambiente local já preparado; disponibilidade offline exige imagens,
 Python, bibliotecas e executáveis presentes. Não fazer alterações de rede no meio
 da coleta. Liberar a janela após conferir `summary.json` e `shutdown.json`.
 Os critérios de interferência e os limites dos diagnósticos ficam no RELEASE_PLAN.
+
+Referência limpa preparada para execução manual, após reservar o host:
+
+```powershell
+.\scripts\Invoke-ScaleDiagnostic.ps1 -PrivateDirectory $scalePrivate -OutputDirectory '.\artifacts\scale-clean-reference-01' -ReuseTerminalReads -ControlledHost
+```
+
+`ControlledHost` exige o modo de reutilização e alimentação pela tomada.
+Os registros `host-conditions.jsonl`/`host-review.json` qualificam separadamente as
+condições observadas, sem comprovar exclusividade do host. Mudança detectada invalida
+a qualificação temporal, mas não aborta imediatamente a oferta nem apaga efeitos.
+Aguarde `JANELA ENCERRADA` e confira o resumo; um aviso de encerramento não confirmado
+exige verificar o Docker. O script não fecha programas ou altera energia/rede.

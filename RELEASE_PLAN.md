@@ -455,6 +455,33 @@ não um congelamento irreversível. Não impor ordem universal entre utilizaçã
 throttling, backlog e drain: a caracterização deve observar esses sinais, sem
 exigir que apareçam nessa sequência.
 
+### Referência limpa antes da caracterização
+
+Preparada uma execução manual identificada: `scale-clean-reference-01`, uma
+réplica fixa e 300 eventos, `reuse_terminal_reads=true` e `controlled_host=true`.
+Sem nova taxa, alteração de recursos, política ou aplicação. Nesta entrega,
+comando preparado e instrumentação validada; coleta ainda não executada.
+
+`host-conditions.jsonl` registra a cada segundo alimentação/bateria, CPU
+acumulada global e memória disponível. Perfil de energia conferido antes/depois.
+Pré-verificação sem confirmação de tomada ou perfil impede iniciar o nó.
+Amostra em bateria/desconhecida, perfil diferente/desconhecido, erro do monitor,
+intervalo maior que 5 s ou divergência maior que 1 s entre avanços UTC e
+monotônico impede qualificar a referência como limpa. Monitoramento é amostrado:
+transições breves podem escapar e aplicativo externo não é identificado.
+
+`host-review.json` separa essas condições do resultado funcional. Problema detectado
+durante a execução não cancela imediatamente as ofertas; os limites normais de
+carga/observação e encerramento permanecem. O resumo final fica incompleto para
+esta finalidade, sem apagar conclusões de negócio ou reenviar eventos. Queda abrupta
+ainda pode impedir exportação e encerramento: conferir arquivos/estado antes de repetir.
+
+O launcher anuncia janela crítica antes do comando e confirma encerramento somente
+com `shutdown.json` indicando nó parado. A janela inclui preparação e exportação,
+não apenas os 60 s de oferta. O operador reserva o host antes de executar. Após
+essa referência, revisar oferta/aceite/conclusão, observador e host; então definir
+patamares de caracterização. Não executar campanha formal automaticamente.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da
