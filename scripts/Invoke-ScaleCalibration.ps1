@@ -7,6 +7,16 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $python = Join-Path $root '.venv/Scripts/python.exe'
 if (-not (Test-Path -LiteralPath $python)) { throw 'Run uv sync --frozen --group autoscaling first.' }
+if ($Mode -eq 'Calibrate') {
+    if (-not (Test-Path -LiteralPath $PrivateDirectory -PathType Container)) {
+        throw "Private directory unavailable in this session: $PrivateDirectory"
+    }
+    foreach ($name in @('identity.json', 'kubeconfig', 'values.json')) {
+        if (-not (Test-Path -LiteralPath (Join-Path $PrivateDirectory $name) -PathType Leaf)) {
+            throw "Required private file unavailable: $name"
+        }
+    }
+}
 Push-Location $root
 try {
     if ($Mode -eq 'Calibrate') {

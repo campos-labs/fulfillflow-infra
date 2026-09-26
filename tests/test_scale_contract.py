@@ -6,12 +6,36 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
-from scripts.scale_calibration import exclusive, records, verify_images
+from scripts.scale_calibration import exclusive, records, verify_images, wait_api
 from scripts.scale_contract import metric, outcome, schedule
 from scripts.scale_environment import executable
 
 
 class ScaleContracts(unittest.TestCase):
+    def test_api_startup_retries_then_accepts_readiness(self):
+        with (
+            patch(
+                "scripts.scale_calibration.environment.kubectl",
+                side_effect=[RuntimeError("starting"), "ok"],
+            ) as call,
+            patch("scripts.scale_calibration.time.sleep"),
+        ):
+            wait_api(Path("unused"))
+        self.assertEqual(call.call_count, 2)
+
+    def test_api_startup_is_bounded(self):
+        with patch("scripts.scale_calibration.time.monotonic", side_effect=[0, 121]):
+            with self.assertRaisesRegex(RuntimeError, "KUBERNETES_API_STARTUP_TIMEOUT"):
+                wait_api(Path("unused"))
+
+    def test_missing_private_directory_is_not_recreated(self):
+        with TemporaryDirectory() as folder:
+            private = Path(folder) / "missing"
+            with self.assertRaisesRegex(RuntimeError, "PRIVATE_DIRECTORY_UNAVAILABLE"):
+                with exclusive(private):
+                    self.fail("entered missing directory")
+            self.assertFalse(private.exists())
+
     def test_missing_executable_identifies_name(self):
         with patch("scripts.scale_environment.shutil.which", return_value=None):
             with self.assertRaises(FileNotFoundError) as caught:

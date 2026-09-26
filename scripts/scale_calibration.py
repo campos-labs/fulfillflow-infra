@@ -332,6 +332,23 @@ def run_one(private, folder, replicas, settings, values, base, expected, work_de
             v.evidence.close()
 
 
+def wait_api(private, seconds=120):
+    deadline = time.monotonic() + seconds
+    while time.monotonic() < deadline:
+        try:
+            if (
+                environment.kubectl(
+                    private, ["get", "--raw", "/readyz", "--request-timeout=5s"], timeout=7
+                ).strip()
+                == "ok"
+            ):
+                return
+        except (RuntimeError, subprocess.TimeoutExpired):
+            pass
+        time.sleep(2)
+    raise RuntimeError("KUBERNETES_API_STARTUP_TIMEOUT")
+
+
 def _execute(private, output):
     expected = identity(private)
     if output.exists():
@@ -364,6 +381,7 @@ def _execute(private, output):
     tunnel = None
     try:
         environment.command(["docker", "start", CLUSTER + "-control-plane"])
+        wait_api(private)
         environment.kubectl(
             private,
             ["wait", "--for=condition=Ready", "nodes", "--all", "--timeout=120s"],
@@ -489,6 +507,8 @@ def _execute(private, output):
 
 @contextmanager
 def exclusive(private):
+    if not private.is_dir():
+        raise RuntimeError("PRIVATE_DIRECTORY_UNAVAILABLE: " + str(private))
     lock = private / "calibration.lock"
     descriptor = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
     try:
