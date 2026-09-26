@@ -79,3 +79,47 @@ class DiagnosticTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "DIAGNOSTIC_TARGET_HAS_HPA"):
             require_fixed_target(None)
         self.assertEqual(command.call_count, 1)
+
+
+class CounterWindowTests(unittest.TestCase):
+    def series(self, amounts):
+        return [
+            {
+                "throttling": {
+                    "counters": [
+                        {
+                            "container": "core",
+                            "pod": "core-one",
+                            "id": "/one",
+                            "metric": m,
+                            "source_timestamp_ms": t,
+                            "value": value,
+                        }
+                        for m in METRICS
+                    ]
+                }
+            }
+            for t, value in amounts
+        ]
+
+    def test_repeated_source_values_do_not_inflate_deltas(self):
+        from scripts.review_scale_diagnostic import windows
+
+        row = windows(self.series([(1000, 2), (1000, 2), (2000, 5)]))[0]
+        self.assertEqual(row["periods"], 3)
+        self.assertEqual(row["distinct_timestamps"], 2)
+        self.assertEqual(row["window_seconds"], 1)
+
+    def test_reset_and_single_timestamp_are_unknown(self):
+        from scripts.review_scale_diagnostic import windows
+
+        for values in ([(1000, 5), (2000, 2)], [(1000, 5), (1000, 5)]):
+            row = windows(self.series(values))[0]
+            self.assertFalse(row["valid"])
+            self.assertNotIn("throttled_period_fraction", row)
+
+    def test_conflicting_value_same_source_timestamp_is_rejected(self):
+        from scripts.review_scale_diagnostic import windows
+
+        with self.assertRaisesRegex(ValueError, "CONFLICTING_SOURCE_TIMESTAMP"):
+            windows(self.series([(1000, 2), (1000, 3)]))

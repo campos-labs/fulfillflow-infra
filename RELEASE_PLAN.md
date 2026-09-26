@@ -304,6 +304,46 @@ Throttling observado também não prova isoladamente o gargalo global.
 Exportar resultados e parar somente o nó dedicado, preservando volumes.
 Reavaliar antes de alterar taxa, duração ou recursos.
 
+**Resultado da coleta focal:** `artifacts/scale-instrumentation-01`, instrumento
+`3093d9c`, concluída com 300/300 aceitos e concluídos no prazo; atribuição
+confirmada a uma réplica, sem pendência elegível final. Nó parado e volumes
+preservados. Conferência separada: `artifacts/scale-instrumentation-01-review.json`,
+613 hashes verificados; reprodução por `scripts/review_scale_diagnostic.py`.
+
+| Componente | Períodos com throttling / observados | Janela da fonte (s) |
+| --- | --- | --- |
+| Core API | 406/527 (77,04%) | 58,559 |
+| Core worker | 206/586 (35,15%) | 66,062 |
+| Tracking API | 70/450 (15,56%) | 58,745 |
+| Tracking worker | 112/588 (19,05%) | 66,942 |
+| Notifications API | 1/467 (0,21%) | 73,708 |
+| Notifications worker | 69/496 (13,91%) | 62,350 |
+
+Janelas usam timestamps distintos por cgroup: cinco ou seis leituras de origem,
+sem reset observado, em 14 coletas. Elas diferem entre componentes e podem incluir
+bordas da preparação/drenagem. Percentuais representam períodos CFS com
+restrição, não CPU perdida, requisições prejudicadas ou indisponibilidade.
+Semântica: [cAdvisor](https://github.com/google/cadvisor/blob/master/docs/storage/prometheus.md)
+e [controle de banda CFS](https://docs.kernel.org/scheduler/sched-bwc.html).
+
+Observador: 2.409 GETs, todos 200; transporte mediano 0,281 s, p95 0,500 s e
+máximo 1,187 s (p95 por posto superior). Conclusão observada: mediana 9,828 s,
+p95 13,313 s, máximo 14,125 s, incluindo polling e verificações; não é tempo
+puro do worker. Coleta completa: máximo 0,735 s; consulta adicional cAdvisor:
+máximo 0,188 s; nenhum ciclo excedeu os 5 s. Não demonstra overhead nulo.
+Máximos amostrados: quatro pendências elegíveis e idade 0,553917 s.
+
+**Aprendizado e pausa:** o limite de CPU atua em várias etapas, inclusive no
+worker, enquanto a carga continua atendida. A hipótese de pressão no Core API
+agora tem evidência de restrição, mas a parcela causada pelo observador e o
+gargalo global continuam indeterminados. Não concluir que aumentar réplicas
+resolveria essa restrição. Não executar 540 eventos nem alterar recursos/limiar
+com base apenas nestes percentuais. Antes de caracterizar capacidade, decidir se
+vale isolar o custo da observação em um protocolo próprio, preservando todas as
+asserções, ou encerrar esta extensão com o limite demonstrado. AKS e comparação
+formal continuam fora desta coleta. KEDA permanece preferencial para eventual
+continuidade; este diagnóstico fixo não reavalia sua política.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da

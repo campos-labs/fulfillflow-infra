@@ -573,7 +573,8 @@ A v1.0.0 entrega a recuperação das seções 8.5–8.6 e sua avaliação delimi
 A seção 8.7 acrescenta o alvo do piloto de autoescalonamento, sem declarar capacidade
 validada. Comparação formal, cluster autoscaler, Argo CD, canary/blue-green, novos
 provedores de entrega e instrumentação ampla permanecem fora do próximo incremento.
-Autoescalonamento e implantação Azure ainda não estão implementados. O
+O piloto KEDA foi exercitado no Kind, sem caracterizar capacidade ou substituir
+a comparação formal. Implantação Azure permanece pendente. O
 [RELEASE_PLAN](RELEASE_PLAN.md) delimita implementação, pausa e decisão posterior;
 essas extensões não são requisitos para encerrar a avaliação da v1.0.0.
 

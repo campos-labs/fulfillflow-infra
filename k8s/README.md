@@ -543,3 +543,13 @@ $scalePrivate = Join-Path $env:LOCALAPPDATA 'Packages\OpenAI.Codex_2p2nqsd0c76g0
 de erro, sem corpo/headers/identificadores de URL. Tempos são exportados ao
 encerramento; encerramento abrupto pode perder o buffer, sem autorizar inferir
 zero consultas. Aplicam-se as ressalvas e a pausa do RELEASE_PLAN.
+
+Revisão sem nova carga (saída nova, fora do pacote original):
+
+```powershell
+uv run --frozen python scripts/review_scale_diagnostic.py --input artifacts/scale-instrumentation-01 --output artifacts/scale-instrumentation-01-review.json
+```
+
+Confere o manifesto de hashes, deduplica timestamps, identifica resets e registra
+janelas por cgroup. Percentuais de períodos com throttling não medem perda de CPU
+ou indisponibilidade. Resultados locais e decisão estão no RELEASE_PLAN.
