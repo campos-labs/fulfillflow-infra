@@ -87,3 +87,13 @@ class KedaContracts(unittest.TestCase):
                     "complete"
                 ]
             )
+
+    def test_multinamespace_bundle_does_not_force_application_namespace(self):
+        from scripts.scale_keda import k
+
+        with (
+            patch("scripts.scale_keda.env.tools", return_value=("kubectl", None)),
+            patch("scripts.scale_keda.env.command") as command,
+        ):
+            k(Path("private"), ["apply", "-f", "-"], namespace=None, data="manifest")
+            self.assertNotIn("-n", command.call_args.args[0])

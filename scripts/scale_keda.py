@@ -86,8 +86,7 @@ def k(private, args, namespace="fulfillflow", timeout=30, data=None):
             private / "kubeconfig",
             "--context",
             "kind-" + calibration.CLUSTER,
-            "-n",
-            namespace,
+            *(["-n", namespace] if namespace else []),
             *args,
         ],
         timeout=timeout,
@@ -157,6 +156,7 @@ class Pilot:
         k(
             private,
             ["apply", "--server-side", "--field-manager=scale-pilot", "-f", "-"],
+            namespace=None,
             timeout=120,
             data=rendered,
         )
