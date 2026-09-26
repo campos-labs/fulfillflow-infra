@@ -759,6 +759,51 @@ volumes e evidências foram preservados. Não alterar reservas globais de rede o
 recriar o cluster como correção implícita. Resolver o acesso local antes de nova
 tentativa identificada. Executor validado por 209 testes, Ruff e checks documentais.
 
+### Resultado do patamar de 45 s a 12/s
+
+`scale-duration-12-45-02`, instrumento `e935656`, concluiu com uma réplica fixa,
+HTTP 16 e 600 eventos planejados, oferecidos, aceitos (202) e concluídos no prazo.
+A recuperação da porta e da inicialização do Docker precedeu a carga; a tentativa
+01 permanece falha de preparação, sem medição de capacidade.
+
+| Indicador | Resultado descritivo |
+| --- | --- |
+| Conclusão funcional | 600/600 no prazo de 60 s, atribuição completa ao mesmo worker |
+| Confirmação observada | Mediana 19,6565 s; p95 23,921 s; máximo 24,704 s |
+| Pendência elegível máxima amostrada | 16 mensagens; idade máxima 1,332519 s |
+| Final da inbox | Zero elegíveis, retry futuro ou bloqueados |
+| Consultas do observador | 3.607 GETs; um HTTP 503 e nenhum erro de transporte registrado |
+| Memória livre mínima do host | 1,099 GiB, abaixo da guarda de progressão de 2 GiB |
+| Controle do host | 244 amostras, energia/plano válidos, maior intervalo 1,031 s |
+| Encerramento | Nó parado, volumes preservados, 1.216 arquivos conferidos por hash |
+
+No patamar, a pendência oscilou: em aproximadamente 27,6 s havia 16 elegíveis
+com idade de 1,333 s; em 57,7 s, 11 com idade de 0,966 s. A primeira amostra após
+a redução de taxa, em 62,7 s, registrou zero. Não houve crescimento contínuo da
+idade nas amostras nem sinal amostrado de cinco segundos. Isso não determina
+capacidade sustentável, não exclui picos intermediários e não testa KEDA.
+O atendimento deste perfil por uma réplica não demonstra equivalência com duas.
+
+O 503 ocorreu em `fixed-1/event-0039/http-timings.json`, GET `carrier-events`,
+às 22:13:03,887 UTC; a observação posterior confirmou a conclusão do evento.
+Não atribuir a causa à memória, ao Core ou ao worker sem diagnóstico específico.
+`complete=true` confirma o encerramento funcional do executor; não substitui
+as guardas externas de progressão. Estas impediram nova carga por memória e HTTP.
+
+**Decisão:** encerrar a sequência de aumento de demanda neste host por ora.
+Não repetir toda a preparação, iniciar 16/s, adicionar réplica ou reduzir o
+limiar de KEDA para produzir escala. Antes de qualquer comparação formal,
+resolver margem operacional e investigar a resposta 503, preservando aplicação
+e recursos congelados. Se o limite local persistir, tratar este conjunto como
+caracterização exploratória e reavaliar ambiente/recorte; migrar a AKS não é
+consequência automática. O aprendizado atual separa capacidade de admitir o perfil,
+conclusão dos aceitos e condições para avaliar uma política de escala.
+
+Fontes ainda locais: `artifacts/scale-duration-12-45-02`,
+`artifacts/scale-duration-12-45-02-review.json` e
+`artifacts/scale-duration-12-45-02-assessment.json`. As séries anteriores
+permanecem preservadas; não formam controles homogêneos desta execução.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da
