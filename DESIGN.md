@@ -415,7 +415,7 @@ observar resultados. Prazos, ordem e denominadores executados ficam no
 
 ### 8.7. Alvo de autoescalonamento em Kind
 
-**Contrato da extensão v1.1; aceite do piloto pendente.** A base permanece
+**Contrato da extensão v1.1; piloto integrado concluído, comparação formal pendente.** A base permanece
 conforme as seções anteriores. A extensão varia apenas réplicas de um worker
 selecionado, com nós e recursos do host fixos, aplicação congelada e demais
 workloads estáveis. Calibração começa com uma e duas réplicas; a política mantém

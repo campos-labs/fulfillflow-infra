@@ -562,3 +562,14 @@ Para a avaliação optativa de reutilização das duas respostas terminais:
 
 Modo exclusivo do diagnóstico. Preserva todas as asserções e identifica a
 mudança de instrumento no protocolo; não utiliza cache entre observações.
+
+### Janela reservada para medições
+
+Concluir downloads e conferência de dependências antes de reservar o host.
+Durante a preparação das entidades, oferta, drenagem e exportação, manter
+alimentação/perfil estáveis e evitar outros aplicativos, builds ou clusters.
+Execução direta pelo PowerShell independe da continuidade do chat. O diagnóstico
+fixo usa o ambiente local já preparado; disponibilidade offline exige imagens,
+Python, bibliotecas e executáveis presentes. Não fazer alterações de rede no meio
+da coleta. Liberar a janela após conferir `summary.json` e `shutdown.json`.
+Os critérios de interferência e os limites dos diagnósticos ficam no RELEASE_PLAN.

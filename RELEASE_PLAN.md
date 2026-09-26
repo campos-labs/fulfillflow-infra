@@ -410,6 +410,51 @@ ensaios. Taxas novas, recursos, limiar e adoção do modo no KEDA permanecem par
 essa decisão; o padrão anterior continua disponível. AKS não resolve a lacuna
 atual de caracterização e continua adiado.
 
+### Condições do host e alcance dos diagnósticos
+
+Relato posterior indica atividade interativa concorrente e interrupção de energia/
+conectividade durante o período dos diagnósticos. Esses fatores não foram
+controlados prospectivamente; a coleta registra processos do instrumento e memória
+do host, mas não contabiliza CPU integral de outros aplicativos, frequência,
+temperatura ou alimentação durante a carga. Preservar os dados originais e marcar
+os tempos/recursos como exploratórios. A redução das releituras é verificável
+no instrumento; o tamanho do efeito temporal não pode ser atribuído a ela.
+
+Conferência de 2026-09-26, UTC-03: a série de `instrumentation-01` cobre
+15:27:59–15:29:04 e a de `reuse-01`, 15:48:55–15:50:00. Intervalo máximo
+entre coletas de ambas: 5,016 s. Eventos Windows consultados entre 15:20 e 16:02
+registram `AcOnline=false` às 15:34:00 e `true` às 15:34:02, com transições
+de espera/retomada até 15:34:19, fora dessas duas janelas. Isso não demonstra
+ausência de interferência do host nem identifica com certeza toda a interrupção
+relatada; não há lacuna de dois minutos nas séries analisadas. Os resultados
+funcionais preservados permanecem 300/300, sem transformar esses ensaios em
+comparação controlada. Registro sanitizado: `artifacts/host-conditions-20260926.json`.
+
+Para novas medições, separar preparação com acesso externo da janela reservada
+local. Antes: finalizar downloads/instalações, conferir imagens e dependências,
+fechar cargas interativas, manter laboratórios históricos parados e aguardar o
+host estabilizar. Registrar perfil de energia, alimentação, recursos Docker e
+condições de partida. Reiniciar é opcional; não alterar o perfil de energia
+entre condições. Manter tomada e tampa aberta, sem suspensão, builds ou outras
+campanhas durante toda a janela, da preparação das entidades à confirmação
+do encerramento. Sinalizar explicitamente início e fim ao operador.
+
+Mudança de alimentação, suspensão/reinício ou atividade externa relevante
+durante uma coleta destinada à capacidade torna sua comparabilidade temporal
+pendente; interromper nova oferta e preservar resultados/encerramento quando
+possível. Não apagar nem reclassificar eventos aceitos como perdidos. A decisão
+de exclusão/repetição deve constar do protocolo antes da campanha.
+
+A execução fixa usa recursos locais e pode ocorrer pelo PowerShell sem internet
+após conferir as dependências; instalação KEDA, imagens ausentes e sincronização
+Git exigem etapa conectada. Não desativar/reconectar a rede no meio da medição.
+Não repetir toda a história preparatória: usar uma referência limpa com o
+observador validado antes da futura caracterização. A reutilização é a escolha
+preferida, fixada por protocolo/SHA; correções posteriores exigem nova identificação,
+não um congelamento irreversível. Não impor ordem universal entre utilização,
+throttling, backlog e drain: a caracterização deve observar esses sinais, sem
+exigir que apareçam nessa sequência.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da
