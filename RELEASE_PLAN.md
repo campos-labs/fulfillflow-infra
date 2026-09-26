@@ -233,16 +233,39 @@ de escala continuam em aberto. Na calibração 05 duas réplicas processaram 143
 eventos; no piloto 04 uma concluiu 300/300 no prazo. Ausência de escala não prova
 equivalência entre políticas nem ausência de transientes entre amostras.
 
-Há um indício a esclarecer antes de elevar demanda: no piloto, a API Core esteve
-acima de 0,45 CPU em 5/14 amostras, com limite configurado de 0,5 CPU. A maior CPU
-amostrada do worker foi 0,4133, e a maior idade elegível foi 0,437378 s. O observador
-faz várias consultas por evento nessa API. Isso sugere investigar entrada/observação,
-mas não comprova throttling, gargalo causal ou capacidade máxima. O gerador não omitiu
-ofertas: atraso máximo de despacho 16 ms, concorrência amostrada máxima 5 de 8.
-Fontes locais: `keda-pilot-04/adaptive/{series,admission}.jsonl`, configuração de
-runtime e procedimentos `observe`/`verify_flow`. Picos entre amostras não são excluídos.
+Diagnóstico retrospectivo concluído em `artifacts/scale-diagnostic-01/review.json`,
+com hashes dos 305 arquivos de entrada. Reprodução: `scripts/review_scale_pilot.py`;
+saída separada, sem alterar a campanha ou iniciar recursos.
 
-Recomendação: um diagnóstico delimitado do custo das consultas e de throttling por
+- Durante o patamar, idade elegível amostrada: 0,354; 0,437; 0,224; 0,262;
+  0,212; 0,175 s. Contagens: 5, 2, 2, 5, 5, 6. Não aparece envelhecimento
+  progressivo; contagens pequenas e oscilantes não demonstram ausência de transientes.
+  Nos cinco intervalos inteiramente dentro do patamar, o contador de conclusões
+  Core cresceu 197 em 25,109 s (aproximadamente 7,85/s), próximo à oferta de 8/s.
+  É ritmo observado nessa janela, não estimativa da capacidade sustentável máxima.
+- O observador registrou 2.409 respostas GET, todas 200: oito por evento em 291
+  casos e nove em nove casos. Excluídos 900 POSTs de preparação anteriores à
+  carga; os 300 webhooks pertencem ao gerador. Contagem não inclui tentativas sem
+  resposta não registradas. O rótulo `operation=prepare` de alguns GETs é estado
+  herdado do verificador; sua data e método os identificam como observação da carga.
+- Correção de interpretação: 14 coletas da API Core contêm apenas seis leituras
+  de CPU com timestamps distintos do kubelet. Duas estão próximas de 0,5 CPU
+  (limite configurado), repetidas em cinco coletas. O worker tem cinco leituras
+  distintas, máximo 0,4133 CPU. Não tratar cinco coletas como cinco ocorrências
+  independentes, nem inferir throttling. Os contadores de throttling não foram
+  preservados; uma consulta posterior não recupera sua atribuição a esta carga.
+- Não houve oferta omitida; atraso máximo de despacho 16 ms e concorrência
+  amostrada máxima 5 de 8. Quantidade de GETs evidencia custo potencial de
+  observação, sem atribuir a ela uma fração da CPU ou da latência.
+
+Decisão desta revisão: não executar os 540 eventos agora. Não surgiu evidência
+suficiente de crescimento de pendência envelhecida para justificar alongar o
+mesmo patamar. Se a extensão continuar, a lacuna é uma coleta focal de throttling
+por componente e de volume/tempo das consultas, com timestamps da fonte, sob o
+perfil já conhecido. Isso antecede caracterizar capacidade ou escolher nova demanda.
+Nenhuma coleta adicional foi executada nesta revisão.
+
+Para a eventual coleta focal, medir o custo das consultas e throttling por
 componente antes de definir nova carga. Manter app, recursos e política inicialmente;
 não reduzir recursos do worker, baixar arbitrariamente o limiar ou mudar alvo para
 produzir escala. Separar conclusão funcional de tempo até sua observação. As medianas

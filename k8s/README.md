@@ -516,3 +516,12 @@ Falha de encerramento requer investigação antes de nova execução.
 Referências técnicas: [instalação](https://keda.sh/docs/2.20/deploy/),
 [scaler PostgreSQL](https://keda.sh/docs/2.20/scalers/postgresql/) e
 [ScaledObject/HPA](https://keda.sh/docs/2.20/reference/scaledobject-spec/).
+
+### Diagnóstico retrospectivo do piloto
+
+`uv run --frozen python scripts/review_scale_pilot.py --input artifacts/keda-pilot-04/adaptive --output artifacts/scale-diagnostic-01`
+
+Lê somente evidências locais já preservadas, conta respostas GET, agrupa CPU por
+UID/timestamp da fonte e calcula intervalos do patamar. Exige destino novo e
+separado; não inicia Docker nem Kubernetes. Se o destino já existir, use outro
+identificador para reprodução. O resultado inclui limites e hashes das entradas.
