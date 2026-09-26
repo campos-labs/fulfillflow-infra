@@ -749,6 +749,16 @@ Revisar oferta/aceite/conclusão, idade e tendência da pendência, drain, admis
 CPU/throttling e mínimo de memória. Aplicar as guardas de progressão existentes;
 não iniciar automaticamente 16/s ou outra condição. Parar o nó ao encerrar.
 
+**Estado da tentativa `scale-duration-12-45-01`:** bloqueada antes da preparação
+funcional e da oferta, no instrumento `dde2ee2`. O Windows reservou a faixa TCP
+59622–59721, que contém a porta 59640 já vinculada à API do nó dedicado.
+`docker start` retornou erro de bind por permissão; reiniciar somente o Docker
+Desktop não removeu o conflito. Não houve carga nem resultado de capacidade.
+O cluster histórico, reiniciado automaticamente pelo Docker, foi parado novamente;
+volumes e evidências foram preservados. Não alterar reservas globais de rede ou
+recriar o cluster como correção implícita. Resolver o acesso local antes de nova
+tentativa identificada. Executor validado por 209 testes, Ruff e checks documentais.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da

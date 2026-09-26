@@ -136,7 +136,7 @@ def characterization_settings(
     http_concurrency=8,
     plateau_seconds=30,
 ):
-    """Keep the historical profile unchanged; allow only two bounded successors."""
+    """Keep the historical profile unchanged; allow only explicitly bounded successors."""
     if plateau_seconds not in (30, 45) or (
         plateau_seconds == 45 and (peak_rate != 12 or http_concurrency != 16)
     ):
