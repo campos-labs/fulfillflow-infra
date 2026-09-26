@@ -2,124 +2,203 @@
 
 ## 1. Estado atual
 
-**v1.0.0 — avaliação operacional concluída em Kind; pausa para decisão de continuidade.**
-A aplicação v1.3.0-rc.1 permanece congelada. O último encerramento conferiu a configuração
-saudável, pausou os workloads e parou o nó, preservando dados e evidências.
-Não há implantação AKS, publicação ACR ou autoescalonamento neste aceite.
+**Preparação documental da v1.1 na branch `feature/v1.1-autoscaling-kind`.**
+Base: v1.0.0, commit `cb6113e6bbd601a65ee5142de85cadc5bf6ba29d`.
+O incremento de viabilidade está planejado, não implementado nem executado.
+Esta etapa entrega somente branch e documentos; a implementação depende da
+continuidade autorizada. Não há nova tag, implantação AKS ou publicação ACR.
 
-Resultados e protocolos pertencem à [avaliação operacional](docs/OPERATIONAL_EVALUATION.md).
-O [DESIGN](DESIGN.md) define os contratos; o [guia Kubernetes](k8s/README.md)
-contém os comandos. Este plano registra entregas e decisões futuras, sem repetir
-as tabelas ou o diário das execuções.
+A v1.0.0 permanece encerrada: aplicação v1.3.0-rc.1 congelada, configuração saudável
+conferida e laboratório parado, com dados e evidências preservados. Resultados e
+protocolos pertencem à [avaliação operacional](docs/OPERATIONAL_EVALUATION.md).
+O [DESIGN](DESIGN.md) define contratos; o [guia Kubernetes](k8s/README.md), comandos.
+Este plano registra entregas e decisões, sem repetir resultados ou diário de execução.
 
-| Entrega concluída | Alcance |
+## 2. Referência concluída e limites preservados
+
+| Entrega v1.0.0 | Alcance |
 | --- | --- |
 | Ambiente e operação | Kind isolado, aplicação congelada, persistência, verificação e restauração delimitada de um workload |
 | Avaliação | Comparação de 20 tentativas; protocolo separado com seis pendências e três inconclusões. Pilotos e séries interrompidas excluídos |
 | Documentação e evidências | Relatório, registros selecionados e dois pacotes completos versionados, com origem e hashes |
 
-Os SHAs executados, CIs e arquivos correspondentes constam no relatório. O
+A [release v1.0.0](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.0.0)
+identifica o fechamento; SHAs executados e CIs constam no relatório. O
 [registro anterior à consolidação](https://github.com/campos-labs/fulfillflow-infra/blob/47dbd111ad4eff89a8e64c7b50d7d2c59c23baf7/RELEASE_PLAN.md)
-preserva o histórico detalhado. Comandos e propostas daquele registro não são
-instruções vigentes de execução.
+preserva o histórico, sem tornar vigentes seus comandos e propostas antigas.
 
-## 2. Pendências de encerramento
+Os ZIPs publicados permitem conferir downloads por hash, mas não comprovam
+restauração de bancos/volumes após perda do equipamento. Pilotos e séries
+interrompidas permanecem locais, com exclusões documentadas. Seletores de
+NetworkPolicies foram validados; tráfego permitido/bloqueado não foi ensaiado.
+Capacidade, estabilidade prolongada e HA não foram avaliadas.
 
-| Item | Tratamento |
+Não repetir séries concluídas, ampliar seus denominadores ou substituir registros
+interrompidos. A extensão terá protocolo, dados e destinos próprios. Seu resultado
+não modifica retrospectivamente o aceite, as imagens ou as evidências da v1.0.0.
+
+## 3. Incremento de viabilidade em Kind
+
+### Objetivo e decisões de entrada
+
+Avaliar se uma política de réplicas pode melhorar o atendimento à demanda com
+recursos controlados. As perguntas operacionais são:
+
+- Como réplicas fixas e autoescalonamento diferem na conclusão dentro do prazo e no uso de recursos?
+- O sinal de escala representa o trabalho que o workload ainda pode processar?
+- A redução de réplicas preserva a conclusão do trabalho aceito?
+
+O piloto verifica se essas perguntas podem ser respondidas; não exige ganho mínimo
+nem resultado favorável. Análises compartilhando execuções não contam como
+repetições independentes. Os contratos do alvo estão no [DESIGN §8.7](DESIGN.md#87-alvo-de-autoescalonamento-em-kind).
+
+| Decidido para a extensão | A resolver no piloto |
 | --- | --- |
-| Evidências | Dois conjuntos concluídos disponíveis no Git como seleção e ZIPs originais revisados para compartilhamento. Pilotos e séries interrompidas preservados localmente, com síntese de exclusões |
-| Backup e recuperação | Dois ZIPs versionados com hashes para conferência do download. Isso não comprova restauração de bancos, volumes ou ambiente após perda do equipamento |
-| Referência de infraestrutura | [v1.0.0](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.0.0) identifica o fechamento documental e operacional; SHAs das execuções permanecem no relatório e nos protocolos |
-| NetworkPolicies | Seletores validados; tráfego permitido/bloqueado não ensaiado. Não declarar isolamento efetivo a partir da CI |
-| Capacidade, estabilidade prolongada e HA | Não avaliadas; fora do aceite funcional e da comparação operacional |
+| Kind, um workload e capacidade de nós fixa; aplicação congelada | Worker elegível, gargalo e margem efetiva do host |
+| Calibração inicial com uma e duas réplicas; mínimo de uma na política | Sinal, consulta/exportador, limiares e estabilização |
+| KEDA e Locust preferenciais; coleta temporal obrigatória, Prometheus preferencial | Versões compatíveis fixadas, instalação e custo da coleta |
+| Evidências por evento separadas da telemetria agregada | Perfil de entrada, prazo funcional e janela de observação posterior |
+| AKS opcional, sem recursos Azure neste incremento | Comparação futura e necessidade de verificação complementar na nuvem |
 
-Não repetir uma série concluída para completar outra, ampliar denominadores ou
-substituir registros interrompidos. Correções documentais não alteram os critérios
-ou SHAs das execuções. Uma nova execução exige protocolo e destino próprios.
+Não selecionar Notifications apenas por ter sido o alvo da restauração. Inspecionar
+processamento, concorrência e pendências dos workers da referência; escolher um
+alvo justificável. Não adicionar atraso artificial, alterar regra de negócio ou
+mudar limites/pools para fabricar vantagem. Se a referência exigir alteração na
+aplicação para permitir escala correta, apresentar a incompatibilidade e pausar.
 
-## 3. Extensões possíveis
+### Entrega em um incremento, com verificações desde o início
 
-Nenhuma extensão é condição para concluir a avaliação atual. A escolha deve resolver
-uma lacuna definida, com referência congelada, custo, critérios e resultados esperados
-no sentido de verificáveis, não de necessariamente favoráveis. Não abrir uma
-branch por condição comparada nem implementar todas as alternativas abaixo.
+| Sequência | Entrega verificável |
+| --- | --- |
+| Preparação | Conferir recursos locais e contratos do alvo; habilitar a CI nesta branch, hoje restrita a push em main; fixar ferramentas novas e preparar instalação/encerramento reproduzíveis em ambiente dedicado |
+| Instrumento | Gerador com oferta controlada e observação independente; coleta temporal e registros por evento; configuração validada, limites, identificação e testes de falha do instrumento |
+| Calibração | Verificar uma e duas réplicas com o mesmo perfil de entrada, coleta e configuração por réplica; registrar contenção, conexões, pendências e resultados antes de ativar a política |
+| Política e piloto | Implementar a política mínima se sinal e margem forem suficientes; verificar aumento/redução e falha de métrica; exportar evidências, encerrar o ambiente e parar para reavaliação |
 
-### AKS e ACR — verificação de implantação
+Resolver ajustes rotineiros sem abrir novos incrementos. Fixar antes de cada
+execução SHA, configuração, IDs, limites e critério de encerramento. A primeira
+janela integrada será limitada a 120 minutos, reservando 20 para observação final,
+exportação e parada; nenhuma carga deve continuar sem supervisão além do prazo.
+Até três execuções identificadas de calibração/piloto cabem nessa janela, sem
+reposição automática. Correção do instrumento exige nova identidade e registro
+do motivo; resultados anteriores permanecem preservados e fora de agregação.
 
-Objetivo possível: verificar se a referência e os procedimentos funcionais operam
-no AKS e identificar adaptações de identidade, armazenamento, rede e encerramento.
-ACR pertence a essa implantação; não é requisito retroativo dos resultados Kind.
+Reutilizar interfaces e verificações pertinentes, sem alterar o comportamento dos
+executores encerrados. Testar o que mudar: configuração inválida, classificação
+por evento, consulta falha, métricas ausentes/obsoletas e limites. Validar manifests,
+permissões de leitura, ownership da escala e encerramento; usar PostgreSQL,
+RabbitMQ e Kubernetes reais no piloto. Mocks complementam, não substituem esse aceite.
 
-A preparação Azure e as consultas anteriores não estabeleceram uma configuração
-provisionável. Antes de qualquer apply, reconferir assinatura, região, quotas,
-restrições de SKU, capacidade do pool, acessos, orçamento e custos residuais.
-Validar o plano efetivo e as guardas do [guia Terraform](infra/README.md).
-Não tratar uma quota positiva ou uma renderização aprovada como garantia de alocação.
+Carga e observação não compartilham uma espera que reduza silenciosamente a oferta.
+Registrar oferta planejada/realizada, recusas, aceite desconhecido e saturação do
+gerador. O piloto deve oferecer um perfil curto de subida, patamar e queda, limitado
+por taxa e quantidade total de eventos; parâmetros ficam registrados antes da execução.
+Prazo funcional e observação posterior são calibrados aqui e congelados antes de
+qualquer comparação formal. Não usar resultados do piloto como repetições dessa comparação.
 
-Uma verificação complementar pode manter réplicas fixas e exercitar jornada,
-restauração e observação dos eventos identificados. Seus resultados pertencem a
-um conjunto separado. Para comparar tempos no AKS, executar ambas as condições
-ali, sob protocolo previamente definido; não comparar controle local com automação
-na nuvem nem converter medições Kind em evidência de desempenho Azure.
+### Critérios da pausa
 
-### Autoescalonamento e trabalho concluído
+A entrega de viabilidade deve permitir revisar, em conjunto:
 
-Objetivo possível: avaliar uma política de réplicas diante de entrada variável,
-comparando réplicas fixas e escala de um workload. Manter capacidade dos nós e
-procedimento de implantação controlados inicialmente.
+1. **Alvo e sinal:** worker escolhido, etapa observada e relação da métrica com
+   pendências conferidas por registros da aplicação, incluindo limites da consulta.
+2. **Execução real:** identidades das réplicas exercitadas, uma versus duas e,
+   quando viável, subida/descida automáticas com configuração efetiva registrada.
+3. **Correção:** resultado esperado por etapa, trabalho aceito acompanhado após
+   redução, efeitos sem duplicação indevida e ausência de reenvio/rearme automático.
+4. **Medição:** série temporal alinhada ao registro por evento, lacunas explícitas,
+   custo da instrumentação e distinção entre prazo excedido e observação inconclusiva.
+5. **Operação:** ausência de controladores concorrentes, tratamento demonstrado de
+   falha da métrica, exportação com hashes e parada confirmada sem excluir volumes.
 
-Requer carga que distinga oferecido, aceito e concluído; idade/backlog por etapa,
-drain, recursos totais e prazos. ACK pode anteceder o processamento local: fila
-RabbitMQ vazia não basta para reduzir workers a zero. Preservar pelo menos um
-processador até haver recuperação demonstrada das pendências locais. HPA ou KEDA
-são opções a avaliar após escolher uma métrica adequada, sem adoção conjunta automática.
-Não presumir que admissão HTTP mais rápida represente maior capacidade de conclusão.
+A falta de ganho não é falha do piloto. Pausar antecipadamente se não houver
+margem de recursos, sinal utilizável, concorrência correta ou necessidade atendível
+sem mudar a aplicação. Não insistir em aumentar carga ou instalar alternativas
+sucessivas para obter um resultado favorável. Registrar o diagnóstico disponível.
 
-### Outras capacidades — somente com finalidade definida
+No encerramento, atualizar o estado deste plano com SHA/CI, localização das evidências,
+checks executados e limitações; não criar documento de contexto adicional nem
+incorporar o piloto ao relatório fechado da v1.0.0. A decisão será **continuar,
+ajustar o recorte ou encerrar a extensão**, sem pressupor a próxima etapa.
 
-| Capacidade | Quando pode acrescentar informação | Delimitação |
-| --- | --- | --- |
-| OpenTelemetry e métricas de pendência | Diagnosticar em qual etapa o trabalho aguarda e correlacionar tentativas | Instrumentação nova altera a identidade da avaliação; tracing completo não está comprovado pelo aceite atual |
-| Argo CD / GitOps | Avaliar reconciliação de configuração e tratamento de drift | Exige separar o controlador do executor de restauração para evitar concorrência de mutações; não é necessário para a comparação concluída |
-| SAST | Acrescentar uma verificação de segurança à entrega | Definir achados e política de tratamento; não demonstra recuperação ou desempenho operacional |
-| Locust ou k6 | Gerar entrada controlada para um objetivo de capacidade | Escolher um gerador e adaptar a observação assíncrona; não reutilizar carga síncrona tratando 202 como conclusão |
+### Depois da pausa — ainda não autorizado
 
-Terraform e GitHub Actions já integram a preparação e validação deste repositório.
-Não equivalem a provisionamento Azure ou pipeline de deploy remoto executados.
-Uma extensão escolhida deverá ter plano próprio, testes desde o primeiro incremento
-e pausa ao atingir seu aceite. Nova versão/branch será decidida nesse momento;
-nenhuma numeração futura ou implementação está comprometida agora.
+Uma comparação formal constitui um segundo incremento, se aprovada. Antes da
+coleta, congelar condições, perfil de entrada, preparação, prazo, repetições,
+ordem e exclusões. Escolher uma referência fixa justificável: fixo em uma réplica
+versus adaptativo mistura automação com recursos adicionais; fixo no máximo
+versus adaptativo responde a outro compromisso entre atendimento e recursos.
+Não abrir automaticamente três condições nem atribuir toda diferença ao controlador.
 
-## 4. Versionamento e continuidade
+Manter instrumentação equivalente entre condições. Registrar totais por tentativa;
+eventos da mesma execução não substituem repetições independentes. Benefícios,
+equivalência, piora e limites são resultados admissíveis. Uma candidata funcional
+poderá receber `v1.1.0-rc.N`; esta preparação não publica tag nem garante release.
+
+<a id="3-extensões-possíveis"></a>
+
+## 4. Opções para reavaliação
+
+### AKS e ACR — complemento opcional
+
+Kind permanece o ambiente principal da extensão. AKS pode verificar a mesma
+referência e cenários selecionados de escala/conclusão, com nós fixos, sem repetir
+a comparação completa. Exige espaço efetivo para réplicas adicionais: uma
+implantação sem essa margem comprova apenas o que foi funcionalmente exercitado.
+Dados de nuvem formam conjunto separado; não transferir tempos/capacidade Kind
+para AKS nem comparar uma condição local com outra na nuvem. ACR pertence à
+implantação Azure, não ao requisito da avaliação local.
+
+A preparação e as consultas anteriores não estabeleceram configuração provisionável.
+Antes de qualquer apply, reconferir assinatura, região, quotas, restrições de SKU,
+capacidade, acessos, orçamento e custos residuais. Validar o plano e as guardas do
+[guia Terraform](infra/README.md); quota positiva não garante alocação. Expansão de
+nós e custos da nuvem constituiriam outro recorte, não parte desta escala de pods.
+
+### Capacidades condicionadas a uma lacuna concreta
+
+| Capacidade | Critério para adoção |
+| --- | --- |
+| Grafana | Visualização útil da coleta já exportável; não condição para validar o piloto |
+| OpenTelemetry | Pergunta de diagnóstico não respondida pelos sinais existentes; possível extensão própria, com custo e cobertura de instrumentação avaliados |
+| Segurança na CI | Lacuna identificada após conferir os checks existentes; distinguir código, dependências e imagens, sem mudar silenciosamente a aplicação congelada |
+| Argo CD / GitOps | Avaliação de reconciliação e drift, com responsabilidade de mutação revisada para não disputar com restauração/escala |
+| Alertmanager, Litmus ou blue/green | Somente se uma nova pergunta exigir alertas, mecanismo de falha ou estratégia de implantação diferentes |
+
+Terraform e GitHub Actions integram preparação/validação; isso não comprova deploy
+Azure executado. Helm pode instalar componentes auxiliares sem substituir o
+Kustomize existente. Não adotar outro gerador de carga nem uma plataforma completa
+de observabilidade apenas para ampliar ferramentas. Novas extensões não são
+requisitos para concluir a recuperação ou o piloto de escala.
+
+## 5. Versionamento e método de trabalho
 
 As versões da infraestrutura são independentes das versões da aplicação. A v1.0.0
-fixa as interfaces operacionais documentadas: comandos, configuração e formatos de
-saída suportados. Correções compatíveis incrementam PATCH; novas capacidades
-compatíveis, MINOR; mudanças incompatíveis, MAJOR. Candidatas usam `-rc.N`.
-AKS e autoescalonamento não têm numeração reservada: ela dependerá da mudança real.
-Referências publicadas e registros de execução não são substituídos retrospectivamente.
+fixa comandos, configuração e formatos de saída suportados. Correções compatíveis
+incrementam PATCH; capacidades compatíveis, MINOR; mudanças incompatíveis, MAJOR.
+Candidatas usam `-rc.N`. Não alterar referências publicadas ou SHAs executados.
 
+Desenvolver a extensão em `feature/v1.1-autoscaling-kind`, sem branch por condição
+ou tentativa. Integrar na main somente após aceite da extensão; a v1.0.0 continua
+acessível pela tag. AKS terá branch quando iniciado, a partir da referência que
+for verificar; não reservar sua versão agora. PRs e Issues não são requisito do fluxo.
 
 1. Ler os contratos pertinentes do DESIGN e o estado deste plano. Preservar a
-   aplicação e as evidências congeladas; não alterar runtime para acomodar um resultado.
+   aplicação e as evidências congeladas; não alterar runtime para acomodar resultado.
 2. Resolver ajustes rotineiros no incremento autorizado. Mudanças de contrato,
    ambiente, custo, acesso ou persistência exigem decisão específica e plano concreto.
-3. Integrar diretamente na `main`, por assunto, depois de revisão e validações
-   pertinentes. A CI da aplicação permanece no repositório de origem.
+3. Revisar e validar por assunto antes de commit/push na branch ativa. A CI da
+   aplicação permanece no repositório de origem; sua aprovação não valida esta extensão.
 4. Manter comandos utilizáveis em PowerShell. Conferir executáveis e versões;
    não alterar ferramentas do operador ou PATH silenciosamente.
 5. Validar configuração antes de mutação, com contexto, identidade e propriedade
    dos recursos explícitos. Falha de permissão não autoriza administração global.
 6. Toda operação tem prazo, diagnóstico e encerramento. Parar na primeira falha
-   inesperada; não repetir implantação, webhook ou patch com resultado incerto.
-   Retomada usa reconciliação e guardas documentadas, sem apagar registros anteriores.
-7. Cobrir comportamento alterado com verificações pertinentes. Não repetir suítes
-   aprovadas sem mudança ou dúvida concreta; documentação sem runtime exige revisão
-   de links, exemplos, dados, fronteiras e diff.
+   inesperada; reconciliar resultado incerto antes de qualquer retomada, sem apagar registros.
+7. Cobrir comportamento alterado com checks pertinentes. Documentação sem runtime
+   exige revisão de links, exemplos, dados, fronteiras e diff; não repetir campanhas.
 8. Não versionar secrets, kubeconfigs, planos/state Terraform, dumps ou caminhos
    pessoais. Saídas operacionais só entram em pacotes delimitados, revisados para
-   compartilhamento e com hashes. Exemplos usam placeholders; dados derivados
-   identificam fonte e transformação, sem reescrever evidências originais.
+   compartilhamento e com hashes; dados derivados identificam fonte e transformação.
 9. Reportar alterações, checks, SHA e limitações. Fornecer comando manual somente
-   para operação preparada, necessária e autorizada. Atualizar o documento responsável
-   pelo assunto, evitando cópias de resultados e documentos de contexto redundantes.
+   para operação preparada, necessária e autorizada. Evitar documentos redundantes.

@@ -2,13 +2,16 @@
 
 [**v1.0.0 — operação e recuperação em Kind**](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.0.0).
 
-Implantação e recuperação operacional do FulfillFlow em Kubernetes. A entrega
-atual usa Kind, uma aplicação congelada e réplicas fixas. A configuração de
-referência AKS/ACR está preparada para uma extensão futura, ainda não implantada.
-
-**Avaliação operacional concluída em Kind; desenvolvimento e execuções pausados.**
-Foram conferidas uma comparação de 20 tentativas e uma avaliação complementar de nove tentativas,
+Implantação e recuperação operacional do FulfillFlow em Kubernetes. A release
+v1.0.0 usa Kind, uma aplicação congelada e réplicas fixas. Foram conferidas uma
+comparação de 20 tentativas e uma avaliação complementar de nove tentativas,
 tratadas separadamente. O último encerramento preservou dados e parou o laboratório.
+
+**Próxima entrega: viabilidade de autoescalonamento em Kind, ainda não implementada.**
+A branch `feature/v1.1-autoscaling-kind` parte da v1.0.0. O
+[incremento planejado](RELEASE_PLAN.md#3-incremento-de-viabilidade-em-kind)
+termina com piloto limitado e pausa para reavaliação, antes de uma comparação formal.
+A configuração de referência AKS/ACR continua opcional e ainda não foi implantada.
 
 ## Comece por aqui
 
@@ -62,7 +65,8 @@ O destino deve ser novo. Para caminhos com espaços ou execução em outro diret
 `-Kubectl` e `-Terraform` são opcionais. Essa validação também roda na CI Linux/Windows:
 testes, renderização, schemas e planos Terraform simulados. Não aplica recursos
 nem executa as séries no Kind. Os comandos operacionais estão no guia Kubernetes;
-a pausa atual não autoriza repetir as séries concluídas.
+as séries concluídas permanecem encerradas. O piloto de autoescalonamento terá
+configuração e destinos próprios, após implementação e verificações pertinentes.
 
 ## Organização e evidências
 

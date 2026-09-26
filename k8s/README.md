@@ -12,6 +12,16 @@ Este guia descreve configuração e comandos. Começar pelo [Kind local](#caminh
 Resultados e fontes estão na [avaliação operacional](../docs/OPERATIONAL_EVALUATION.md);
 entregas, pausa e extensões, no [RELEASE_PLAN](../RELEASE_PLAN.md).
 
+**Extensão v1.1 em preparação:** os comandos deste guia continuam sendo os da
+base com réplicas fixas; não instalam nem verificam autoescalonamento. O
+[alvo de escala](../DESIGN.md#87-alvo-de-autoescalonamento-em-kind) terá ambiente
+dedicado e [piloto limitado](../RELEASE_PLAN.md#3-incremento-de-viabilidade-em-kind),
+sem reutilizar bancos/volumes históricos. Não usar `resume`/`pause` ou reaplicar o
+runtime existente sobre um alvo controlado por KEDA/HPA: os comandos atuais
+restauram/escalam réplicas e não coordenam a suspensão do controlador. Instalação,
+coleta e encerramento próprios serão documentados depois de implementados;
+não há comando executável do novo piloto nesta preparação.
+
 `overlays/example` é exclusivamente de validação. A imagem runtime
 `example.azurecr.io.invalid/fulfillflow/runtime@sha256:` seguida de 64 zeros é
 **inválida**, não resolve e não representa publicação no ACR. O seletor

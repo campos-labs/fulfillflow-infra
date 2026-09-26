@@ -4,8 +4,9 @@
 
 Este documento define a arquitetura e os contratos operacionais da entrega em
 Kind: verificação de implantação, restauração delimitada e observação
-posterior do trabalho aceito. AKS/ACR é uma configuração de referência opcional,
-ainda não implantada; não é dependência da entrega local.
+posterior do trabalho aceito, entregues na v1.0.0. A seção 8.7 define o alvo de
+autoescalonamento da v1.1, ainda não implementado nem verificado. AKS/ACR é uma
+configuração de referência opcional, ainda não implantada; não é dependência local.
 
 O [RELEASE_PLAN](RELEASE_PLAN.md) registra marcos e decisões pendentes. O relatório
 [OPERATIONAL_EVALUATION](docs/OPERATIONAL_EVALUATION.md) reúne protocolos executados,
@@ -27,7 +28,8 @@ silenciosos no build de infraestrutura.
 
 ## 2. Topologia aprovada
 
-O ambiente Kind usa um nó e uma réplica de cada processo. A topologia de serviços
+A base Kind da v1.0.0 usa um nó e uma réplica de cada processo. Na extensão da
+seção 8.7, somente o worker selecionado poderá variar réplicas. A topologia de serviços
 abaixo também orienta a extensão Azure, cujo dimensionamento exige decisão própria.
 
 | Componente | Controlador | Responsabilidade |
@@ -171,8 +173,9 @@ volume ao aplicar securityContext; não impor configuração que impeça o runti
 | RabbitMQ | 250m | 0,5 | 512 MiB |
 | Cada Job ativo | 250m | 0,5 | 384 MiB |
 
-O runtime soma requests de 1900m, limits de 5500m e memória de 5376 MiB, sem Jobs
-ou overhead. O perfil reduzido, usado no Kind, altera somente requests de CPU;
+Com uma réplica de cada processo, o runtime soma requests de 1900m, limits de
+5500m e memória de 5376 MiB, sem Jobs ou overhead. O perfil reduzido, usado no Kind,
+altera somente requests de CPU;
 preserva limits, memória, réplicas, imagens, pools, probes e prazos da base. São
 reservas para fluxo funcional sequencial, não mínimos medidos nem capacidade
 comprovada. Menor reserva pode aumentar latência sob contenção e não implica
@@ -410,6 +413,90 @@ recuperação explícita. Nenhuma reposição automática ou alteração de crit
 observar resultados. Prazos, ordem e denominadores executados ficam no
 [relatório operacional](docs/OPERATIONAL_EVALUATION.md).
 
+### 8.7. Alvo de autoescalonamento em Kind
+
+**Contrato da extensão v1.1; implementação e piloto pendentes.** A base permanece
+conforme as seções anteriores. A extensão varia apenas réplicas de um worker
+selecionado, com nós e recursos do host fixos, aplicação congelada e demais
+workloads estáveis. Calibração começa com uma e duas réplicas; a política mantém
+mínimo de uma e máximo inicial de duas. Qualquer ampliação exige capacidade
+verificada e configuração identificada antes de nova execução, fora desta calibração.
+
+Criar ambiente de piloto dedicado, sem reutilizar bancos, volumes ou namespace
+da avaliação encerrada; manter o laboratório histórico parado. Identificar cluster,
+UIDs, imagens, configuração e recursos do host. Réplicas compartilham CPU, memória,
+banco e broker; soma de requests não comprova folga, e mais pods não criam nós.
+Preservar os parâmetros por réplica da seção 7. Contabilizar pools multiplicados,
+limites PostgreSQL, controladores, coleta e gerador, inclusive quando externos ao cluster.
+
+**Controle e sinal.** KEDA é a opção preferencial e integra-se ao HPA; não criar
+outro HPA independente sobre o mesmo alvo. Na condição fixa, o controlador não
+pode disputar réplicas com o executor. Na adaptativa, manifests de rotina e scripts
+não devem repor `replicas` durante a observação. Restauração automática da v1.0.0,
+GitOps e mudanças de configuração não participam simultaneamente deste piloto.
+
+Definir a métrica pelo trabalho elegível que o worker pode processar. Fila RabbitMQ,
+inbox durável, trabalho em execução/lease e `BLOCKED` têm significados distintos;
+mais réplicas não rearmam bloqueios. Confrontar o sinal com registros por evento e
+estado persistido, sem somar cópias técnicas. Mínimo de uma réplica impede escala
+a zero, mas não torna suficiente uma métrica que omite pendências após ACK.
+
+KEDA pode consultar PostgreSQL ou uma métrica exportada. A escolha deve declarar
+consulta, estados, idade, unidades, limiar, cadência, custo e comportamento diante
+de dados ausentes/obsoletos. Acesso SQL operacional é somente leitura, com role
+restrita ao banco e dados necessários, timeout e conexões limitadas; não usar
+credenciais do worker nem contornar interfaces de negócio para escrever dados.
+Credenciais, RBAC e acessos de rede dos componentes auxiliares devem ser explícitos.
+Nenhum erro de consulta vira zero pendências. Documentar/testar o comportamento
+real do controlador em falha de métrica, sem presumir que sempre conserva réplicas.
+
+**Entrada e resultado.** Locust é o gerador preferencial. Distinguir oferta
+planejada/realizada, aceitação confirmada ou desconhecida, rejeição, conclusão e
+pendência; observar conclusão independentemente do ritmo de admissão. Fixar taxa,
+quantidade, distribuição de entidades/eventos e cadência de polling. Limitar também
+a concorrência do gerador, declarando oferta não realizada quando esse limite
+impedir a taxa prevista; não mascarar sua saturação. Preservar
+HMAC e identidades; aceite desconhecido não autoriza reenvio automático.
+
+Para eventos cujo resultado esperado é aplicação de transição, acompanhar
+Tracking e estado esperado de Order e Notifications `SIMULATED` separadamente;
+o conjunto de transições definido para concluir um pedido deve confirmar `FULFILLED`.
+Não exigir pedido concluído após uma transição intermediária nem confundir resultado
+terminal rejeitado com sucesso. Verificar efeitos únicos e IDs após aumento/redução,
+sem webhook repetido ou rearme de `BLOCKED`. Não enfraquecer probes, SIGTERM ou leases.
+
+O prazo funcional começa no aceite durável observado; registrar oferta e resposta
+202 para declarar o limite dessa observação. Duração local usa relógio monotônico;
+UTC e duração das consultas permitem alinhar séries sem presumir relógios idênticos.
+Separar conclusão no prazo, conclusão tardia, pendência confirmada e observação
+inconclusiva. Coortes devem ter a mesma oportunidade de observação, inclusive
+aceites próximos ao fim da carga. A proporção de conclusão no prazo usa aceites
+confirmados como denominador e identifica consultas inconclusivas; publicar também
+oferta, recusas e aceites desconhecidos, sem descartá-los silenciosamente.
+Prazo/observação posterior são finitos; timeout
+não comprova perda. Drain mede pendências após cessar a oferta; não equivale a fila vazia.
+
+**Coleta e interpretação.** Séries temporais são obrigatórias; Prometheus é a
+opção preferencial, independente da fonte consultada por KEDA. Registrar cadência,
+fonte, unidade e lacunas para demanda, backlog/idade por etapa, réplicas
+solicitadas/disponíveis, eventos de escala e CPU/memória. Guardar IDs dos pods e
+consumo do banco, broker e componentes auxiliares. Contadores do scaler não são
+a única evidência de conclusão. Métricas agregadas não recebem event IDs como labels;
+registros funcionais separados preservam identidade e resultado de cada evento.
+
+Fixar versão/configuração, exportar dados legíveis por máquina e registrar overhead.
+Comparações mantêm instrumentação equivalente. Falha na coleta tem classificação
+própria, não vira sucesso nem falha de negócio. Menos pod-tempo não demonstra menor
+custo Azure em nós fixos; escala observada não prova capacidade ou HA de produção.
+Ganhos, equivalência e piora são admissíveis, sem requisito percentual favorável.
+
+**Encerramento.** Definir antes do piloto limites, interrupção de oferta, coleta
+final e propriedade da escala. Exportar evidências e classificar pendências antes
+de suspender o controlador e parar os recursos dedicados; não deixar KEDA/HPA
+recriando réplicas durante a pausa. Verificar o estado efetivo, preservar volumes
+e não executar destruição como limpeza automática. Comandos só entram no guia
+Kubernetes após implementação e validação; critérios da pausa ficam no RELEASE_PLAN.
+
 ## 9. Limites e evolução
 
 O aceite deve identificar o ambiente efetivamente exercitado: Kind ou AKS.
@@ -417,12 +504,13 @@ O aceite local não encerra as verificações específicas da nuvem. Nenhum dos 
 marcos, isoladamente, demonstra HA, SLA de produção, capacidade, estabilidade
 prolongada ou solução dos incidentes históricos da aplicação/ferramenta de medição.
 
-A entrega permite somente a recuperação das seções 8.5–8.6 e
-sua avaliação delimitada em Kind. HPA/KEDA, cluster autoscaler, Argo CD, canary/blue-green,
-campanhas de capacidade e novos provedores de entrega continuam fora do escopo.
-Autoescalonamento e implantação Azure são extensões não implementadas. Suas
-condições de entrada ficam no [RELEASE_PLAN](RELEASE_PLAN.md); não são requisitos
-para encerrar a avaliação nem conclusões dos resultados locais.
+A v1.0.0 entrega a recuperação das seções 8.5–8.6 e sua avaliação delimitada.
+A seção 8.7 acrescenta o alvo do piloto de autoescalonamento, sem declarar capacidade
+validada. Comparação formal, cluster autoscaler, Argo CD, canary/blue-green, novos
+provedores de entrega e instrumentação ampla permanecem fora do próximo incremento.
+Autoescalonamento e implantação Azure ainda não estão implementados. O
+[RELEASE_PLAN](RELEASE_PLAN.md) delimita implementação, pausa e decisão posterior;
+essas extensões não são requisitos para encerrar a avaliação da v1.0.0.
 
 ## 10. Ambiente local e avaliação em Kind
 
@@ -452,3 +540,11 @@ qualquer remoção. Versões e exceção temporária de cgroup ficam em
 - [Probes Kubernetes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
 - [Budgets Azure](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets)
 - [Controlador de NetworkPolicies no Kind 0.30.0](https://github.com/kubernetes-sigs/kind/blob/v0.30.0/images/kindnetd/cmd/kindnetd/main.go)
+
+As referências abaixo descrevem capacidades das ferramentas; suas versões de
+implantação serão selecionadas por compatibilidade e fixadas no incremento:
+
+- [KEDA e HPA](https://keda.sh/docs/2.18/concepts/)
+- [KEDA: consulta PostgreSQL](https://keda.sh/docs/2.18/scalers/postgresql/)
+- [Prometheus: coleta e séries temporais](https://prometheus.io/docs/introduction/overview/)
+- [Locust: extensão e eventos](https://docs.locust.io/en/stable/extending-locust.html)
