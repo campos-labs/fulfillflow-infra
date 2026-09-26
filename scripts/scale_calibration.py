@@ -142,7 +142,9 @@ def observe(v, item):
         return {**state, "observation_error": error.code}
 
 
-def run_one(private, folder, replicas, settings, values, base, expected, work_deadline):
+def run_one(
+    private, folder, replicas, settings, values, base, expected, work_deadline, policy=None
+):
     folder.mkdir(exist_ok=False)
     environment.kubectl(private, ["scale", "deployment/" + TARGET, "--replicas=" + str(replicas)])
     environment.kubectl(
@@ -180,11 +182,18 @@ def run_one(private, folder, replicas, settings, values, base, expected, work_de
     child_env = {**os.environ, "CARRIER_ALPHA_WEBHOOK_SECRET": values["alpha"]}
     results = {}
     admissions = {}
+    if policy:
+        policy.begin_load(private, folder)
+
+    def collect():
+        sample = telemetry.temporal_sample(
+            private, replicas, lambda: db_metric(private, values["observer"])
+        )
+        return policy.sample(private, sample) if policy else sample
+
     collector = telemetry.Collector(
         folder / "series.jsonl",
-        lambda: telemetry.temporal_sample(
-            private, replicas, lambda: db_metric(private, values["observer"])
-        ),
+        collect,
         settings["collection_interval_seconds"],
     )
     collector.start()
@@ -293,8 +302,12 @@ def run_one(private, folder, replicas, settings, values, base, expected, work_de
         collector.close()
         if collector.failed.is_set():
             raise RuntimeError("COLLECTION_FAILED")
-        distribution = telemetry.attribution(
-            private, before, since, admissions, folder / "worker-attribution.json"
+        distribution = (
+            policy.attribution(private, admissions, folder / "worker-attribution.json")
+            if policy
+            else telemetry.attribution(
+                private, before, since, admissions, folder / "worker-attribution.json"
+            )
         )
         final_metric = db_metric(private, values["observer"])
         passed = distribution["complete"] and all(
@@ -345,7 +358,7 @@ def wait_api(private, seconds=120):
     raise RuntimeError("KUBERNETES_API_STARTUP_TIMEOUT")
 
 
-def _execute(private, output):
+def _execute(private, output, extension=None):
     expected = identity(private)
     if output.exists():
         raise RuntimeError("OUTPUT_EXISTS")
@@ -367,7 +380,12 @@ def _execute(private, output):
             "settings": settings,
             "identity": expected,
             "runtime_config_digest": RUNTIME_CONFIG,
-            "purpose": "calibration only",
+            "purpose": "KEDA bounded pilot" if extension else "calibration only",
+            **(
+                {"policy": extension.pin, "prepare_only": extension.prepare_only}
+                if extension
+                else {}
+            ),
         },
     )
     values = json.loads((private / "values.json").read_text())
@@ -433,25 +451,30 @@ def _execute(private, output):
                 time.sleep(2)
             else:
                 raise RuntimeError("TUNNEL_NOT_READY")
-        for count in settings["replicas"]:
-            print(f"Calibration: {count} fixed replica(s)", flush=True)
-            if not run_one(
-                private,
-                output / f"fixed-{count}",
-                count,
-                settings,
-                values,
-                base,
-                expected,
-                work_deadline,
-            ):
-                raise RuntimeError("CALIBRATION_NOT_COMPLETE")
+        if extension:
+            extension.run(private, output, settings, values, base, expected, work_deadline)
+        else:
+            for count in settings["replicas"]:
+                print(f"Calibration: {count} fixed replica(s)", flush=True)
+                if not run_one(
+                    private,
+                    output / f"fixed-{count}",
+                    count,
+                    settings,
+                    values,
+                    base,
+                    expected,
+                    work_deadline,
+                ):
+                    raise RuntimeError("CALIBRATION_NOT_COMPLETE")
         write(
             output / "summary.json",
             {
                 "complete": True,
-                "autoscaling_tested": False,
-                "next": "review fixed-replica signal and headroom before KEDA integration",
+                "autoscaling_tested": bool(extension and not extension.prepare_only),
+                "next": "pause for pilot review"
+                if extension
+                else "review fixed-replica signal and headroom before KEDA integration",
             },
         )
     except Exception as error:
@@ -471,6 +494,13 @@ def _execute(private, output):
         if tunnel and tunnel.poll() is None:
             tunnel.terminate()
             tunnel.wait(timeout=10)
+        cleanup_error = None
+        if extension:
+            try:
+                extension.cleanup(private)
+            except Exception as error:
+                cleanup_error = type(error).__name__
+                write(output / "controller-cleanup-error.json", {"error": cleanup_error})
         stopped = False
         try:
             environment.command(
@@ -484,7 +514,7 @@ def _execute(private, output):
             write(
                 output / "shutdown.json", {"container_stopped": stopped, "volumes_preserved": True}
             )
-            if not stopped and (output / "summary.json").exists():
+            if (not stopped or cleanup_error) and (output / "summary.json").exists():
                 summary = json.loads((output / "summary.json").read_text())
                 summary["complete"] = False
                 summary["shutdown_error"] = True
@@ -500,6 +530,8 @@ def _execute(private, output):
                     + path.relative_to(output).as_posix()
                 )
         (output / "checksums.sha256").write_text("\n".join(hashes) + "\n", encoding="utf-8")
+        if cleanup_error:
+            raise RuntimeError("CONTROLLER_CLEANUP_FAILED")
 
 
 @contextmanager

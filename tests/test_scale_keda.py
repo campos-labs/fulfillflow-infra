@@ -1,0 +1,61 @@
+"""Policy bounds, missing metrics and safe ownership without a live cluster."""
+
+import json
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+from scripts.scale_keda import CONFIG, Pilot, quantity, scaled_object
+
+
+class KedaContracts(unittest.TestCase):
+    def test_policy_uses_aged_durable_work_and_no_fallback(self):
+        spec = scaled_object(json.loads(CONFIG.read_text()))["spec"]
+        self.assertEqual((spec["minReplicaCount"], spec["maxReplicaCount"]), (1, 2))
+        self.assertNotIn("fallback", spec)
+        trigger = spec["triggers"][0]
+        self.assertEqual(trigger["metricType"], "AverageValue")
+        self.assertEqual(trigger["metadata"]["targetQueryValue"], "1")
+        self.assertIn("interval '5 seconds'", trigger["metadata"]["query"])
+        self.assertIn("next_attempt_at <= now()", trigger["metadata"]["query"])
+        self.assertEqual(
+            spec["advanced"]["horizontalPodAutoscalerConfig"]["behavior"]["scaleDown"][
+                "stabilizationWindowSeconds"
+            ],
+            300,
+        )
+
+    def test_quantity_rejects_unusable_metric(self):
+        self.assertEqual(quantity("1250m"), 1.25)
+        self.assertEqual(quantity("0"), 0)
+        for value in ("NaN", "inf", "-1", "invalid"):
+            with self.assertRaises(ValueError):
+                quantity(value)
+
+    def test_missing_metric_is_unavailable_not_zero(self):
+        pilot = Pilot()
+        pilot.object_uid = "ours"
+        obj = {"metadata": {"uid": "ours"}, "status": {}}
+        with patch("scripts.scale_keda.get", side_effect=[obj, None]):
+            sample = pilot.status(Path("unused"))
+        self.assertEqual(sample["metric"], {"available": False})
+
+    def test_cleanup_refuses_foreign_controller(self):
+        pilot = Pilot()
+        foreign = {"metadata": {"uid": "other", "labels": {}}}
+        with (
+            patch("scripts.scale_keda.get", return_value=foreign),
+            patch("scripts.scale_keda.k") as command,
+        ):
+            with self.assertRaisesRegex(RuntimeError, "CLEANUP_CONTROLLER_IDENTITY"):
+                pilot.cleanup(Path("unused"))
+            command.assert_not_called()
+
+    def test_no_manual_scale_while_hpa_remains(self):
+        with (
+            patch("scripts.scale_keda.get", side_effect=[None, {"metadata": {"name": "hpa"}}]),
+            patch("scripts.scale_keda.k") as command,
+        ):
+            with self.assertRaisesRegex(RuntimeError, "HPA_STILL_PRESENT"):
+                Pilot().cleanup(Path("unused"))
+            command.assert_not_called()

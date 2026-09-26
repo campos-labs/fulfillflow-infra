@@ -480,6 +480,39 @@ Credenciais, RBAC e acessos de rede dos componentes auxiliares devem ser explíc
 Nenhum erro de consulta vira zero pendências. Documentar/testar o comportamento
 real do controlador em falha de métrica, sem presumir que sempre conserva réplicas.
 
+**Piloto KEDA delimitado.** KEDA 2.20.2, manifesto oficial core (sem webhook de
+admissão adicional), hash e imagens amd64 fixados em `config/keda-pilot.json`.
+Instalação exclusiva em `fulfillflow-scale-01`; namespace `keda`, observação limitada
+a `fulfillflow`, RBAC oficial do controlador no cluster dedicado. PostgreSQL usa
+role própria somente leitura nas quatro colunas da inbox, timeout de 2 s e limite
+de duas conexões. Segredo referenciado por TriggerAuthentication, sem modificar
+credenciais da aplicação. Regra de rede permite PostgreSQL ao namespace KEDA;
+o CNI local não comprova enforcement de NetworkPolicies.
+
+Sinal: quantidade de `tracking.apply.v1` elegíveis (`PENDING`/`RETRY_WAIT` vencidos)
+com pelo menos cinco segundos desde `created_at`. Alvo de uma mensagem envelhecida
+por réplica, entre uma e duas réplicas. Cinco segundos é orçamento provisório da
+etapa inicial dentro do prazo funcional de 60 s; não é limiar ótimo inferido dos
+resultados nem mede exclusivamente espera ociosa. SQL retorna zero somente quando
+não há linhas elegíveis; erro continua erro. Sem fallback ou escala a zero.
+Polling KEDA 5 s, HPA conforme cadência efetiva registrada do cluster (padrão 15 s),
+estabilização de subida 15 s e descida 300 s. `cooldownPeriod` não governa 2→1.
+O perfil de carga permanece o da calibração 05. Não exigir aumento de réplicas.
+
+O protocolo separa preparação/falha da métrica da oferta funcional. Injeta
+`SELECT 1/0` somente na consulta do ScaledObject, sem alterar banco ou aplicação,
+registra falha da API de métricas/condições do controlador e restaura a consulta
+original. Não interpreta valores antigos do HPA como leitura válida. Após a carga,
+observa por até 360 s sem novos eventos. Ausência de escala com leituras saudáveis
+e ausência de critério nas amostras distingue-se de observação indisponível; não
+prova o comportamento entre amostras. Logs por pod são preservados durante a execução
+para acompanhar também pods removidos. Inventariar reinícios e lacunas de leitura.
+
+No encerramento, exportar configuração/status, remover somente o ScaledObject
+próprio e aguardar a exclusão do HPA antes de repor uma réplica e parar o nó.
+Não apagar CRDs, credenciais, volumes nem históricos. A calibração 05 permanece
+referência preparatória com hashes originais; o piloto não é repetição experimental.
+
 **Entrada e resultado.** Locust é o gerador preferencial. Distinguir oferta
 planejada/realizada, aceitação confirmada ou desconhecida, rejeição, conclusão e
 pendência; observar conclusão independentemente do ritmo de admissão. Fixar taxa,

@@ -6,9 +6,9 @@
 Base: v1.0.0, commit `cb6113e6bbd601a65ee5142de85cadc5bf6ba29d`.
 CI da branch habilitada. Bootstrap dedicado e smoke do instrumento concluídos;
 calibração com uma e duas réplicas executada, com uma oferta não realizada.
-Instrumento revisto: coleta temporal independente, motivos de não oferta, recursos
-amostrados do processo e atribuição por pod. Calibração sucessora ainda pendente;
-KEDA permanece preferencial e não foi instalado.
+Calibração 05 conferida: 300/300 eventos no prazo em cada condição, distribuição
+143/157 com duas réplicas e 620 checksums íntegros. Não comprova ganho de escala.
+Piloto mínimo KEDA em implementação; preparação real e carga ainda pendentes.
 A pausa final do incremento ainda não foi atingida. Sem nova tag, AKS ou ACR.
 
 ### Preparação conferida e próximo passo
@@ -42,7 +42,7 @@ A pausa final do incremento ainda não foi atingida. Sem nova tag, AKS ou ACR.
   Coleta independente abaixo de 0,32 s por ciclo nesse smoke; não extrapolar para
   a carga de 300 eventos. `smoke-03` parou antes da carga ao detectar pod anterior
   ainda em encerramento; adicionada espera limitada antes da preparação.
-- Sucessora reservada: `scale-calibration-05`, mesmo perfil e limites de `04`.
+- Calibração concluída: `scale-calibration-05`, mesmo perfil e limites de `04`.
   Mudança apenas do instrumento; não agregar seus tempos aos anteriores como
   comparação homogênea. Após execução, rever distribuição de trabalho, cadência
   efetiva, custo amostrado e sinal de pendência. Nenhuma vantagem de duas réplicas
@@ -168,6 +168,21 @@ No encerramento, atualizar o estado deste plano com SHA/CI, localização das ev
 checks executados e limitações; não criar documento de contexto adicional nem
 incorporar o piloto ao relatório fechado da v1.0.0. A decisão será **continuar,
 ajustar o recorte ou encerrar a extensão**, sem pressupor a próxima etapa.
+
+### Próxima janela autorizada — piloto mínimo KEDA
+
+Uma preparação sem carga e um piloto identificado, sem repetição automática.
+KEDA 2.20.2 core com versões/hashes fixados, consulta de mensagens elegíveis com
+idade mínima de 5 s, alvo de uma por réplica, mínimo 1 e máximo 2. O DESIGN detalha
+limites, cadências e encerramento; não mudar perfil de 300 eventos nem prazo 60 s.
+O teste de falha altera somente a consulta do scaler e restaura a configuração.
+Execução de carga fica separada, seguida de 360 s de observação sem novas ofertas.
+
+Distinguir leituras válidas sem demanda suficiente, indisponibilidade da métrica e
+réplicas efetivamente observadas. Permanecer em uma réplica é resultado admissível.
+Registrar subida/descida somente se ocorrerem; não fabricá-las para satisfazer aceite.
+O relatório de calibração 05 e seus arquivos permanecem intactos. O piloto formará
+conjunto próprio e termina na pausa de reavaliação, antes de comparação formal.
 
 ### Depois da pausa — ainda não autorizado
 

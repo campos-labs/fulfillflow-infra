@@ -487,3 +487,32 @@ aos logs DONE por pod, sem exportar texto livre de logs. `summary.json` distingu
 conclusão funcional e completude da atribuição. `shutdown.json` confirma a parada.
 Amostragem de processos pode omitir subprocessos curtos; não somar consumos do host
 e do nó. Preservar todas as saídas, inclusive quando `complete=false`.
+
+
+## Piloto mínimo KEDA
+
+`Invoke-KedaPilot.ps1` reutiliza o cluster exclusivo e o diretório privado existente.
+`Prepare` instala a versão fixada, verifica a consulta, injeta erro SQL apenas no
+scaler, restaura a consulta e remove seu ScaledObject/HPA antes de parar o nó.
+`Execute` repete essas verificações, aplica a mesma carga da calibração com política
+adaptativa e observa mais 360 s. Cada modo exige saída nova e checkout limpo.
+Não executar a calibração fixa enquanto existir controlador de escala.
+
+```powershell
+./scripts/Invoke-KedaPilot.ps1 -Mode Prepare -PrivateDirectory $private -OutputDirectory ./artifacts/keda-preparation-01
+./scripts/Invoke-KedaPilot.ps1 -Mode Execute -PrivateDirectory $private -OutputDirectory ./artifacts/keda-pilot-01
+```
+
+A configuração é `config/keda-pilot.json`. Manifesto oficial core é baixado com hash
+conferido, sem instalar Helm ou webhook adicional. A instalação requer rede para
+GitHub/GHCR; não usa Azure. `keda-install.yaml`, `keda-identities.json`, `policy.json`,
+`metric-fault-probe.json`, séries e logs permitidos sustentam a conferência.
+A credencial própria do scaler fica em `keda-reader.json` no diretório privado;
+não anexar esse diretório. Aplicativos empacotados no Windows podem redirecionar
+AppData: usar o caminho físico acessível pelo terminal, preservando os mesmos arquivos.
+Ao terminar, conferir resumo, hashes e `shutdown.json`. Não apagar CRDs ou volumes.
+Falha de encerramento requer investigação antes de nova execução.
+
+Referências técnicas: [instalação](https://keda.sh/docs/2.20/deploy/),
+[scaler PostgreSQL](https://keda.sh/docs/2.20/scalers/postgresql/) e
+[ScaledObject/HPA](https://keda.sh/docs/2.20/reference/scaledobject-spec/).
