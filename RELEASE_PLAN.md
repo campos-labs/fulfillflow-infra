@@ -579,6 +579,57 @@ Ordem fixa, uma execução por taxa e estado acumulado limitam inferência causa
 Encerrar para síntese após esses dois candidatos ou no primeiro limite, sem
 campanha formal, nova política ou AKS automáticos.
 
+### Resultado de 12/s e limite da progressão
+
+Executada `scale-capacity-12-01` com instrumento `e63baf9`. A conferência de
+`artifacts/scale-capacity-12-01-review.json` validou 856 arquivos por hash;
+`artifacts/scale-capacity-assessment-01.json` registra a decomposição da oferta.
+Ambos são derivados locais, separados dos originais. A tentativa terminou com
+`complete=false` / `DIAGNOSTIC_FUNCTIONAL_OR_ATTRIBUTION_INCOMPLETE` porque a agenda
+não foi integralmente oferecida. O nome genérico do erro não identifica sozinho
+a causa: a atribuição por pod ficou completa e nenhum aceite deixou de concluir.
+
+| Medida | Resultado |
+| --- | --- |
+| Planejados / oferecidos / aceitos / concluídos no prazo | 420 / 398 / 398 / 398 |
+| Ofertas não realizadas | 22, todas `client_concurrency_limit`, somente no patamar |
+| Patamar de 30 s | 360 planejadas; 338 oferecidas e aceitas (11,267/s em média) |
+| Atraso máximo do despacho | 0,027 s; nenhuma omissão por `scheduler_lag` |
+| Oferta → resposta 202 | Mediana 0,469 s; p95 0,813 s; máximo 1,828 s |
+| Aceite → confirmação observada | Mediana 15,8985 s; p95 18,797 s |
+| GETs do observador | 2.393, sem erro e todos HTTP 200 |
+| Pendências elegíveis / idade máxima amostradas | 9 / 0,575 s |
+| Inbox ao final | Zero elegíveis, em retry ou bloqueadas |
+| Picos amostrados de CPU, Core API / worker | 0,501 / 0,470 |
+| Períodos com throttling, Core API / worker | 58,88% / 45,42%, em janelas distintas |
+| Host e encerramento | 205 amostras válidas; mínimo livre 2,688 GiB; nó parado |
+
+Uma réplica processou os 398 aceites, sem reinício no intervalo inventariado.
+As omissões ocorreram com as oito requisições do cliente ocupadas, sem atraso
+da agenda suficiente para disparar seu limite. Isso identifica o mecanismo
+imediato da suboferta, não a causa exclusiva da duração das requisições.
+O tempo até confirmação inclui observação e validação; o aumento descritivo
+não pode ser chamado de aumento equivalente da latência do worker. A diferença
+entre os SHAs inclui suporte aos perfis; a coleta e o verificador foram mantidos.
+A ordem fixa, a demanda diferente e o estado acumulado impedem isolar causalidade.
+
+**Gate aplicado:** não executar `scale-capacity-16-01`. O primeiro critério de
+parada (oferta não realizada) foi atingido. Não reenviar as 22 ofertas, corrigir
+os totais retrospectivamente ou considerar 398/420 como perda de eventos aceitos.
+A caracterização encontrou um limite do caminho de oferta com esse instrumento,
+não a capacidade máxima do Core worker. KEDA não foi testado nesta execução.
+
+**Próximo recorte recomendado:** se continuar a caracterização, separar o limite
+de concorrência do cliente da pressão na entrada/observação. Uma eventual
+concorrência HTTP maior exige protocolo sucessor, mantendo 12/s inicialmente e
+registrando tanto a realização da oferta quanto a pressão transferida ao sistema.
+Não assumir que aumentar o cliente corrige o sistema, nem alterar simultaneamente
+observadores, CPU ou política. Se o objetivo for encerrar a viabilidade, este limite
+já sustenta a conclusão restrita de que não foi demonstrada demanda sustentada
+no worker que justifique comparar escalonamento. Não ampliar ferramentas ou AKS
+para contornar a indefinição. Código validado por 207 testes e Ruff; sem alteração
+da aplicação ou dos resultados congelados.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da

@@ -599,3 +599,8 @@ Caracterização fixa delimitada: o mesmo launcher aceita `-PeakRate 12` ou
 `-PeakRate 16`, obrigatoriamente com `-ControlledHost -ReuseTerminalReads`.
 Usar pasta exclusiva por execução e respeitar o gate entre taxas no RELEASE_PLAN;
 não executar os dois comandos em paralelo ou em laço incondicional.
+
+A caracterização `scale-capacity-12-01` atingiu o limite de concorrência do
+gerador (22 ofertas não realizadas; 398/398 aceites concluídos). O gate impediu
+a execução de 16/s. Não repetir nem aumentar a taxa automaticamente; preservar
+os registros e definir um protocolo sucessor antes de mudar o instrumento.
