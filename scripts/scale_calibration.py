@@ -143,9 +143,20 @@ def observe(v, item):
 
 
 def run_one(
-    private, folder, replicas, settings, values, base, expected, work_deadline, policy=None
+    private,
+    folder,
+    replicas,
+    settings,
+    values,
+    base,
+    expected,
+    work_deadline,
+    policy=None,
+    diagnostic=False,
 ):
     folder.mkdir(exist_ok=False)
+    if diagnostic:
+        from scripts.scale_diagnostic import TimedTransport, throttling_sample
     environment.kubectl(private, ["scale", "deployment/" + TARGET, "--replicas=" + str(replicas)])
     environment.kubectl(
         private, ["rollout", "status", "deployment/" + TARGET, "--timeout=90s"], timeout=100
@@ -176,6 +187,8 @@ def run_one(
                 "tracking_code": code,
             }
         )
+        if diagnostic:
+            v.transport = TimedTransport(v.transport)
         verifiers[v.event_id] = v
     write(folder / "prepared.json", prepared)
     write(folder / "load.json", {"base": base, **settings})
@@ -189,6 +202,9 @@ def run_one(
         sample = telemetry.temporal_sample(
             private, replicas, lambda: db_metric(private, values["observer"])
         )
+        if diagnostic:
+            sample["throttling"] = throttling_sample(private)
+            sample["collection_end_monotonic"] = time.monotonic()
         return policy.sample(private, sample) if policy else sample
 
     collector = telemetry.Collector(
@@ -338,6 +354,10 @@ def run_one(
         child_log.close()
         collector.close()
         for v in verifiers.values():
+            if diagnostic:
+                write(
+                    Path(v.evidence.stream.name).with_name("http-timings.json"), v.transport.records
+                )
             v.evidence.close()
 
 
@@ -358,7 +378,9 @@ def wait_api(private, seconds=120):
     raise RuntimeError("KUBERNETES_API_STARTUP_TIMEOUT")
 
 
-def _execute(private, output, extension=None):
+def _execute(private, output, extension=None, diagnostic=False):
+    if diagnostic and extension:
+        raise RuntimeError("DIAGNOSTIC_NOT_AUTOSCALING")
     expected = identity(private)
     if output.exists():
         raise RuntimeError("OUTPUT_EXISTS")
@@ -380,7 +402,16 @@ def _execute(private, output, extension=None):
             "settings": settings,
             "identity": expected,
             "runtime_config_digest": RUNTIME_CONFIG,
-            "purpose": "KEDA bounded pilot" if extension else "calibration only",
+            "purpose": "fixed-one instrumentation diagnostic"
+            if diagnostic
+            else "KEDA bounded pilot"
+            if extension
+            else "calibration only",
+            "diagnostic": {
+                "enabled": diagnostic,
+                "fixed_replicas": 1 if diagnostic else None,
+                "load_changed": False,
+            },
             **(
                 {"policy": extension.pin, "prepare_only": extension.prepare_only}
                 if extension
@@ -451,7 +482,27 @@ def _execute(private, output, extension=None):
                 time.sleep(2)
             else:
                 raise RuntimeError("TUNNEL_NOT_READY")
-        if extension:
+        if diagnostic:
+            from scripts.scale_diagnostic import require_fixed_target, throttling_sample
+
+            require_fixed_target(private)
+            write(output / "throttling-preflight.json", throttling_sample(private))
+            print(
+                "Diagnostic: 300 events, one fixed replica, throttling and HTTP timing", flush=True
+            )
+            if not run_one(
+                private,
+                output / "fixed-1",
+                1,
+                settings,
+                values,
+                base,
+                expected,
+                work_deadline,
+                diagnostic=True,
+            ):
+                raise RuntimeError("DIAGNOSTIC_FUNCTIONAL_OR_ATTRIBUTION_INCOMPLETE")
+        elif extension:
             extension.run(private, output, settings, values, base, expected, work_deadline)
         else:
             for count in settings["replicas"]:
@@ -548,20 +599,21 @@ def exclusive(private):
         lock.unlink()
 
 
-def execute(private, output):
+def execute(private, output, diagnostic=False):
     if private.is_relative_to(output) or output.is_relative_to(private):
         raise RuntimeError("PRIVATE_OUTPUT_OVERLAP")
     with exclusive(private):
-        _execute(private, output)
+        _execute(private, output, diagnostic=diagnostic)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--private", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--diagnostic", action="store_true")
     args = parser.parse_args()
     try:
-        execute(args.private.resolve(), args.output.resolve())
+        execute(args.private.resolve(), args.output.resolve(), diagnostic=args.diagnostic)
         print(
             json.dumps(
                 {

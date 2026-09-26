@@ -525,3 +525,21 @@ Lê somente evidências locais já preservadas, conta respostas GET, agrupa CPU 
 UID/timestamp da fonte e calcula intervalos do patamar. Exige destino novo e
 separado; não inicia Docker nem Kubernetes. Se o destino já existir, use outro
 identificador para reprodução. O resultado inclui limites e hashes das entradas.
+
+### Coleta focal de throttling e consultas
+
+`Invoke-ScaleDiagnostic.ps1` executa somente uma condição fixa de 300 eventos.
+Usa a identidade e as guardas da calibração; exige Docker disponível, checkout
+limpo, destino novo e nenhum outro contêiner em execução. Recusa controlador
+ativo sobre o worker e contadores de throttling ausentes antes de oferecer carga.
+
+```powershell
+$scalePrivate = Join-Path $env:LOCALAPPDATA 'Packages\OpenAI.Codex_2p2nqsd0c76g0\LocalCache\Local\FulfillFlowInfra\scale-01'
+.\scripts\Invoke-ScaleDiagnostic.ps1 -PrivateDirectory $scalePrivate -OutputDirectory '.\artifacts\scale-instrumentation-01'
+```
+
+`fixed-1/series.jsonl` acrescenta contadores cAdvisor e timestamps da fonte;
+`fixed-1/event-*/http-timings.json` contém tempos do transporte, status ou tipo
+de erro, sem corpo/headers/identificadores de URL. Tempos são exportados ao
+encerramento; encerramento abrupto pode perder o buffer, sem autorizar inferir
+zero consultas. Aplicam-se as ressalvas e a pausa do RELEASE_PLAN.

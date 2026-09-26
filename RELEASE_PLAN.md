@@ -281,6 +281,29 @@ pendência atribuível ao alvo e margem no ambiente. Interromper diante de limit
 do gerador, observação ou outra etapa. Não prosseguir em escalada de taxas se o sinal
 continuar curto. Perfil apenas proposto; nenhuma nova execução iniciada nesta revisão.
 
+### Coleta focal de instrumentação
+
+Uma execução identificada, com uma réplica fixa e os mesmos 300 eventos,
+recursos, prazos e verificações da calibração. KEDA permanece instalado,
+mas ScaledObject/HPA do alvo devem estar ausentes. Nenhuma alteração da
+aplicação ou redução do limiar. Não é comparação formal nem
+repetição do piloto adaptativo.
+
+Antes de oferecer carga, exigir os três contadores cAdvisor de períodos CFS,
+períodos limitados e segundos de throttling nos seis processos da aplicação.
+Excluir agregados de pod; preservar identidade do cgroup e timestamp da fonte.
+Ausência não equivale a zero; reinícios, timestamps repetidos e resets
+impedem interpretar diferenças como intervalos independentes. Coletar a cada
+5 s junto da série existente, registrando a duração adicional da coleta.
+
+Cronometrar o transporte das consultas do observador após a preparação,
+sem suprimir requisições ou verificações. Buffer por evento, exportado
+no encerramento: tempos incluem espera do transporte local, mas excluem validação
+posterior e persistência das evidências. Isso não mede CPU causal da observação.
+Throttling observado também não prova isoladamente o gargalo global.
+Exportar resultados e parar somente o nó dedicado, preservando volumes.
+Reavaliar antes de alterar taxa, duração ou recursos.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da
