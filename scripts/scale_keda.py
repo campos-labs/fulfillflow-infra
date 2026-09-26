@@ -334,32 +334,11 @@ class Pilot:
     def metric_probe(self, private, output):
         self.activate(private)
         records = self.wait_metric(private, True)
-        patch = {
-            "spec": {
-                "triggers": [
-                    {
-                        **scaled_object(self.pin)["spec"]["triggers"][0],
-                        "metadata": {
-                            **scaled_object(self.pin)["spec"]["triggers"][0]["metadata"],
-                            "query": "SELECT 1/0",
-                        },
-                    }
-                ]
-            }
-        }
+        faulty = scaled_object(self.pin)
+        faulty["spec"]["triggers"][0]["metadata"]["query"] = "SELECT 1/0"
+        write(output / "metric-healthy-before.json", records)
         try:
-            k(
-                private,
-                [
-                    "patch",
-                    "scaledobject",
-                    NAME,
-                    "--field-manager=scale-pilot",
-                    "--type=merge",
-                    "-p",
-                    json.dumps(patch),
-                ],
-            )
+            apply(private, faulty)
             time.sleep(10)
             for _ in range(3):
                 records.extend(self.wait_metric(private, False))
