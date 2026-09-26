@@ -125,6 +125,31 @@ def wait_throttling(
     raise RuntimeError("THROTTLING_PREFLIGHT_TIMEOUT")
 
 
+def characterization_settings(settings, peak_rate, *, diagnostic, reuse, controlled, extension):
+    """Keep the historical profile unchanged; allow only two bounded successors."""
+    if peak_rate == 8:
+        return settings
+    if peak_rate not in (12, 16):
+        raise RuntimeError("CHARACTERIZATION_RATE_NOT_ALLOWED")
+    if not diagnostic or not reuse or not controlled or extension:
+        raise RuntimeError("CHARACTERIZATION_REQUIRES_CONTROLLED_FIXED_DIAGNOSTIC")
+    if settings["stages"] != [
+        {"seconds": 15, "rate": 2},
+        {"seconds": 30, "rate": 8},
+        {"seconds": 15, "rate": 2},
+    ]:
+        raise RuntimeError("CHARACTERIZATION_BASELINE_CHANGED")
+    return {
+        **settings,
+        "stages": [
+            dict(s, rate=peak_rate) if i == 1 else dict(s) for i, s in enumerate(settings["stages"])
+        ],
+        "replicas": [1],
+        "capacity_characterization": True,
+        "purpose": "bounded fixed-one capacity characterization; not formal comparison",
+    }
+
+
 def require_fixed_target(private):
     hpas = json.loads(env.kubectl(private, ["get", "hpa", "-o", "json"]))["items"]
     if any(h["spec"]["scaleTargetRef"]["name"] == TARGET for h in hpas):

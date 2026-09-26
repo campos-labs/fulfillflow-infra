@@ -182,3 +182,65 @@ class ThrottlingStartupTests(unittest.TestCase):
             with self.subTest(code=code), tempfile.TemporaryDirectory() as folder:
                 with self.assertRaisesRegex(RuntimeError, code):
                     self.run_wait(folder, [RuntimeError(code), {"should_not_be_used": True}])
+
+
+class CharacterizationSettingsTests(unittest.TestCase):
+    def test_bounded_profiles_preserve_baseline_and_other_settings(self):
+        from scripts.scale_contract import schedule
+        from scripts.scale_diagnostic import characterization_settings
+
+        base = {
+            "stages": [
+                {"seconds": 15, "rate": 2},
+                {"seconds": 30, "rate": 8},
+                {"seconds": 15, "rate": 2},
+            ],
+            "replicas": [1, 2],
+            "http_concurrency": 8,
+        }
+        for rate, total in [(8, 300), (12, 420), (16, 540)]:
+            result = characterization_settings(
+                base, rate, diagnostic=True, reuse=True, controlled=True, extension=None
+            )
+            self.assertEqual(
+                len(
+                    schedule(
+                        result["stages"],
+                        characterization=result.get("capacity_characterization", False),
+                    )
+                ),
+                total,
+            )
+            self.assertEqual(result["http_concurrency"], 8)
+        self.assertEqual(base["stages"][1]["rate"], 8)
+        self.assertEqual(base["replicas"], [1, 2])
+
+    def test_rejects_uncontrolled_or_adaptive_characterization(self):
+        from scripts.scale_diagnostic import characterization_settings
+
+        good = dict(diagnostic=True, reuse=True, controlled=True, extension=None)
+        for key, value in [
+            ("diagnostic", False),
+            ("reuse", False),
+            ("controlled", False),
+            ("extension", object()),
+        ]:
+            with self.subTest(key=key), self.assertRaisesRegex(RuntimeError, "REQUIRES_CONTROLLED"):
+                characterization_settings({}, 12, **{**good, key: value})
+        with self.assertRaisesRegex(RuntimeError, "RATE_NOT_ALLOWED"):
+            characterization_settings({}, 20, **good)
+        with self.assertRaisesRegex(RuntimeError, "BASELINE_CHANGED"):
+            characterization_settings({"stages": []}, 12, **good)
+
+    def test_historical_schedule_limit_remains_and_new_profile_is_exact(self):
+        from scripts.scale_contract import schedule
+
+        stages = [
+            {"seconds": 15, "rate": 2},
+            {"seconds": 30, "rate": 12},
+            {"seconds": 15, "rate": 2},
+        ]
+        with self.assertRaisesRegex(ValueError, "STAGE_LIMIT"):
+            schedule(stages)
+        with self.assertRaisesRegex(ValueError, "CHARACTERIZATION_PROFILE_NOT_ALLOWED"):
+            schedule([{"seconds": 60, "rate": 16}], characterization=True)

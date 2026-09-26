@@ -30,7 +30,9 @@ def main():
     settings = json.loads((folder / "load.json").read_text(encoding="utf-8"))
     base = base_url(settings["base"])
     prepared = json.loads((folder / "prepared.json").read_text(encoding="utf-8"))
-    offsets = schedule(settings["stages"])
+    offsets = schedule(
+        settings["stages"], characterization=settings.get("capacity_characterization", False)
+    )
     if len(prepared) != len(offsets):
         raise ValueError("PREPARATION_COUNT")
     env = Environment()

@@ -23,7 +23,12 @@ QUERY = """SELECT json_build_object(
  FROM message_inbox WHERE type='tracking.apply.v1';"""
 
 
-def schedule(stages: list[dict]) -> list[float]:
+def schedule(stages: list[dict], *, characterization: bool = False) -> list[float]:
+    if characterization and stages not in [
+        [{"seconds": 15, "rate": 2}, {"seconds": 30, "rate": rate}, {"seconds": 15, "rate": 2}]
+        for rate in (12, 16)
+    ]:
+        raise ValueError("CHARACTERIZATION_PROFILE_NOT_ALLOWED")
     if not stages or len(stages) > 5:
         raise ValueError("INVALID_STAGES")
     result, offset = [], 0.0
@@ -31,7 +36,7 @@ def schedule(stages: list[dict]) -> list[float]:
         seconds, rate = stage["seconds"], stage["rate"]
         if any(type(x) not in (int, float) or not math.isfinite(x) for x in (seconds, rate)):
             raise ValueError("INVALID_STAGE_NUMBER")
-        if not 1 <= seconds <= 60 or not 0 < rate <= 10:
+        if not 1 <= seconds <= 60 or not 0 < rate <= (16 if characterization else 10):
             raise ValueError("STAGE_LIMIT")
         count = math.floor(seconds * rate)
         result.extend(offset + i / rate for i in range(count))

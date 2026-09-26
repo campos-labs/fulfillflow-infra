@@ -459,6 +459,15 @@ Dois pods Ready não provam participação de ambos. Não alterar a aplicação 
 produzir essa atribuição. Consultas, recursos e logs têm limites de coleta e não
 substituem a verificação funcional por evento.
 
+**Caracterização posterior ao piloto.** Antes de uma comparação formal, a
+condição fixa admite dois perfis limitados, com patamar de 30 s a 12 ou 16
+mensagens/s entre 15 s a 2/s na entrada e na saída (420 ou 540 eventos).
+O perfil histórico permanece inalterado. Exigir uma réplica, controle amostrado
+do host e observador com reutilização terminal; preservar recursos e prazo.
+A progressão entre perfis depende da revisão dos limites definidos previamente
+no RELEASE_PLAN. Não extrapolar capacidade máxima nem transportar essas taxas
+para KEDA automaticamente.
+
 **Controle e sinal.** KEDA é a opção preferencial e integra-se ao HPA; não criar
 outro HPA independente sobre o mesmo alvo. Na condição fixa, o controlador não
 pode disputar réplicas com o executor. Na adaptativa, manifests de rotina e scripts

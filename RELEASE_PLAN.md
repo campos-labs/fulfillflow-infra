@@ -544,6 +544,41 @@ ao limite torna especialmente importante distinguir pressão da entrada/consulta
 de acúmulo no worker. Não reduzir o limiar KEDA, adotar AKS ou executar
 comparação formal com base nesta referência.
 
+### Caracterização curta autorizada — protocolo anterior à carga
+
+Duas execuções candidatas, separadas e identificadas: `scale-capacity-12-01`
+e `scale-capacity-16-01`. Ambas mantêm 15 s a 2/s, patamar de 30 s e 15 s a
+2/s; somente a taxa do patamar muda para 12/s (420 eventos) e, condicionalmente,
+16/s (540). A progressão limitada de +4/s caracteriza sensibilidade à demanda;
+não busca uma taxa que obrigue KEDA a escalar nem estima capacidade máxima.
+Uma réplica fixa, mesma aplicação/configuração e banco acumulado identificado,
+concorrência HTTP 8, observadores 16, prazo funcional 60 s, observação 120 s,
+coleta 5 s e reutilização terminal. Sem novo controlador ou ajuste de recursos.
+
+O launcher exige `-ControlledHost -ReuseTerminalReads` para `-PeakRate 12|16`.
+O protocolo registra a taxa e `load_changed=true`; os argumentos omitidos mantêm
+a referência original. Teto operacional por execução: 20 minutos de trabalho,
+mais encerramento. Não alterar a agenda durante a oferta nem reenviar eventos.
+Os limites existentes de gerador, coleta, observação e encerramento permanecem.
+
+Revisar a primeira antes de iniciar a segunda. Não avançar se houver oferta não
+realizada, aceite desconhecido, conclusão fora do prazo, falha funcional/coleta,
+reinício do worker, condição inválida do host, menos de 2 GiB de memória
+livre amostrada, erro HTTP do observador, p95 de confirmação observada >=30 s,
+idade elegível amostrada >=5 s ou pendência/retry/bloqueio ao final. São limites
+operacionais conservadores da progressão, não critérios de capacidade máxima
+ou de aprovação da aplicação. Uma violação preserva o resultado da primeira
+e impede a próxima carga; não apaga nem reclassifica os aceites. Throttling isolado
+não identifica gargalo. Não aumentar além de 16/s nesta etapa.
+
+A coleta não impõe corte instantâneo de oferta por essas métricas; a agenda
+finita limita cada carga a 60 s. Entre execuções, conferir exportação e nó
+parado e aguardar estabilização. Comparar descritivamente oferta/aceite, conclusão,
+backlog/idade, recursos e custo da observação, preservando cadências/fontes.
+Ordem fixa, uma execução por taxa e estado acumulado limitam inferência causal.
+Encerrar para síntese após esses dois candidatos ou no primeiro limite, sem
+campanha formal, nova política ou AKS automáticos.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da

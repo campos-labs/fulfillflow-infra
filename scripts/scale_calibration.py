@@ -177,7 +177,9 @@ def run_one(
     before = telemetry.wait_worker_count(private, replicas)
     prepared = []
     verifiers = {}
-    offsets = schedule(settings["stages"])
+    offsets = schedule(
+        settings["stages"], characterization=settings.get("capacity_characterization", False)
+    )
     for index in range(len(offsets)):
         if time.monotonic() >= work_deadline:
             raise RuntimeError("OPERATIONAL_WINDOW_EXHAUSTED")
@@ -403,6 +405,7 @@ def _execute(
     diagnostic=False,
     reuse_terminal_reads=False,
     controlled_host=False,
+    peak_rate=8,
 ):
     if controlled_host and (not diagnostic or not reuse_terminal_reads):
         raise RuntimeError("CONTROLLED_REFERENCE_REQUIRES_REUSE_DIAGNOSTIC")
@@ -419,9 +422,21 @@ def _execute(
         raise RuntimeError("DIRTY_CHECKOUT")
     work_deadline = time.monotonic() + 100 * 60
     settings = json.loads((ROOT / "config/scale-calibration.json").read_text())
-    schedule(settings["stages"])
+    schedule(settings["stages"], characterization=settings.get("capacity_characterization", False))
     if settings["replicas"] != [1, 2] or settings["http_concurrency"] != 8:
         raise RuntimeError("CALIBRATION_CONFIGURATION_CHANGED")
+    from scripts.scale_diagnostic import characterization_settings
+
+    settings = characterization_settings(
+        settings,
+        peak_rate,
+        diagnostic=diagnostic,
+        reuse=reuse_terminal_reads,
+        controlled=controlled_host,
+        extension=extension,
+    )
+    if peak_rate != 8:
+        work_deadline = time.monotonic() + 20 * 60
     output.mkdir(parents=True)
     write(
         output / "protocol.json",
@@ -439,7 +454,8 @@ def _execute(
             "diagnostic": {
                 "enabled": diagnostic,
                 "fixed_replicas": 1 if diagnostic else None,
-                "load_changed": False,
+                "load_changed": peak_rate != 8,
+                "peak_rate": peak_rate,
                 "controlled_host": controlled_host,
                 "reuse_terminal_reads": reuse_terminal_reads,
             },
@@ -532,8 +548,15 @@ def _execute(
                 output / "throttling-preflight.json",
                 wait_throttling(private, output / "throttling-startup.jsonl"),
             )
+            event_count = len(
+                schedule(
+                    settings["stages"],
+                    characterization=settings.get("capacity_characterization", False),
+                )
+            )
             print(
-                "Diagnostic: 300 events, one fixed replica, throttling and HTTP timing", flush=True
+                f"Diagnostic: {event_count} events, one fixed replica, throttling and HTTP timing",
+                flush=True,
             )
             if not run_one(
                 private,
@@ -657,7 +680,14 @@ def exclusive(private):
         lock.unlink()
 
 
-def execute(private, output, diagnostic=False, reuse_terminal_reads=False, controlled_host=False):
+def execute(
+    private,
+    output,
+    diagnostic=False,
+    reuse_terminal_reads=False,
+    controlled_host=False,
+    peak_rate=8,
+):
     if private.is_relative_to(output) or output.is_relative_to(private):
         raise RuntimeError("PRIVATE_OUTPUT_OVERLAP")
     with exclusive(private):
@@ -667,6 +697,7 @@ def execute(private, output, diagnostic=False, reuse_terminal_reads=False, contr
             diagnostic=diagnostic,
             reuse_terminal_reads=reuse_terminal_reads,
             controlled_host=controlled_host,
+            peak_rate=peak_rate,
         )
 
 
@@ -677,6 +708,7 @@ def main():
     parser.add_argument("--diagnostic", action="store_true")
     parser.add_argument("--reuse-terminal-reads", action="store_true")
     parser.add_argument("--controlled-host", action="store_true")
+    parser.add_argument("--peak-rate", type=int, choices=(8, 12, 16), default=8)
     args = parser.parse_args()
     try:
         execute(
@@ -685,6 +717,7 @@ def main():
             diagnostic=args.diagnostic,
             reuse_terminal_reads=args.reuse_terminal_reads,
             controlled_host=args.controlled_host,
+            peak_rate=args.peak_rate,
         )
         print(
             json.dumps(

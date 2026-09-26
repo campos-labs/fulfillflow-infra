@@ -594,3 +594,8 @@ Essa espera não se aplica às amostras durante a carga. A tentativa `01` foi
 preservada e `scale-clean-reference-02` concluiu a referência controlada. Não
 reutilizar essas pastas; a próxima carga depende do protocolo de caracterização
 registrado no RELEASE_PLAN.
+
+Caracterização fixa delimitada: o mesmo launcher aceita `-PeakRate 12` ou
+`-PeakRate 16`, obrigatoriamente com `-ControlledHost -ReuseTerminalReads`.
+Usar pasta exclusiva por execução e respeitar o gate entre taxas no RELEASE_PLAN;
+não executar os dois comandos em paralelo ou em laço incondicional.

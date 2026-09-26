@@ -2,7 +2,8 @@ param(
     [Parameter(Mandatory=$true)][string]$PrivateDirectory,
     [Parameter(Mandatory=$true)][string]$OutputDirectory,
     [switch]$ReuseTerminalReads,
-    [switch]$ControlledHost
+    [switch]$ControlledHost,
+    [ValidateSet(8,12,16)][int]$PeakRate = 8
 )
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
@@ -10,7 +11,8 @@ if (-not (Test-Path -LiteralPath $PrivateDirectory -PathType Container)) { throw
 $PrivateDirectory = (Resolve-Path -LiteralPath $PrivateDirectory).Path
 $OutputDirectory = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutputDirectory)
 if (Test-Path -LiteralPath $OutputDirectory) { throw 'Output already exists; use a new identifier.' }
-$diagnosticArgs = @()
+if ($PeakRate -ne 8 -and (-not $ReuseTerminalReads -or -not $ControlledHost)) { throw 'Characterization requires ControlledHost and ReuseTerminalReads' }
+$diagnosticArgs = @('--peak-rate', [string]$PeakRate)
 if ($ReuseTerminalReads) { $diagnosticArgs += '--reuse-terminal-reads' }
 if ($ControlledHost) {
     if (-not $ReuseTerminalReads) { throw 'ControlledHost requires ReuseTerminalReads' }
