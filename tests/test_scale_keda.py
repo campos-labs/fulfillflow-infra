@@ -59,3 +59,31 @@ class KedaContracts(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "HPA_STILL_PRESENT"):
                 Pilot().cleanup(Path("unused"))
             command.assert_not_called()
+
+    def test_cleanup_refuses_differently_named_target_hpa(self):
+        hpa = {"spec": {"scaleTargetRef": {"name": "core-worker"}}}
+        with (
+            patch("scripts.scale_keda.get", return_value=None),
+            patch("scripts.scale_keda.k", return_value=json.dumps({"items": [hpa]})) as command,
+        ):
+            with self.assertRaisesRegex(RuntimeError, "FOREIGN_TARGET_HPA"):
+                Pilot().cleanup(Path("unused"))
+            self.assertEqual(command.call_count, 1)
+
+    def test_attribution_allows_prior_restarts_but_rejects_new_restart(self):
+        pilot = Pilot()
+        pilot.restart_baseline = {"pod": 2}
+        pilot.pods = {"pod": {"name": "worker", "restarts": 2}}
+        pilot.logs = {"record": {"request_id": "r", "pod_uid": "pod"}}
+        with patch.object(pilot, "sample"), patch("scripts.scale_keda.write"):
+            self.assertTrue(
+                pilot.attribution(Path("unused"), {"event": {"request_id": "r"}}, Path("unused"))[
+                    "complete"
+                ]
+            )
+            pilot.pods["pod"]["restarts"] = 3
+            self.assertFalse(
+                pilot.attribution(Path("unused"), {"event": {"request_id": "r"}}, Path("unused"))[
+                    "complete"
+                ]
+            )

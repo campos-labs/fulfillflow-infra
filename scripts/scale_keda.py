@@ -123,6 +123,8 @@ class Pilot:
         self.pods = {}
         self.log_gaps = []
         self.object_uid = None
+        self.restart_baseline = {}
+        self.metric_samples = []
 
     def install(self, private, output):
         namespace = get(private, "namespace", "keda")
@@ -378,6 +380,7 @@ class Pilot:
     def begin_load(self, private, folder):
         self.private = private
         self.since = utc()
+        self.restart_baseline = {p["uid"]: p["restarts"] for p in telemetry.worker_pods(private)}
         self.activate(private)
         self.wait_metric(private, True)
         write(folder / "policy.json", scaled_object(self.pin))
@@ -386,6 +389,7 @@ class Pilot:
         sample.pop("replicas_fixed", None)
         sample["condition"] = "adaptive"
         sample["controller"] = self.status(private)
+        self.metric_samples.append(sample["controller"])
         current = telemetry.worker_pods(private)
         for pod in current:
             self.pods[pod["uid"]] = pod
@@ -413,12 +417,15 @@ class Pilot:
         complete = len(ids) == len(admissions) and all(
             sum(r["request_id"] == x for r in rows) == 1 for x in ids
         )
-        complete = complete and all(p["restarts"] == 0 for p in self.pods.values())
+        complete = complete and all(
+            p["restarts"] == self.restart_baseline.get(uid, 0) for uid, p in self.pods.items()
+        )
         result = {
             "complete": complete,
             "records": rows,
             "pods": list(self.pods.values()),
             "log_gaps": self.log_gaps,
+            "restart_baseline": self.restart_baseline,
             "per_pod": {
                 p["name"]: sum(r["pod_uid"] == uid for r in rows) for uid, p in self.pods.items()
             },
@@ -443,6 +450,14 @@ class Pilot:
             idle.append(self.status(private))
             time.sleep(5)
         write(output / "post-load.json", idle)
+        observed = self.metric_samples + idle
+        unavailable = sum(not r["metric"]["available"] for r in observed)
+        write(
+            output / "metric-availability.json",
+            {"samples": len(observed), "unavailable": unavailable},
+        )
+        if unavailable:
+            raise RuntimeError("PILOT_METRIC_OBSERVATION_INCOMPLETE")
         write(
             output / "pilot-result.json",
             {
@@ -475,6 +490,9 @@ class Pilot:
             )
         if get(private, "hpa", NAME):
             raise RuntimeError("HPA_STILL_PRESENT")
+        controllers = json.loads(k(private, ["get", "hpa", "-o", "json"]))["items"]
+        if any(h["spec"]["scaleTargetRef"]["name"] == TARGET for h in controllers):
+            raise RuntimeError("FOREIGN_TARGET_HPA")
         k(private, ["scale", "deployment/" + TARGET, "--replicas=1"])
         telemetry.wait_worker_count(private, 1)
         self.object_uid = None
