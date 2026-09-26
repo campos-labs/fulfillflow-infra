@@ -97,3 +97,26 @@ class KedaContracts(unittest.TestCase):
         ):
             k(Path("private"), ["apply", "-f", "-"], namespace=None, data="manifest")
             self.assertNotIn("-n", command.call_args.args[0])
+
+    def test_readiness_failure_names_component_and_preserves_status(self):
+        with (
+            patch(
+                "scripts.scale_keda.k",
+                side_effect=[RuntimeError("failed"), json.dumps({"items": []})],
+            ),
+            patch("scripts.scale_keda.get", return_value={"status": {"readyReplicas": 0}}),
+            patch("scripts.scale_keda.write") as save,
+        ):
+            with self.assertRaisesRegex(RuntimeError, "KEDA_DEPLOYMENT_NOT_READY_keda-operator"):
+                Pilot().wait_deployment(Path("private"), Path("output"), "keda-operator")
+            self.assertEqual(save.call_args.args[1]["deployment_status"], {"readyReplicas": 0})
+
+    def test_readiness_diagnostic_failure_preserves_original_failure(self):
+        with (
+            patch("scripts.scale_keda.k", side_effect=RuntimeError("failed")),
+            patch("scripts.scale_keda.get", side_effect=RuntimeError("offline")),
+            patch("scripts.scale_keda.write") as save,
+        ):
+            with self.assertRaisesRegex(RuntimeError, "KEDA_DEPLOYMENT_NOT_READY_keda-operator"):
+                Pilot().wait_deployment(Path("private"), Path("output"), "keda-operator")
+            self.assertTrue(save.call_args.args[1]["observation_unavailable"])

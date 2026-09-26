@@ -5,6 +5,7 @@ import hashlib
 import json
 import math
 import secrets
+import subprocess
 import sys
 import time
 import urllib.request
@@ -161,7 +162,7 @@ class Pilot:
             data=rendered,
         )
         for name in self.pin["images"]:
-            k(private, ["rollout", "status", "deployment/" + name, "--timeout=240s"], "keda", 250)
+            self.wait_deployment(private, output, name)
         k(
             private,
             [
@@ -266,6 +267,31 @@ class Pilot:
                 "deployments": [get(private, "deployment", n, "keda") for n in self.pin["images"]],
             },
         )
+
+    def wait_deployment(self, private, output, name):
+        print("KEDA: waiting for " + name, flush=True)
+        try:
+            k(private, ["rollout", "status", "deployment/" + name, "--timeout=240s"], "keda", 250)
+        except (RuntimeError, subprocess.TimeoutExpired) as error:
+            diagnostic = {"deployment": name, "error": type(error).__name__}
+            try:
+                deployment = get(private, "deployment", name, "keda")
+                diagnostic["deployment_status"] = (
+                    deployment.get("status", {}) if deployment else None
+                )
+                pods = json.loads(k(private, ["get", "pods", "-o", "json"], "keda"))["items"]
+                diagnostic["pods"] = [
+                    {
+                        "name": pod["metadata"]["name"],
+                        "uid": pod["metadata"]["uid"],
+                        "status": pod.get("status", {}),
+                    }
+                    for pod in pods
+                ]
+            except (RuntimeError, subprocess.TimeoutExpired):
+                diagnostic["observation_unavailable"] = True
+            write(output / (name + "-readiness-failure.json"), diagnostic)
+            raise RuntimeError("KEDA_DEPLOYMENT_NOT_READY_" + name) from error
 
     def activate(self, private):
         if (
