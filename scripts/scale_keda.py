@@ -23,6 +23,8 @@ from scripts.scale_contract import TARGET, utc, write
 NAME = "core-worker-pilot"
 OWNER = "fulfillflow-scale-pilot"
 CONFIG = env.ROOT / "config/keda-pilot.json"
+# Allow a recorded 300-second restart backoff plus bounded startup time.
+READINESS_SECONDS = 420
 
 
 def query():
@@ -271,7 +273,12 @@ class Pilot:
     def wait_deployment(self, private, output, name):
         print("KEDA: waiting for " + name, flush=True)
         try:
-            k(private, ["rollout", "status", "deployment/" + name, "--timeout=240s"], "keda", 250)
+            k(
+                private,
+                ["rollout", "status", "deployment/" + name, f"--timeout={READINESS_SECONDS}s"],
+                "keda",
+                READINESS_SECONDS + 10,
+            )
         except (RuntimeError, subprocess.TimeoutExpired) as error:
             diagnostic = {"deployment": name, "error": type(error).__name__}
             try:

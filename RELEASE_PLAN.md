@@ -70,6 +70,13 @@ A pausa final do incremento ainda não foi atingida. Sem nova tag, AKS ou ACR.
 - `keda-preparation-04` concluiu nova partida e teste de falha/retorno da métrica
   sem carga, com executor `0db58d7`. Retomar em `keda-pilot-02`, mantendo `01`
   intacto. A aprovação da preparação não comprova desempenho nem escala sob carga.
+- `keda-pilot-02` parou antes da carga. O diagnóstico preservou ambos os
+  componentes KEDA em `CrashLoopBackOff`, com `back-off 5m0s`, superior à espera
+  de prontidão de 240 s. A espera passa a 420 s por Deployment, sem alterar
+  probes, recursos, carga ou política. Isso corrige a incompatibilidade entre
+  prazos; não determina a causa dos reinícios (último exit 255/Unknown).
+  Sucessora: `keda-pilot-03`; manter anteriores intactas. Validar sem outros
+  containers ativos, inclusive o cluster histórico que pode voltar no reboot.
 - Próximo passo manual: um piloto adaptativo com o mesmo perfil de 300 eventos,
   seguido de 360 s sem nova oferta. Métrica indisponível fora da injeção torna a
   observação incompleta; ausência de escala com métrica válida pode ser resultado.

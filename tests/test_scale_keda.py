@@ -120,3 +120,10 @@ class KedaContracts(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "KEDA_DEPLOYMENT_NOT_READY_keda-operator"):
                 Pilot().wait_deployment(Path("private"), Path("output"), "keda-operator")
             self.assertTrue(save.call_args.args[1]["observation_unavailable"])
+
+    def test_readiness_budget_exceeds_observed_restart_backoff(self):
+        with patch("scripts.scale_keda.k") as command:
+            Pilot().wait_deployment(Path("private"), Path("output"), "keda-operator")
+            args = command.call_args.args
+            self.assertIn("--timeout=420s", args[1])
+            self.assertEqual(args[3], 430)
