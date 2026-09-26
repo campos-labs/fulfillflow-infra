@@ -62,6 +62,14 @@ A pausa final do incremento ainda não foi atingida. Sem nova tag, AKS ou ACR.
   preservados. `01` interrompida por namespace imposto ao bundle; `02` na alteração
   da consulta. Corrigidos namespaces e aplicação declarativa uniforme.
   Tentativas preservadas, sem resultados de autoescalonamento sob carga.
+- `keda-pilot-01` interrompido antes da carga: espera de prontidão KEDA
+  expirou após 240 s. Instalação subsequente completou; causa específica não
+  determinada pelo diagnóstico original. Nenhum evento oferecido, nó parado e
+  volumes preservados. Executor agora identifica o Deployment e preserva seu
+  estado e o dos pods quando a espera falha, sem expor configuração de secrets.
+- `keda-preparation-04` concluiu nova partida e teste de falha/retorno da métrica
+  sem carga, com executor `0db58d7`. Retomar em `keda-pilot-02`, mantendo `01`
+  intacto. A aprovação da preparação não comprova desempenho nem escala sob carga.
 - Próximo passo manual: um piloto adaptativo com o mesmo perfil de 300 eventos,
   seguido de 360 s sem nova oferta. Métrica indisponível fora da injeção torna a
   observação incompleta; ausência de escala com métrica válida pode ser resultado.
