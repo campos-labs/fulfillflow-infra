@@ -12,9 +12,10 @@ réplica; não demonstrou ciclo 1→2→1 ou ganho de escala. Diagnósticos post
 com uma réplica chegaram a 600/600 eventos no prazo. A verificação manual
 sucessora preservou margem de memória e não apresentou erro HTTP; o 503 anterior
 permanece sem causa determinada. A 16/s, 540/540 eventos concluíram com
-crescimento de pendência; uma verificação com duas réplicas fixas está
-preparada, sem comparação formal ou ganho de escala demonstrado. Ver
-[resultados e próximo passo](RELEASE_PLAN.md#resultado-a-16s-e-capacidade-adicional).
+crescimento de pendência. A sucessora com duas réplicas concluiu 540/540,
+com participação de ambos os pods e menor pendência amostrada; isso ainda não
+demonstra benefício do autoescalonamento. Ver
+[resultados e próximo passo](RELEASE_PLAN.md#resultado-com-duas-réplicas-fixas).
 A branch `feature/v1.1-autoscaling-kind` preserva o incremento; não há nova release.
 AKS/ACR continuam opcionais e ainda não foram implantados.
 

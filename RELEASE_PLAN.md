@@ -17,8 +17,9 @@ host e um 503 de consulta cuja causa permanece indeterminada; ver
 [fechamento do diagnóstico](#fechamento-do-diagnóstico-de-consulta-e-memória).
 A sucessora manual preservou 4,55 GiB livres, 600/600 conclusões e consultas
 sem erro. A sucessora a 16/s concluiu 540/540 e apresentou crescimento de
-pendência com margem do host. Preparada uma tentativa com duas réplicas fixas,
-sem aumentar a taxa; ver [resultado a 16/s](#resultado-a-16s-e-capacidade-adicional).
+pendência com margem do host. A sucessora com duas réplicas concluiu 540/540,
+com participação 281/259 e menor pendência amostrada. Ver
+[resultado de capacidade adicional](#resultado-com-duas-réplicas-fixas).
 
 ### Preparação conferida e próximo passo
 
@@ -1045,6 +1046,60 @@ Se houver participação e melhora coerente, reavaliar a janela de resposta da
 política mantendo limiares; se não, investigar o limite compartilhado somente
 com os sinais coletados. Qualquer falha de guarda exige revisão. Não iniciar
 outra carga, refatoração ou AKS automaticamente.
+
+### Resultado com duas réplicas fixas
+
+`scale-capacity-16-c16-fixed2-01`, infraestrutura
+`e19b499aa5e2585cdab4d7f598d3283e41362f06`, concluída. Os 1.096 arquivos
+passaram na conferência; manifesto SHA-256
+`d04b7625ce1c4da799018b39a1b35c2ef045b1010c03668181e003a132014e8b`.
+Revisão e assessment locais ficam ao lado da pasta original, com sufixos
+`-review.json` e `-assessment.json`; dados brutos preservados.
+
+| Indicador a 16/s, 540 eventos | Uma réplica | Duas réplicas |
+| --- | --- | --- |
+| Oferecidos / aceitos / concluídos no prazo | 540 / 540 / 540 | 540 / 540 / 540 |
+| Participação por pod | 540 | 281 / 259 |
+| Pendência elegível máxima amostrada | 72 | 9 |
+| Maior idade amostrada | 4,912 s | 0,523 s |
+| Confirmação observada, mediana / p95 | 22,961 / 28,391 s | 22,079 / 27,609 s |
+| GETs / respostas diferentes de 200 | 3.244 / 0 | 3.247 / 0 |
+| Memória livre mínima do host | 4,08 GiB | 3,78 GiB |
+
+Na sucessora, controle do host válido em 236 amostras, intervalo máximo 1,016 s;
+atribuição completa, identidades e contadores de reinício estáveis durante a
+medição. Zero pendências, retries e bloqueios ao final; nó parado, volumes
+preservados. Admissão HTTP no patamar: média 0,476 s, p95 0,860 s, até 14
+pedidos ativos antes do despacho; nenhuma oferta omitida. Sem erro de transporte.
+
+**Interpretação:** ambos os workers processaram trabalho e a sucessora não
+reproduziu o crescimento progressivo de pendência observado com um worker.
+Há indício operacional de utilidade da capacidade adicional para essa etapa.
+O tempo até confirmação completa permaneceu próximo; não atribuir a diferença
+entre idade de inbox e confirmação ao observador, nem declarar aceleração global.
+As condições têm uma tentativa cada, ordem fixa e banco preservado; os SHAs
+da infraestrutura diferem para habilitar a segunda réplica, mantendo captura v2.
+A tabela é descritiva, não estima efeito causal, significância ou capacidade
+máxima. Recursos por pod são iguais, mas o total dos workers aumentou.
+
+**Próxima decisão:** voltar ao comportamento da política, sem aumentar carga
+ou reduzir o limiar para provocar escala. A consulta atual conta trabalho elegível
+com idade de pelo menos 5 s; o controlador tem polling de 5 s, HPA conforme
+cadência efetiva e estabilização de subida de 15 s. As amostras da condição
+fixa não comprovam cruzamento persistente desse critério; um pico curto pode
+terminar antes de a capacidade adicional tornar-se operacional. Não somar
+essas cadências como prazo exato nem inferir o comportamento do controlador
+sem executá-lo. Capacidade fixa útil não garante utilidade de reação automática.
+
+Recomenda-se uma sucessora KEDA delimitada no mesmo perfil de 540 eventos,
+com coleta equivalente e observação de sinal, decisão, réplica pronta e
+processamento por pod. Antes de executar, adaptar e validar seu protocolo:
+o piloto KEDA existente ainda usa o perfil histórico de 300 eventos e não deve
+ser apresentado como equivalente. Preservar limites, falhas de métrica distintas
+de zero, guardas e encerramento. Não acionamento ou acionamento tardio são
+resultados admissíveis. Essa sucessora ainda não está implementada ou executada;
+comparação formal, novos perfis, AKS e alteração da aplicação continuam fora
+do aceite atual. O 503 histórico segue sem causa determinada.
 
 ### Depois da pausa — ainda não autorizado
 
