@@ -415,7 +415,7 @@ observar resultados. Prazos, ordem e denominadores executados ficam no
 
 ### 8.7. Alvo de autoescalonamento em Kind
 
-**Contrato da extensão v1.1; implementação e piloto pendentes.** A base permanece
+**Contrato da extensão v1.1; aceite do piloto pendente.** A base permanece
 conforme as seções anteriores. A extensão varia apenas réplicas de um worker
 selecionado, com nós e recursos do host fixos, aplicação congelada e demais
 workloads estáveis. Calibração começa com uma e duas réplicas; a política mantém
@@ -428,6 +428,21 @@ UIDs, imagens, configuração e recursos do host. Réplicas compartilham CPU, me
 banco e broker; soma de requests não comprova folga, e mais pods não criam nós.
 Preservar os parâmetros por réplica da seção 7. Contabilizar pools multiplicados,
 limites PostgreSQL, controladores, coleta e gerador, inclusive quando externos ao cluster.
+
+**Calibração preparatória.** O candidato inicial é `core-worker`: sua inbox durável
+permite observar trabalho elegível após ACK. A réplica também executa recepção e
+publicação; eventual efeito não será atribuído exclusivamente ao processamento SQL.
+A consulta conta `PENDING`/`RETRY_WAIT` vencidos de `tracking.apply.v1`, em mensagens,
+com retry futuro, `BLOCKED`, concluídos e idade apresentados separadamente.
+A leitura pode incluir trabalho em transação ainda não confirmada: não mede apenas
+mensagens ociosas. Sua utilidade ainda será avaliada. Role própria somente leitura,
+quatro colunas autorizadas e timeout SQL limitam a coleta; erro não produz zero.
+
+O instrumento usa Locust HttpSession em processo separado, agenda aberta limitada,
+observação por evento e séries SQL/Kubernetes/kubelet. Não instala Prometheus nesta
+etapa. A coleta preparatória ainda não contabiliza todos os processos externos ao
+cluster nem atribui conclusões a cada réplica. Estabilizar esses pontos antes do
+piloto adaptativo preservado; a calibração não satisfaz sozinha seu aceite.
 
 **Controle e sinal.** KEDA é a opção preferencial e integra-se ao HPA; não criar
 outro HPA independente sobre o mesmo alvo. Na condição fixa, o controlador não

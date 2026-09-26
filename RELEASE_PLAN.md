@@ -2,11 +2,30 @@
 
 ## 1. Estado atual
 
-**Preparação documental da v1.1 na branch `feature/v1.1-autoscaling-kind`.**
+**Incremento de viabilidade em implementação na branch `feature/v1.1-autoscaling-kind`.**
 Base: v1.0.0, commit `cb6113e6bbd601a65ee5142de85cadc5bf6ba29d`.
-O incremento de viabilidade está planejado, não implementado nem executado.
-Esta etapa entrega somente branch e documentos; a implementação depende da
-continuidade autorizada. Não há nova tag, implantação AKS ou publicação ACR.
+CI da branch habilitada. Bootstrap dedicado e smoke do instrumento concluídos;
+calibração com uma e duas réplicas preparada. KEDA ainda não instalado.
+A pausa final do incremento ainda não foi atingida. Sem nova tag, AKS ou ACR.
+
+### Preparação conferida e próximo passo
+
+- Cluster exclusivo `fulfillflow-scale-01`, bancos/credenciais próprios; histórico parado.
+- Bootstrap local: `artifacts/scale-bootstrap-01/bootstrap.json`. Migrations e seis
+  Deployments prontos. Docker recuperou sem reset; nó novo usa `restart=no` e termina parado.
+- Smoke local: `artifacts/scale-instrument-smoke-02/fixed-1/summary.json`: três eventos
+  no prazo, efeitos conferidos e pendência final zero. Não demonstra efeito de escala.
+- Primeiro smoke parou na identificação OCI, antes da carga. Corrigida distinção
+  entre índice Docker `582a858d…`, manifest amd64 `ffb7d2d4…` e config `cc882fab…`:
+  referências da mesma imagem importada, vinculada ao SHA congelado da aplicação.
+- Próximo comando no [guia Kubernetes](k8s/README.md#calibracao-de-concorrencia):
+  300 eventos por condição, 1 depois 2 réplicas; 15 s a 2/s, 30 s a 8/s e 15 s a 2/s.
+  Prazo funcional 60 s após aceite observado, observação 120 s por evento,
+  concorrência HTTP 8 e consultas até 16. Preparação das entidades fora da oferta.
+- Rever sinal, conclusão, oferta não realizada e folga antes de KEDA. O teto de
+  120 minutos e até três execuções limita operação; não define tamanho amostral.
+  Completar atribuição por réplica e custos do instrumento antes do piloto integrado.
+  Não aumentar carga para forçar benefício nem alterar a aplicação congelada.
 
 A v1.0.0 permanece encerrada: aplicação v1.3.0-rc.1 congelada, configuração saudável
 conferida e laboratório parado, com dados e evidências preservados. Resultados e

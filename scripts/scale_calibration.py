@@ -1,0 +1,532 @@
+"""Two fixed-replica calibration runs; never installs an autoscaler or repeats evidence."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import socket
+import subprocess
+import sys
+import time
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import contextmanager
+from pathlib import Path
+
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from scripts import scale_environment as environment
+from scripts.scale_contract import (
+    CLUSTER,
+    QUERY,
+    RUNTIME_CONFIG,
+    SOURCE,
+    TARGET,
+    metric,
+    outcome,
+    schedule,
+    utc,
+    write,
+)
+from scripts.verify_flow import Config, Evidence, Failure, HttpTransport, Verifier
+
+ROOT = environment.ROOT
+
+
+def records(path):
+    if not path.exists():
+        return []
+    text = path.read_text(encoding="utf-8")
+    return [json.loads(line) for line in text.splitlines(keepends=True) if line.endswith("\n")]
+
+
+def identity(private):
+    expected = json.loads((private / "identity.json").read_text())
+    node = json.loads(environment.command(["docker", "inspect", CLUSTER + "-control-plane"]))[0]
+    if (
+        node["Id"] != expected["container_id"]
+        or node["Config"]["Labels"].get("io.x-k8s.kind.cluster") != CLUSTER
+    ):
+        raise RuntimeError("CONTAINER_IDENTITY")
+    if expected["source"] != SOURCE:
+        raise RuntimeError("SOURCE_IDENTITY")
+    return expected
+
+
+def db_metric(private, password):
+    # Restricted role over TCP; password enters stdin only, never command arguments.
+    shell = "IFS= read -r PGPASSWORD; export PGPASSWORD; exec psql -h 127.0.0.1 -U scale_observer -d fulfillflow_core -At -v ON_ERROR_STOP=1"
+    text = environment.kubectl(
+        private,
+        ["exec", "-i", "postgres-0", "--", "sh", "-c", shell],
+        password + "\n" + QUERY,
+        timeout=10,
+    )
+    return metric(json.loads(text))
+
+
+def verify_images(private, expected):
+    if expected.get("image_id") != environment.IMAGE_ID:
+        raise RuntimeError("IMPORTED_IMAGE_IDENTITY")
+    pods = json.loads(environment.kubectl(private, ["get", "pods", "-o", "json"]))["items"]
+    seen = set()
+    for pod in pods:
+        name = pod["metadata"]["labels"].get("app.kubernetes.io/name", "")
+        if name not in (
+            "core",
+            "tracking",
+            "notifications",
+            "core-worker",
+            "tracking-worker",
+            "notifications-worker",
+        ):
+            continue
+        statuses = pod["status"].get("containerStatuses", [])
+        if not statuses:
+            raise RuntimeError("RUNTIME_IMAGE_UNOBSERVED")
+        seen.add(name)
+        for container in statuses:
+            if RUNTIME_CONFIG != container.get("imageID", "").removeprefix("docker-pullable://"):
+                raise RuntimeError("RUNTIME_IMAGE_IDENTITY")
+
+    if seen != {
+        "core",
+        "tracking",
+        "notifications",
+        "core-worker",
+        "tracking-worker",
+        "notifications-worker",
+    }:
+        raise RuntimeError("RUNTIME_INCOMPLETE")
+
+
+def observe(v, item):
+    v.deadline = time.monotonic() + 20
+    state = {"event_id": item["event_id"], "observed_monotonic": time.monotonic()}
+    try:
+        path = "/api/v1/carrier-events/" + item["inbox_id"]
+        inbox = v.get(path)
+        if inbox.get("external_event_id") != item["event_id"]:
+            raise Failure("EVENT_IDENTITY")
+        if inbox.get("status") == "REJECTED" or inbox.get("progress") == "BLOCKED_LOCAL":
+            return {**state, "terminal_failure": True}
+        if inbox.get("status") != "PROCESSED":
+            return {**state, "pending_confirmed": True, "stage": "tracking"}
+        event = v.tracking(item["inbox_id"], path, item["shipment_id"])
+        v.final_business(item["order_id"], item["shipment_id"])
+        status = v.get("/api/v1/notification-status/" + event)
+        if status.get("status") == "FAILED" or "BLOCKED" in (
+            status.get("publication"),
+            status.get("processing"),
+        ):
+            return {**state, "terminal_failure": True}
+        if status.get("processing") != "DONE":
+            return {**state, "pending_confirmed": True, "stage": "notifications"}
+        notification = v.notifications(event)
+        v.effects(item["shipment_id"], item["inbox_id"], event, notification)
+        return {
+            **state,
+            "completed_monotonic": time.monotonic(),
+            "effects_unique": True,
+            "tracking_event_id": event,
+            "notification_id": notification,
+        }
+    except Failure as error:
+        return {**state, "observation_error": error.code}
+
+
+def run_one(private, folder, replicas, settings, values, base, expected, work_deadline):
+    folder.mkdir(exist_ok=False)
+    environment.kubectl(private, ["scale", "deployment/" + TARGET, "--replicas=" + str(replicas)])
+    environment.kubectl(
+        private, ["rollout", "status", "deployment/" + TARGET, "--timeout=90s"], timeout=100
+    )
+    verify_images(private, expected)
+    if db_metric(private, values["observer"])["eligible"]:
+        raise RuntimeError("INITIAL_BACKLOG")
+    prepared = []
+    verifiers = {}
+    offsets = schedule(settings["stages"])
+    for index in range(len(offsets)):
+        if time.monotonic() >= work_deadline:
+            raise RuntimeError("OPERATIONAL_WINDOW_EXHAUSTED")
+        evidence = Evidence(folder / f"event-{index:04d}")
+        v = Verifier(
+            Config(base, folder, deadline_seconds=120, secret=values["alpha"]),
+            evidence,
+            HttpTransport(),
+        )
+        v.deadline = min(v.deadline, work_deadline)
+        order, shipment, code = v.prepare()
+        prepared.append(
+            {
+                "event_id": v.event_id,
+                "order_id": order,
+                "shipment_id": shipment,
+                "tracking_code": code,
+            }
+        )
+        verifiers[v.event_id] = v
+    write(folder / "prepared.json", prepared)
+    write(folder / "load.json", {"base": base, **settings})
+    child_env = {**os.environ, "CARRIER_ALPHA_WEBHOOK_SECRET": values["alpha"]}
+    started = time.monotonic()
+    results = {}
+    admissions = {}
+    evidence_stream = (folder / "series.jsonl").open("x", encoding="utf-8")
+    child_log = (folder / "load-process.log").open("x", encoding="utf-8")
+    child = subprocess.Popen(
+        [sys.executable, str(ROOT / "scripts/scale_load.py"), str(folder)],
+        env=child_env,
+        stdout=child_log,
+        stderr=subprocess.STDOUT,
+        cwd=ROOT,
+    )
+    try:
+        deadline = (
+            started
+            + sum(s["seconds"] for s in settings["stages"])
+            + settings["observation_seconds"]
+            + 30
+        )
+        with ThreadPoolExecutor(max_workers=16) as observers:
+            while time.monotonic() < min(deadline, work_deadline):
+                tick = time.monotonic()
+                incoming = records(folder / "admission.jsonl")
+                admissions = {
+                    r["event_id"]: r
+                    for r in incoming
+                    if r["kind"] == "response" and r["status"] == 202
+                }
+                eligible = []
+                for item in prepared:
+                    event = item["event_id"]
+                    admission = admissions.get(event)
+                    if (
+                        not admission
+                        or "inbox_id" not in admission
+                        or results.get(event, {}).get("completed_monotonic")
+                    ):
+                        continue
+                    if time.monotonic() - admission["monotonic"] > settings["observation_seconds"]:
+                        continue
+                    eligible.append({**item, "inbox_id": admission["inbox_id"]})
+                observed = list(
+                    observers.map(lambda item: observe(verifiers[item["event_id"]], item), eligible)
+                )
+                for record in observed:
+                    results[record["event_id"]] = record
+                sample = {"utc": utc(), "monotonic": tick, "replicas_fixed": replicas}
+                try:
+                    sample["inbox"] = db_metric(private, values["observer"])
+                    dep = json.loads(
+                        environment.kubectl(private, ["get", "deployment/" + TARGET, "-o", "json"])
+                    )
+                    sample["deployment"] = {
+                        "uid": dep["metadata"]["uid"],
+                        "desired": dep["spec"]["replicas"],
+                        "ready": dep["status"].get("readyReplicas", 0),
+                    }
+                    stats = json.loads(
+                        environment.kubectl(
+                            private,
+                            [
+                                "get",
+                                "--raw",
+                                "/api/v1/nodes/" + CLUSTER + "-control-plane/proxy/stats/summary",
+                            ],
+                        )
+                    )
+                    sample["resources"] = [
+                        {
+                            "namespace": p["podRef"]["namespace"],
+                            "pod": p["podRef"]["name"],
+                            "uid": p["podRef"]["uid"],
+                            "cpu": p.get("cpu"),
+                            "memory": p.get("memory"),
+                        }
+                        for p in stats.get("pods", [])
+                    ]
+                    sample["node_resources"] = {k: stats["node"].get(k) for k in ("cpu", "memory")}
+                except (RuntimeError, ValueError, KeyError, subprocess.TimeoutExpired):
+                    sample["collection_error"] = True
+                sample["collection_end_monotonic"] = time.monotonic()
+                evidence_stream.write(json.dumps(sample) + "\n")
+                evidence_stream.flush()
+                if sample.get("collection_error"):
+                    raise RuntimeError("COLLECTION_FAILED")
+                if any(r.get("terminal_failure") for r in observed):
+                    raise RuntimeError("BUSINESS_FAILURE")
+                if child.poll() is not None and child.returncode != 0:
+                    raise RuntimeError("LOAD_PROCESS_FAILED")
+                if (
+                    child.poll() is not None
+                    and len(results) == len(admissions)
+                    and all(r.get("completed_monotonic") for r in results.values())
+                ):
+                    break
+                time.sleep(
+                    max(0, settings["collection_interval_seconds"] - (time.monotonic() - tick))
+                )
+        child.wait(timeout=15)
+        incoming = records(folder / "admission.jsonl")
+        final = []
+        for item in prepared:
+            event = item["event_id"]
+            admission = admissions.get(event)
+            result = results.get(event, {})
+            if admission:
+                classification = outcome(
+                    admission["monotonic"],
+                    result.get("completed_monotonic"),
+                    settings["functional_deadline_seconds"],
+                    bool(result.get("observation_error")),
+                    result.get("pending_confirmed", False),
+                )
+            else:
+                offered = any(
+                    x.get("event_id") == event and x["kind"] == "offered" for x in incoming
+                )
+                responses = [
+                    x for x in incoming if x.get("event_id") == event and x["kind"] == "response"
+                ]
+                classification = (
+                    "not_offered"
+                    if not offered
+                    else "not_accepted"
+                    if responses and 400 <= responses[-1]["status"] < 500
+                    else "acceptance_unknown"
+                )
+            final.append(
+                {**item, **result, "classification": classification, "acceptance": admission}
+            )
+        write(folder / "events.json", final)
+        counts = {
+            name: sum(x["classification"] == name for x in final)
+            for name in sorted({x["classification"] for x in final})
+        }
+        final_metric = db_metric(private, values["observer"])
+        passed = all(x["classification"] in ("completed_in_time", "completed_late") for x in final)
+        write(
+            folder / "summary.json",
+            {
+                "complete": True,
+                "functional_passed": passed,
+                "counts": counts,
+                "initial_fixed_replicas": replicas,
+                "final_inbox": final_metric,
+                "latencies_are_observed_upper_bounds": True,
+                "observer_concurrency": 16,
+                "instrument": "Locust HttpSession; open arrival schedule; kubelet/SQL temporal collection",
+            },
+        )
+        return passed
+    finally:
+        if child.poll() is None:
+            child.terminate()
+            child.wait(timeout=15)
+        child_log.close()
+        evidence_stream.close()
+        for v in verifiers.values():
+            v.evidence.close()
+
+
+def _execute(private, output):
+    expected = identity(private)
+    if output.exists():
+        raise RuntimeError("OUTPUT_EXISTS")
+    if environment.command(["docker", "ps", "-q"]).strip():
+        raise RuntimeError("CONCURRENT_CONTAINERS")
+    if environment.command(["git", "status", "--porcelain"], timeout=10).strip():
+        raise RuntimeError("DIRTY_CHECKOUT")
+    work_deadline = time.monotonic() + 100 * 60
+    settings = json.loads((ROOT / "config/scale-calibration.json").read_text())
+    schedule(settings["stages"])
+    if settings["replicas"] != [1, 2] or settings["http_concurrency"] != 8:
+        raise RuntimeError("CALIBRATION_CONFIGURATION_CHANGED")
+    output.mkdir(parents=True)
+    write(
+        output / "protocol.json",
+        {
+            "source": SOURCE,
+            "infrastructure_sha": environment.command(["git", "rev-parse", "HEAD"]).strip(),
+            "settings": settings,
+            "identity": expected,
+            "runtime_config_digest": RUNTIME_CONFIG,
+            "purpose": "calibration only",
+        },
+    )
+    values = json.loads((private / "values.json").read_text())
+    port = 18181
+    with socket.socket() as probe:
+        probe.bind(("127.0.0.1", port))
+    tunnel = None
+    try:
+        environment.command(["docker", "start", CLUSTER + "-control-plane"])
+        environment.kubectl(
+            private,
+            ["wait", "--for=condition=Ready", "nodes", "--all", "--timeout=120s"],
+            timeout=130,
+        )
+        ns = json.loads(
+            environment.kubectl(private, ["get", "namespace", "fulfillflow", "-o", "json"])
+        )
+        if ns["metadata"]["uid"] != expected["namespace_uid"]:
+            raise RuntimeError("NAMESPACE_IDENTITY")
+        for name in (
+            "core",
+            "tracking",
+            "notifications",
+            "core-worker",
+            "tracking-worker",
+            "notifications-worker",
+        ):
+            environment.kubectl(
+                private, ["rollout", "status", "deployment/" + name, "--timeout=120s"], timeout=130
+            )
+        tool, _ = environment.tools()
+        tunnel = subprocess.Popen(
+            [
+                str(tool),
+                "--kubeconfig",
+                str(private / "kubeconfig"),
+                "--context",
+                "kind-" + CLUSTER,
+                "-n",
+                "fulfillflow",
+                "port-forward",
+                "--address",
+                "127.0.0.1",
+                "service/core",
+                f"{port}:8000",
+            ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        base = f"http://127.0.0.1:{port}"
+        until = time.monotonic() + 20
+        while time.monotonic() < until:
+            if tunnel.poll() is not None:
+                raise RuntimeError("TUNNEL_FAILED")
+            try:
+                response = HttpTransport()("GET", base + "/health/ready", {}, None, 2)
+                if response.status == 200:
+                    break
+            except Failure:
+                pass
+            time.sleep(1)
+        else:
+            raise RuntimeError("TUNNEL_NOT_READY")
+        for count in settings["replicas"]:
+            print(f"Calibration: {count} fixed replica(s)", flush=True)
+            if not run_one(
+                private,
+                output / f"fixed-{count}",
+                count,
+                settings,
+                values,
+                base,
+                expected,
+                work_deadline,
+            ):
+                raise RuntimeError("CALIBRATION_NOT_FUNCTIONALLY_COMPLETE")
+        write(
+            output / "summary.json",
+            {
+                "complete": True,
+                "autoscaling_tested": False,
+                "next": "review fixed-replica signal and headroom before KEDA integration",
+            },
+        )
+    except Exception as error:
+        if not (output / "summary.json").exists():
+            write(
+                output / "summary.json",
+                {
+                    "complete": False,
+                    "error": type(error).__name__,
+                    "code": str(error)
+                    if isinstance(error, RuntimeError)
+                    else "CALIBRATION_INTERRUPTED",
+                },
+            )
+        raise
+    finally:
+        if tunnel and tunnel.poll() is None:
+            tunnel.terminate()
+            tunnel.wait(timeout=10)
+        stopped = False
+        try:
+            environment.command(
+                ["docker", "stop", "--timeout", "30", CLUSTER + "-control-plane"], timeout=60
+            )
+            state = json.loads(
+                environment.command(["docker", "inspect", CLUSTER + "-control-plane"])
+            )[0]
+            stopped = not state["State"]["Running"]
+        finally:
+            write(
+                output / "shutdown.json", {"container_stopped": stopped, "volumes_preserved": True}
+            )
+            if not stopped and (output / "summary.json").exists():
+                summary = json.loads((output / "summary.json").read_text())
+                summary["complete"] = False
+                summary["shutdown_error"] = True
+                (output / "summary.json").write_text(
+                    json.dumps(summary, indent=2), encoding="utf-8"
+                )
+        hashes = []
+        for path in sorted(output.rglob("*")):
+            if path.is_file():
+                hashes.append(
+                    hashlib.sha256(path.read_bytes()).hexdigest()
+                    + "  "
+                    + path.relative_to(output).as_posix()
+                )
+        (output / "checksums.sha256").write_text("\n".join(hashes) + "\n", encoding="utf-8")
+
+
+@contextmanager
+def exclusive(private):
+    lock = private / "calibration.lock"
+    descriptor = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+    try:
+        with os.fdopen(descriptor, "w") as stream:
+            stream.write(str(os.getpid()))
+        yield
+    finally:
+        lock.unlink()
+
+
+def execute(private, output):
+    if private.is_relative_to(output) or output.is_relative_to(private):
+        raise RuntimeError("PRIVATE_OUTPUT_OVERLAP")
+    with exclusive(private):
+        _execute(private, output)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--private", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    try:
+        execute(args.private.resolve(), args.output.resolve())
+        print(
+            json.dumps(
+                {
+                    "complete": True,
+                    "autoscaling_tested": False,
+                    "output": str(args.output.resolve()),
+                }
+            )
+        )
+    except Exception as error:
+        print(json.dumps({"complete": False, "error": type(error).__name__}))
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -7,7 +7,9 @@ v1.0.0 usa Kind, uma aplicação congelada e réplicas fixas. Foram conferidas u
 comparação de 20 tentativas e uma avaliação complementar de nove tentativas,
 tratadas separadamente. O último encerramento preservou dados e parou o laboratório.
 
-**Próxima entrega: viabilidade de autoescalonamento em Kind, ainda não implementada.**
+**Em implementação: viabilidade de autoescalonamento em Kind.**
+Bootstrap isolado e smoke do instrumento conferidos; calibração fixa preparada.
+KEDA e piloto adaptativo ainda pendentes.
 A branch `feature/v1.1-autoscaling-kind` parte da v1.0.0. O
 [incremento planejado](RELEASE_PLAN.md#3-incremento-de-viabilidade-em-kind)
 termina com piloto limitado e pausa para reavaliação, antes de uma comparação formal.

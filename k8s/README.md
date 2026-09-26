@@ -451,3 +451,29 @@ Não usar o contexto corrente implicitamente em uma futura automação.
 
 Essa sequência pertence à extensão opcional AKS; implantação e requisitos Azure
 continuam pendentes. O aceite Kind não a substitui.
+
+
+<a id="calibracao-de-concorrencia"></a>
+## Calibração de concorrência — preparação da v1.1
+
+`scripts/Invoke-ScaleCalibration.ps1` opera exclusivamente `fulfillflow-scale-01`,
+com kubeconfig e credenciais privados fora do repositório. Não usar os comandos
+de retomada do laboratório histórico. Requer Docker Linux, imagem local congelada,
+ferramentas verificadas e `uv sync --frozen --group autoscaling`.
+`Prepare` cria o ambiente uma única vez; `Calibrate` exige identidade preservada,
+checkout limpo e nenhuma outra carga Docker. Nunca reutilizar saída existente ou
+apagar lock sem investigar seu dono.
+
+```powershell
+# $private: diretório protegido criado no bootstrap; não versionar seu conteúdo.
+./scripts/Invoke-ScaleCalibration.ps1 -Mode Calibrate -PrivateDirectory $private -OutputDirectory ./artifacts/scale-calibration-01
+```
+
+Manter o equipamento ligado e sem suspensão. O comando prepara entidades sintéticas,
+exercita uma e duas réplicas fixas e para o nó ao terminar, preservando volumes.
+Encerramento forçado exige conferir o container antes de retomar. Saídas incluem
+identidades, admissões, observações por evento, séries, resumos e hashes.
+Aceite desconhecido não provoca reenvio. Tempos são limites superiores observados,
+sujeitos à duração e concorrência das consultas. Guardar o resultado e reavaliar
+antes de KEDA; não repetir com carga maior para obter diferença. Esta preparação
+não comprova autoscaling nem altera as campanhas encerradas da v1.0.0.
