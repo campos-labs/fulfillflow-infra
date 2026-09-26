@@ -268,3 +268,48 @@ class CharacterizationSettingsTests(unittest.TestCase):
                 self.assertRaisesRegex(RuntimeError, "ADMISSION_CONCURRENCY_PROFILE_NOT_ALLOWED"),
             ):
                 characterization_settings(base, rate, http_concurrency=concurrency, **flags)
+
+
+class ExtendedPlateauTests(unittest.TestCase):
+    def test_only_duration_changes_and_exact_600_event_limit(self):
+        from scripts.scale_contract import schedule
+        from scripts.scale_diagnostic import characterization_settings
+
+        base = {
+            "stages": [
+                {"seconds": 15, "rate": 2},
+                {"seconds": 30, "rate": 8},
+                {"seconds": 15, "rate": 2},
+            ],
+            "replicas": [1, 2],
+            "http_concurrency": 8,
+        }
+        flags = dict(
+            diagnostic=True, reuse=True, controlled=True, extension=None, http_concurrency=16
+        )
+        old = characterization_settings(base, 12, **flags)
+        new = characterization_settings(base, 12, plateau_seconds=45, **flags)
+        self.assertEqual(len(schedule(new["stages"], characterization=True)), 600)
+        self.assertEqual(base["stages"][1]["seconds"], 30)
+        new["stages"][1]["seconds"] = 30
+        self.assertEqual(old, new)
+        for rate, duration, concurrency in [(8, 45, 8), (16, 45, 8), (12, 45, 8), (12, 60, 16)]:
+            with (
+                self.subTest(rate=rate, duration=duration, concurrency=concurrency),
+                self.assertRaisesRegex(RuntimeError, "DURATION_NOT_ALLOWED"),
+            ):
+                characterization_settings(
+                    base,
+                    rate,
+                    plateau_seconds=duration,
+                    **{**flags, "http_concurrency": concurrency},
+                )
+        with self.assertRaises(ValueError):
+            schedule(
+                [
+                    {"seconds": 15, "rate": 2},
+                    {"seconds": 46, "rate": 12},
+                    {"seconds": 15, "rate": 2},
+                ],
+                characterization=True,
+            )

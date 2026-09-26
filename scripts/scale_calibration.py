@@ -407,6 +407,7 @@ def _execute(
     controlled_host=False,
     peak_rate=8,
     http_concurrency=8,
+    plateau_seconds=30,
 ):
     if controlled_host and (not diagnostic or not reuse_terminal_reads):
         raise RuntimeError("CONTROLLED_REFERENCE_REQUIRES_REUSE_DIAGNOSTIC")
@@ -436,6 +437,7 @@ def _execute(
         controlled=controlled_host,
         extension=extension,
         http_concurrency=http_concurrency,
+        plateau_seconds=plateau_seconds,
     )
     if peak_rate != 8:
         work_deadline = time.monotonic() + 20 * 60
@@ -691,6 +693,7 @@ def execute(
     controlled_host=False,
     peak_rate=8,
     http_concurrency=8,
+    plateau_seconds=30,
 ):
     if private.is_relative_to(output) or output.is_relative_to(private):
         raise RuntimeError("PRIVATE_OUTPUT_OVERLAP")
@@ -703,6 +706,7 @@ def execute(
             controlled_host=controlled_host,
             peak_rate=peak_rate,
             http_concurrency=http_concurrency,
+            plateau_seconds=plateau_seconds,
         )
 
 
@@ -715,6 +719,7 @@ def main():
     parser.add_argument("--controlled-host", action="store_true")
     parser.add_argument("--peak-rate", type=int, choices=(8, 12, 16), default=8)
     parser.add_argument("--http-concurrency", type=int, choices=(8, 16), default=8)
+    parser.add_argument("--plateau-seconds", type=int, choices=(30, 45), default=30)
     args = parser.parse_args()
     try:
         execute(
@@ -725,6 +730,7 @@ def main():
             controlled_host=args.controlled_host,
             peak_rate=args.peak_rate,
             http_concurrency=args.http_concurrency,
+            plateau_seconds=args.plateau_seconds,
         )
         print(
             json.dumps(

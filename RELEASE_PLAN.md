@@ -734,6 +734,21 @@ Evidências locais: `artifacts/scale-admission-12-c16-02`, conferência em
 `artifacts/scale-admission-12-c16-02-review.json` e derivação em
 `artifacts/scale-admission-12-c16-02-assessment.json`; ainda não publicadas como pacote.
 
+### Diagnóstico delimitado de persistência a 12/s
+
+Preparar `scale-duration-12-45-01`: uma réplica, teto HTTP 16,
+`reuse_terminal_reads=true`, host controlado e patamar de 45 s a 12/s,
+entre 15 s a 2/s (600 eventos). Apenas a duração muda frente à admissão anterior.
+A pergunta é se o crescimento ao fim do patamar persiste com mais 15 s;
+não procurar um limiar que force escala. Dados acumulados e reinicialização
+impedem interpretar diferenças como efeito causal isolado da duração.
+
+Conferir margem do host e ausência de containers concorrentes antes da carga.
+Manter prazo funcional de 60 s, coleta de 5 s e limite operacional de 20 minutos.
+Revisar oferta/aceite/conclusão, idade e tendência da pendência, drain, admissão,
+CPU/throttling e mínimo de memória. Aplicar as guardas de progressão existentes;
+não iniciar automaticamente 16/s ou outra condição. Parar o nó ao encerrar.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da

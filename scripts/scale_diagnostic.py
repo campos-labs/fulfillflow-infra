@@ -126,9 +126,21 @@ def wait_throttling(
 
 
 def characterization_settings(
-    settings, peak_rate, *, diagnostic, reuse, controlled, extension, http_concurrency=8
+    settings,
+    peak_rate,
+    *,
+    diagnostic,
+    reuse,
+    controlled,
+    extension,
+    http_concurrency=8,
+    plateau_seconds=30,
 ):
     """Keep the historical profile unchanged; allow only two bounded successors."""
+    if plateau_seconds not in (30, 45) or (
+        plateau_seconds == 45 and (peak_rate != 12 or http_concurrency != 16)
+    ):
+        raise RuntimeError("CHARACTERIZATION_DURATION_NOT_ALLOWED")
     if http_concurrency not in (8, 16) or (http_concurrency != 8 and peak_rate != 12):
         raise RuntimeError("ADMISSION_CONCURRENCY_PROFILE_NOT_ALLOWED")
     if peak_rate == 8:
@@ -146,7 +158,8 @@ def characterization_settings(
     return {
         **settings,
         "stages": [
-            dict(s, rate=peak_rate) if i == 1 else dict(s) for i, s in enumerate(settings["stages"])
+            dict(s, rate=peak_rate, seconds=plateau_seconds) if i == 1 else dict(s)
+            for i, s in enumerate(settings["stages"])
         ],
         "replicas": [1],
         "capacity_characterization": True,

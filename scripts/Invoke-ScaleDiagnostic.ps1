@@ -4,7 +4,8 @@ param(
     [switch]$ReuseTerminalReads,
     [switch]$ControlledHost,
     [ValidateSet(8,12,16)][int]$PeakRate = 8,
-    [ValidateSet(8,16)][int]$HttpConcurrency = 8
+    [ValidateSet(8,16)][int]$HttpConcurrency = 8,
+    [ValidateSet(30,45)][int]$PlateauSeconds = 30
 )
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
@@ -14,7 +15,7 @@ $OutputDirectory = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPath
 if (Test-Path -LiteralPath $OutputDirectory) { throw 'Output already exists; use a new identifier.' }
 if ($PeakRate -ne 8 -and (-not $ReuseTerminalReads -or -not $ControlledHost)) { throw 'Characterization requires ControlledHost and ReuseTerminalReads' }
 if ($HttpConcurrency -ne 8 -and $PeakRate -ne 12) { throw 'Admission concurrency override requires PeakRate 12' }
-$diagnosticArgs = @('--peak-rate', [string]$PeakRate, '--http-concurrency', [string]$HttpConcurrency)
+$diagnosticArgs = @('--peak-rate', [string]$PeakRate, '--http-concurrency', [string]$HttpConcurrency, '--plateau-seconds', [string]$PlateauSeconds)
 if ($ReuseTerminalReads) { $diagnosticArgs += '--reuse-terminal-reads' }
 if ($ControlledHost) {
     if (-not $ReuseTerminalReads) { throw 'ControlledHost requires ReuseTerminalReads' }

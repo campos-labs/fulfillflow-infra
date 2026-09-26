@@ -473,6 +473,11 @@ sem mudar agenda, observador ou workload. Identificar o instrumento e a mudança
 no protocolo; oferta planejada igual não garante demanda efetiva igual.
 Essa exceção não altera os padrões das calibrações ou do piloto KEDA.
 
+A extensão de duração admite somente 45 s a 12/s com teto HTTP 16, mantendo
+15 s a 2/s antes/depois: 600 eventos. Identificar separadamente esse diagnóstico
+para observar persistência da pressão; não alterar os perfis anteriores ou
+o prazo funcional. Não constitui comparação formal nem aciona KEDA.
+
 **Controle e sinal.** KEDA é a opção preferencial e integra-se ao HPA; não criar
 outro HPA independente sobre o mesmo alvo. Na condição fixa, o controlador não
 pode disputar réplicas com o executor. Na adaptativa, manifests de rotina e scripts

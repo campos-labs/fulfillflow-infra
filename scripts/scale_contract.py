@@ -25,8 +25,8 @@ QUERY = """SELECT json_build_object(
 
 def schedule(stages: list[dict], *, characterization: bool = False) -> list[float]:
     if characterization and stages not in [
-        [{"seconds": 15, "rate": 2}, {"seconds": 30, "rate": rate}, {"seconds": 15, "rate": 2}]
-        for rate in (12, 16)
+        [{"seconds": 15, "rate": 2}, {"seconds": seconds, "rate": rate}, {"seconds": 15, "rate": 2}]
+        for rate, seconds in ((12, 30), (16, 30), (12, 45))
     ]:
         raise ValueError("CHARACTERIZATION_PROFILE_NOT_ALLOWED")
     if not stages or len(stages) > 5:
