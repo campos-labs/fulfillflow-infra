@@ -2,7 +2,7 @@
 
 ## 1. Estado atual
 
-**Avaliação operacional concluída em Kind; pausa para decisão de continuidade.**
+**v1.0.0 — avaliação operacional concluída em Kind; pausa para decisão de continuidade.**
 A aplicação v1.3.0-rc.1 permanece congelada. O último encerramento conferiu a configuração
 saudável, pausou os workloads e parou o nó, preservando dados e evidências.
 Não há implantação AKS, publicação ACR ou autoescalonamento neste aceite.
@@ -29,7 +29,7 @@ instruções vigentes de execução.
 | --- | --- |
 | Evidências | Dois conjuntos concluídos disponíveis no Git como seleção e ZIPs originais revisados para compartilhamento. Pilotos e séries interrompidas preservados localmente, com síntese de exclusões |
 | Backup e recuperação | Dois ZIPs versionados com hashes para conferência do download. Isso não comprova restauração de bancos, volumes ou ambiente após perda do equipamento |
-| Release/tag de infraestrutura | Não criada nesta consolidação; eventual marco deve identificar código, documentos e conjuntos executados sem mover referências existentes |
+| Referência de infraestrutura | [v1.0.0](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.0.0) identifica o fechamento documental e operacional; SHAs das execuções permanecem no relatório e nos protocolos |
 | NetworkPolicies | Seletores validados; tráfego permitido/bloqueado não ensaiado. Não declarar isolamento efetivo a partir da CI |
 | Capacidade, estabilidade prolongada e HA | Não avaliadas; fora do aceite funcional e da comparação operacional |
 
@@ -90,7 +90,15 @@ Uma extensão escolhida deverá ter plano próprio, testes desde o primeiro incr
 e pausa ao atingir seu aceite. Nova versão/branch será decidida nesse momento;
 nenhuma numeração futura ou implementação está comprometida agora.
 
-## 4. Regras de trabalho e continuidade
+## 4. Versionamento e continuidade
+
+As versões da infraestrutura são independentes das versões da aplicação. A v1.0.0
+fixa as interfaces operacionais documentadas: comandos, configuração e formatos de
+saída suportados. Correções compatíveis incrementam PATCH; novas capacidades
+compatíveis, MINOR; mudanças incompatíveis, MAJOR. Candidatas usam `-rc.N`.
+AKS e autoescalonamento não têm numeração reservada: ela dependerá da mudança real.
+Referências publicadas e registros de execução não são substituídos retrospectivamente.
+
 
 1. Ler os contratos pertinentes do DESIGN e o estado deste plano. Preservar a
    aplicação e as evidências congeladas; não alterar runtime para acomodar um resultado.

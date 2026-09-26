@@ -1,5 +1,7 @@
 # FulfillFlow Infra
 
+[**v1.0.0 — operação e recuperação em Kind**](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.0.0).
+
 Implantação e recuperação operacional do FulfillFlow em Kubernetes. A entrega
 atual usa Kind, uma aplicação congelada e réplicas fixas. A configuração de
 referência AKS/ACR está preparada para uma extensão futura, ainda não implantada.
@@ -73,5 +75,5 @@ a pausa atual não autoriza repetir as séries concluídas.
 O [índice de evidências](docs/OPERATIONAL_EVALUATION.md#8-evidências-e-reprodução-da-leitura)
 reúne a leitura guiada e os [dois ZIPs completos](docs/evidence/operational-a/archives)
 dos conjuntos concluídos, com checksums. Pilotos e séries interrompidas permanecem
-locais, com suas exclusões documentadas. Nenhuma release/tag foi criada; restauração
-de backup independente não foi verificada.
+locais, com suas exclusões documentadas. A release também reúne os dois ZIPs e
+checksums; restauração de backup independente não foi verificada.

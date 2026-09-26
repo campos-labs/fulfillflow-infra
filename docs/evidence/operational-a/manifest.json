@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "scope": "Operational A evaluation on frozen application v1.3; curated offline copies, no new runtime execution.",
-  "published_availability": "Selected records and two byte-identical complete campaign archives are versioned in Git. No release/tag was created. Pilots and interrupted series remain local; their exclusions are documented.",
+  "published_availability": "Selected records and two byte-identical complete archives are versioned in Git. Release v1.0.0 distributes the same two archives and checksums. Pilots and interrupted series remain local with documented exclusions.",
   "complete_archives": [
     {
       "campaign": "a2-comparison-03",
@@ -2796,5 +2796,15 @@
       "Copy hashes match original ZIP hashes"
     ],
     "limitation": "A content review for distribution does not prove backup restoration or create a new operational result."
+  },
+  "release": {
+    "tag": "v1.0.0",
+    "url": "https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.0.0",
+    "scope": "Repository closure; executed campaign SHAs remain in each protocol. No new runtime execution.",
+    "assets": [
+      "a2-comparison-03.zip",
+      "a-complements-evaluation-01.zip",
+      "checksums.sha256"
+    ]
   }
 }

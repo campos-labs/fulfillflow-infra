@@ -281,8 +281,10 @@ registros de conferência permanecem locais, com seleções no índice acima.
 Conferências anteriores conservam o estado de disponibilidade de sua ocasião;
 este índice e o manifesto descrevem a distribuição atual.
 
-Nenhuma release/tag foi criada. Artefatos da CI contêm validação estática e têm
-retenção de sete dias; os ZIPs versionados não dependem dessa retenção.
+A [release v1.0.0](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.0.0)
+reúne este fechamento e os dois ZIPs com checksums. Sua tag identifica a consolidação,
+não substitui os SHAs executados na seção 2. Artefatos da CI contêm validação estática
+e têm retenção de sete dias; os ZIPs versionados e anexados não dependem dessa retenção.
 As auditorias anteriores verificaram 638 e 379 arquivos respectivamente, além de
 235 e 123 registros encadeados. A base final coincidiu com a inicial em cada conjunto;
 o encerramento preservou volumes e parou o laboratório. Restauração de bancos ou

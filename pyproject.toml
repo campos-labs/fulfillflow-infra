@@ -1,6 +1,6 @@
 [project]
 name = "fulfillflow-infra-validation"
-version = "0.1.0"
+version = "1.0.0"
 description = "Offline validation tooling for FulfillFlow infrastructure"
 requires-python = ">=3.12,<3.13"
 dependencies = ["PyYAML==6.0.2", "jsonschema==4.25.1"]
