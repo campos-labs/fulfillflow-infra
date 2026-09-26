@@ -202,6 +202,7 @@ dependencies = [
 [package.dev-dependencies]
 autoscaling = [
     { name = "locust" },
+    { name = "psutil" },
 ]
 dev = [
     { name = "ruff" },
@@ -214,7 +215,10 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-autoscaling = [{ name = "locust", specifier = "==2.46.6" }]
+autoscaling = [
+    { name = "locust", specifier = "==2.46.6" },
+    { name = "psutil", specifier = "==7.2.2" },
+]
 dev = [{ name = "ruff", specifier = "==0.12.12" }]
 
 [[package]]

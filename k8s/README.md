@@ -477,3 +477,13 @@ Aceite desconhecido não provoca reenvio. Tempos são limites superiores observa
 sujeitos à duração e concorrência das consultas. Guardar o resultado e reavaliar
 antes de KEDA; não repetir com carga maior para obter diferença. Esta preparação
 não comprova autoscaling nem altera as campanhas encerradas da v1.0.0.
+
+A sucessora `scale-calibration-05` mantém o perfil de entrada. `admission.jsonl`
+acrescenta `dispatch_attempt` (horário previsto/real, atraso, concorrência e motivos).
+`series.jsonl` é coletado independentemente da observação funcional e inclui duração
+e atraso do ciclo, recursos dos processos e memória do host. Erro aparece em
+`series.error.json` e impede aceite. `worker-attribution.json` vincula os aceites
+aos logs DONE por pod, sem exportar texto livre de logs. `summary.json` distingue
+conclusão funcional e completude da atribuição. `shutdown.json` confirma a parada.
+Amostragem de processos pode omitir subprocessos curtos; não somar consumos do host
+e do nó. Preservar todas as saídas, inclusive quando `complete=false`.

@@ -8,6 +8,7 @@ dependencies = ["PyYAML==6.0.2", "jsonschema==4.25.1"]
 [dependency-groups]
 autoscaling = [
     "locust==2.46.6",
+    "psutil==7.2.2",
 ]
 dev = ["ruff==0.12.12"]
 

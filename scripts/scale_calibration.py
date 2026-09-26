@@ -17,6 +17,7 @@ from pathlib import Path
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts import scale_environment as environment
+from scripts import scale_observation as telemetry
 from scripts.scale_contract import (
     CLUSTER,
     QUERY,
@@ -150,6 +151,7 @@ def run_one(private, folder, replicas, settings, values, base, expected, work_de
     verify_images(private, expected)
     if db_metric(private, values["observer"])["eligible"]:
         raise RuntimeError("INITIAL_BACKLOG")
+    before = telemetry.wait_worker_count(private, replicas)
     prepared = []
     verifiers = {}
     offsets = schedule(settings["stages"])
@@ -176,18 +178,31 @@ def run_one(private, folder, replicas, settings, values, base, expected, work_de
     write(folder / "prepared.json", prepared)
     write(folder / "load.json", {"base": base, **settings})
     child_env = {**os.environ, "CARRIER_ALPHA_WEBHOOK_SECRET": values["alpha"]}
-    started = time.monotonic()
     results = {}
     admissions = {}
-    evidence_stream = (folder / "series.jsonl").open("x", encoding="utf-8")
-    child_log = (folder / "load-process.log").open("x", encoding="utf-8")
-    child = subprocess.Popen(
-        [sys.executable, str(ROOT / "scripts/scale_load.py"), str(folder)],
-        env=child_env,
-        stdout=child_log,
-        stderr=subprocess.STDOUT,
-        cwd=ROOT,
+    collector = telemetry.Collector(
+        folder / "series.jsonl",
+        lambda: telemetry.temporal_sample(
+            private, replicas, lambda: db_metric(private, values["observer"])
+        ),
+        settings["collection_interval_seconds"],
     )
+    collector.start()
+    since = utc()
+    started = time.monotonic()
+    child_log = (folder / "load-process.log").open("x", encoding="utf-8")
+    try:
+        child = subprocess.Popen(
+            [sys.executable, str(ROOT / "scripts/scale_load.py"), str(folder)],
+            env=child_env,
+            stdout=child_log,
+            stderr=subprocess.STDOUT,
+            cwd=ROOT,
+        )
+    except Exception:
+        child_log.close()
+        collector.close()
+        raise
     try:
         deadline = (
             started
@@ -222,44 +237,7 @@ def run_one(private, folder, replicas, settings, values, base, expected, work_de
                 )
                 for record in observed:
                     results[record["event_id"]] = record
-                sample = {"utc": utc(), "monotonic": tick, "replicas_fixed": replicas}
-                try:
-                    sample["inbox"] = db_metric(private, values["observer"])
-                    dep = json.loads(
-                        environment.kubectl(private, ["get", "deployment/" + TARGET, "-o", "json"])
-                    )
-                    sample["deployment"] = {
-                        "uid": dep["metadata"]["uid"],
-                        "desired": dep["spec"]["replicas"],
-                        "ready": dep["status"].get("readyReplicas", 0),
-                    }
-                    stats = json.loads(
-                        environment.kubectl(
-                            private,
-                            [
-                                "get",
-                                "--raw",
-                                "/api/v1/nodes/" + CLUSTER + "-control-plane/proxy/stats/summary",
-                            ],
-                        )
-                    )
-                    sample["resources"] = [
-                        {
-                            "namespace": p["podRef"]["namespace"],
-                            "pod": p["podRef"]["name"],
-                            "uid": p["podRef"]["uid"],
-                            "cpu": p.get("cpu"),
-                            "memory": p.get("memory"),
-                        }
-                        for p in stats.get("pods", [])
-                    ]
-                    sample["node_resources"] = {k: stats["node"].get(k) for k in ("cpu", "memory")}
-                except (RuntimeError, ValueError, KeyError, subprocess.TimeoutExpired):
-                    sample["collection_error"] = True
-                sample["collection_end_monotonic"] = time.monotonic()
-                evidence_stream.write(json.dumps(sample) + "\n")
-                evidence_stream.flush()
-                if sample.get("collection_error"):
+                if collector.failed.is_set():
                     raise RuntimeError("COLLECTION_FAILED")
                 if any(r.get("terminal_failure") for r in observed):
                     raise RuntimeError("BUSINESS_FAILURE")
@@ -312,13 +290,25 @@ def run_one(private, folder, replicas, settings, values, base, expected, work_de
             name: sum(x["classification"] == name for x in final)
             for name in sorted({x["classification"] for x in final})
         }
+        collector.close()
+        if collector.failed.is_set():
+            raise RuntimeError("COLLECTION_FAILED")
+        distribution = telemetry.attribution(
+            private, before, since, admissions, folder / "worker-attribution.json"
+        )
         final_metric = db_metric(private, values["observer"])
-        passed = all(x["classification"] in ("completed_in_time", "completed_late") for x in final)
+        passed = distribution["complete"] and all(
+            x["classification"] in ("completed_in_time", "completed_late") for x in final
+        )
         write(
             folder / "summary.json",
             {
                 "complete": True,
-                "functional_passed": passed,
+                "functional_passed": all(
+                    x["classification"] in ("completed_in_time", "completed_late") for x in final
+                ),
+                "attribution_complete": distribution["complete"],
+                "per_pod_completed": distribution["per_pod"],
                 "counts": counts,
                 "initial_fixed_replicas": replicas,
                 "final_inbox": final_metric,
@@ -333,7 +323,7 @@ def run_one(private, folder, replicas, settings, values, base, expected, work_de
             child.terminate()
             child.wait(timeout=15)
         child_log.close()
-        evidence_stream.close()
+        collector.close()
         for v in verifiers.values():
             v.evidence.close()
 
@@ -455,7 +445,7 @@ def _execute(private, output):
                 expected,
                 work_deadline,
             ):
-                raise RuntimeError("CALIBRATION_NOT_FUNCTIONALLY_COMPLETE")
+                raise RuntimeError("CALIBRATION_NOT_COMPLETE")
         write(
             output / "summary.json",
             {

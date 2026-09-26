@@ -438,11 +438,26 @@ A leitura pode incluir trabalho em transação ainda não confirmada: não mede 
 mensagens ociosas. Sua utilidade ainda será avaliada. Role própria somente leitura,
 quatro colunas autorizadas e timeout SQL limitam a coleta; erro não produz zero.
 
-O instrumento usa Locust HttpSession em processo separado, agenda aberta limitada,
-observação por evento e séries SQL/Kubernetes/kubelet. Não instala Prometheus nesta
-etapa. A coleta preparatória ainda não contabiliza todos os processos externos ao
-cluster nem atribui conclusões a cada réplica. Estabilizar esses pontos antes do
-piloto adaptativo preservado; a calibração não satisfaz sozinha seu aceite.
+O instrumento usa Locust HttpSession em processo separado e agenda aberta limitada.
+Registra para cada despacho o horário previsto, a tentativa, atraso e concorrência;
+`client_concurrency_limit` e `scheduler_lag` podem ocorrer simultaneamente. A tolerância
+de atraso permanece 250 ms. Não corrigir retrospectivamente uma oferta não realizada.
+
+A coleta SQL/Kubernetes/kubelet tem execução independente da observação funcional,
+com início/fim por amostra e atraso sobre a cadência nominal de cinco segundos.
+Não instala Prometheus nesta etapa. Registra CPU acumulada e RSS por PID/criação
+na árvore do instrumento e memória disponível do host. Processos muito curtos podem
+escapar à amostragem; esses valores não são contabilização integral do host e não
+devem ser somados aos recursos do nó, pois há sobreposição. Ausência/erro de coleta
+interrompe o aceite; não vira zero. Tempos funcionais continuam limites superiores
+observados, não horários exatos da confirmação de negócio.
+
+Atribuir processamento pelos logs `core/process/DONE` da aplicação congelada,
+correlacionados ao `request_id` do aceite, com UID e reinícios dos pods. Exigir
+uma correspondência por aceite e inventário estável; lacuna não demonstra perda.
+Dois pods Ready não provam participação de ambos. Não alterar a aplicação para
+produzir essa atribuição. Consultas, recursos e logs têm limites de coleta e não
+substituem a verificação funcional por evento.
 
 **Controle e sinal.** KEDA é a opção preferencial e integra-se ao HPA; não criar
 outro HPA independente sobre o mesmo alvo. Na condição fixa, o controlador não

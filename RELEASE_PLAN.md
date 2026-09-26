@@ -6,7 +6,9 @@
 Base: v1.0.0, commit `cb6113e6bbd601a65ee5142de85cadc5bf6ba29d`.
 CI da branch habilitada. Bootstrap dedicado e smoke do instrumento concluídos;
 calibração com uma e duas réplicas executada, com uma oferta não realizada.
-Revisão do gerador pendente antes de repetir ou integrar KEDA.
+Instrumento revisto: coleta temporal independente, motivos de não oferta, recursos
+amostrados do processo e atribuição por pod. Calibração sucessora ainda pendente;
+KEDA permanece preferencial e não foi instalado.
 A pausa final do incremento ainda não foi atingida. Sem nova tag, AKS ou ACR.
 
 ### Preparação conferida e próximo passo
@@ -33,13 +35,25 @@ A pausa final do incremento ainda não foi atingida. Sem nova tag, AKS ou ACR.
   ou concorrência cheia; o registro atual não permite separar os dois mecanismos.
   Cluster parado e volumes preservados. Não repetir automaticamente: revisar custo
   do gerador/observador e o diagnóstico de oferta antes de decidir nova execução.
+- Smoke do instrumento revisto: `artifacts/scale-instrument-smoke-04`, quatro
+  eventos por condição, conclusão e atribuição completas. Na condição de duas
+  réplicas, os quatro registros pertencem a um único pod: o instrumento distingue
+  prontidão de participação, sem exigir distribuição artificialmente equilibrada.
+  Coleta independente abaixo de 0,32 s por ciclo nesse smoke; não extrapolar para
+  a carga de 300 eventos. `smoke-03` parou antes da carga ao detectar pod anterior
+  ainda em encerramento; adicionada espera limitada antes da preparação.
+- Sucessora reservada: `scale-calibration-05`, mesmo perfil e limites de `04`.
+  Mudança apenas do instrumento; não agregar seus tempos aos anteriores como
+  comparação homogênea. Após execução, rever distribuição de trabalho, cadência
+  efetiva, custo amostrado e sinal de pendência. Nenhuma vantagem de duas réplicas
+  é pressuposta. Não instalar KEDA nem repetir automaticamente após essa coleta.
 - Comando de referência no [guia Kubernetes](k8s/README.md#calibracao-de-concorrencia):
   300 eventos por condição, 1 depois 2 réplicas; 15 s a 2/s, 30 s a 8/s e 15 s a 2/s.
   Prazo funcional 60 s após aceite observado, observação 120 s por evento,
   concorrência HTTP 8 e consultas até 16. Preparação das entidades fora da oferta.
 - Rever sinal, conclusão, oferta não realizada e folga antes de KEDA. O teto de
   120 minutos e até três execuções limita operação; não define tamanho amostral.
-  Completar atribuição por réplica e custos do instrumento antes do piloto integrado.
+  Conferir atribuição por réplica e custos amostrados do instrumento na sucessora.
   Não aumentar carga para forçar benefício nem alterar a aplicação congelada.
 
 A v1.0.0 permanece encerrada: aplicação v1.3.0-rc.1 congelada, configuração saudável

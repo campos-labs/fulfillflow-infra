@@ -77,3 +77,20 @@ def write(path: Path, value: object) -> None:
 
 def utc() -> str:
     return datetime.now(UTC).isoformat()
+
+
+def dispatch_diagnostic(scheduled, attempted, active, capacity):
+    lag = max(0, attempted - scheduled)
+    reasons = []
+    if active >= capacity:
+        reasons.append("client_concurrency_limit")
+    if lag > 0.25:
+        reasons.append("scheduler_lag")
+    return {
+        "scheduled_monotonic": scheduled,
+        "dispatch_attempt_monotonic": attempted,
+        "lag_seconds": lag,
+        "active_requests": active,
+        "capacity": capacity,
+        "reasons": reasons,
+    }

@@ -8,7 +8,8 @@ comparação de 20 tentativas e uma avaliação complementar de nove tentativas,
 tratadas separadamente. O último encerramento preservou dados e parou o laboratório.
 
 **Em implementação: viabilidade de autoescalonamento em Kind.**
-Bootstrap isolado e smoke do instrumento conferidos; calibração fixa preparada.
+Bootstrap e smoke conferidos; calibração sucessora preparada com coleta independente
+e atribuição de processamento por pod. Resultados anteriores permanecem preservados.
 KEDA e piloto adaptativo ainda pendentes.
 A branch `feature/v1.1-autoscaling-kind` parte da v1.0.0. O
 [incremento planejado](RELEASE_PLAN.md#3-incremento-de-viabilidade-em-kind)

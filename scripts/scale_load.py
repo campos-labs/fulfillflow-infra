@@ -16,7 +16,7 @@ from locust.env import Environment
 from requests.adapters import HTTPAdapter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from scripts.scale_contract import schedule, utc
+from scripts.scale_contract import dispatch_diagnostic, schedule, utc
 from scripts.verify_flow import Config, Verifier, base_url
 
 
@@ -80,6 +80,7 @@ def main():
                         if payload["external_event_id"] != item["event_id"]:
                             raise ValueError("IDENTITY")
                         record["inbox_id"] = inbox
+                        record["request_id"] = str(UUID(payload["request_id"]))
                     except (ValueError, KeyError, TypeError):
                         record["schema_error"] = True
                 emit(record)
@@ -93,12 +94,14 @@ def main():
 
         for item, offset in zip(prepared, offsets, strict=True):
             gevent.sleep(max(0, started + offset - time.monotonic()))
-            if pool.full() or time.monotonic() > started + offset + 0.25:
+            dispatch = dispatch_diagnostic(started + offset, time.monotonic(), len(pool), pool.size)
+            emit({"kind": "dispatch_attempt", "event_id": item["event_id"], **dispatch})
+            if dispatch["reasons"]:
                 emit(
                     {
                         "kind": "not_offered",
                         "event_id": item["event_id"],
-                        "reason": "GENERATOR_LIMIT",
+                        **dispatch,
                     }
                 )
             else:
