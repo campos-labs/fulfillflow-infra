@@ -623,3 +623,12 @@ reutilização terminal. Usa pasta nova `fixed-2` dentro da saída da tentativa;
 o revisor identifica a condição pelo protocolo. O padrão continua uma réplica.
 Essa condição aumenta recursos totais dos workers, sem autoescalonamento;
 seguir objetivo e guardas no RELEASE_PLAN antes de qualquer execução.
+
+Piloto adaptativo sucessor: `Invoke-KedaPilot.ps1 -Mode Execute -CapacityProfile`
+(com `-PrivateDirectory` e `-OutputDirectory` exclusivos) seleciona o perfil
+limitado de 540 eventos, uma réplica inicial, HTTP 16, captura v2, reutilização
+terminal e controle do host. O padrão histórico permanece 300 eventos. Usar o
+launcher local preparado no RELEASE_PLAN para conferir 5 GiB livres e isolar
+a janela. Aguardar também os 360 s de observação após a carga e o encerramento.
+O teste não exige escala: avaliar sinal, disponibilidade da métrica, decisões e
+participação por pod. Parar para revisão, mesmo com `complete=true`.

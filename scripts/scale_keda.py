@@ -118,15 +118,31 @@ def quantity(value):
 
 
 class Pilot:
-    def __init__(self, prepare_only=False):
+    def __init__(self, prepare_only=False, capacity_profile=False):
         self.pin = json.loads(CONFIG.read_text())
         self.prepare_only = prepare_only
+        self.capacity_profile = capacity_profile
         self.logs = {}
         self.pods = {}
         self.log_gaps = []
         self.object_uid = None
         self.restart_baseline = {}
         self.metric_samples = []
+
+    def capacity_settings(self, settings):
+        from scripts.scale_diagnostic import characterization_settings
+
+        result = characterization_settings(
+            settings,
+            16,
+            diagnostic=True,
+            reuse=True,
+            controlled=True,
+            extension=None,
+            http_concurrency=16,
+            plateau_seconds=30,
+        )
+        return {**result, "purpose": "bounded adaptive capacity pilot; not formal comparison"}
 
     def install(self, private, output):
         namespace = get(private, "namespace", "keda")
@@ -454,9 +470,31 @@ class Pilot:
         if self.prepare_only:
             write(output / "pilot-result.json", {"prepared": True, "load_executed": False})
             return
-        print("KEDA: adaptive workload with unchanged calibration profile", flush=True)
+        if self.capacity_profile:
+            from scripts.scale_diagnostic import wait_throttling
+
+            write(
+                output / "throttling-preflight.json",
+                wait_throttling(private, output / "throttling-startup.jsonl"),
+            )
+        print(
+            "KEDA: adaptive workload (540 events)"
+            if self.capacity_profile
+            else "KEDA: adaptive workload with unchanged calibration profile",
+            flush=True,
+        )
         ok = calibration.run_one(
-            private, output / "adaptive", 1, settings, values, base, expected, deadline, policy=self
+            private,
+            output / "adaptive",
+            1,
+            settings,
+            values,
+            base,
+            expected,
+            deadline,
+            policy=self,
+            diagnostic=self.capacity_profile,
+            reuse_terminal_reads=self.capacity_profile,
         )
         if not ok:
             raise RuntimeError("ADAPTIVE_FUNCTIONAL_OR_ATTRIBUTION_INCOMPLETE")
@@ -520,13 +558,22 @@ def main():
     parser.add_argument("--private", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--prepare-only", action="store_true")
+    parser.add_argument("--capacity-profile", action="store_true")
     args = parser.parse_args()
     private, output = args.private.resolve(), args.output.resolve()
     if private.is_relative_to(output) or output.is_relative_to(private):
         raise RuntimeError("PRIVATE_OUTPUT_OVERLAP")
     try:
         with calibration.exclusive(private):
-            calibration._execute(private, output, extension=Pilot(args.prepare_only))
+            calibration._execute(
+                private,
+                output,
+                extension=Pilot(args.prepare_only, args.capacity_profile),
+                controlled_host=args.capacity_profile,
+                reuse_terminal_reads=args.capacity_profile,
+                peak_rate=16 if args.capacity_profile else 8,
+                http_concurrency=16 if args.capacity_profile else 8,
+            )
         print(
             json.dumps(
                 {"complete": True, "output": str(output), "load_executed": not args.prepare_only}

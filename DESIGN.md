@@ -537,7 +537,16 @@ resultados nem mede exclusivamente espera ociosa. SQL retorna zero somente quand
 não há linhas elegíveis; erro continua erro. Sem fallback ou escala a zero.
 Polling KEDA 5 s, HPA conforme cadência efetiva registrada do cluster (padrão 15 s),
 estabilização de subida 15 s e descida 300 s. `cooldownPeriod` não governa 2→1.
-O perfil de carga permanece o da calibração 05. Não exigir aumento de réplicas.
+O perfil histórico permanece o da calibração 05. A sucessora opt-in
+`-CapacityProfile` usa 15 s a 2/s, 30 s a 16/s, 15 s a 2/s (540 eventos),
+HTTP 16, reutilização terminal, captura HTTP v2 e controle do host. Começa com
+uma réplica e usa a mesma política, sem alterar limiares ou recursos por pod.
+Identificar condição adaptativa e diferenças de coleta: status/métrica do
+controlador e logs dos pods são coletados durante a carga para preservar
+atribuição quando pods forem removidos. Esse custo adicional não existe na
+condição fixa e impede presumir equivalência integral da instrumentação.
+Não exigir aumento de réplicas ou interpretar `autoscaling_tested=true` como
+ciclo 1→2→1 demonstrado. Esta sucessora é piloto, não comparação formal.
 
 O protocolo separa preparação/falha da métrica da oferta funcional. Injeta
 `SELECT 1/0` somente na consulta do ScaledObject, sem alterar banco ou aplicação,

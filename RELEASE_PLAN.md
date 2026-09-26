@@ -18,7 +18,8 @@ host e um 503 de consulta cuja causa permanece indeterminada; ver
 A sucessora manual preservou 4,55 GiB livres, 600/600 conclusões e consultas
 sem erro. A sucessora a 16/s concluiu 540/540 e apresentou crescimento de
 pendência com margem do host. A sucessora com duas réplicas concluiu 540/540,
-com participação 281/259 e menor pendência amostrada. Ver
+com participação 281/259 e menor pendência amostrada. O piloto KEDA no
+mesmo perfil está preparado para execução manual, ainda não executado. Ver
 [resultado de capacidade adicional](#resultado-com-duas-réplicas-fixas).
 
 ### Preparação conferida e próximo passo
@@ -1097,9 +1098,55 @@ processamento por pod. Antes de executar, adaptar e validar seu protocolo:
 o piloto KEDA existente ainda usa o perfil histórico de 300 eventos e não deve
 ser apresentado como equivalente. Preservar limites, falhas de métrica distintas
 de zero, guardas e encerramento. Não acionamento ou acionamento tardio são
-resultados admissíveis. Essa sucessora ainda não está implementada ou executada;
-comparação formal, novos perfis, AKS e alteração da aplicação continuam fora
-do aceite atual. O 503 histórico segue sem causa determinada.
+resultados admissíveis. A preparação dessa sucessora está registrada abaixo; comparação formal,
+novos perfis, AKS e alteração da aplicação continuam fora do aceite atual. O 503 histórico segue sem causa determinada.
+
+### Piloto KEDA sucessor preparado
+
+Uma tentativa `keda-capacity-16-c16-01` via
+`artifacts/Invoke-KedaCapacity.local.ps1`, em PowerShell externo, com aplicativos
+de assistência/navegadores fechados. O launcher exige 5 GiB livres antes de
+iniciar, checkout limpo, branch correta e ambiente privado existente; recusa
+sobrescrita e containers concorrentes. Registra preflight, SHA e margem.
+
+O parâmetro versionado `Invoke-KedaPilot.ps1 -Mode Execute -CapacityProfile`
+seleciona exclusivamente os mesmos 540 eventos a 16/s usados nas condições
+fixas, HTTP 16, prazo 60 s e captura v2 com reutilização terminal. O caminho
+padrão de 300 eventos permanece inalterado. Recursos, aplicação, consulta,
+idade de 5 s, alvo, faixa 1–2 e estabilização permanecem iguais.
+
+Sequência: conferir instalação/identidade KEDA; verificar erro e recuperação
+da métrica sem carga; remover o controlador dessa verificação; conferir
+contadores de throttling; preparar eventos com uma réplica; ativar a política
+e exigir métrica disponível antes das ofertas. Durante a carga, coletar
+pendência/idade, recursos/throttling, confirmação por evento, status/métrica
+KEDA/HPA e logs por pod. Observar por mais 360 s após a fase funcional,
+sem novos eventos. Esses seis minutos fazem parte da janela crítica.
+
+No encerramento, remover apenas o ScaledObject próprio, conferir exclusão do
+HPA, repor uma réplica e parar o nó preservando volumes. Sem mutação manual
+de réplicas enquanto o HPA controla o alvo. Falha de métrica permanece
+indisponibilidade, nunca zero. Não relaxar guardas de host, oferta, HTTP,
+conclusão, identidade e coleta. `complete=true` exige revisão posterior dessas
+guardas; a memória mínima é guarda de progressão, não aborto instantâneo.
+
+Interpretar separadamente: critério não observado; critério observado sem
+expansão; expansão e participação; capacidade disponibilizada depois da
+pressão; observação indisponível. Decisões e transições são amostradas;
+leituras não reconstituem todos os instantes entre coletas. O sinal conta
+somente trabalho elegível envelhecido, não o backlog inteiro.
+
+A condição adaptativa acrescenta consultas ao controlador e preserva logs
+por pod durante a carga. Registrar duração/atrasos da coleta e esse custo:
+os tempos não constituem comparação formal com os diagnósticos fixos.
+O revisor de diagnóstico reconhece a pasta `adaptive` pelo protocolo e confere
+hashes; a interpretação do controlador também exige `metric-availability.json`,
+`post-load.json`, `policy.json` e status nas séries.
+
+**Pausa obrigatória após a revisão dessa tentativa:** decidir se a política
+é pertinente ao pico curto, se há lacuna de observação ou se outro perfil
+operacional precisa de justificativa prévia. Nenhum aumento automático de carga,
+alteração de limiar ou campanha formal. Ainda não há resultado desta sucessora.
 
 ### Depois da pausa — ainda não autorizado
 

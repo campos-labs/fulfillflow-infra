@@ -169,3 +169,71 @@ class KedaContracts(unittest.TestCase):
             self.assertEqual(container["imagePullPolicy"], "IfNotPresent")
             self.assertEqual(container["image"], pilot.pin["images"]["keda-operator"])
             self.assertIn("@sha256:", container["image"])
+
+
+class CapacityPilotTests(unittest.TestCase):
+    def test_capacity_profile_preserves_policy_and_baseline(self):
+        from scripts.scale_contract import schedule
+
+        base = {
+            "stages": [
+                {"seconds": 15, "rate": 2},
+                {"seconds": 30, "rate": 8},
+                {"seconds": 15, "rate": 2},
+            ],
+            "replicas": [1, 2],
+            "http_concurrency": 8,
+            "functional_deadline_seconds": 60,
+        }
+        pilot = Pilot(capacity_profile=True)
+        result = pilot.capacity_settings(base)
+        self.assertEqual(len(schedule(result["stages"], characterization=True)), 540)
+        self.assertEqual(result["replicas"], [1])
+        self.assertEqual(result["http_concurrency"], 16)
+        self.assertEqual(result["functional_deadline_seconds"], 60)
+        self.assertEqual(base["stages"][1]["rate"], 8)
+        self.assertEqual(scaled_object(pilot.pin), scaled_object(Pilot().pin))
+
+    def test_capacity_requires_control_and_disallows_fixed_or_changed_profile(self):
+        from scripts.scale_calibration import _execute
+
+        good = dict(
+            extension=Pilot(capacity_profile=True),
+            controlled_host=True,
+            reuse_terminal_reads=True,
+            peak_rate=16,
+            http_concurrency=16,
+        )
+        for override in (
+            {"controlled_host": False},
+            {"reuse_terminal_reads": False},
+            {"peak_rate": 12},
+            {"http_concurrency": 8},
+            {"plateau_seconds": 45},
+            {"fixed_replicas": 2},
+            {"diagnostic": True},
+        ):
+            with (
+                self.subTest(override=override),
+                patch("scripts.scale_calibration.identity") as identity,
+            ):
+                with self.assertRaisesRegex(RuntimeError, "ADAPTIVE_CAPACITY_PROFILE_NOT_ALLOWED"):
+                    _execute(Path("unused"), Path("unused-output"), **{**good, **override})
+                identity.assert_not_called()
+
+    def test_capacity_load_uses_same_http_capture_and_reuse_and_stops_on_failure(self):
+        pilot = Pilot(capacity_profile=True)
+        with (
+            patch.object(pilot, "install"),
+            patch.object(pilot, "metric_probe"),
+            patch("scripts.scale_keda.write"),
+            patch("scripts.scale_diagnostic.wait_throttling"),
+            patch("scripts.scale_keda.calibration.run_one", return_value=False) as run,
+        ):
+            with self.assertRaisesRegex(RuntimeError, "ADAPTIVE_FUNCTIONAL"):
+                pilot.run(Path("private"), Path("output"), {}, {}, "base", {}, 123)
+            self.assertEqual(run.call_args.args[1], Path("output/adaptive"))
+            self.assertEqual(run.call_args.args[2], 1)
+            self.assertIs(run.call_args.kwargs["policy"], pilot)
+            self.assertTrue(run.call_args.kwargs["diagnostic"])
+            self.assertTrue(run.call_args.kwargs["reuse_terminal_reads"])

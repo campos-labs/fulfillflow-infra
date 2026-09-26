@@ -78,10 +78,16 @@ def review(source):
             raise ValueError("SOURCE_CHECKSUM_MISMATCH")
         count += 1
     protocol = json.loads((source / "protocol.json").read_text())
-    replicas = protocol.get("diagnostic", {}).get("fixed_replicas", 1)
-    if type(replicas) is not int or replicas not in (1, 2):
-        raise ValueError("INVALID_DIAGNOSTIC_REPLICAS")
-    load = source / f"fixed-{replicas}"
+    diagnostic = protocol.get("diagnostic", {})
+    if diagnostic.get("condition") == "adaptive":
+        if not diagnostic.get("enabled") or diagnostic.get("fixed_replicas") is not None:
+            raise ValueError("INVALID_ADAPTIVE_DIAGNOSTIC")
+        load = source / "adaptive"
+    else:
+        replicas = diagnostic.get("fixed_replicas", 1)
+        if type(replicas) is not int or replicas not in (1, 2):
+            raise ValueError("INVALID_DIAGNOSTIC_REPLICAS")
+        load = source / f"fixed-{replicas}"
     series = [json.loads(s) for s in (load / "series.jsonl").read_text().splitlines()]
     events = json.loads((load / "events.json").read_text())
     timings = [

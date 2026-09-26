@@ -465,17 +465,24 @@ class DiagnosticReviewReplicaTests(unittest.TestCase):
 
         from scripts.review_scale_diagnostic import review
 
-        for replicas in (1, 2):
+        for replicas in (1, 2, None):
             with self.subTest(replicas=replicas), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
-                folder = root / f"fixed-{replicas}"
+                name = "adaptive" if replicas is None else f"fixed-{replicas}"
+                folder = root / name
                 folder.mkdir()
                 data = {
-                    "protocol.json": {"diagnostic": {"fixed_replicas": replicas}},
+                    "protocol.json": {
+                        "diagnostic": {
+                            "fixed_replicas": replicas,
+                            "enabled": True,
+                            "condition": "adaptive" if replicas is None else "fixed",
+                        }
+                    },
                     "summary.json": {"complete": True},
-                    f"fixed-{replicas}/summary.json": {"initial_fixed_replicas": replicas},
-                    f"fixed-{replicas}/events.json": [],
-                    f"fixed-{replicas}/series.jsonl": {
+                    f"{name}/summary.json": {"initial_fixed_replicas": replicas},
+                    f"{name}/events.json": [],
+                    f"{name}/series.jsonl": {
                         "monotonic": 1,
                         "collection_end_monotonic": 2,
                         "interval_overrun_seconds": 0,

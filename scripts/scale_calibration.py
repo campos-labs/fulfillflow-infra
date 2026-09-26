@@ -410,9 +410,20 @@ def _execute(
     plateau_seconds=30,
     fixed_replicas=1,
 ):
-    if controlled_host and (not diagnostic or not reuse_terminal_reads):
+    adaptive_capture = bool(extension and getattr(extension, "capacity_profile", False))
+    if adaptive_capture and (
+        diagnostic
+        or not controlled_host
+        or not reuse_terminal_reads
+        or peak_rate != 16
+        or http_concurrency != 16
+        or plateau_seconds != 30
+        or fixed_replicas != 1
+    ):
+        raise RuntimeError("ADAPTIVE_CAPACITY_PROFILE_NOT_ALLOWED")
+    if controlled_host and (not (diagnostic or adaptive_capture) or not reuse_terminal_reads):
         raise RuntimeError("CONTROLLED_REFERENCE_REQUIRES_REUSE_DIAGNOSTIC")
-    if reuse_terminal_reads and not diagnostic:
+    if reuse_terminal_reads and not (diagnostic or adaptive_capture):
         raise RuntimeError("REUSE_REQUIRES_DIAGNOSTIC")
     if diagnostic and extension:
         raise RuntimeError("DIAGNOSTIC_NOT_AUTOSCALING")
@@ -430,17 +441,20 @@ def _execute(
         raise RuntimeError("CALIBRATION_CONFIGURATION_CHANGED")
     from scripts.scale_diagnostic import characterization_settings
 
-    settings = characterization_settings(
-        settings,
-        peak_rate,
-        diagnostic=diagnostic,
-        reuse=reuse_terminal_reads,
-        controlled=controlled_host,
-        extension=extension,
-        http_concurrency=http_concurrency,
-        plateau_seconds=plateau_seconds,
-        fixed_replicas=fixed_replicas,
-    )
+    if adaptive_capture:
+        settings = extension.capacity_settings(settings)
+    else:
+        settings = characterization_settings(
+            settings,
+            peak_rate,
+            diagnostic=diagnostic,
+            reuse=reuse_terminal_reads,
+            controlled=controlled_host,
+            extension=extension,
+            http_concurrency=http_concurrency,
+            plateau_seconds=plateau_seconds,
+            fixed_replicas=fixed_replicas,
+        )
     if peak_rate != 8:
         work_deadline = time.monotonic() + 20 * 60
     output.mkdir(parents=True)
@@ -458,9 +472,10 @@ def _execute(
             if extension
             else "calibration only",
             "diagnostic": {
-                "enabled": diagnostic,
+                "enabled": diagnostic or adaptive_capture,
+                "condition": "adaptive" if adaptive_capture else "fixed",
                 "fixed_replicas": fixed_replicas if diagnostic else None,
-                "http_diagnostic_metadata_version": 2 if diagnostic else None,
+                "http_diagnostic_metadata_version": 2 if diagnostic or adaptive_capture else None,
                 "load_changed": peak_rate != 8,
                 "peak_rate": peak_rate,
                 "admission_concurrency_changed": http_concurrency != 8,
