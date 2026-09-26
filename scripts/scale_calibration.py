@@ -404,38 +404,39 @@ def _execute(private, output):
                 private, ["rollout", "status", "deployment/" + name, "--timeout=120s"], timeout=130
             )
         tool, _ = environment.tools()
-        tunnel = subprocess.Popen(
-            [
-                str(tool),
-                "--kubeconfig",
-                str(private / "kubeconfig"),
-                "--context",
-                "kind-" + CLUSTER,
-                "-n",
-                "fulfillflow",
-                "port-forward",
-                "--address",
-                "127.0.0.1",
-                "service/core",
-                f"{port}:8000",
-            ],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
+        tunnel_args = [
+            str(tool),
+            "--kubeconfig",
+            str(private / "kubeconfig"),
+            "--context",
+            "kind-" + CLUSTER,
+            "-n",
+            "fulfillflow",
+            "port-forward",
+            "--address",
+            "127.0.0.1",
+            "service/core",
+            f"{port}:8000",
+        ]
         base = f"http://127.0.0.1:{port}"
-        until = time.monotonic() + 20
-        while time.monotonic() < until:
-            if tunnel.poll() is not None:
-                raise RuntimeError("TUNNEL_FAILED")
-            try:
-                response = HttpTransport()("GET", base + "/health/ready", {}, None, 2)
-                if response.status == 200:
-                    break
-            except Failure:
-                pass
-            time.sleep(1)
-        else:
-            raise RuntimeError("TUNNEL_NOT_READY")
+        # A restarted kubelet can report cached Ready before the target container runs.
+        # Retry only the local tunnel before offering any workload, preserving diagnostics.
+        until = time.monotonic() + 90
+        with (output / "tunnel-startup.log").open("x", encoding="utf-8") as tunnel_log:
+            while time.monotonic() < until:
+                if tunnel is None or tunnel.poll() is not None:
+                    tunnel = subprocess.Popen(
+                        tunnel_args, stdout=tunnel_log, stderr=subprocess.STDOUT
+                    )
+                try:
+                    response = HttpTransport()("GET", base + "/health/ready", {}, None, 2)
+                    if response.status == 200 and tunnel.poll() is None:
+                        break
+                except Failure:
+                    pass
+                time.sleep(2)
+            else:
+                raise RuntimeError("TUNNEL_NOT_READY")
         for count in settings["replicas"]:
             print(f"Calibration: {count} fixed replica(s)", flush=True)
             if not run_one(
