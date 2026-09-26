@@ -1,0 +1,10 @@
+number,scenario,pair,condition,usable,scenario_passed,error,deployment_verdict,policy_action,automatic_restore,accepted_pending_events,completed_pending_events,accepted_observed_events,completed_observed_events,preparation_seconds,authorized_to_request_seconds,request_to_terminal_seconds,authorization_to_terminal_seconds,converged_seconds,notification_observed_seconds,signal_difference_seconds
+1,pending,1,explicit,True,True,,rejected,explicit_restore,False,1,1,,,2.9690000000118744,1.0310000000172295,3.827999999979511,4.85899999999674,29.51500000001397,15.34299999999348,-14.172000000020489
+2,pending,1,auto,True,True,,rejected,restore,True,1,1,,,2.7809999999881256,0.0159999999741558,3.76500000001397,3.7809999999881256,26.780999999988126,11.35899999999674,-15.421999999991385
+3,pending,2,auto,True,True,,rejected,restore,True,1,1,,,2.875,0.0,3.7809999999881256,3.7809999999881256,26.85899999999674,11.46899999998277,-15.39000000001397
+4,pending,2,explicit,True,True,,rejected,explicit_restore,False,1,1,,,2.8589999999967404,1.0160000000032596,3.7960000000020955,4.812000000005355,27.953000000008615,12.35899999999674,-15.594000000011874
+5,pending,3,explicit,True,True,,rejected,explicit_restore,False,1,1,,,2.7969999999913853,1.0150000000139698,3.812999999994645,4.828000000008615,29.437999999994645,15.14100000000326,-14.296999999991385
+6,pending,3,auto,True,True,,rejected,restore,True,1,1,,,2.812000000005355,0.0159999999741558,3.734000000025844,3.75,26.905999999988126,11.39000000001397,-15.515999999974156
+7,inconclusive,1,auto,True,True,,inconclusive,abstain,False,0,0,1,1,,,,,,,
+8,inconclusive,2,auto,True,True,,inconclusive,abstain,False,0,0,1,1,,,,,,,
+9,inconclusive,3,auto,True,True,,inconclusive,abstain,False,0,0,1,1,,,,,,,

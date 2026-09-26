@@ -1,0 +1,48 @@
+{
+  "nature": "projection",
+  "selection": "Prior interruption reviews, retained for instrument limitations and exclusion accounting. No successful attempts imported into comparison 03, and no interrupted attempt reclassified.",
+  "series": [
+    {
+      "series": "a2-comparison-01",
+      "source": "artifacts/a2-interruption-review-01/partial-audit.json",
+      "source_pointers": [
+        "/valid_healthy_attempts",
+        "/incomplete_fault_attempt",
+        "/original_log_bytes_preserved",
+        "/reproduction",
+        "/original_campaign_modified"
+      ],
+      "complete": false,
+      "valid_healthy_attempts": 10,
+      "incomplete_attempt": 11,
+      "original_log_bytes_preserved": false,
+      "reproduction": "same pod returned an empty log, then the expected validation one second later",
+      "original_campaign_modified": false,
+      "exclusion": "Incomplete campaign; missing expected startup diagnostic. Subsequent bounded observation handled transient empty logs, without proving exact timing of the original unpreserved log."
+    },
+    {
+      "series": "a2-comparison-02",
+      "source": "artifacts/a2-interruption-review-02/partial-audit.json",
+      "source_pointers": [
+        "/usable_attempts",
+        "/inconclusive_attempt",
+        "/error",
+        "/classification"
+      ],
+      "complete": false,
+      "usable_attempts": 17,
+      "inconclusive_attempt": 18,
+      "error": "SCHEMA_UNEXPECTED",
+      "classification": "observer rejected a permitted intermediate projection; no claim of functional completion without later read-only verification",
+      "later_read_only_verification": {
+        "source": "artifacts/a2-interruption-review-02/closure.json",
+        "accepted_event_later_completed": true,
+        "original_event_resent": false,
+        "original_attempt_reclassified": false,
+        "completion_time_of_original_attempt": "unknown"
+      },
+      "exclusion": "Incomplete campaign; permitted intermediate projection rejected by observer. Later GET confirmation does not supply a recovery duration for the original attempt."
+    }
+  ],
+  "pilots": "Pilot attempts are preparation and excluded from comparison 03 and complements evaluation. Complements pilot 01 preserved with inherited scenario-label issue; pilot 02 is the evaluation protocol reference."
+}

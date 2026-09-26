@@ -1,0 +1,251 @@
+{
+  "nature": "recalculated_summary",
+  "method": "Within campaign/scenario/condition, use usable successful rows; median, min and max without rounding intermediate values. Empty CSV cells are missing, not zero. No pooling of campaigns or significance claims.",
+  "campaigns": {
+    "a2-comparison-03": [
+      {
+        "scenario": "healthy",
+        "condition": "auto",
+        "attempts": 5,
+        "metrics_seconds": {
+          "candidate_decision_seconds": {
+            "n": 5,
+            "median": 21.546999999991385,
+            "min": 20.578000000008615,
+            "max": 21.687000000005355
+          },
+          "activation_seconds": {
+            "n": 0,
+            "median": null,
+            "min": null,
+            "max": null
+          },
+          "configuration_recovery_seconds": {
+            "n": 0,
+            "median": null,
+            "min": null,
+            "max": null
+          },
+          "functional_recovery_seconds": {
+            "n": 0,
+            "median": null,
+            "min": null,
+            "max": null
+          },
+          "policy_total_seconds": {
+            "n": 5,
+            "median": 21.546999999991385,
+            "min": 20.578000000008615,
+            "max": 21.687000000005355
+          }
+        }
+      },
+      {
+        "scenario": "healthy",
+        "condition": "explicit",
+        "attempts": 5,
+        "metrics_seconds": {
+          "candidate_decision_seconds": {
+            "n": 5,
+            "median": 21.735000000000582,
+            "min": 20.390999999988708,
+            "max": 22.702999999994063
+          },
+          "activation_seconds": {
+            "n": 0,
+            "median": null,
+            "min": null,
+            "max": null
+          },
+          "configuration_recovery_seconds": {
+            "n": 0,
+            "median": null,
+            "min": null,
+            "max": null
+          },
+          "functional_recovery_seconds": {
+            "n": 0,
+            "median": null,
+            "min": null,
+            "max": null
+          },
+          "policy_total_seconds": {
+            "n": 5,
+            "median": 21.735000000000582,
+            "min": 20.390999999988708,
+            "max": 22.702999999994063
+          }
+        }
+      },
+      {
+        "scenario": "invalid-pool",
+        "condition": "auto",
+        "attempts": 5,
+        "metrics_seconds": {
+          "candidate_decision_seconds": {
+            "n": 5,
+            "median": 6.187999999994645,
+            "min": 3.485000000000582,
+            "max": 6.25
+          },
+          "activation_seconds": {
+            "n": 5,
+            "median": 0.062000000005355105,
+            "min": 0.030999999988125637,
+            "max": 0.09399999999732245
+          },
+          "configuration_recovery_seconds": {
+            "n": 5,
+            "median": 18.797000000005937,
+            "min": 17.562000000005355,
+            "max": 18.843999999997322
+          },
+          "functional_recovery_seconds": {
+            "n": 5,
+            "median": 21.937000000005355,
+            "min": 20.734000000011292,
+            "max": 21.98399999999674
+          },
+          "policy_total_seconds": {
+            "n": 5,
+            "median": 27.01600000000326,
+            "min": 24.313000000009197,
+            "max": 28.218999999997322
+          }
+        }
+      },
+      {
+        "scenario": "invalid-pool",
+        "condition": "explicit",
+        "attempts": 5,
+        "metrics_seconds": {
+          "candidate_decision_seconds": {
+            "n": 5,
+            "median": 6.203000000008615,
+            "min": 3.5319999999919673,
+            "max": 6.5
+          },
+          "activation_seconds": {
+            "n": 5,
+            "median": 1.0780000000086147,
+            "min": 1.0619999999908032,
+            "max": 1.0780000000086147
+          },
+          "configuration_recovery_seconds": {
+            "n": 5,
+            "median": 18.764999999999418,
+            "min": 17.65700000000652,
+            "max": 18.843999999997322
+          },
+          "functional_recovery_seconds": {
+            "n": 5,
+            "median": 21.906000000002678,
+            "min": 20.76600000000326,
+            "max": 21.952999999994063
+          },
+          "policy_total_seconds": {
+            "n": 5,
+            "median": 29.093999999997322,
+            "min": 26.468999999997322,
+            "max": 29.547000000005937
+          }
+        }
+      }
+    ],
+    "a-complements-evaluation-01": [
+      {
+        "scenario": "inconclusive",
+        "condition": "auto",
+        "attempts": 3,
+        "metrics_seconds": {
+          "authorized_to_request_seconds": {
+            "n": 0,
+            "median": null,
+            "min": null,
+            "max": null
+          },
+          "request_to_terminal_seconds": {
+            "n": 0,
+            "median": null,
+            "min": null,
+            "max": null
+          },
+          "authorization_to_terminal_seconds": {
+            "n": 0,
+            "median": null,
+            "min": null,
+            "max": null
+          },
+          "signal_difference_seconds": {
+            "n": 0,
+            "median": null,
+            "min": null,
+            "max": null
+          }
+        }
+      },
+      {
+        "scenario": "pending",
+        "condition": "auto",
+        "attempts": 3,
+        "metrics_seconds": {
+          "authorized_to_request_seconds": {
+            "n": 3,
+            "median": 0.0159999999741558,
+            "min": 0.0,
+            "max": 0.0159999999741558
+          },
+          "request_to_terminal_seconds": {
+            "n": 3,
+            "median": 3.76500000001397,
+            "min": 3.734000000025844,
+            "max": 3.7809999999881256
+          },
+          "authorization_to_terminal_seconds": {
+            "n": 3,
+            "median": 3.7809999999881256,
+            "min": 3.75,
+            "max": 3.7809999999881256
+          },
+          "signal_difference_seconds": {
+            "n": 3,
+            "median": -15.421999999991385,
+            "min": -15.515999999974156,
+            "max": -15.39000000001397
+          }
+        }
+      },
+      {
+        "scenario": "pending",
+        "condition": "explicit",
+        "attempts": 3,
+        "metrics_seconds": {
+          "authorized_to_request_seconds": {
+            "n": 3,
+            "median": 1.0160000000032596,
+            "min": 1.0150000000139698,
+            "max": 1.0310000000172295
+          },
+          "request_to_terminal_seconds": {
+            "n": 3,
+            "median": 3.812999999994645,
+            "min": 3.7960000000020955,
+            "max": 3.827999999979511
+          },
+          "authorization_to_terminal_seconds": {
+            "n": 3,
+            "median": 4.828000000008615,
+            "min": 4.812000000005355,
+            "max": 4.85899999999674
+          },
+          "signal_difference_seconds": {
+            "n": 3,
+            "median": -14.296999999991385,
+            "min": -15.594000000011874,
+            "max": -14.172000000020489
+          }
+        }
+      }
+    ]
+  }
+}

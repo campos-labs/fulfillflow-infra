@@ -1,0 +1,100 @@
+{
+  "authorization": "after_common_preparation_and_both_observers_started",
+  "environment": {
+    "context": "kind-fulfillflow-local-01",
+    "image": "fulfillflow-kind-runtime:source-9e3a135a00db",
+    "image_id": "sha256:cc882fab4e5294ed7e516131a1b4ace90a2d7e019467ca5c929b14381b680daa",
+    "namespace": "fulfillflow",
+    "namespace_uid": "e520a64e-d2c9-403f-ad37-11a405c2e1d2",
+    "node": "fulfillflow-local-01-control-plane"
+  },
+  "explicit_actor": "script_not_human",
+  "injection": "one_observer_transport_503_in_separate_healthy_attempt",
+  "limits": {
+    "flow": 90,
+    "operation": 600,
+    "poll": 1,
+    "rollout": 90,
+    "window": 2700
+  },
+  "order": [
+    {
+      "condition": "explicit",
+      "number": 1,
+      "pair": 1,
+      "scenario": "pending"
+    },
+    {
+      "condition": "auto",
+      "number": 2,
+      "pair": 1,
+      "scenario": "pending"
+    },
+    {
+      "condition": "auto",
+      "number": 3,
+      "pair": 2,
+      "scenario": "pending"
+    },
+    {
+      "condition": "explicit",
+      "number": 4,
+      "pair": 2,
+      "scenario": "pending"
+    },
+    {
+      "condition": "explicit",
+      "number": 5,
+      "pair": 3,
+      "scenario": "pending"
+    },
+    {
+      "condition": "auto",
+      "number": 6,
+      "pair": 3,
+      "scenario": "pending"
+    },
+    {
+      "condition": "auto",
+      "number": 7,
+      "pair": 1,
+      "scenario": "inconclusive"
+    },
+    {
+      "condition": "auto",
+      "number": 8,
+      "pair": 2,
+      "scenario": "inconclusive"
+    },
+    {
+      "condition": "auto",
+      "number": 9,
+      "pair": 3,
+      "scenario": "inconclusive"
+    }
+  ],
+  "pilot_reference": {
+    "directory": "a-complements-pilot-02",
+    "protocol_sha256": "86c104ed3be16ad4da83e1cf69a5088cf9e3d7c181637e2ed9e5170d35f80500",
+    "summary_sha256": "c4ac67bc5aeb451b02bdf7960a2598ee511fa75c8097d7fba6c78daf0f0a9a6f"
+  },
+  "preparation": "confirmed_202_tracking_order_completed_SENT_NOT_RECEIVED",
+  "provenance": {
+    "application_sha": "9e3a135a00db218643633c7165d3106f0c8285e1",
+    "infra_sha": "f7a6111bffd2e2ce736a1560dbd957dadb6cb806",
+    "script_hashes": {
+      "a1.py": "771e35352a54ded36cec47a7dfe2d1bc54c2b2a4a407fa504e92c342c0a7f8b6",
+      "a1_flow.py": "efba7c8ec355dc384b5eb7e239c678d18b380df0845c896f3cff0931446c1932",
+      "a1_runtime.py": "a31bf50280a672aaf76d8d8fe68ef5035ca084b4c70dc23c8faa8e01abf12194",
+      "a2.py": "7bb7963f72284c856ff680189a9a6023d49e867c06502721b3e93f6b6acce08e",
+      "a2_campaign.py": "6d8ddbe541895638890d8309e83990cf369bc473be2f93914d3553ec157d4934",
+      "a_complements.py": "bfb0ed4d889443b5503241fd83d2494c375f74606b609736f9fbabf6cb675013",
+      "setup_validation_tools.py": "a2244c80fb944aa4f3f8ad587b26bb58491dd277e10ce9facebe79ac6ec92c58",
+      "validate.py": "050ea0316e4f71d2b03d1ab4d16bcdb28cbc19690717de40508f9670012b5c84",
+      "verify_flow.py": "7c4704e86d61b2544c4e1610996b12d645a62d9bc2c53f6699deb87f92342c78"
+    },
+    "working_tree_dirty": false
+  },
+  "stage": "evaluation",
+  "version": 1
+}

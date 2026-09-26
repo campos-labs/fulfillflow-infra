@@ -1,0 +1,166 @@
+{
+  "actor": "script",
+  "deadlines_seconds": {
+    "closure_reserve": 1800,
+    "explicit_request_poll": 0.1,
+    "flow": 90,
+    "operation": 600,
+    "poll": 1,
+    "rollout": 90,
+    "startup_empty_log_wait": 5,
+    "window": 14400
+  },
+  "environment": {
+    "context": "kind-fulfillflow-local-01",
+    "image": "fulfillflow-kind-runtime:source-9e3a135a00db",
+    "image_id": "sha256:cc882fab4e5294ed7e516131a1b4ace90a2d7e019467ca5c929b14381b680daa",
+    "namespace": "fulfillflow",
+    "namespace_uid": "e520a64e-d2c9-403f-ad37-11a405c2e1d2",
+    "node": "fulfillflow-local-01-control-plane"
+  },
+  "order": [
+    {
+      "condition": "explicit",
+      "number": 1,
+      "pair": 1,
+      "scenario": "healthy"
+    },
+    {
+      "condition": "auto",
+      "number": 2,
+      "pair": 1,
+      "scenario": "healthy"
+    },
+    {
+      "condition": "auto",
+      "number": 3,
+      "pair": 2,
+      "scenario": "healthy"
+    },
+    {
+      "condition": "explicit",
+      "number": 4,
+      "pair": 2,
+      "scenario": "healthy"
+    },
+    {
+      "condition": "explicit",
+      "number": 5,
+      "pair": 3,
+      "scenario": "healthy"
+    },
+    {
+      "condition": "auto",
+      "number": 6,
+      "pair": 3,
+      "scenario": "healthy"
+    },
+    {
+      "condition": "auto",
+      "number": 7,
+      "pair": 4,
+      "scenario": "healthy"
+    },
+    {
+      "condition": "explicit",
+      "number": 8,
+      "pair": 4,
+      "scenario": "healthy"
+    },
+    {
+      "condition": "explicit",
+      "number": 9,
+      "pair": 5,
+      "scenario": "healthy"
+    },
+    {
+      "condition": "auto",
+      "number": 10,
+      "pair": 5,
+      "scenario": "healthy"
+    },
+    {
+      "condition": "auto",
+      "number": 11,
+      "pair": 1,
+      "scenario": "invalid-pool"
+    },
+    {
+      "condition": "explicit",
+      "number": 12,
+      "pair": 1,
+      "scenario": "invalid-pool"
+    },
+    {
+      "condition": "explicit",
+      "number": 13,
+      "pair": 2,
+      "scenario": "invalid-pool"
+    },
+    {
+      "condition": "auto",
+      "number": 14,
+      "pair": 2,
+      "scenario": "invalid-pool"
+    },
+    {
+      "condition": "auto",
+      "number": 15,
+      "pair": 3,
+      "scenario": "invalid-pool"
+    },
+    {
+      "condition": "explicit",
+      "number": 16,
+      "pair": 3,
+      "scenario": "invalid-pool"
+    },
+    {
+      "condition": "explicit",
+      "number": 17,
+      "pair": 4,
+      "scenario": "invalid-pool"
+    },
+    {
+      "condition": "auto",
+      "number": 18,
+      "pair": 4,
+      "scenario": "invalid-pool"
+    },
+    {
+      "condition": "auto",
+      "number": 19,
+      "pair": 5,
+      "scenario": "invalid-pool"
+    },
+    {
+      "condition": "explicit",
+      "number": 20,
+      "pair": 5,
+      "scenario": "invalid-pool"
+    }
+  ],
+  "provenance": {
+    "application_sha": "9e3a135a00db218643633c7165d3106f0c8285e1",
+    "infra_sha": "08a68234932557f29c65911cab17f850adc4b23d",
+    "script_hashes": {
+      "a1.py": "49227689c5231cb0a8da71f845181e49ddbb270ebb3a37125a4843c72a7ec1ee",
+      "a1_flow.py": "efba7c8ec355dc384b5eb7e239c678d18b380df0845c896f3cff0931446c1932",
+      "a1_runtime.py": "a31bf50280a672aaf76d8d8fe68ef5035ca084b4c70dc23c8faa8e01abf12194",
+      "a2.py": "eea7c891a651bfa74b30e013c693fe0ecd4efb83a1dc3323b51f6135db29e58c",
+      "a2_campaign.py": "e96f6bcb37896034ca373cabd25ce1f9386a884eeb9b304b1048ae7396a56f8c",
+      "setup_validation_tools.py": "a2244c80fb944aa4f3f8ad587b26bb58491dd277e10ce9facebe79ac6ec92c58",
+      "validate.py": "050ea0316e4f71d2b03d1ab4d16bcdb28cbc19690717de40508f9670012b5c84",
+      "verify_flow.py": "7c4704e86d61b2544c4e1610996b12d645a62d9bc2c53f6699deb87f92342c78"
+    },
+    "working_tree_dirty": false
+  },
+  "scope": "Kind A2-II, no Azure or application load campaign",
+  "started_utc": "2026-09-25T02:59:55.928630+00:00",
+  "version": 1,
+  "host": {
+    "platform": "win32",
+    "python": "3.12.14",
+    "windows_idle_inhibition": true
+  }
+}

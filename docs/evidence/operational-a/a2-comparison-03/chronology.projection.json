@@ -1,0 +1,2304 @@
+{
+  "nature": "projection",
+  "source_campaign": "a2-comparison-03",
+  "attempts": [
+    {
+      "attempt": "01-healthy-explicit",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.29699999999138527,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "bd3846d2-ac31-4af2-9ec2-dd32374f5dc0",
+            "utc": "2026-09-25T02:59:57.222509+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7350000000005821,
+            "phase": "candidate_send_intent",
+            "process_id": "bd3846d2-ac31-4af2-9ec2-dd32374f5dc0",
+            "template_hash": "7ee8585969d0dc70f48d8b4fe98dbff281a716011e7225edd7bd1af0581d49d4",
+            "utc": "2026-09-25T02:59:57.656939+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 22.485000000000582,
+            "phase": "candidate_decided",
+            "process_id": "bd3846d2-ac31-4af2-9ec2-dd32374f5dc0",
+            "utc": "2026-09-25T03:00:19.405083+00:00",
+            "verdict": "approved"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0004.json",
+          "value": {
+            "elapsed_seconds": 22.485000000000582,
+            "phase": "no_automatic_restore",
+            "process_id": "bd3846d2-ac31-4af2-9ec2-dd32374f5dc0",
+            "utc": "2026-09-25T03:00:19.405083+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0005.json",
+          "value": {
+            "elapsed_seconds": 22.485000000000582,
+            "phase": "operation_finished",
+            "process_id": "bd3846d2-ac31-4af2-9ec2-dd32374f5dc0",
+            "success": true,
+            "utc": "2026-09-25T03:00:19.405083+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [
+        {
+          "source": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0006.json",
+          "value": {
+            "actor": "script",
+            "cleanup": true,
+            "elapsed_seconds": 0.2960000000020955,
+            "phase": "restoration_requested",
+            "process_id": "7a12e440-f7b4-4465-9ed0-9623f5c84f99",
+            "utc": "2026-09-25T03:00:19.797420+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 0.5620000000053551,
+            "phase": "restore_send_intent",
+            "process_id": "7a12e440-f7b4-4465-9ed0-9623f5c84f99",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:00:20.061688+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0008.json",
+          "value": {
+            "elapsed_seconds": 0.6710000000020955,
+            "phase": "restore_sent",
+            "process_id": "7a12e440-f7b4-4465-9ed0-9623f5c84f99",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:00:20.164055+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0009.json",
+          "value": {
+            "elapsed_seconds": 17.889999999999418,
+            "phase": "healthy_converged",
+            "process_id": "7a12e440-f7b4-4465-9ed0-9623f5c84f99",
+            "utc": "2026-09-25T03:00:37.383113+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0010.json",
+          "value": {
+            "directory": "recovery-flow-84e7c27f-5133-474d-8f45-1ce67fefc0b0",
+            "elapsed_seconds": 18.327999999994063,
+            "phase": "recovery_flow_started",
+            "process_id": "7a12e440-f7b4-4465-9ed0-9623f5c84f99",
+            "utc": "2026-09-25T03:00:37.832318+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0011.json",
+          "value": {
+            "elapsed_seconds": 21.389999999999418,
+            "phase": "recovery_observed",
+            "process_id": "7a12e440-f7b4-4465-9ed0-9623f5c84f99",
+            "success": true,
+            "utc": "2026-09-25T03:00:40.894395+00:00"
+          }
+        }
+      ],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "02-healthy-auto",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/02-healthy-auto/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.3129999999946449,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "be231f3b-1525-4cba-9067-87290f5612b4",
+            "utc": "2026-09-25T03:00:43.071634+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/02-healthy-auto/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7189999999973224,
+            "phase": "candidate_send_intent",
+            "process_id": "be231f3b-1525-4cba-9067-87290f5612b4",
+            "template_hash": "d5d212a59f300480e241b1077b17328edbc2048a825fd407c0aec69f6c6767ac",
+            "utc": "2026-09-25T03:00:43.487470+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/02-healthy-auto/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 22.406000000002678,
+            "phase": "candidate_decided",
+            "process_id": "be231f3b-1525-4cba-9067-87290f5612b4",
+            "utc": "2026-09-25T03:01:05.173026+00:00",
+            "verdict": "approved"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/02-healthy-auto/journal/0004.json",
+          "value": {
+            "elapsed_seconds": 22.406000000002678,
+            "phase": "no_automatic_restore",
+            "process_id": "be231f3b-1525-4cba-9067-87290f5612b4",
+            "utc": "2026-09-25T03:01:05.175634+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/02-healthy-auto/journal/0005.json",
+          "value": {
+            "elapsed_seconds": 22.406000000002678,
+            "phase": "operation_finished",
+            "process_id": "be231f3b-1525-4cba-9067-87290f5612b4",
+            "success": true,
+            "utc": "2026-09-25T03:01:05.175634+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [
+        {
+          "source": "artifacts/a2-comparison-03/02-healthy-auto/journal/0006.json",
+          "value": {
+            "actor": "script",
+            "cleanup": true,
+            "elapsed_seconds": 0.3120000000053551,
+            "phase": "restoration_requested",
+            "process_id": "377b4cc8-3a47-4f5b-bcfe-47757463be8b",
+            "utc": "2026-09-25T03:01:05.566413+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/02-healthy-auto/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 0.5779999999940628,
+            "phase": "restore_send_intent",
+            "process_id": "377b4cc8-3a47-4f5b-bcfe-47757463be8b",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:01:05.830335+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/02-healthy-auto/journal/0008.json",
+          "value": {
+            "elapsed_seconds": 0.7029999999940628,
+            "phase": "restore_sent",
+            "process_id": "377b4cc8-3a47-4f5b-bcfe-47757463be8b",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:01:05.949160+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/02-healthy-auto/journal/0009.json",
+          "value": {
+            "elapsed_seconds": 19.156000000002678,
+            "phase": "healthy_converged",
+            "process_id": "377b4cc8-3a47-4f5b-bcfe-47757463be8b",
+            "utc": "2026-09-25T03:01:24.411860+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/02-healthy-auto/journal/0010.json",
+          "value": {
+            "directory": "recovery-flow-ee7ac0a5-8d06-4dea-8635-b754546eb492",
+            "elapsed_seconds": 19.60899999999674,
+            "phase": "recovery_flow_started",
+            "process_id": "377b4cc8-3a47-4f5b-bcfe-47757463be8b",
+            "utc": "2026-09-25T03:01:24.861522+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/02-healthy-auto/journal/0011.json",
+          "value": {
+            "elapsed_seconds": 22.73399999999674,
+            "phase": "recovery_observed",
+            "process_id": "377b4cc8-3a47-4f5b-bcfe-47757463be8b",
+            "success": true,
+            "utc": "2026-09-25T03:01:27.987065+00:00"
+          }
+        }
+      ],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "03-healthy-auto",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/03-healthy-auto/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.2970000000059372,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "be41ba10-3935-4715-b529-147104da6b1b",
+            "utc": "2026-09-25T03:01:30.125486+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/03-healthy-auto/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7180000000080327,
+            "phase": "candidate_send_intent",
+            "process_id": "be41ba10-3935-4715-b529-147104da6b1b",
+            "template_hash": "260a32ed6d4332e16df5e8c93e67daf4bdc69787752d4c1ce26cc7e9cab49d81",
+            "utc": "2026-09-25T03:01:30.548055+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/03-healthy-auto/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 22.264999999999418,
+            "phase": "candidate_decided",
+            "process_id": "be41ba10-3935-4715-b529-147104da6b1b",
+            "utc": "2026-09-25T03:01:52.098816+00:00",
+            "verdict": "approved"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/03-healthy-auto/journal/0004.json",
+          "value": {
+            "elapsed_seconds": 22.264999999999418,
+            "phase": "no_automatic_restore",
+            "process_id": "be41ba10-3935-4715-b529-147104da6b1b",
+            "utc": "2026-09-25T03:01:52.098816+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/03-healthy-auto/journal/0005.json",
+          "value": {
+            "elapsed_seconds": 22.264999999999418,
+            "phase": "operation_finished",
+            "process_id": "be41ba10-3935-4715-b529-147104da6b1b",
+            "success": true,
+            "utc": "2026-09-25T03:01:52.098816+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [
+        {
+          "source": "artifacts/a2-comparison-03/03-healthy-auto/journal/0006.json",
+          "value": {
+            "actor": "script",
+            "cleanup": true,
+            "elapsed_seconds": 0.3129999999946449,
+            "phase": "restoration_requested",
+            "process_id": "f1324c0d-577a-4181-954e-ddc6d76b5dd2",
+            "utc": "2026-09-25T03:01:52.490301+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/03-healthy-auto/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 0.5789999999979045,
+            "phase": "restore_send_intent",
+            "process_id": "f1324c0d-577a-4181-954e-ddc6d76b5dd2",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:01:52.744416+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/03-healthy-auto/journal/0008.json",
+          "value": {
+            "elapsed_seconds": 0.6719999999913853,
+            "phase": "restore_sent",
+            "process_id": "f1324c0d-577a-4181-954e-ddc6d76b5dd2",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:01:52.844562+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/03-healthy-auto/journal/0009.json",
+          "value": {
+            "elapsed_seconds": 19.110000000000582,
+            "phase": "healthy_converged",
+            "process_id": "f1324c0d-577a-4181-954e-ddc6d76b5dd2",
+            "utc": "2026-09-25T03:02:11.286218+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/03-healthy-auto/journal/0010.json",
+          "value": {
+            "directory": "recovery-flow-b0eb7c75-59e5-4175-b5ef-63491746142b",
+            "elapsed_seconds": 19.51600000000326,
+            "phase": "recovery_flow_started",
+            "process_id": "f1324c0d-577a-4181-954e-ddc6d76b5dd2",
+            "utc": "2026-09-25T03:02:11.680379+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/03-healthy-auto/journal/0011.json",
+          "value": {
+            "elapsed_seconds": 22.625,
+            "phase": "recovery_observed",
+            "process_id": "f1324c0d-577a-4181-954e-ddc6d76b5dd2",
+            "success": true,
+            "utc": "2026-09-25T03:02:14.801303+00:00"
+          }
+        }
+      ],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "04-healthy-explicit",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.3129999999946449,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "c09f2254-f56a-49ba-82d3-eba36c0bb335",
+            "utc": "2026-09-25T03:02:17.070158+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7350000000005821,
+            "phase": "candidate_send_intent",
+            "process_id": "c09f2254-f56a-49ba-82d3-eba36c0bb335",
+            "template_hash": "e156c33e9a4f8a26c4509de8a8eaf30b904e23509a35f0d9dbcdde817bbfd1ac",
+            "utc": "2026-09-25T03:02:17.497444+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 23.437999999994645,
+            "phase": "candidate_decided",
+            "process_id": "c09f2254-f56a-49ba-82d3-eba36c0bb335",
+            "utc": "2026-09-25T03:02:40.198014+00:00",
+            "verdict": "approved"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0004.json",
+          "value": {
+            "elapsed_seconds": 23.437999999994645,
+            "phase": "no_automatic_restore",
+            "process_id": "c09f2254-f56a-49ba-82d3-eba36c0bb335",
+            "utc": "2026-09-25T03:02:40.198014+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0005.json",
+          "value": {
+            "elapsed_seconds": 23.437999999994645,
+            "phase": "operation_finished",
+            "process_id": "c09f2254-f56a-49ba-82d3-eba36c0bb335",
+            "success": true,
+            "utc": "2026-09-25T03:02:40.198014+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [
+        {
+          "source": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0006.json",
+          "value": {
+            "actor": "script",
+            "cleanup": true,
+            "elapsed_seconds": 0.3129999999946449,
+            "phase": "restoration_requested",
+            "process_id": "4baffda8-ebe8-40d2-94f5-b60385d13f74",
+            "utc": "2026-09-25T03:02:40.606155+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 0.5629999999946449,
+            "phase": "restore_send_intent",
+            "process_id": "4baffda8-ebe8-40d2-94f5-b60385d13f74",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:02:40.864818+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0008.json",
+          "value": {
+            "elapsed_seconds": 0.6719999999913853,
+            "phase": "restore_sent",
+            "process_id": "4baffda8-ebe8-40d2-94f5-b60385d13f74",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:02:40.965089+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0009.json",
+          "value": {
+            "elapsed_seconds": 19.110000000000582,
+            "phase": "healthy_converged",
+            "process_id": "4baffda8-ebe8-40d2-94f5-b60385d13f74",
+            "utc": "2026-09-25T03:02:59.401675+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0010.json",
+          "value": {
+            "directory": "recovery-flow-ec21f094-5cda-4757-8463-2f4f61dfacea",
+            "elapsed_seconds": 19.51600000000326,
+            "phase": "recovery_flow_started",
+            "process_id": "4baffda8-ebe8-40d2-94f5-b60385d13f74",
+            "utc": "2026-09-25T03:02:59.805107+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0011.json",
+          "value": {
+            "elapsed_seconds": 22.593999999997322,
+            "phase": "recovery_observed",
+            "process_id": "4baffda8-ebe8-40d2-94f5-b60385d13f74",
+            "success": true,
+            "utc": "2026-09-25T03:03:02.884774+00:00"
+          }
+        }
+      ],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "05-healthy-explicit",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.3129999999946449,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "fb6abcd2-dce1-4569-a0ae-51f5ad683201",
+            "utc": "2026-09-25T03:03:05.112116+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7660000000032596,
+            "phase": "candidate_send_intent",
+            "process_id": "fb6abcd2-dce1-4569-a0ae-51f5ad683201",
+            "template_hash": "5047fd18209a9e715dc131ab37dda70f674724df29c97d4f7794a2fcffe78e1f",
+            "utc": "2026-09-25T03:03:05.555283+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 21.156999999991967,
+            "phase": "candidate_decided",
+            "process_id": "fb6abcd2-dce1-4569-a0ae-51f5ad683201",
+            "utc": "2026-09-25T03:03:25.947681+00:00",
+            "verdict": "approved"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0004.json",
+          "value": {
+            "elapsed_seconds": 21.156999999991967,
+            "phase": "no_automatic_restore",
+            "process_id": "fb6abcd2-dce1-4569-a0ae-51f5ad683201",
+            "utc": "2026-09-25T03:03:25.951907+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0005.json",
+          "value": {
+            "elapsed_seconds": 21.156999999991967,
+            "phase": "operation_finished",
+            "process_id": "fb6abcd2-dce1-4569-a0ae-51f5ad683201",
+            "success": true,
+            "utc": "2026-09-25T03:03:25.951907+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [
+        {
+          "source": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0006.json",
+          "value": {
+            "actor": "script",
+            "cleanup": true,
+            "elapsed_seconds": 0.29699999999138527,
+            "phase": "restoration_requested",
+            "process_id": "911f084e-bd74-4d46-9b49-5a0cb1704e97",
+            "utc": "2026-09-25T03:03:26.329541+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 0.5469999999913853,
+            "phase": "restore_send_intent",
+            "process_id": "911f084e-bd74-4d46-9b49-5a0cb1704e97",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:03:26.580982+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0008.json",
+          "value": {
+            "elapsed_seconds": 0.6560000000026776,
+            "phase": "restore_sent",
+            "process_id": "911f084e-bd74-4d46-9b49-5a0cb1704e97",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:03:26.682148+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0009.json",
+          "value": {
+            "elapsed_seconds": 17.936999999990803,
+            "phase": "healthy_converged",
+            "process_id": "911f084e-bd74-4d46-9b49-5a0cb1704e97",
+            "utc": "2026-09-25T03:03:43.969144+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0010.json",
+          "value": {
+            "directory": "recovery-flow-8458cbed-38ec-45d7-b679-9eea78436b14",
+            "elapsed_seconds": 18.375,
+            "phase": "recovery_flow_started",
+            "process_id": "911f084e-bd74-4d46-9b49-5a0cb1704e97",
+            "utc": "2026-09-25T03:03:44.398903+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0011.json",
+          "value": {
+            "elapsed_seconds": 21.468999999997322,
+            "phase": "recovery_observed",
+            "process_id": "911f084e-bd74-4d46-9b49-5a0cb1704e97",
+            "success": true,
+            "utc": "2026-09-25T03:03:47.495613+00:00"
+          }
+        }
+      ],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "06-healthy-auto",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/06-healthy-auto/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.2960000000020955,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "3c569593-082e-45c0-975d-164c5f26b35d",
+            "utc": "2026-09-25T03:03:49.673717+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/06-healthy-auto/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7179999999934807,
+            "phase": "candidate_send_intent",
+            "process_id": "3c569593-082e-45c0-975d-164c5f26b35d",
+            "template_hash": "aaa441428b94c9f8cd54bd3512cd684bb4bb56994f8fd9c358ef052be4abc774",
+            "utc": "2026-09-25T03:03:50.095909+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/06-healthy-auto/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 21.296000000002095,
+            "phase": "candidate_decided",
+            "process_id": "3c569593-082e-45c0-975d-164c5f26b35d",
+            "utc": "2026-09-25T03:04:10.669954+00:00",
+            "verdict": "approved"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/06-healthy-auto/journal/0004.json",
+          "value": {
+            "elapsed_seconds": 21.296000000002095,
+            "phase": "no_automatic_restore",
+            "process_id": "3c569593-082e-45c0-975d-164c5f26b35d",
+            "utc": "2026-09-25T03:04:10.672420+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/06-healthy-auto/journal/0005.json",
+          "value": {
+            "elapsed_seconds": 21.296000000002095,
+            "phase": "operation_finished",
+            "process_id": "3c569593-082e-45c0-975d-164c5f26b35d",
+            "success": true,
+            "utc": "2026-09-25T03:04:10.674803+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [
+        {
+          "source": "artifacts/a2-comparison-03/06-healthy-auto/journal/0006.json",
+          "value": {
+            "actor": "script",
+            "cleanup": true,
+            "elapsed_seconds": 0.3120000000053551,
+            "phase": "restoration_requested",
+            "process_id": "f2ac2316-f660-4d52-82de-6710457a6447",
+            "utc": "2026-09-25T03:04:11.042960+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/06-healthy-auto/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 0.5620000000053551,
+            "phase": "restore_send_intent",
+            "process_id": "f2ac2316-f660-4d52-82de-6710457a6447",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:04:11.293120+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/06-healthy-auto/journal/0008.json",
+          "value": {
+            "elapsed_seconds": 0.6560000000026776,
+            "phase": "restore_sent",
+            "process_id": "f2ac2316-f660-4d52-82de-6710457a6447",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:04:11.396216+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/06-healthy-auto/journal/0009.json",
+          "value": {
+            "elapsed_seconds": 19.172000000005937,
+            "phase": "healthy_converged",
+            "process_id": "f2ac2316-f660-4d52-82de-6710457a6447",
+            "utc": "2026-09-25T03:04:29.900074+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/06-healthy-auto/journal/0010.json",
+          "value": {
+            "directory": "recovery-flow-fe783694-873c-4868-9707-61b6cd4a0384",
+            "elapsed_seconds": 19.578000000008615,
+            "phase": "recovery_flow_started",
+            "process_id": "f2ac2316-f660-4d52-82de-6710457a6447",
+            "utc": "2026-09-25T03:04:30.307527+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/06-healthy-auto/journal/0011.json",
+          "value": {
+            "elapsed_seconds": 21.75,
+            "phase": "recovery_observed",
+            "process_id": "f2ac2316-f660-4d52-82de-6710457a6447",
+            "success": true,
+            "utc": "2026-09-25T03:04:32.477357+00:00"
+          }
+        }
+      ],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "07-healthy-auto",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/07-healthy-auto/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.3279999999940628,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "e6a9d3c9-4e3f-41e5-a432-e85653944fed",
+            "utc": "2026-09-25T03:04:34.710859+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/07-healthy-auto/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7660000000032596,
+            "phase": "candidate_send_intent",
+            "process_id": "e6a9d3c9-4e3f-41e5-a432-e85653944fed",
+            "template_hash": "ceaf5c4e7237fd08ee2f8f7cee78045082dbd78ab25e2736c33234d9fe57367d",
+            "utc": "2026-09-25T03:04:35.153476+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/07-healthy-auto/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 21.39100000000326,
+            "phase": "candidate_decided",
+            "process_id": "e6a9d3c9-4e3f-41e5-a432-e85653944fed",
+            "utc": "2026-09-25T03:04:55.779967+00:00",
+            "verdict": "approved"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/07-healthy-auto/journal/0004.json",
+          "value": {
+            "elapsed_seconds": 21.39100000000326,
+            "phase": "no_automatic_restore",
+            "process_id": "e6a9d3c9-4e3f-41e5-a432-e85653944fed",
+            "utc": "2026-09-25T03:04:55.779967+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/07-healthy-auto/journal/0005.json",
+          "value": {
+            "elapsed_seconds": 21.39100000000326,
+            "phase": "operation_finished",
+            "process_id": "e6a9d3c9-4e3f-41e5-a432-e85653944fed",
+            "success": true,
+            "utc": "2026-09-25T03:04:55.785174+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [
+        {
+          "source": "artifacts/a2-comparison-03/07-healthy-auto/journal/0006.json",
+          "value": {
+            "actor": "script",
+            "cleanup": true,
+            "elapsed_seconds": 0.3130000000091968,
+            "phase": "restoration_requested",
+            "process_id": "3856fd56-5ef0-49b0-98d5-6997dfcbdaf7",
+            "utc": "2026-09-25T03:04:56.157440+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/07-healthy-auto/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 0.5630000000091968,
+            "phase": "restore_send_intent",
+            "process_id": "3856fd56-5ef0-49b0-98d5-6997dfcbdaf7",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:04:56.401489+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/07-healthy-auto/journal/0008.json",
+          "value": {
+            "elapsed_seconds": 0.6720000000059372,
+            "phase": "restore_sent",
+            "process_id": "3856fd56-5ef0-49b0-98d5-6997dfcbdaf7",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:04:56.509578+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/07-healthy-auto/journal/0009.json",
+          "value": {
+            "elapsed_seconds": 19.15700000000652,
+            "phase": "healthy_converged",
+            "process_id": "3856fd56-5ef0-49b0-98d5-6997dfcbdaf7",
+            "utc": "2026-09-25T03:05:14.999251+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/07-healthy-auto/journal/0010.json",
+          "value": {
+            "directory": "recovery-flow-a267e65d-6ed5-45f7-b8d6-0fbd6d99e6ec",
+            "elapsed_seconds": 19.610000000000582,
+            "phase": "recovery_flow_started",
+            "process_id": "3856fd56-5ef0-49b0-98d5-6997dfcbdaf7",
+            "utc": "2026-09-25T03:05:15.455970+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/07-healthy-auto/journal/0011.json",
+          "value": {
+            "elapsed_seconds": 22.688000000009197,
+            "phase": "recovery_observed",
+            "process_id": "3856fd56-5ef0-49b0-98d5-6997dfcbdaf7",
+            "success": true,
+            "utc": "2026-09-25T03:05:18.522731+00:00"
+          }
+        }
+      ],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "08-healthy-explicit",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.2960000000020955,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "d116b948-9f04-4eee-a7f2-94e13d9db5d6",
+            "utc": "2026-09-25T03:05:20.672778+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7179999999934807,
+            "phase": "candidate_send_intent",
+            "process_id": "d116b948-9f04-4eee-a7f2-94e13d9db5d6",
+            "template_hash": "9bf20e526be84f14564ea671edb34f6bbc758a5d1a9bc58b45ca50e2b52a8a8e",
+            "utc": "2026-09-25T03:05:21.099791+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 22.452999999994063,
+            "phase": "candidate_decided",
+            "process_id": "d116b948-9f04-4eee-a7f2-94e13d9db5d6",
+            "utc": "2026-09-25T03:05:42.829158+00:00",
+            "verdict": "approved"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0004.json",
+          "value": {
+            "elapsed_seconds": 22.452999999994063,
+            "phase": "no_automatic_restore",
+            "process_id": "d116b948-9f04-4eee-a7f2-94e13d9db5d6",
+            "utc": "2026-09-25T03:05:42.829158+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0005.json",
+          "value": {
+            "elapsed_seconds": 22.452999999994063,
+            "phase": "operation_finished",
+            "process_id": "d116b948-9f04-4eee-a7f2-94e13d9db5d6",
+            "success": true,
+            "utc": "2026-09-25T03:05:42.832739+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [
+        {
+          "source": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0006.json",
+          "value": {
+            "actor": "script",
+            "cleanup": true,
+            "elapsed_seconds": 0.3129999999946449,
+            "phase": "restoration_requested",
+            "process_id": "2b6ee4cd-f5a6-4183-b14c-88e38e3914fb",
+            "utc": "2026-09-25T03:05:43.209634+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 0.5779999999940628,
+            "phase": "restore_send_intent",
+            "process_id": "2b6ee4cd-f5a6-4183-b14c-88e38e3914fb",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:05:43.465690+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0008.json",
+          "value": {
+            "elapsed_seconds": 0.6879999999946449,
+            "phase": "restore_sent",
+            "process_id": "2b6ee4cd-f5a6-4183-b14c-88e38e3914fb",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:05:43.578303+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0009.json",
+          "value": {
+            "elapsed_seconds": 19.172000000005937,
+            "phase": "healthy_converged",
+            "process_id": "2b6ee4cd-f5a6-4183-b14c-88e38e3914fb",
+            "utc": "2026-09-25T03:06:02.068448+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0010.json",
+          "value": {
+            "directory": "recovery-flow-36e6b7ad-4c48-41a4-94c0-0681dc0da2c9",
+            "elapsed_seconds": 19.577999999994063,
+            "phase": "recovery_flow_started",
+            "process_id": "2b6ee4cd-f5a6-4183-b14c-88e38e3914fb",
+            "utc": "2026-09-25T03:06:02.473803+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0011.json",
+          "value": {
+            "elapsed_seconds": 22.702999999994063,
+            "phase": "recovery_observed",
+            "process_id": "2b6ee4cd-f5a6-4183-b14c-88e38e3914fb",
+            "success": true,
+            "utc": "2026-09-25T03:06:05.591217+00:00"
+          }
+        }
+      ],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "09-healthy-explicit",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.3119999999908032,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "1ca55c1d-dd6f-4260-9853-edd4e9334888",
+            "utc": "2026-09-25T03:06:07.839604+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7339999999967404,
+            "phase": "candidate_send_intent",
+            "process_id": "1ca55c1d-dd6f-4260-9853-edd4e9334888",
+            "template_hash": "0aacaea341875bcd3f919182d1af2cc48788e6eee80ce54ab3d152707af61f33",
+            "utc": "2026-09-25T03:06:08.264976+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 21.281000000002678,
+            "phase": "candidate_decided",
+            "process_id": "1ca55c1d-dd6f-4260-9853-edd4e9334888",
+            "utc": "2026-09-25T03:06:28.813785+00:00",
+            "verdict": "approved"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0004.json",
+          "value": {
+            "elapsed_seconds": 21.281000000002678,
+            "phase": "no_automatic_restore",
+            "process_id": "1ca55c1d-dd6f-4260-9853-edd4e9334888",
+            "utc": "2026-09-25T03:06:28.813785+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0005.json",
+          "value": {
+            "elapsed_seconds": 21.281000000002678,
+            "phase": "operation_finished",
+            "process_id": "1ca55c1d-dd6f-4260-9853-edd4e9334888",
+            "success": true,
+            "utc": "2026-09-25T03:06:28.813785+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [
+        {
+          "source": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0006.json",
+          "value": {
+            "actor": "script",
+            "cleanup": true,
+            "elapsed_seconds": 0.2960000000020955,
+            "phase": "restoration_requested",
+            "process_id": "41622e75-67b4-444f-b0dd-2c678e9eeaed",
+            "utc": "2026-09-25T03:06:29.176536+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 0.5460000000020955,
+            "phase": "restore_send_intent",
+            "process_id": "41622e75-67b4-444f-b0dd-2c678e9eeaed",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:06:29.417315+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0008.json",
+          "value": {
+            "elapsed_seconds": 0.6399999999994179,
+            "phase": "restore_sent",
+            "process_id": "41622e75-67b4-444f-b0dd-2c678e9eeaed",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:06:29.514631+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0009.json",
+          "value": {
+            "elapsed_seconds": 19.077999999994063,
+            "phase": "healthy_converged",
+            "process_id": "41622e75-67b4-444f-b0dd-2c678e9eeaed",
+            "utc": "2026-09-25T03:06:47.955494+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0010.json",
+          "value": {
+            "directory": "recovery-flow-3a69d195-0825-4e36-addd-72095c924f01",
+            "elapsed_seconds": 19.5,
+            "phase": "recovery_flow_started",
+            "process_id": "41622e75-67b4-444f-b0dd-2c678e9eeaed",
+            "utc": "2026-09-25T03:06:48.371752+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0011.json",
+          "value": {
+            "elapsed_seconds": 22.562000000005355,
+            "phase": "recovery_observed",
+            "process_id": "41622e75-67b4-444f-b0dd-2c678e9eeaed",
+            "success": true,
+            "utc": "2026-09-25T03:06:51.430172+00:00"
+          }
+        }
+      ],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "10-healthy-auto",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/10-healthy-auto/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.29699999999138527,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "38c74b14-cce9-4b70-8f97-ec2389cfc433",
+            "utc": "2026-09-25T03:06:53.576200+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/10-healthy-auto/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.75,
+            "phase": "candidate_send_intent",
+            "process_id": "38c74b14-cce9-4b70-8f97-ec2389cfc433",
+            "template_hash": "0493508c33ee4baa9fa6e064f0d31f1072d7c29edaa6230c3fb16e92b4b8e4c8",
+            "utc": "2026-09-25T03:06:54.023566+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/10-healthy-auto/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 22.421999999991385,
+            "phase": "candidate_decided",
+            "process_id": "38c74b14-cce9-4b70-8f97-ec2389cfc433",
+            "utc": "2026-09-25T03:07:15.707644+00:00",
+            "verdict": "approved"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/10-healthy-auto/journal/0004.json",
+          "value": {
+            "elapsed_seconds": 22.436999999990803,
+            "phase": "no_automatic_restore",
+            "process_id": "38c74b14-cce9-4b70-8f97-ec2389cfc433",
+            "utc": "2026-09-25T03:07:15.712764+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/10-healthy-auto/journal/0005.json",
+          "value": {
+            "elapsed_seconds": 22.436999999990803,
+            "phase": "operation_finished",
+            "process_id": "38c74b14-cce9-4b70-8f97-ec2389cfc433",
+            "success": true,
+            "utc": "2026-09-25T03:07:15.715572+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [
+        {
+          "source": "artifacts/a2-comparison-03/10-healthy-auto/journal/0006.json",
+          "value": {
+            "actor": "script",
+            "cleanup": true,
+            "elapsed_seconds": 0.3279999999940628,
+            "phase": "restoration_requested",
+            "process_id": "c2e30768-9c63-4efa-884a-e761222ef986",
+            "utc": "2026-09-25T03:07:16.105806+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/10-healthy-auto/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 0.6399999999994179,
+            "phase": "restore_send_intent",
+            "process_id": "c2e30768-9c63-4efa-884a-e761222ef986",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:07:16.419808+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/10-healthy-auto/journal/0008.json",
+          "value": {
+            "elapsed_seconds": 0.75,
+            "phase": "restore_sent",
+            "process_id": "c2e30768-9c63-4efa-884a-e761222ef986",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:07:16.526939+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/10-healthy-auto/journal/0009.json",
+          "value": {
+            "elapsed_seconds": 19.264999999999418,
+            "phase": "healthy_converged",
+            "process_id": "c2e30768-9c63-4efa-884a-e761222ef986",
+            "utc": "2026-09-25T03:07:35.043478+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/10-healthy-auto/journal/0010.json",
+          "value": {
+            "directory": "recovery-flow-6445617d-b1ae-41d7-9c13-ab21b1634650",
+            "elapsed_seconds": 19.718999999997322,
+            "phase": "recovery_flow_started",
+            "process_id": "c2e30768-9c63-4efa-884a-e761222ef986",
+            "utc": "2026-09-25T03:07:35.500803+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/10-healthy-auto/journal/0011.json",
+          "value": {
+            "elapsed_seconds": 22.827999999994063,
+            "phase": "recovery_observed",
+            "process_id": "c2e30768-9c63-4efa-884a-e761222ef986",
+            "success": true,
+            "utc": "2026-09-25T03:07:38.612707+00:00"
+          }
+        }
+      ],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "11-invalid-pool-auto",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.2970000000059372,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "8a0edee6-4d09-4ae0-ab7e-2b1edaeb0c3d",
+            "utc": "2026-09-25T03:07:40.766866+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7190000000118744,
+            "phase": "candidate_send_intent",
+            "process_id": "8a0edee6-4d09-4ae0-ab7e-2b1edaeb0c3d",
+            "template_hash": "03330f68fcab52f783c78e68b1776af0c22ac92badc815d3b2dff097c4d769fc",
+            "utc": "2026-09-25T03:07:41.188684+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 6.969000000011874,
+            "phase": "candidate_decided",
+            "process_id": "8a0edee6-4d09-4ae0-ab7e-2b1edaeb0c3d",
+            "utc": "2026-09-25T03:07:47.437266+00:00",
+            "verdict": "rejected"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0004.json",
+          "value": {
+            "actor": "policy",
+            "elapsed_seconds": 7.0,
+            "phase": "restoration_requested",
+            "process_id": "8a0edee6-4d09-4ae0-ab7e-2b1edaeb0c3d",
+            "utc": "2026-09-25T03:07:47.468012+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0005.json",
+          "value": {
+            "elapsed_seconds": 7.26600000000326,
+            "phase": "restore_send_intent",
+            "process_id": "8a0edee6-4d09-4ae0-ab7e-2b1edaeb0c3d",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:07:47.727443+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0006.json",
+          "value": {
+            "elapsed_seconds": 7.360000000000582,
+            "phase": "restore_sent",
+            "process_id": "8a0edee6-4d09-4ae0-ab7e-2b1edaeb0c3d",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:07:47.823926+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 25.797000000005937,
+            "phase": "healthy_converged",
+            "process_id": "8a0edee6-4d09-4ae0-ab7e-2b1edaeb0c3d",
+            "utc": "2026-09-25T03:08:06.264772+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0008.json",
+          "value": {
+            "directory": "recovery-flow-5ebb754e-04a8-40d6-9467-2be780aa2381",
+            "elapsed_seconds": 25.797000000005937,
+            "phase": "recovery_flow_started",
+            "process_id": "8a0edee6-4d09-4ae0-ab7e-2b1edaeb0c3d",
+            "utc": "2026-09-25T03:08:06.267557+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0009.json",
+          "value": {
+            "elapsed_seconds": 28.938000000009197,
+            "phase": "recovery_observed",
+            "process_id": "8a0edee6-4d09-4ae0-ab7e-2b1edaeb0c3d",
+            "success": true,
+            "utc": "2026-09-25T03:08:09.405905+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0010.json",
+          "value": {
+            "elapsed_seconds": 28.938000000009197,
+            "phase": "operation_finished",
+            "process_id": "8a0edee6-4d09-4ae0-ab7e-2b1edaeb0c3d",
+            "success": true,
+            "utc": "2026-09-25T03:08:09.405905+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "12-invalid-pool-explicit",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.3279999999940628,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "110bb549-af87-406b-aa09-7c2f86236008",
+            "utc": "2026-09-25T03:08:11.895652+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7659999999887077,
+            "phase": "candidate_send_intent",
+            "process_id": "110bb549-af87-406b-aa09-7c2f86236008",
+            "template_hash": "4cabedca17a7087e3ade3c64d4565b4939254ab0960be7c53a7b1bf05052033f",
+            "utc": "2026-09-25T03:08:12.329288+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 7.015999999988708,
+            "phase": "candidate_decided",
+            "process_id": "110bb549-af87-406b-aa09-7c2f86236008",
+            "utc": "2026-09-25T03:08:18.584550+00:00",
+            "verdict": "rejected"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0004.json",
+          "value": {
+            "elapsed_seconds": 7.062999999994645,
+            "phase": "awaiting_explicit_request",
+            "process_id": "110bb549-af87-406b-aa09-7c2f86236008",
+            "utc": "2026-09-25T03:08:18.626807+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0005.json",
+          "value": {
+            "actor": "script",
+            "elapsed_seconds": 8.093999999997322,
+            "phase": "restoration_requested",
+            "process_id": "110bb549-af87-406b-aa09-7c2f86236008",
+            "utc": "2026-09-25T03:08:19.652309+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0006.json",
+          "value": {
+            "elapsed_seconds": 8.312999999994645,
+            "phase": "restore_send_intent",
+            "process_id": "110bb549-af87-406b-aa09-7c2f86236008",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:08:19.871661+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 8.421999999991385,
+            "phase": "restore_sent",
+            "process_id": "110bb549-af87-406b-aa09-7c2f86236008",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:08:19.976494+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0008.json",
+          "value": {
+            "elapsed_seconds": 26.85899999999674,
+            "phase": "healthy_converged",
+            "process_id": "110bb549-af87-406b-aa09-7c2f86236008",
+            "utc": "2026-09-25T03:08:38.426021+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0009.json",
+          "value": {
+            "directory": "recovery-flow-cd2897bf-647c-4aaf-a535-f881ee99bab2",
+            "elapsed_seconds": 26.875,
+            "phase": "recovery_flow_started",
+            "process_id": "110bb549-af87-406b-aa09-7c2f86236008",
+            "utc": "2026-09-25T03:08:38.428869+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0010.json",
+          "value": {
+            "elapsed_seconds": 30.0,
+            "phase": "recovery_observed",
+            "process_id": "110bb549-af87-406b-aa09-7c2f86236008",
+            "success": true,
+            "utc": "2026-09-25T03:08:41.566359+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0011.json",
+          "value": {
+            "elapsed_seconds": 30.0,
+            "phase": "operation_finished",
+            "process_id": "110bb549-af87-406b-aa09-7c2f86236008",
+            "success": true,
+            "utc": "2026-09-25T03:08:41.568898+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "13-invalid-pool-explicit",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.3130000000091968,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "689f8a2f-646b-4d84-a307-a3c34c714d11",
+            "utc": "2026-09-25T03:08:43.908160+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7350000000005821,
+            "phase": "candidate_send_intent",
+            "process_id": "689f8a2f-646b-4d84-a307-a3c34c714d11",
+            "template_hash": "b6548103838b0434e6541e9b046d7b2046d45251771908e5c1fba05f2d31b0c0",
+            "utc": "2026-09-25T03:08:44.330063+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 6.938000000009197,
+            "phase": "candidate_decided",
+            "process_id": "689f8a2f-646b-4d84-a307-a3c34c714d11",
+            "utc": "2026-09-25T03:08:50.523001+00:00",
+            "verdict": "rejected"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0004.json",
+          "value": {
+            "elapsed_seconds": 6.985000000000582,
+            "phase": "awaiting_explicit_request",
+            "process_id": "689f8a2f-646b-4d84-a307-a3c34c714d11",
+            "utc": "2026-09-25T03:08:50.577526+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0005.json",
+          "value": {
+            "actor": "script",
+            "elapsed_seconds": 8.0,
+            "phase": "restoration_requested",
+            "process_id": "689f8a2f-646b-4d84-a307-a3c34c714d11",
+            "utc": "2026-09-25T03:08:51.592371+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0006.json",
+          "value": {
+            "elapsed_seconds": 8.25,
+            "phase": "restore_send_intent",
+            "process_id": "689f8a2f-646b-4d84-a307-a3c34c714d11",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:08:51.837617+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 8.344000000011874,
+            "phase": "restore_sent",
+            "process_id": "689f8a2f-646b-4d84-a307-a3c34c714d11",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:08:51.936866+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0008.json",
+          "value": {
+            "elapsed_seconds": 25.65700000000652,
+            "phase": "healthy_converged",
+            "process_id": "689f8a2f-646b-4d84-a307-a3c34c714d11",
+            "utc": "2026-09-25T03:09:09.254367+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0009.json",
+          "value": {
+            "directory": "recovery-flow-1dc50fc0-ea89-4627-af08-7f483ae3837f",
+            "elapsed_seconds": 25.65700000000652,
+            "phase": "recovery_flow_started",
+            "process_id": "689f8a2f-646b-4d84-a307-a3c34c714d11",
+            "utc": "2026-09-25T03:09:09.256486+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0010.json",
+          "value": {
+            "elapsed_seconds": 28.76600000000326,
+            "phase": "recovery_observed",
+            "process_id": "689f8a2f-646b-4d84-a307-a3c34c714d11",
+            "success": true,
+            "utc": "2026-09-25T03:09:12.365682+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0011.json",
+          "value": {
+            "elapsed_seconds": 28.78200000000652,
+            "phase": "operation_finished",
+            "process_id": "689f8a2f-646b-4d84-a307-a3c34c714d11",
+            "success": true,
+            "utc": "2026-09-25T03:09:12.367944+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "14-invalid-pool-auto",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.32800000000861473,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "9c2b2109-1f8c-46a3-8122-9ddfdc38fe16",
+            "utc": "2026-09-25T03:09:14.786119+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7810000000026776,
+            "phase": "candidate_send_intent",
+            "process_id": "9c2b2109-1f8c-46a3-8122-9ddfdc38fe16",
+            "template_hash": "52b437ba614c45075ad90bebb8bac46bfe12b5ea3c01c1daa354905968e8b0f6",
+            "utc": "2026-09-25T03:09:15.234259+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 4.297000000005937,
+            "phase": "candidate_decided",
+            "process_id": "9c2b2109-1f8c-46a3-8122-9ddfdc38fe16",
+            "utc": "2026-09-25T03:09:18.749159+00:00",
+            "verdict": "rejected"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0004.json",
+          "value": {
+            "actor": "policy",
+            "elapsed_seconds": 4.359000000011292,
+            "phase": "restoration_requested",
+            "process_id": "9c2b2109-1f8c-46a3-8122-9ddfdc38fe16",
+            "utc": "2026-09-25T03:09:18.815803+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0005.json",
+          "value": {
+            "elapsed_seconds": 4.625,
+            "phase": "restore_send_intent",
+            "process_id": "9c2b2109-1f8c-46a3-8122-9ddfdc38fe16",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:09:19.078622+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0006.json",
+          "value": {
+            "elapsed_seconds": 4.734000000011292,
+            "phase": "restore_sent",
+            "process_id": "9c2b2109-1f8c-46a3-8122-9ddfdc38fe16",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:09:19.194030+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 23.203000000008615,
+            "phase": "healthy_converged",
+            "process_id": "9c2b2109-1f8c-46a3-8122-9ddfdc38fe16",
+            "utc": "2026-09-25T03:09:37.649210+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0008.json",
+          "value": {
+            "directory": "recovery-flow-71dfd5ba-74e7-43af-a2d2-f4db039045af",
+            "elapsed_seconds": 23.203000000008615,
+            "phase": "recovery_flow_started",
+            "process_id": "9c2b2109-1f8c-46a3-8122-9ddfdc38fe16",
+            "utc": "2026-09-25T03:09:37.652613+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0009.json",
+          "value": {
+            "elapsed_seconds": 26.343000000008033,
+            "phase": "recovery_observed",
+            "process_id": "9c2b2109-1f8c-46a3-8122-9ddfdc38fe16",
+            "success": true,
+            "utc": "2026-09-25T03:09:40.802012+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0010.json",
+          "value": {
+            "elapsed_seconds": 26.359000000011292,
+            "phase": "operation_finished",
+            "process_id": "9c2b2109-1f8c-46a3-8122-9ddfdc38fe16",
+            "success": true,
+            "utc": "2026-09-25T03:09:40.804456+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "15-invalid-pool-auto",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.3130000000091968,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "51258176-b2e9-4a2e-b2d2-d884b288596d",
+            "utc": "2026-09-25T03:09:43.154845+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.75,
+            "phase": "candidate_send_intent",
+            "process_id": "51258176-b2e9-4a2e-b2d2-d884b288596d",
+            "template_hash": "8e847b8c5018a02a68eabbf7b552ddafcc47d47b1192730941b7a0138789cd27",
+            "utc": "2026-09-25T03:09:43.598874+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 6.953000000008615,
+            "phase": "candidate_decided",
+            "process_id": "51258176-b2e9-4a2e-b2d2-d884b288596d",
+            "utc": "2026-09-25T03:09:49.789431+00:00",
+            "verdict": "rejected"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0004.json",
+          "value": {
+            "actor": "policy",
+            "elapsed_seconds": 7.01600000000326,
+            "phase": "restoration_requested",
+            "process_id": "51258176-b2e9-4a2e-b2d2-d884b288596d",
+            "utc": "2026-09-25T03:09:49.865001+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0005.json",
+          "value": {
+            "elapsed_seconds": 7.25,
+            "phase": "restore_send_intent",
+            "process_id": "51258176-b2e9-4a2e-b2d2-d884b288596d",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:09:50.097251+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0006.json",
+          "value": {
+            "elapsed_seconds": 7.360000000000582,
+            "phase": "restore_sent",
+            "process_id": "51258176-b2e9-4a2e-b2d2-d884b288596d",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:09:50.201801+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 25.860000000000582,
+            "phase": "healthy_converged",
+            "process_id": "51258176-b2e9-4a2e-b2d2-d884b288596d",
+            "utc": "2026-09-25T03:10:08.702474+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0008.json",
+          "value": {
+            "directory": "recovery-flow-cd3c721f-5ef2-47a8-b002-ac514743eae5",
+            "elapsed_seconds": 25.860000000000582,
+            "phase": "recovery_flow_started",
+            "process_id": "51258176-b2e9-4a2e-b2d2-d884b288596d",
+            "utc": "2026-09-25T03:10:08.704234+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0009.json",
+          "value": {
+            "elapsed_seconds": 28.953000000008615,
+            "phase": "recovery_observed",
+            "process_id": "51258176-b2e9-4a2e-b2d2-d884b288596d",
+            "success": true,
+            "utc": "2026-09-25T03:10:11.800878+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0010.json",
+          "value": {
+            "elapsed_seconds": 28.953000000008615,
+            "phase": "operation_finished",
+            "process_id": "51258176-b2e9-4a2e-b2d2-d884b288596d",
+            "success": true,
+            "utc": "2026-09-25T03:10:11.802886+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "16-invalid-pool-explicit",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.2970000000059372,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "ebf6964a-85fa-4285-b079-b0d705b42c47",
+            "utc": "2026-09-25T03:10:14.160585+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.75,
+            "phase": "candidate_send_intent",
+            "process_id": "ebf6964a-85fa-4285-b079-b0d705b42c47",
+            "template_hash": "aa78bb1ae88927fc0011acd073e9b52e0408e5ee9721fec159449a2e9aa5ccdf",
+            "utc": "2026-09-25T03:10:14.611821+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 7.25,
+            "phase": "candidate_decided",
+            "process_id": "ebf6964a-85fa-4285-b079-b0d705b42c47",
+            "utc": "2026-09-25T03:10:21.110773+00:00",
+            "verdict": "rejected"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0004.json",
+          "value": {
+            "elapsed_seconds": 7.312000000005355,
+            "phase": "awaiting_explicit_request",
+            "process_id": "ebf6964a-85fa-4285-b079-b0d705b42c47",
+            "utc": "2026-09-25T03:10:21.177006+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0005.json",
+          "value": {
+            "actor": "script",
+            "elapsed_seconds": 8.328000000008615,
+            "phase": "restoration_requested",
+            "process_id": "ebf6964a-85fa-4285-b079-b0d705b42c47",
+            "utc": "2026-09-25T03:10:22.192248+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0006.json",
+          "value": {
+            "elapsed_seconds": 8.578000000008615,
+            "phase": "restore_send_intent",
+            "process_id": "ebf6964a-85fa-4285-b079-b0d705b42c47",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:10:22.433354+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 8.687000000005355,
+            "phase": "restore_sent",
+            "process_id": "ebf6964a-85fa-4285-b079-b0d705b42c47",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:10:22.538852+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0008.json",
+          "value": {
+            "elapsed_seconds": 27.172000000005937,
+            "phase": "healthy_converged",
+            "process_id": "ebf6964a-85fa-4285-b079-b0d705b42c47",
+            "utc": "2026-09-25T03:10:41.035141+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0009.json",
+          "value": {
+            "directory": "recovery-flow-b67a96bf-425f-4d42-bfed-547a61856811",
+            "elapsed_seconds": 27.172000000005937,
+            "phase": "recovery_flow_started",
+            "process_id": "ebf6964a-85fa-4285-b079-b0d705b42c47",
+            "utc": "2026-09-25T03:10:41.037282+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0010.json",
+          "value": {
+            "elapsed_seconds": 30.281000000002678,
+            "phase": "recovery_observed",
+            "process_id": "ebf6964a-85fa-4285-b079-b0d705b42c47",
+            "success": true,
+            "utc": "2026-09-25T03:10:44.145231+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0011.json",
+          "value": {
+            "elapsed_seconds": 30.297000000005937,
+            "phase": "operation_finished",
+            "process_id": "ebf6964a-85fa-4285-b079-b0d705b42c47",
+            "success": true,
+            "utc": "2026-09-25T03:10:44.147482+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "17-invalid-pool-explicit",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.3129999999946449,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "a2741267-882f-42f3-acbf-f172cf63d675",
+            "utc": "2026-09-25T03:10:46.609460+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7660000000032596,
+            "phase": "candidate_send_intent",
+            "process_id": "a2741267-882f-42f3-acbf-f172cf63d675",
+            "template_hash": "b91517fd073fd288dcc4c058656040f20a65e3048d37f3a03b01e03d3e11478a",
+            "utc": "2026-09-25T03:10:47.066726+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 6.89100000000326,
+            "phase": "candidate_decided",
+            "process_id": "a2741267-882f-42f3-acbf-f172cf63d675",
+            "utc": "2026-09-25T03:10:53.182516+00:00",
+            "verdict": "rejected"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0004.json",
+          "value": {
+            "elapsed_seconds": 6.921999999991385,
+            "phase": "awaiting_explicit_request",
+            "process_id": "a2741267-882f-42f3-acbf-f172cf63d675",
+            "utc": "2026-09-25T03:10:53.223940+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0005.json",
+          "value": {
+            "actor": "script",
+            "elapsed_seconds": 7.9539999999979045,
+            "phase": "restoration_requested",
+            "process_id": "a2741267-882f-42f3-acbf-f172cf63d675",
+            "utc": "2026-09-25T03:10:54.244651+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0006.json",
+          "value": {
+            "elapsed_seconds": 8.171999999991385,
+            "phase": "restore_send_intent",
+            "process_id": "a2741267-882f-42f3-acbf-f172cf63d675",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:10:54.474957+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 8.296999999991385,
+            "phase": "restore_sent",
+            "process_id": "a2741267-882f-42f3-acbf-f172cf63d675",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:10:54.598132+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0008.json",
+          "value": {
+            "elapsed_seconds": 26.781999999991967,
+            "phase": "healthy_converged",
+            "process_id": "a2741267-882f-42f3-acbf-f172cf63d675",
+            "utc": "2026-09-25T03:11:13.069257+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0009.json",
+          "value": {
+            "directory": "recovery-flow-5b9f96df-d8f3-48ad-bb62-b66a44edab43",
+            "elapsed_seconds": 26.781999999991967,
+            "phase": "recovery_flow_started",
+            "process_id": "a2741267-882f-42f3-acbf-f172cf63d675",
+            "utc": "2026-09-25T03:11:13.071524+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0010.json",
+          "value": {
+            "elapsed_seconds": 29.860000000000582,
+            "phase": "recovery_observed",
+            "process_id": "a2741267-882f-42f3-acbf-f172cf63d675",
+            "success": true,
+            "utc": "2026-09-25T03:11:16.149163+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0011.json",
+          "value": {
+            "elapsed_seconds": 29.860000000000582,
+            "phase": "operation_finished",
+            "process_id": "a2741267-882f-42f3-acbf-f172cf63d675",
+            "success": true,
+            "utc": "2026-09-25T03:11:16.151476+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "18-invalid-pool-auto",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.3119999999908032,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "a17dda2d-f18c-496a-9392-acba7b47d211",
+            "utc": "2026-09-25T03:11:18.465296+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7649999999994179,
+            "phase": "candidate_send_intent",
+            "process_id": "a17dda2d-f18c-496a-9392-acba7b47d211",
+            "template_hash": "12decaf2550ce845e5b058f3fd7b6e0d769856fc69e374e9d1ab7c9cd45e4b78",
+            "utc": "2026-09-25T03:11:18.922402+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 6.952999999994063,
+            "phase": "candidate_decided",
+            "process_id": "a17dda2d-f18c-496a-9392-acba7b47d211",
+            "utc": "2026-09-25T03:11:25.113135+00:00",
+            "verdict": "rejected"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0004.json",
+          "value": {
+            "actor": "policy",
+            "elapsed_seconds": 7.046999999991385,
+            "phase": "restoration_requested",
+            "process_id": "a17dda2d-f18c-496a-9392-acba7b47d211",
+            "utc": "2026-09-25T03:11:25.194700+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0005.json",
+          "value": {
+            "elapsed_seconds": 7.2810000000026776,
+            "phase": "restore_send_intent",
+            "process_id": "a17dda2d-f18c-496a-9392-acba7b47d211",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:11:25.443827+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0006.json",
+          "value": {
+            "elapsed_seconds": 7.389999999999418,
+            "phase": "restore_sent",
+            "process_id": "a17dda2d-f18c-496a-9392-acba7b47d211",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:11:25.545304+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 24.60899999999674,
+            "phase": "healthy_converged",
+            "process_id": "a17dda2d-f18c-496a-9392-acba7b47d211",
+            "utc": "2026-09-25T03:11:42.768594+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0008.json",
+          "value": {
+            "directory": "recovery-flow-1a86dc15-f160-46b7-821a-0d1de6877259",
+            "elapsed_seconds": 24.60899999999674,
+            "phase": "recovery_flow_started",
+            "process_id": "a17dda2d-f18c-496a-9392-acba7b47d211",
+            "utc": "2026-09-25T03:11:42.770772+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0009.json",
+          "value": {
+            "elapsed_seconds": 27.781000000002678,
+            "phase": "recovery_observed",
+            "process_id": "a17dda2d-f18c-496a-9392-acba7b47d211",
+            "success": true,
+            "utc": "2026-09-25T03:11:45.934372+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0010.json",
+          "value": {
+            "elapsed_seconds": 27.781000000002678,
+            "phase": "operation_finished",
+            "process_id": "a17dda2d-f18c-496a-9392-acba7b47d211",
+            "success": true,
+            "utc": "2026-09-25T03:11:45.934923+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "19-invalid-pool-auto",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.2970000000059372,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "48d11a58-a45a-4fbb-8378-667b6f2032f5",
+            "utc": "2026-09-25T03:11:48.275552+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7339999999967404,
+            "phase": "candidate_send_intent",
+            "process_id": "48d11a58-a45a-4fbb-8378-667b6f2032f5",
+            "template_hash": "318c3ca43b1ed296c8739e5d9f7c4374dbe0f7070d36c6239f4412db848f24a4",
+            "utc": "2026-09-25T03:11:48.718380+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 4.2189999999973224,
+            "phase": "candidate_decided",
+            "process_id": "48d11a58-a45a-4fbb-8378-667b6f2032f5",
+            "utc": "2026-09-25T03:11:52.204657+00:00",
+            "verdict": "rejected"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0004.json",
+          "value": {
+            "actor": "policy",
+            "elapsed_seconds": 4.2810000000026776,
+            "phase": "restoration_requested",
+            "process_id": "48d11a58-a45a-4fbb-8378-667b6f2032f5",
+            "utc": "2026-09-25T03:11:52.261563+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0005.json",
+          "value": {
+            "elapsed_seconds": 4.5310000000026776,
+            "phase": "restore_send_intent",
+            "process_id": "48d11a58-a45a-4fbb-8378-667b6f2032f5",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:11:52.521868+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0006.json",
+          "value": {
+            "elapsed_seconds": 4.6560000000026776,
+            "phase": "restore_sent",
+            "process_id": "48d11a58-a45a-4fbb-8378-667b6f2032f5",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:11:52.637058+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 21.922000000005937,
+            "phase": "healthy_converged",
+            "process_id": "48d11a58-a45a-4fbb-8378-667b6f2032f5",
+            "utc": "2026-09-25T03:12:09.903892+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0008.json",
+          "value": {
+            "directory": "recovery-flow-e54878ec-a765-4d2a-b524-b10a193bb6a7",
+            "elapsed_seconds": 21.922000000005937,
+            "phase": "recovery_flow_started",
+            "process_id": "48d11a58-a45a-4fbb-8378-667b6f2032f5",
+            "utc": "2026-09-25T03:12:09.905545+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0009.json",
+          "value": {
+            "elapsed_seconds": 25.047000000005937,
+            "phase": "recovery_observed",
+            "process_id": "48d11a58-a45a-4fbb-8378-667b6f2032f5",
+            "success": true,
+            "utc": "2026-09-25T03:12:13.032349+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0010.json",
+          "value": {
+            "elapsed_seconds": 25.047000000005937,
+            "phase": "operation_finished",
+            "process_id": "48d11a58-a45a-4fbb-8378-667b6f2032f5",
+            "success": true,
+            "utc": "2026-09-25T03:12:13.035391+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    },
+    {
+      "attempt": "20-invalid-pool-explicit",
+      "policy_window": [
+        {
+          "source": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0000.json",
+          "value": {
+            "elapsed_seconds": 0.3279999999940628,
+            "mode": "run",
+            "phase": "operation_started",
+            "process_id": "a943f9b6-be81-4144-8bc6-b0a3fc0d3d18",
+            "utc": "2026-09-25T03:12:15.476362+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0001.json",
+          "value": {
+            "elapsed_seconds": 0.7649999999994179,
+            "phase": "candidate_send_intent",
+            "process_id": "a943f9b6-be81-4144-8bc6-b0a3fc0d3d18",
+            "template_hash": "107cc90c835128b39add657a1900479867bfd4ca31e04f0f8614a05d327a7898",
+            "utc": "2026-09-25T03:12:15.924276+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0003.json",
+          "value": {
+            "elapsed_seconds": 4.296999999991385,
+            "phase": "candidate_decided",
+            "process_id": "a943f9b6-be81-4144-8bc6-b0a3fc0d3d18",
+            "utc": "2026-09-25T03:12:19.459181+00:00",
+            "verdict": "rejected"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0004.json",
+          "value": {
+            "elapsed_seconds": 4.3439999999973224,
+            "phase": "awaiting_explicit_request",
+            "process_id": "a943f9b6-be81-4144-8bc6-b0a3fc0d3d18",
+            "utc": "2026-09-25T03:12:19.506688+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0005.json",
+          "value": {
+            "actor": "script",
+            "elapsed_seconds": 5.375,
+            "phase": "restoration_requested",
+            "process_id": "a943f9b6-be81-4144-8bc6-b0a3fc0d3d18",
+            "utc": "2026-09-25T03:12:20.523248+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0006.json",
+          "value": {
+            "elapsed_seconds": 5.5939999999973224,
+            "phase": "restore_send_intent",
+            "process_id": "a943f9b6-be81-4144-8bc6-b0a3fc0d3d18",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:12:20.748124+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0007.json",
+          "value": {
+            "elapsed_seconds": 5.702999999994063,
+            "phase": "restore_sent",
+            "process_id": "a943f9b6-be81-4144-8bc6-b0a3fc0d3d18",
+            "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+            "utc": "2026-09-25T03:12:20.857623+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0008.json",
+          "value": {
+            "elapsed_seconds": 24.125,
+            "phase": "healthy_converged",
+            "process_id": "a943f9b6-be81-4144-8bc6-b0a3fc0d3d18",
+            "utc": "2026-09-25T03:12:39.286029+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0009.json",
+          "value": {
+            "directory": "recovery-flow-041dd045-7123-402c-a3a3-81e97a7b6ea1",
+            "elapsed_seconds": 24.139999999999418,
+            "phase": "recovery_flow_started",
+            "process_id": "a943f9b6-be81-4144-8bc6-b0a3fc0d3d18",
+            "utc": "2026-09-25T03:12:39.289342+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0010.json",
+          "value": {
+            "elapsed_seconds": 27.23399999999674,
+            "phase": "recovery_observed",
+            "process_id": "a943f9b6-be81-4144-8bc6-b0a3fc0d3d18",
+            "success": true,
+            "utc": "2026-09-25T03:12:42.390477+00:00"
+          }
+        },
+        {
+          "source": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0011.json",
+          "value": {
+            "elapsed_seconds": 27.23399999999674,
+            "phase": "operation_finished",
+            "process_id": "a943f9b6-be81-4144-8bc6-b0a3fc0d3d18",
+            "success": true,
+            "utc": "2026-09-25T03:12:42.392118+00:00"
+          }
+        }
+      ],
+      "later_cleanup": [],
+      "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+    }
+  ],
+  "metrics": {
+    "candidate_decision_seconds": [
+      "candidate_send_intent",
+      "candidate_decided"
+    ],
+    "activation_seconds": [
+      "candidate_decided",
+      "restoration_requested"
+    ],
+    "configuration_recovery_seconds": [
+      "restoration_requested",
+      "healthy_converged"
+    ],
+    "functional_recovery_seconds": [
+      "restoration_requested",
+      "recovery_observed"
+    ],
+    "policy_total_seconds": [
+      "candidate_send_intent",
+      "operation_finished"
+    ]
+  },
+  "selection": "First occurrence in the policy process; later cleanup excluded; missing metrics remain absent, never zero."
+}

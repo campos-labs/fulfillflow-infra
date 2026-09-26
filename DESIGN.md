@@ -2,36 +2,35 @@
 
 ## 1. Estado e autoridade
 
-Este documento define a base operacional e o contrato A2 de restauração
-automatizada em Kind. A configuração AKS/ACR permanece como alvo de nuvem
-opcional, fora da entrega A2; as diferenças locais estão na seção 10.
-O estado de implementação e as verificações executadas pertencem ao
-[RELEASE_PLAN.md](RELEASE_PLAN.md). Um requisito descrito aqui não comprova que o
-recurso já exista ou que sua verificação tenha sido executada.
+Este documento define a arquitetura e os contratos operacionais da entrega em
+Kind: verificação de implantação (A1), restauração delimitada (A2) e observação
+posterior do trabalho aceito. AKS/ACR é uma configuração de referência opcional,
+ainda não implantada; não é dependência da entrega local.
 
-A aplicação de referência é `v1.3.0-rc.1`, commit
-`9e3a135a00db218643633c7165d3106f0c8285e1`, de `campos-labs/fulfillflow`.
-Seus [contratos](https://github.com/campos-labs/fulfillflow/blob/9e3a135a00db218643633c7165d3106f0c8285e1/DESIGN.md),
+O [RELEASE_PLAN](RELEASE_PLAN.md) registra marcos e decisões pendentes. O relatório
+[OPERATIONAL_EVALUATION](docs/OPERATIONAL_EVALUATION.md) reúne protocolos executados,
+resultados, limites e evidências. Um contrato documentado não comprova execução;
+um teste da aplicação não substitui sua verificação no ambiente operacional.
+
+A referência é `campos-labs/fulfillflow`, `v1.3.0-rc.1`, commit
+`9e3a135a00db218643633c7165d3106f0c8285e1`. Seus
+[contratos](https://github.com/campos-labs/fulfillflow/blob/9e3a135a00db218643633c7165d3106f0c8285e1/DESIGN.md),
 [operação](https://github.com/campos-labs/fulfillflow/blob/9e3a135a00db218643633c7165d3106f0c8285e1/README.md)
 e [Compose](https://github.com/campos-labs/fulfillflow/blob/9e3a135a00db218643633c7165d3106f0c8285e1/compose.yaml)
-são referências congeladas. Não mover tags, alterar imagens históricas, restaurar
-bancos antigos neste ambiente ou copiar seus resultados como aceite no AKS.
+permanecem congelados. Não mover tags, alterar imagens históricas, reutilizar
+bancos antigos ou apresentar resultados anteriores como aceite neste ambiente.
 
-O repositório da aplicação conserva código, testes e construção das imagens.
-Este repositório conserva infraestrutura, configuração de implantação e
-verificação operacional. Incompatibilidade funcional comprovada requer correção
-identificada na aplicação e nova referência aprovada; não usar patches silenciosos
-no build de infraestrutura.
+A aplicação conserva código, testes e construção das imagens; este repositório,
+infraestrutura, configuração e verificação operacional. Incompatibilidade funcional
+requer correção identificada na aplicação e nova referência aprovada, sem patches
+silenciosos no build de infraestrutura.
 
 ## 2. Topologia aprovada
 
-A topologia de serviços abaixo é comum ao Kind e ao alvo Azure. A2 usa o ambiente
-local da seção 10, com réplicas fixas. No alvo Azure, usar uma região, AKS com
-capacidade de nós explícita e fixa, ACR privado e namespace dedicado. A primeira
-implantação usa uma réplica de cada processo da aplicação. Contagens de nós e
-SKUs dependem do dimensionamento e orçamento aprovados.
+O ambiente Kind usa um nó e uma réplica de cada processo. A topologia de serviços
+abaixo também orienta a extensão Azure, cujo dimensionamento exige decisão própria.
 
-| Componente | Controlador previsto | Responsabilidade |
+| Componente | Controlador | Responsabilidade |
 | --- | --- | --- |
 | Core API | Deployment + Service ClusterIP | Entrada HTTP, UI e consultas autenticadas aos serviços |
 | Tracking API | Deployment + Service ClusterIP | Admissão durável, HMAC, inbox e timeline |
@@ -41,111 +40,80 @@ SKUs dependem do dimensionamento e orçamento aprovados.
 | Notifications worker | Deployment | Recepção durável e simulação idempotente |
 | PostgreSQL | StatefulSet, uma réplica, PVC | Três bancos e roles independentes |
 | RabbitMQ | StatefulSet, uma réplica, PVC | Transporte com vhost e permissões por fluxo |
-| Migrações | Jobs por proprietário | Aplicar os três históricos Alembic antes do runtime |
+| Migrações | Jobs por proprietário | Três históricos Alembic, antes do runtime |
 
 Banco e broker únicos são pontos de falha compartilhados. Persistência e reinício
-não constituem alta disponibilidade. Não acrescentar gateway, serviço de domínio,
-réplica ou operador apenas para aumentar a topologia.
-
-Manifests são declarados em `k8s/`, com Kustomize para configuração por ambiente.
-Terraform gerencia os recursos Azure; o fluxo de implantação gerencia os recursos
-Kubernetes. Evitar dois controladores administrando o mesmo objeto.
+não constituem alta disponibilidade. Não ampliar a topologia sem requisito concreto.
+Kustomize organiza os manifests de `k8s/`; Terraform descreve somente os recursos
+Azure. Evitar dois controladores administrando o mesmo objeto.
 
 ## 3. Imagens e proveniência
 
-Na extensão Azure deste projeto, ACR é o registry escolhido. Não é requisito do A2
-local nem exigência universal do AKS. A implantação usa referências `image@sha256:...`,
-sem `latest` ou dependência de tags mutáveis. Registrar para cada imagem: origem,
-commit, target do Dockerfile, hash do lock, plataforma e digest de registry.
-Um ID local Docker não é um digest publicado no ACR. No A2, carregar e conferir
-as imagens locais é suficiente; não provisionar registry nem credenciais Azure.
-A rastreabilidade deriva da referência congelada, identidade efetiva e configuração,
-sem depender da presença de um serviço de nuvem.
+Registrar origem, commit, target do Dockerfile, hash do lock, plataforma e identidade
+efetiva de cada imagem. No Kind, carregar e conferir o ID da imagem local com
+`imagePullPolicy: Never`; não são necessários registry ou credenciais Azure.
+Na extensão Azure, ACR é o registry escolhido: usar `image@sha256:...`, sem `latest`
+ou tags mutáveis. ID local Docker não é digest publicado no ACR.
 
-APIs, workers e Jobs podem compartilhar a mesma imagem `runtime`, mudando comando
-e configuração. Não exigir uma imagem diferente por processo. Preservar o
-Dockerfile, `uv.lock` e dependências da referência. A construção/publicação pertence
-ao fluxo de aplicação; acesso a um checkout privado deve ser mínimo e explícito.
-Uma reconstrução tem identidade própria e exige smoke, sem alegar identidade
-binária com as imagens locais previamente verificadas.
+APIs, workers e Jobs podem compartilhar a imagem `runtime` com comandos distintos.
+Preservar Dockerfile, `uv.lock` e dependências da referência. Acesso ao checkout
+privado deve ser mínimo e explícito. Uma reconstrução tem identidade própria e
+exige smoke; não presumir identidade binária com uma imagem anterior.
 
-As imagens PostgreSQL `18-trixie` e RabbitMQ `4.2.4-alpine` têm digests no Compose
-congelado. Fixar esses digests na implantação e, se importadas para ACR, registrar
-origem/destino e resolver o digest publicado. Não atualizar dependências durante
-a preparação por conveniência. Conferir a compatibilidade da plataforma de nós.
+PostgreSQL `18-trixie` e RabbitMQ `4.2.4-alpine` usam os digests do Compose congelado.
+Conferir a plataforma dos nós; não atualizar dependências por conveniência. Se as
+imagens forem importadas para ACR, registrar origem, destino e digest publicado.
 
 ## 4. Identidade, rede e segredos
 
-- Pessoas usam identidades individuais com MFA. O bootstrap fica com a
-  administração atual; a entrada posterior da equipe não exige recriar recursos.
-- Separar acesso Azure Resource Manager, autorização no Kubernetes, dados do
-  Storage e acesso ao ACR. Contributor não concede automaticamente todos eles.
-- Automação GitHub Actions usa OIDC com confiança restrita ao repositório e ao
-  ambiente/branch autorizado, sem credencial humana ou segredo permanente de login.
-- Separar permissões de provisionamento e implantação. Atribuições de roles ficam
-  no bootstrap controlado; o deploy cotidiano não recebe Owner da assinatura.
-- AKS usa identidades gerenciadas, incluindo pull do ACR pela identidade kubelet.
-  Fixar o modo de permissões do ACR; `AcrPull` no modo RBAC e roles de repositório
-  no modo ABAC não são intercambiáveis. Não habilitar usuário admin do ACR.
-- Habilitar autenticação Entra e autorização delimitada no cluster. Não distribuir
-  kubeconfig administrativo como credencial de pipeline.
+Banco, AMQP, APIs internas e management do broker não recebem exposição pública.
+Core usa `kubectl port-forward` autenticado ou caminho privado aprovado. A aplicação
+não autentica usuários: segredos internos não tornam segura sua publicação na internet.
 
-Banco, AMQP, interfaces internas e management do broker não recebem exposição
-pública. Core começa acessível por túnel autenticado (`kubectl port-forward`) ou
-caminho privado aprovado. Não há autenticação de usuários na aplicação; não
-publicar UI/APIs de negócio na internet apenas com os segredos internos.
+NetworkPolicies delimitam Core → APIs internas; Tracking API → Core API para as
+consultas contratadas; cada processo → banco próprio; workers → broker; DNS e
+acessos operacionais necessários. As roles PostgreSQL isolam os bancos. Aplicar
+policies não comprova isolamento: verificar tráfego permitido e bloqueado.
 
-Antes de criar AKS, definir se o endpoint Kubernetes é privado ou público com
-restrição de origem, e como o executor chega a ele. Runner hospedado no GitHub
-não tem acesso implícito a uma rede privada. Não abrir o cluster a toda a internet
-para contornar conectividade. Registrar a escolha, o custo e suas limitações.
+Secrets são injetados por mecanismo protegido, sem valores em manifests, tfvars
+versionados, argumentos registrados ou logs. Base64 não é criptografia. Usar
+credenciais próprias, sem defaults do Compose. Proteger kubeconfigs, state, planos
+e artefatos sensíveis; não criar fontes concorrentes de configuração.
 
-Usar NetworkPolicies com matriz de tráfego: Core → APIs internas; Tracking API →
-Core API para consultas do contrato congelado; cada processo →
-banco próprio; workers → broker; DNS e acessos operacionais estritamente necessários.
-As roles PostgreSQL continuam sendo a autoridade para isolamento entre bancos.
+A extensão Azure mantém estes contratos, detalhados em [infra/README](infra/README.md):
 
-A configuração Terraform usa Azure CNI Overlay com Cilium e propõe API Kubernetes
-pública restrita a IPv4 individuais `/32`; não é escolha de conectividade já
-aprovada. Confirmar ranges sem sobreposição, DNS e executor com origem estável
-antes de criar o ambiente. O provider fixado não configura o modo RBAC/ABAC do
-ACR: verificar o modo efetivo antes de conceder validade ao contrato de pull.
-
-Secrets de runtime são injetados por mecanismo protegido definido antes do deploy;
-nenhum valor real em manifests, tfvars versionados, argumentos registrados ou logs.
-Kubernetes Secret em base64 não é criptografia. Segredos padrão do Compose são
-exclusivos do ambiente local e não serão reutilizados. Proteger também state,
-planos Terraform, kubeconfigs e artefatos que possam conter informações sensíveis.
-A escolha entre injeção protegida no deploy e Key Vault deve ser registrada sem
-introduzir uma segunda fonte de configuração concorrente.
+- identidades individuais com MFA; separar permissões ARM, Kubernetes, Storage e ACR;
+- provisionamento separado do deploy, sem Owner da assinatura ou kubeconfig
+  administrativo no pipeline;
+- GitHub Actions por OIDC restrito ao repositório e branch/ambiente confiáveis;
+- AKS com Entra e identidades gerenciadas; pull pela identidade kubelet, sem admin
+  ACR; verificar modo RBAC/ABAC antes de atribuir validade a `AcrPull`;
+- CNI Overlay/Cilium, ranges sem sobreposição e API Kubernetes pública restrita a
+  IPv4 `/32`, conforme a configuração preparada. Essa conectividade ainda precisa
+  ser aprovada e verificada com executor de origem estável. Não abrir a API para
+  contornar conectividade nem presumir acesso privado pelo runner hospedado.
 
 ## 5. Estado, bootstrap e custo
 
-Usar Terraform com provider/CLI compatíveis e versões fixadas no incremento de
-preparação; versionar `.terraform.lock.hcl`. Backend remoto Azure Blob com
-autenticação Entra, locking e acesso restrito. Bootstrap do backend é explícito,
-identificado e separado do ambiente removível. Não guardar state no Git nem
-fornecer access keys no código. Backend e cópia das evidências devem sobreviver
-ao encerramento dos recursos de execução.
+Criar bancos, roles e permissões em recursos novos. Assets de bootstrap têm origem
+registrada e credenciais próprias. Inicialização de volume vazio não atualiza
+volumes existentes nem rotaciona senhas. PostgreSQL 18 conserva o layout do Compose;
+RabbitMQ conserva nome do nó, hostname e caminho dos dados ao recriar pods.
 
-PVCs usam classe de armazenamento suportada no AKS, capacidade explícita e
-políticas de retenção documentadas. PostgreSQL 18 usa o layout de volume do
-Compose congelado; não assumir caminhos de versões anteriores. RabbitMQ conserva
-nome do nó, hostname estável e caminho dos dados ao recriar pods.
+PVCs têm capacidade e retenção explícitas. O Kind usa local-path; a referência AKS,
+Azure Disk CSI. Exportar e conferir cópia independente antes de remover dados.
+Existência de PVC ou backup não comprova restauração, que exige ensaio isolado.
 
-Criar bancos/roles e permissões em recursos novos. Scripts de bootstrap e
-definitions do broker derivados da referência devem ter origem registrada e
-credenciais substituídas; não copiar defaults locais. Inicialização de volume vazio
-não é mecanismo de rotação de senha ou atualização de volume já existente.
+Na extensão Azure, Terraform e provider têm versões fixadas e lock versionado.
+Backend Blob usa Entra, locking e acesso restrito; seu bootstrap é separado do
+ambiente removível. State e access keys não entram no Git. Backend e evidências
+devem sobreviver ao encerramento dos recursos de execução.
 
 Antes de `apply`, registrar assinatura, região, quotas, SKUs, discos, conectividade,
-estimativa de custo, limite de gasto autorizado e procedimento de encerramento.
-Incluir nós, armazenamento, registry, rede e retenção de logs. Budgets geram alertas,
-não suspendem consumo automaticamente. Não prometer custo zero por parar workloads.
-
-Exportar evidências e verificar a cópia independente antes de remoção de dados.
-Restauração será ensaiada apenas em destino isolado, com registros próprios;
-persistência de PVC e existência de backup não comprovam recuperação verificada.
+limite autorizado e estimativa de nós, armazenamento, registry, rede e logs, incluindo
+encerramento e retenção. Budgets alertam, mas não suspendem consumo. Parar workloads
+não implica custo zero. O procedimento de bootstrap e as guardas Terraform ficam
+em [infra/README](infra/README.md).
 
 ## 6. Inicialização e ciclo de vida
 
@@ -196,54 +164,43 @@ volume ao aplicar securityContext; não impor configuração que impeça o runti
 
 ## 7. Recursos e conclusão assíncrona
 
-| Referência funcional local | Limite CPU | Limite memória |
-| --- | --- | --- |
-| Cada API e cada worker (seis processos) | 0,5 | 384 MiB |
-| PostgreSQL | 2 | 2560 MiB |
-| RabbitMQ | 0,5 | 512 MiB |
+| Componente | Request CPU reduzido | Limite CPU | Request e limite de memória |
+| --- | --- | --- | --- |
+| Cada API e worker (seis processos) | 150m | 0,5 | 384 MiB |
+| PostgreSQL | 750m | 2 | 2560 MiB |
+| RabbitMQ | 250m | 0,5 | 512 MiB |
+| Cada Job ativo | 250m | 0,5 | 384 MiB |
 
-Esses limites somam 5,5 CPUs e 5376 MiB, excluindo Jobs e overhead do cluster;
-não são dimensionamento de nós nem capacidade comprovada. Definir requests,
-limits, espaço para sistema/rollout/Jobs e número de nós antes do provisionamento.
-Começar pelos limites funcionais da referência e registrar qualquer ajuste de
-implantação antes do aceite. Não alegar equivalência com campanhas anteriores.
+O runtime soma requests de 1900m, limits de 5500m e memória de 5376 MiB, sem Jobs
+ou overhead. O perfil reduzido, usado no Kind, altera somente requests de CPU;
+preserva limits, memória, réplicas, imagens, pools, probes e prazos da base. São
+reservas para fluxo funcional sequencial, não mínimos medidos nem capacidade
+comprovada. Menor reserva pode aumentar latência sob contenção e não implica
+redução proporcional de consumo ou cobrança. A base mantém requests iguais aos
+limits; `k8s/overlays/reduced-functional` continua sendo exemplo AKS bloqueado.
 
-O exemplo inicial usa requests iguais aos limites da tabela, mais 0,5 CPU/384 MiB
-por Job ativo; a capacidade alocável dos nós precisa comportar esses valores e
-o sistema. Rollout da aplicação usa `maxSurge: 0`, `maxUnavailable: 1`, com possível
-indisponibilidade. PVCs de 32 GiB e 16 GiB em StandardSSD_LRS, retenção `Retain`,
-são proposta ainda sujeita a custo e validação CSI. Não dimensionar nós apenas pela
-memória nem reduzir recursos para caber em crédito presumido. A proposta Terraform
-configura um nó adicional durante upgrade; não mantém esse nó alocado normalmente.
-Quota e custo temporários entram na revisão. Uma janela funcional sem upgrades
-planejados não garante ausência de reparos nem autoriza operação permanente sem
-margem de manutenção. Rotação do pool exige revisão explícita do plano Terraform.
+Definir capacidade alocável para sistema, runtime, Jobs e manutenção antes de
+provisionar. Não dimensionar apenas pela memória nem alegar equivalência com
+campanhas anteriores. Rollout da aplicação usa `maxSurge: 0`, `maxUnavailable: 1`,
+com possível indisponibilidade. A proposta AKS usa PVCs StandardSSD_LRS de 32 GiB e
+16 GiB com `Retain`, sujeitos a custo e validação CSI. Seu pool prevê um nó extra
+durante upgrade, sem mantê-lo normalmente alocado. Quota, custo temporário e rotação
+do pool exigem revisão. Ausência de upgrades planejados não exclui reparos nem
+permite operação permanente sem margem de manutenção; o perfil reduzido não
+comprova suporte a pool AKS de nó único.
 
-O perfil separado `k8s/overlays/reduced-functional` reduz somente requests de CPU:
-150m por API/worker, 750m para PostgreSQL, 250m para RabbitMQ e 250m por Job.
-Mantém limits, memória, réplicas, imagens, pools, probes e prazos da base. Os valores
-são candidatos para fluxo funcional sequencial, não mínimos medidos. Requests do
-runtime somam 1900m; limits continuam em 5500m. Sob contenção, menor reserva de CPU
-pode aumentar latência; não implica redução proporcional de consumo ou cobrança.
-O perfil herda o bloqueio de agendamento do exemplo e ainda não autoriza deploy.
-Compatibilidade do pool AKS, quotas, capacidade alocável, componentes de sistema
-e política de upgrade devem ser resolvidas antes da implantação. A existência do
-perfil não comprova suporte a um cluster de nó único. Estado e critérios de
-avaliação estão no RELEASE_PLAN.
+Preservar pools API 2/0 e worker 3/0, prefetch 8, lotes 20, polling 500 ms, lease
+30 s e confirm timeout 5 s. Pools crescem com réplicas; banco e broker também
+limitam a operação.
 
-Manter os parâmetros iniciais da aplicação: pools API 2/0 e worker 3/0,
-prefetch 8, lotes 20, polling 500 ms, lease 30 s e confirm timeout 5 s. A soma
-dos pools cresce com réplicas; banco e broker também podem limitar a operação.
+ACK confirma persistência em inbox técnica, não conclusão. O backlog pode ocupar
+outboxes, inboxes técnicas ou eventos de negócio. Contar etapas separadamente e
+eventos únicos pela identidade correta, sem somar cópias técnicas. Fila vazia,
+HTTP 202 e pod pronto não bastam como aceite.
 
-ACK significa persistência em inbox técnica, não conclusão. O backlog pode estar
-em outboxes, inboxes técnicas ou eventos de negócio pendentes. Contar etapas
-separadamente e eventos únicos pela identidade correta; não somar cópias técnicas.
-Fila RabbitMQ vazia, HTTP 202 e pod pronto não bastam como aceite.
-
-Observar separadamente oferta, aceitação, conclusão Tracking/Order, simulação
-Notifications, pendências e prazo de observação. Eventos retomáveis recuperam-se
-sem reenvio do webhook; `BLOCKED` exige rearme auditável pelo proprietário.
-`SIMULATED` não significa entrega a um provedor externo.
+Observar oferta, aceitação, conclusão Tracking/Order, Notifications, pendências e
+prazo separadamente. Trabalho retomável dispensa reenvio do webhook; `BLOCKED`
+exige rearme auditável pelo proprietário. `SIMULATED` não é entrega externa.
 
 ## 8. Implantação e evidências operacionais
 
@@ -254,7 +211,7 @@ Implantação é acionada explicitamente e tem concorrência limitada por ambien
 Acesso Azure por OIDC ocorre somente em jobs confiáveis. Execuções não confiáveis
 não recebem credenciais nem executam apply.
 A implantação exige autorização do ambiente de destino; CI de validação não
-constitui autorização para provisionamento.
+constitui autorização para provisionamento nem comprovação de execução operacional.
 
 Verificação funcional usa fluxo público, IDs exclusivos, HMAC e polling limitado.
 Não reenviar automaticamente um evento para transformar timeout em sucesso.
@@ -405,27 +362,28 @@ da restauração, convergência e conclusão de negócio, usando relógio monot�
 coerente por duração e UTC para correlação. Identificar ator humano/agente/script
 do acionamento explícito; execução por agente não mede tempo de reação humana.
 Não acrescentar espera artificial à condição explícita. Métricas, ordem e quantidade
-de repetições pertencem ao protocolo no RELEASE_PLAN.
+de repetições executadas estão no [relatório operacional](docs/OPERATIONAL_EVALUATION.md).
 
 ### 8.6. Complementos A — pendência e observação inconclusiva
 
-Preservar a série A2 concluída. Dois cenários separados usam a mesma aplicação,
-workload, falha de startup, política e guarda de identidade. Não combinar falha de
-implantação com falha de consulta na mesma tentativa.
+Os complementos mantêm aplicação, workload, política e guarda de identidade de A2,
+mas têm protocolos próprios. Não combinar falha de implantação e falha de consulta
+na mesma tentativa; não juntar seus tempos ou denominadores aos da comparação A2.
 
 **Pendência:** após confirmar a candidata `DB_POOL_SIZE=0`, admitir um evento novo,
 confirmar Tracking/Order e observar publicação `SENT` com Notifications ainda
 `NOT_RECEIVED`. Isso evidencia trabalho aguardando consumo; não demonstra que o
 worker defeituoso recebeu/processou a mensagem nem persistência após ACK nele.
 Somente então liberar o acionamento da restauração, com preparação comum às duas
-condições. Registrar separadamente detecção, preparação, autorização e acionamento.
+condições. Registrar detecção, preparação, autorização e acionamento separadamente;
+a duração desde a autorização não representa toda a indisponibilidade.
 O acionamento explícito continua sendo comando separado por script, sem espera
 artificial e sem representar reação humana. Revalidar identidade antes da mutação.
 
 Observar o evento anterior exclusivamente por GET, sem reentrega ou rearme. A
-infraestrutura restaura a configuração; a aplicação durável retoma o trabalho; o
-verificador confirma resultado e efeito único. O evento novo de smoke da restauração
-continua identificado separadamente e não substitui a verificação da pendência.
+infraestrutura restaura a configuração; a aplicação conclui o trabalho aguardando
+consumo; o verificador confirma resultado e efeito único. O evento novo de smoke
+da restauração continua separado e não substitui a verificação da pendência.
 
 Desde antes da autorização, observar em paralelo o workload e o evento pendente.
 Usar relógio monotônico do mesmo processo, UTC, início/fim das consultas e polling
@@ -447,7 +405,8 @@ marcada ocorre depois dessas asserções, fora do intervalo avaliado.
 
 Falha inesperada interrompe a sequência, preservando estado e evidências para
 recuperação explícita. Nenhuma reposição automática ou alteração de critério após
-observar resultados. Prazos, ordem e denominadores ficam no RELEASE_PLAN.
+observar resultados. Prazos, ordem e denominadores executados ficam no
+[relatório operacional](docs/OPERATIONAL_EVALUATION.md).
 
 ## 9. Limites e evolução
 
@@ -459,13 +418,13 @@ prolongada ou solução dos incidentes históricos da aplicação/ferramenta de 
 A2 e seus complementos permitem somente a recuperação das seções 8.5–8.6 e
 sua avaliação delimitada em Kind. HPA/KEDA, cluster autoscaler, Argo CD, canary/blue-green,
 campanhas de capacidade e novos provedores de entrega continuam fora do escopo.
-Autoescalonamento (B) e implantação Azure são extensões opcionais posteriores;
-não são condições para concluir A2.
+Autoescalonamento (B) e implantação Azure são extensões não implementadas. Suas
+condições de entrada ficam no [RELEASE_PLAN](RELEASE_PLAN.md); não são requisitos
+para encerrar o Plano A nem conclusões dos resultados locais.
 
 ## 10. Ambiente local e avaliação em Kind
 
-Kind é o ambiente principal do aceite e da comparação A2, além da preparação
-funcional já realizada. Ambas as condições usam o mesmo ambiente; não misturar
+Kind é o ambiente do Plano A. Ambas as condições usam o mesmo ambiente; não misturar
 tempos locais com resultados futuros de AKS. A aplicação congelada e a topologia
 de serviços não mudam. O overlay `k8s/overlays/kind-local`
 usa um único nó, local-path com Retain,

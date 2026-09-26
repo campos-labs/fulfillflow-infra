@@ -14,3 +14,6 @@
 *.conf text eol=lf
 .gitignore text eol=lf
 .gitattributes text eol=lf
+
+# Preserve evidence bytes and declared SHA-256 across checkout/commit.
+docs/evidence/operational-a/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

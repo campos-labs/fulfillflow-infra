@@ -1,0 +1,54 @@
+{
+  "review_date": "2026-09-25",
+  "source": "a-complements-evaluation-01",
+  "infra_sha": "f7a6111bffd2e2ce736a1560dbd957dadb6cb806",
+  "application_sha": "9e3a135a00db218643633c7165d3106f0c8285e1",
+  "new_executions": false,
+  "files_verified": 379,
+  "journal_records": 123,
+  "zip_sha256": "19317e812794fd0b117836fca93f61d29853ed0d9f4d13ed1b4a5b3d6bbfedda",
+  "complete": true,
+  "attempts": 9,
+  "pending_recovered": 6,
+  "abstentions_verified": 3,
+  "fresh_smokes_with_duplicate_checks": 9,
+  "resumed_reads_only": true,
+  "original_event_identities_preserved": true,
+  "unique_effects_observed": true,
+  "baseline_restored": true,
+  "node_observed_state": "exited",
+  "elapsed_seconds": 491.265,
+  "medians_seconds": {
+    "explicit": {
+      "authorized_to_request_seconds": 1.016,
+      "request_to_terminal_seconds": 3.813,
+      "authorization_to_terminal_seconds": 4.828
+    },
+    "auto": {
+      "authorized_to_request_seconds": 0.016,
+      "request_to_terminal_seconds": 3.765,
+      "authorization_to_terminal_seconds": 3.781
+    }
+  },
+  "limits": [
+    "Three pending pairs; descriptive, no statistical significance claim",
+    "Explicit actor is a polling script, not a person",
+    "Startup fault was already detected; additional detection advantage not demonstrated",
+    "Pending means published but not received; not partially processed by faulty worker",
+    "503 injected in client observation transport, not an actual API outage",
+    "Healthy revision convergence is a composite observation, not exact Pod Ready transition",
+    "GET-only resumed summaries inherit webhook_offered=true from checkpoint; HTTP logs confirm no reoffer",
+    "Raw packages and pilot/release preparation records were preserved unchanged",
+    "No independent backup or production reliability claim"
+  ],
+  "paired_authorization_to_terminal_auto_minus_explicit_seconds": [
+    -1.078,
+    -1.031,
+    -1.078
+  ],
+  "signal_difference_seconds": {
+    "min": -15.594,
+    "max": -14.172,
+    "median": -15.406
+  }
+}

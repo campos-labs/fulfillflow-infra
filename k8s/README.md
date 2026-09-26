@@ -1,9 +1,15 @@
-# Manifests: alvo AKS e ambiente Kind local
+# Kubernetes: operação Kind e referência AKS
 
 A referência auditada é `campos-labs/fulfillflow`, `v1.3.0-rc.1`, SHA
 `9e3a135a00db218643633c7165d3106f0c8285e1`. O overlay Kind foi executado
 em cluster local. Os exemplos AKS continuam bloqueados; o ensaio local não verifica
 pull ACR, identidade, isolamento de rede ou armazenamento/recuperação no AKS.
+
+Este guia descreve configuração e comandos. Começar pelo [Kind local](#caminho-kind-local),
+[A1](#procedimento-a1), [A2](#a2--operação-delimitada) ou
+[complementos](#complementos-a--pendência-e-observação-inconclusiva).
+Resultados e fontes estão na [avaliação operacional](../docs/OPERATIONAL_EVALUATION.md);
+entregas, pausa e extensões, no [RELEASE_PLAN](../RELEASE_PLAN.md).
 
 `overlays/example` é exclusivamente de validação. A imagem runtime
 `example.azurecr.io.invalid/fulfillflow/runtime@sha256:` seguida de 64 zeros é
@@ -97,7 +103,7 @@ python k8s/prepare_rabbitmq_definitions.py --passwords-file $ProtectedPasswordsF
 Bootstrap do PostgreSQL e import de definitions não são mecanismos de rotação de
 senha. Não reaplicar credenciais novas presumindo atualização de volumes existentes.
 A atualização de secrets por volume pode exigir reinício controlado; secrets em
-env são fixos até a recriação do pod. Não há automação de rotação neste incremento.
+env são fixos até a recriação do pod. Não há automação de rotação nesta entrega.
 
 ## Recursos, segurança e saúde
 
@@ -160,7 +166,7 @@ opcional dentro do mesmo namespace precisa do label
 monitoring genérica, egress Internet, API server, management RabbitMQ ou SQL cruzado
 é criada. Labels são configuração administrativa, não autenticação. Sem ingress,
 NodePort, LoadBalancer ou serviço para workers. Métricas/tracing amplos não fazem
-parte do aceite inicial.
+parte do aceite.
 
 ## Origem dos assets de inicialização
 
@@ -183,36 +189,6 @@ Nenhum código de negócio da aplicação foi copiado.
 de CPU. Valores estão no [DESIGN](../DESIGN.md#7-recursos-e-conclusão-assíncrona);
 critérios e pendências estão no [RELEASE_PLAN](../RELEASE_PLAN.md).
 Não é um overlay liberado para implantação nem comprovação de capacidade no AKS.
-
-## Sequência operacional AKS — ainda não executada
-
-Antes de aplicar, registrar contexto e namespace exatos, SHA da infraestrutura,
-digests ACR, perfil de recursos, propriedade dos volumes e destino de evidências.
-Recusar exemplos bloqueados, imagens inválidas e contexto diferente do aprovado.
-Não usar o contexto corrente implicitamente em uma futura automação.
-
-1. Conferir acesso e capacidade alocável; exportar inventário sanitizado. Reservar
-   CPU/memória dos componentes do sistema além dos workloads. Não inferir capacidade
-   por soma dos limits nem por quota disponível da assinatura.
-2. Preparar namespace e secrets pelo canal protegido aprovado. Não incluir seus
-   valores em `kubectl` argv, transcripts, logs ou artefatos de CI. Aplicar fundações
-   e verificar banco/broker antes de migrations, preservando eventos e logs de falha.
-3. Executar cada Job de migration separadamente: Core, Tracking e Notifications.
-   A renderização conjunta da pasta não autoriza aplicação simultânea dos Jobs.
-   Conferir os heads documentados e parar na primeira falha; não apagar/recriar Job
-   nem volume automaticamente. Uma tentativa sucessora terá identidade própria.
-4. Aplicar runtime com uma réplica por processo. Verificar rollout/prontidão com
-   prazo finito, depois executar o verificador funcional existente por túnel local
-   autenticado. Readiness e fila vazia não substituem conclusão do evento.
-5. Exportar identificação, resultados, eventos e logs sanitizados, sem secrets.
-   Preservar falhas e estados pendentes. Só retomar após classificação do problema;
-   não executar o smoke de novo para ocultar timeout da tentativa anterior.
-6. Ao encerrar a janela, inventariar recursos ainda cobrados e verificar a cópia
-   independente antes de qualquer remoção autorizada. Parar pods não encerra custos
-   de nós, discos, ACR ou rede. Não automatizar exclusão de PVCs ou resource groups.
-
-Essa sequência é o procedimento planejado para AKS; sua implantação e seus
-requisitos Azure continuam pendentes. O ambiente Kind usa as diferenças abaixo.
 
 ## Caminho Kind local
 
@@ -238,8 +214,9 @@ Sequência de reprodução (somente em ambiente novo): exportar o SHA congelado 
 criar cluster com `config/kind-local.yaml`, carregar a imagem com Kind e conferir seu
 ID. Injetar os secrets exclusivos pelo contrato acima, via stdin e armazenamento
 protegido, antes de aplicar foundations. Aplicar cada migration separadamente,
-conferir conclusão/head e só então aplicar runtime. O pacote registrado no RELEASE_PLAN contém os manifests aplicados e o procedimento
-de aceite. Os helpers adicionais desse ensaio têm caminhos locais; não constituem
+conferir conclusão/head e só então aplicar runtime. O pacote local de implantação,
+identificado no [histórico de entrega](https://github.com/campos-labs/fulfillflow-infra/blob/47dbd111ad4eff89a8e64c7b50d7d2c59c23baf7/RELEASE_PLAN.md),
+contém os manifests aplicados e o procedimento de aceite. Os helpers adicionais desse ensaio têm caminhos locais; não constituem
 um instalador portátil ou pipeline de recuperação versionado.
 
 Não executar essa sequência para retomar o cluster preservado: iniciar o mesmo
@@ -255,10 +232,10 @@ e a situação de backup/restauração pertencem ao RELEASE_PLAN.
 
 ## Procedimento A1
 
-A interface A1 segue DESIGN §8.1–8.4 e foi exercitada no piloto registrado no
-RELEASE_PLAN §7, incluindo restauração e pausa. Usa Kind existente e uma alteração
-em um único Deployment; não cria cluster, secrets ou migrations. Sua reutilização
-em A2 segue o plano atual, sem mudar os efeitos dos comandos abaixo.
+A interface A1 segue [DESIGN §8.1–8.4](../DESIGN.md#81-a1--verificação-de-uma-revisão-de-runtime)
+e é reutilizada por A2. Usa Kind existente e uma alteração em um único Deployment;
+não cria cluster, secrets ou migrations. O [histórico](https://github.com/campos-labs/fulfillflow-infra/blob/47dbd111ad4eff89a8e64c7b50d7d2c59c23baf7/RELEASE_PLAN.md)
+preserva o aceite do piloto, incluindo restauração e pausa.
 
 Interface: `scripts/Invoke-A1.ps1 -Python <executável> -Config <arquivo.json>
 -OutputDirectory <destino-novo> -Mode <modo>`. O equivalente Python é
@@ -316,8 +293,8 @@ de observabilidade. Seus testes não substituem a execução integrada nem valid
 
 ## A2 — Operação delimitada
 
-A interface A2 reutiliza a configuração local A1 e segue DESIGN §8.5. O aceite
-integrado e a comparação são registrados separadamente no RELEASE_PLAN §7.
+A interface A2 reutiliza a configuração local A1 e segue [DESIGN §8.5](../DESIGN.md#85-a2--restauração-automatizada-de-runtime-em-kind).
+O [relatório operacional](../docs/OPERATIONAL_EVALUATION.md) separa pilotos e comparação.
 ACR não é necessário: o Kind usa a imagem local verificada, sem publicação externa.
 
 Interface: `scripts/Invoke-A2.ps1 -Python <executável> -Config <arquivo.json>
@@ -358,7 +335,8 @@ Os quatro pilotos A2-I não são repetições da comparação A2-II.
 
 **Ciclo concluído; comandos abaixo são referência operacional.** A série 03 foi
 conferida com 20/20 tentativas e ambiente parado. Não repetir para este aceite;
-resultados e pausa estão no [RELEASE_PLAN](../RELEASE_PLAN.md). Uma futura execução
+resultados estão no [relatório operacional](../docs/OPERATIONAL_EVALUATION.md#3-acionamento-e-restauração-da-configuração)
+e a pausa, no [RELEASE_PLAN](../RELEASE_PLAN.md). Uma futura execução
 exige decisão, referência e destino próprios, sem sobrescrever as séries existentes.
 
 `scripts/Invoke-A2Comparison.ps1 -SettingsFile <arquivo-local.json> -Mode Check`
@@ -406,7 +384,8 @@ completar a quota. Consultar o diagnóstico antes de qualquer nova execução.
 Os comandos abaixo documentam a interface. Não repetir a série concluída;
 nova execução depende de protocolo/destino próprios e decisão após a pausa.
 
-Protocolo e estado: RELEASE_PLAN §7.1; contratos: DESIGN §8.6. O executor
+Protocolo executado e resultados: [avaliação operacional](../docs/OPERATIONAL_EVALUATION.md#2-referências-e-método);
+estado: [RELEASE_PLAN](../RELEASE_PLAN.md); contratos: [DESIGN §8.6](../DESIGN.md#86-complementos-a--pendência-e-observação-inconclusiva). O executor
 `scripts/Invoke-AComplements.ps1` usa os mesmos campos locais do launcher A2
 (`python`, `config`, `output`, `secret_file`, `expected_sha`). `output` deve ser novo.
 Para avaliação, acrescentar `pilot_source`, apontando ao pacote completo dos três
@@ -432,3 +411,33 @@ Os tempos de sinais paralelos incluem consultas/polling; o CSV dos complementos
 não integra as medianas A2 anteriores. A falha 503 é injeção identificada no
 transporte do observador, não indisponibilidade real da API. A abstenção é verificada
 antes da limpeza explícita. A retomada dos eventos anteriores usa apenas GET.
+
+## Sequência operacional AKS — ainda não executada
+
+Antes de aplicar, registrar contexto e namespace exatos, SHA da infraestrutura,
+digests ACR, perfil de recursos, propriedade dos volumes e destino de evidências.
+Recusar exemplos bloqueados, imagens inválidas e contexto diferente do aprovado.
+Não usar o contexto corrente implicitamente em uma futura automação.
+
+1. Conferir acesso e capacidade alocável; exportar inventário sanitizado. Reservar
+   CPU/memória dos componentes do sistema além dos workloads. Não inferir capacidade
+   por soma dos limits nem por quota disponível da assinatura.
+2. Preparar namespace e secrets pelo canal protegido aprovado. Não incluir seus
+   valores em `kubectl` argv, transcripts, logs ou artefatos de CI. Aplicar fundações
+   e verificar banco/broker antes de migrations, preservando eventos e logs de falha.
+3. Executar cada Job de migration separadamente: Core, Tracking e Notifications.
+   A renderização conjunta da pasta não autoriza aplicação simultânea dos Jobs.
+   Conferir os heads documentados e parar na primeira falha; não apagar/recriar Job
+   nem volume automaticamente. Uma tentativa sucessora terá identidade própria.
+4. Aplicar runtime com uma réplica por processo. Verificar rollout/prontidão com
+   prazo finito, depois executar o verificador funcional existente por túnel local
+   autenticado. Readiness e fila vazia não substituem conclusão do evento.
+5. Exportar identificação, resultados, eventos e logs sanitizados, sem secrets.
+   Preservar falhas e estados pendentes. Só retomar após classificação do problema;
+   não executar o smoke de novo para ocultar timeout da tentativa anterior.
+6. Ao encerrar a janela, inventariar recursos ainda cobrados e verificar a cópia
+   independente antes de qualquer remoção autorizada. Parar pods não encerra custos
+   de nós, discos, ACR ou rede. Não automatizar exclusão de PVCs ou resource groups.
+
+Essa sequência pertence à extensão opcional AKS; implantação e requisitos Azure
+continuam pendentes. O aceite Kind não a substitui.

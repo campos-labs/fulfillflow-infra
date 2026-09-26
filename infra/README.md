@@ -1,16 +1,24 @@
-# Terraform — preparação sem provisionamento
+# Terraform — extensão Azure opcional
 
-Dois roots independentes, Terraform **1.13.5** e provider AzureRM **4.55.0**.
-`bootstrap/` prepara somente o backend persistente; `environment/` descreve o
-ambiente AKS/ACR e a identidade de deploy. Seus locks incluem Windows e Linux
-amd64. Não há provider Kubernetes, instalação de aplicações ou recursos criados.
+Esta configuração de referência não foi implantada e não é necessária para a
+entrega em Kind. O [RELEASE_PLAN](../RELEASE_PLAN.md) reúne critérios para eventual
+extensão; o [DESIGN](../DESIGN.md) define os contratos comuns e o
+[relatório operacional](../docs/OPERATIONAL_EVALUATION.md) delimita o aceite local.
 
-Todos os valores em `*.example` e nos testes são sintéticos. Região, assinatura,
-quota, versão disponível do AKS, SKUs, capacidade e orçamento continuam pendentes.
+Dois roots independentes usam Terraform **1.13.5** e AzureRM **4.55.0**, com locks
+para Windows/Linux amd64: `bootstrap/` prepara o backend persistente;
+`environment/` descreve AKS, ACR e identidade de deploy. Não há provider Kubernetes
+nem instalação de aplicações nesses roots. A proposta usa uma região, capacidade
+fixa e namespace dedicado, começando com uma réplica por processo. Tamanhos e
+quantidade de nós dependem do dimensionamento e orçamento aprovados.
+
+Os valores em `*.example` e nos testes são sintéticos. Assinatura, região, quotas,
+SKUs, versão AKS, capacidade e orçamento exigem conferência antes de provisionar.
 `cost_approval_confirmed` é falso por padrão: a precondição bloqueia plan/apply
 sem confirmação e referência da aprovação. Essa guarda evita execução acidental;
 alterar o booleano não concede autorização. Nenhum benefício de assinatura ou
-saldo presumido equivale a teto de gasto aprovado.
+saldo presumido equivale a teto de gasto aprovado. Esta documentação não autoriza
+criação de recursos.
 
 ## Validação local
 
@@ -29,7 +37,7 @@ terraform -chdir=infra/environment test
 `init -backend=false` instala/verifica o provider e não conecta ao backend.
 Os testes usam exclusivamente `mock_provider` e `command = plan`: verificam
 entradas e estrutura proposta, incluindo rejeição de origem aberta/inválida,
-guardas de aprovação e escopos da identidade de deploy. O provider legado expõe
+guardas de aprovação e escopos da identidade de deploy. O provider fixado expõe
 `kubelet_identity` como bloco calculado/opcional que esses mocks não preenchem.
 Por isso, os testes de ambiente selecionam alvos e excluem a atribuição `AcrPull`;
 o aviso de targeting é esperado **somente nos testes**, não é orientação para
@@ -39,14 +47,14 @@ autorização, locking, disponibilidade ou conectividade.
 Para atualizar locks após mudança autorizada de versão, usar `providers lock
 -platform=windows_amd64 -platform=linux_amd64` em cada root; não editar hashes.
 
-## Proposta de ambiente, ainda sujeita à decisão
+## Configuração de referência
 
 - AKS com API **pública restrita** a uma lista obrigatória de IPv4 `/32` válidos.
   Não é cluster privado. Selecionar executor com egress público estável e aprovado;
   o runner hospedado padrão do GitHub não tem essa condição implicitamente.
 - Nós Linux com contagem, VM, disco de SO e versão Kubernetes explícitos. Sem
   autoscaler, upgrade automático do Kubernetes ou imagem do SO; correções futuras
-  exigem operação revisada. Rollout/upgrade reserva um nó adicional (`max_surge=1`),
+  exigem operação revisada. Upgrade do pool reserva um nó adicional (`max_surge=1`),
   que entra em quotas e estimativa. VM/plataforma amd64 e a imagem Ubuntu escolhida
   pelo AKS para a versão exata devem ser verificadas e registradas antes de aprovação.
   Sem atualizações automáticas, limitar a janela funcional e revisar patches antes
@@ -110,7 +118,7 @@ Contributor no ARM não substitui `Storage Blob Data Contributor`. Acesso tempor
 necessário para criar/verificar o backend e o acesso de rotina ao container devem
 ser resolvidos antes da operação, sem grants amplos como atalho.
 
-Sequência preparada para o incremento II, **não executada nem autorizada aqui**:
+Sequência de bootstrap para eventual implantação, **ainda não executada**:
 
 1. Aprovar alvo, custos/retenção, permissões e janela de bootstrap. Registrar os
    providers Azure já habilitados; os roots não fazem registro automático. Criar
@@ -132,7 +140,7 @@ Sequência preparada para o incremento II, **não executada nem autorizada aqui*
    sem `-migrate-state` se ele ainda não possuir state. O backend remoto não é
    comprovado apenas pelo sucesso de `init -backend=false` ou pelos mocks.
 
-Durante operação futura, usar locking e timeout explícito; interromper no primeiro
+Durante a operação, usar locking e timeout explícito; interromper no primeiro
 erro, conservar diagnóstico sanitizado e classificar antes de retomar. Não apagar
 leases nem forçar unlock sem confirmar ausência do proprietário ativo.
 

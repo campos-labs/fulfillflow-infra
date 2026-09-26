@@ -1,68 +1,49 @@
 # FulfillFlow Infra
 
-Infraestrutura e operação do [FulfillFlow](https://github.com/campos-labs/fulfillflow)
-em Kubernetes, com laboratório Kind e configuração de referência para AKS/ACR.
+Implantação e recuperação operacional do FulfillFlow em Kubernetes. A entrega
+atual usa Kind, uma aplicação congelada e réplicas fixas. A configuração de
+referência AKS/ACR está preparada para uma extensão futura, ainda não implantada.
 
-**Estado: A1/A2 e complementos concluídos em Kind; pausa de reavaliação atingida.**
-A comparação de 20 tentativas e a avaliação complementar de nove tentativas foram
-conferidas separadamente. O laboratório está parado, com dados e evidências
-preservados. Escopo, resultados e limites estão no [RELEASE_PLAN](RELEASE_PLAN.md).
+**Plano A concluído; desenvolvimento e execuções pausados.** Foram conferidas uma
+comparação de 20 tentativas e uma avaliação complementar de nove tentativas,
+tratadas separadamente. O último encerramento preservou dados e parou o laboratório.
 
-## Objetivo
+## Comece por aqui
 
-Implantar a aplicação congelada com réplicas fixas e verificar a conclusão do fluxo
-assíncrono. A1 detecta e registra; A2 acrescenta restauração automatizada delimitada
-e comparação com acionamento explícito, usando a mesma verificação. Kind foi o
-ambiente da comparação; AKS/ACR e autoescalonamento são extensões opcionais.
-
-## Referência da aplicação
-
-| Campo | Referência |
+| Necessidade | Documento |
 | --- | --- |
-| Repositório | `campos-labs/fulfillflow` |
-| Tag | `v1.3.0-rc.1` |
-| Commit | `9e3a135a00db218643633c7165d3106f0c8285e1` |
-| Estado | Pré-release funcional; capacidade e estabilidade prolongada não avaliadas |
-| Imagens no ACR | Somente na extensão Azure; publicação pendente e dispensável no A2 |
+| Entender resultados, conclusões e suas fontes | [Avaliação operacional](docs/OPERATIONAL_EVALUATION.md) |
+| Entender arquitetura e limites da automação | [DESIGN](DESIGN.md) |
+| Consultar entregas, pendências e extensões possíveis | [RELEASE_PLAN](RELEASE_PLAN.md) |
+| Preparar ou operar o laboratório | [Guia Kubernetes](k8s/README.md#caminho-kind-local) |
+| Examinar a configuração Azure ainda não implantada | [Guia Terraform](infra/README.md) |
 
-Core, Tracking e Notifications têm API e worker próprios. A base prevê seis
-processos de aplicação, uma instância PostgreSQL com três bancos/roles e uma
-instância RabbitMQ. Isso representa três serviços de aplicação e oito componentes
-principais; Jobs, componentes do cluster e réplicas alteram a contagem de pods.
-Notifications registra entrega simulada, sem envio externo.
+## Aplicação e mecanismo avaliado
 
-Este repositório não é um fork da aplicação. Consome suas imagens e contratos
-congelados; não copia código de negócio nem campanhas históricas.
+A referência é [FulfillFlow v1.3.0-rc.1](https://github.com/campos-labs/fulfillflow/tree/9e3a135a00db218643633c7165d3106f0c8285e1),
+commit `9e3a135a00db218643633c7165d3106f0c8285e1`. Core, Tracking e Notifications
+possuem API e worker próprios, com três bancos/roles em PostgreSQL e RabbitMQ.
+Notifications registra entrega simulada; não envia mensagens a provedores externos.
+Este repositório consome a aplicação e seus contratos, sem copiar código de negócio.
 
-## Documentação
+A1 verifica uma revisão e fornece restauração explícita. A2 acrescenta acionamento
+automático delimitado: confirma a falha de inicialização do `notifications-worker`,
+confere sua identidade e restaura uma configuração conhecida. A comparação mantém
+aplicação, detector e verificador comuns às duas condições; o acionamento explícito
+é realizado por script. Os complementos observam trabalho aguardando consumo e
+abstenção diante de falha de consulta injetada. A política não reverte dados nem
+rearma trabalho `BLOCKED`.
 
-| Documento | Responsabilidade |
-| --- | --- |
-| [DESIGN.md](DESIGN.md) | Arquitetura alvo da base operacional, fronteiras e contratos de implantação |
-| [RELEASE_PLAN.md](RELEASE_PLAN.md) | Incrementos, validações, estado, pausa e alternativas ainda não aprovadas |
-
-Antes de alterar arquivos, consultar as seções pertinentes do DESIGN e o
-incremento autorizado no RELEASE_PLAN.
-
-## Organização
-
-| Caminho | Conteúdo |
-| --- | --- |
-| [infra/](infra/README.md) | Bootstrap e ambiente Terraform; planos com provider simulado nos testes |
-| [k8s/](k8s/README.md) | Operação por fases, contrato de secrets, overlay Kind e exemplos AKS bloqueados |
-| `.github/workflows/` | Validação Linux/Windows sem credenciais Azure |
-| `scripts/` | Preparação de ferramentas, validação e verificador funcional |
-| `config/` | Versões fixadas, configuração Kind e ficha com campos Azure ainda pendentes |
-| `tests/` | Contratos de rede/manifest e falhas do verificador/launchers |
+O [relatório](docs/OPERATIONAL_EVALUATION.md) distingue configuração restaurada,
+convergência do workload e conclusão funcional. Aceitação HTTP 202, pod pronto ou
+fila vazia não comprovam, isoladamente, conclusão de negócio. Os resultados não
+estimam capacidade, estabilidade prolongada, alta disponibilidade ou desempenho no AKS.
 
 ## Validação local
 
-Requer Python 3.12, uv 0.12.7 e PowerShell 7. Conferir seus caminhos completos antes
-do uso. A preparação baixa Terraform 1.13.5 e kubectl 1.35.3 em `.tools/`, verifica
-os hashes fixados e não altera o PATH nem ferramentas da aplicação. O primeiro
-uso também baixa dependências, provider e schemas; não consulta Azure ou cluster.
-
-Na raiz do repositório, com `uv` e PowerShell verificados:
+Requer Python 3.12, uv 0.12.7 e PowerShell 7. Conferir os executáveis antes do uso.
+A preparação instala ferramentas verificadas em `.tools/`, sem alterar o PATH.
+Na raiz do repositório, executar cada comando somente após saída zero do anterior:
 
 ```powershell
 uv sync --frozen
@@ -74,40 +55,21 @@ uv run --frozen ruff format --check scripts tests k8s/prepare_rabbitmq_definitio
 uv run --frozen python scripts/validate.py --output artifacts/validation-local-01
 ```
 
-Cada comando deve terminar com saída zero antes do seguinte. O destino da validação
-deve ser novo; não há sobrescrita ou retry. Para execução bloqueante a partir de
-outro diretório, `scripts/Invoke-Validation.ps1` recebe `-Python` com o caminho
-completo do Python da `.venv` e `-OutputDirectory` com um destino novo. Os parâmetros
-opcionais `-Kubectl` e `-Terraform` também recebem caminhos completos.
+O destino deve ser novo. Para caminhos com espaços ou execução em outro diretório,
+`scripts/Invoke-Validation.ps1` aceita `-Python` e `-OutputDirectory` absolutos;
+`-Kubectl` e `-Terraform` são opcionais. Essa validação também roda na CI Linux/Windows:
+testes, renderização, schemas e planos Terraform simulados. Não aplica recursos
+nem executa as séries no Kind. Os comandos operacionais estão no guia Kubernetes;
+a pausa atual não autoriza repetir as séries concluídas.
 
-O verificador `scripts/verify_flow.py` foi executado no Kind: cria dados sintéticos,
-observa Tracking/Order e Notifications separadamente e verifica uma duplicata
-intencional. Exige workers, migrações e segredo do carrier. Não é gerador de carga
-nem atesta, isoladamente, a imagem executada. Identidade, resultados e limites do
-ensaio estão no [RELEASE_PLAN](RELEASE_PLAN.md); operação e retomada do ambiente
-preservado estão em [k8s/README.md](k8s/README.md).
+## Organização e evidências
 
-Schemas Kubernetes são os arquivos estritos 1.35.0 do projeto comunitário
-`yannh/kubernetes-json-schema`, fixados por commit. Essa validação e os planos
-Terraform com mocks não comprovam disponibilidade da versão no AKS, permissões,
-quotas, custo, pull ou funcionamento dos volumes.
+- `infra/`: bootstrap e ambiente Terraform; requisitos de nuvem ainda pendentes.
+- `k8s/`: manifests por fase, overlay Kind, exemplos AKS bloqueados e contratos de secrets.
+- `scripts/`, `tests/`, `config/`: operação, verificações e versões fixadas.
+- `docs/evidence/operational-a/`: seleção versionada de dados e projeções rastreáveis.
+- `artifacts/`: saída local ignorada pelo Git; não presumir acesso por link ao repositório.
 
-## Limites do escopo atual
-
-- Kind como ambiente principal; verificações AKS/ACR pendentes e fora da entrega A2.
-- Réplicas fixas, sem HPA/KEDA ou Argo CD. A restauração automática A2 foi verificada em pilotos e comparação delimitada;
-  os comandos A1 atuais continuam exigindo restauração explícita.
-- PostgreSQL e RabbitMQ persistentes com uma instância cada, sem promessa de HA.
-- Acesso restrito; a aplicação não fornece autenticação de usuários.
-- Aceitação HTTP 202, pod pronto ou fila vazia não comprovam conclusão de negócio.
-- Verificações funcionais delimitadas; campanhas extensas continuam fora do escopo.
-
-A série A2-II 03 concluiu 20/20 tentativas, com cinco pares por cenário; as séries
-parciais anteriores permanecem separadas. Resultados, proveniência e limitações
-estão no [RELEASE_PLAN](RELEASE_PLAN.md#7-evolução-local--aceite-a1-e-entrega-a2).
-As interfaces operacionais estão em [k8s/README.md](k8s/README.md).
-
-As séries concluídas permanecem preservadas separadamente. A retomada de trabalho
-pendente e a abstenção diante de observação inconclusiva foram verificadas no
-protocolo dos complementos. AKS/ACR e autoescalonamento dependem de decisão posterior;
-os resultados locais não comprovam capacidade, estabilidade prolongada ou desempenho na nuvem.
+O [índice de evidências](docs/OPERATIONAL_EVALUATION.md#8-evidências-e-reprodução-da-leitura)
+informa o que está versionado e o que permanece local. Os pacotes completos ainda
+não foram anexados a uma release, e uma cópia independente não foi verificada.

@@ -1,0 +1,649 @@
+{
+  "attempts": [
+    {
+      "activation_seconds": null,
+      "candidate_decision_seconds": 21.75,
+      "cleanup_passed": true,
+      "condition": "explicit",
+      "configuration_recovery_seconds": null,
+      "deployment_verdict": "approved",
+      "error": null,
+      "functional_recovery_seconds": null,
+      "number": 1,
+      "pair": 1,
+      "policy_total_seconds": 21.75,
+      "restoration_actors": [],
+      "restore_intents": 0,
+      "scenario": "healthy",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": null,
+      "candidate_decision_seconds": 21.687000000005355,
+      "cleanup_passed": true,
+      "condition": "auto",
+      "configuration_recovery_seconds": null,
+      "deployment_verdict": "approved",
+      "error": null,
+      "functional_recovery_seconds": null,
+      "number": 2,
+      "pair": 1,
+      "policy_total_seconds": 21.687000000005355,
+      "restoration_actors": [],
+      "restore_intents": 0,
+      "scenario": "healthy",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": null,
+      "candidate_decision_seconds": 21.546999999991385,
+      "cleanup_passed": true,
+      "condition": "auto",
+      "configuration_recovery_seconds": null,
+      "deployment_verdict": "approved",
+      "error": null,
+      "functional_recovery_seconds": null,
+      "number": 3,
+      "pair": 2,
+      "policy_total_seconds": 21.546999999991385,
+      "restoration_actors": [],
+      "restore_intents": 0,
+      "scenario": "healthy",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": null,
+      "candidate_decision_seconds": 22.702999999994063,
+      "cleanup_passed": true,
+      "condition": "explicit",
+      "configuration_recovery_seconds": null,
+      "deployment_verdict": "approved",
+      "error": null,
+      "functional_recovery_seconds": null,
+      "number": 4,
+      "pair": 2,
+      "policy_total_seconds": 22.702999999994063,
+      "restoration_actors": [],
+      "restore_intents": 0,
+      "scenario": "healthy",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": null,
+      "candidate_decision_seconds": 20.390999999988708,
+      "cleanup_passed": true,
+      "condition": "explicit",
+      "configuration_recovery_seconds": null,
+      "deployment_verdict": "approved",
+      "error": null,
+      "functional_recovery_seconds": null,
+      "number": 5,
+      "pair": 3,
+      "policy_total_seconds": 20.390999999988708,
+      "restoration_actors": [],
+      "restore_intents": 0,
+      "scenario": "healthy",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": null,
+      "candidate_decision_seconds": 20.578000000008615,
+      "cleanup_passed": true,
+      "condition": "auto",
+      "configuration_recovery_seconds": null,
+      "deployment_verdict": "approved",
+      "error": null,
+      "functional_recovery_seconds": null,
+      "number": 6,
+      "pair": 3,
+      "policy_total_seconds": 20.578000000008615,
+      "restoration_actors": [],
+      "restore_intents": 0,
+      "scenario": "healthy",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": null,
+      "candidate_decision_seconds": 20.625,
+      "cleanup_passed": true,
+      "condition": "auto",
+      "configuration_recovery_seconds": null,
+      "deployment_verdict": "approved",
+      "error": null,
+      "functional_recovery_seconds": null,
+      "number": 7,
+      "pair": 4,
+      "policy_total_seconds": 20.625,
+      "restoration_actors": [],
+      "restore_intents": 0,
+      "scenario": "healthy",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": null,
+      "candidate_decision_seconds": 21.735000000000582,
+      "cleanup_passed": true,
+      "condition": "explicit",
+      "configuration_recovery_seconds": null,
+      "deployment_verdict": "approved",
+      "error": null,
+      "functional_recovery_seconds": null,
+      "number": 8,
+      "pair": 4,
+      "policy_total_seconds": 21.735000000000582,
+      "restoration_actors": [],
+      "restore_intents": 0,
+      "scenario": "healthy",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": null,
+      "candidate_decision_seconds": 20.547000000005937,
+      "cleanup_passed": true,
+      "condition": "explicit",
+      "configuration_recovery_seconds": null,
+      "deployment_verdict": "approved",
+      "error": null,
+      "functional_recovery_seconds": null,
+      "number": 9,
+      "pair": 5,
+      "policy_total_seconds": 20.547000000005937,
+      "restoration_actors": [],
+      "restore_intents": 0,
+      "scenario": "healthy",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": null,
+      "candidate_decision_seconds": 21.671999999991385,
+      "cleanup_passed": true,
+      "condition": "auto",
+      "configuration_recovery_seconds": null,
+      "deployment_verdict": "approved",
+      "error": null,
+      "functional_recovery_seconds": null,
+      "number": 10,
+      "pair": 5,
+      "policy_total_seconds": 21.686999999990803,
+      "restoration_actors": [],
+      "restore_intents": 0,
+      "scenario": "healthy",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": 0.030999999988125637,
+      "candidate_decision_seconds": 6.25,
+      "condition": "auto",
+      "configuration_recovery_seconds": 18.797000000005937,
+      "deployment_verdict": "rejected",
+      "error": null,
+      "functional_recovery_seconds": 21.938000000009197,
+      "number": 11,
+      "pair": 1,
+      "policy_total_seconds": 28.218999999997322,
+      "restoration_actors": [
+        "policy"
+      ],
+      "restore_intents": 1,
+      "scenario": "invalid-pool",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": 1.0780000000086147,
+      "candidate_decision_seconds": 6.25,
+      "condition": "explicit",
+      "configuration_recovery_seconds": 18.764999999999418,
+      "deployment_verdict": "rejected",
+      "error": null,
+      "functional_recovery_seconds": 21.906000000002678,
+      "number": 12,
+      "pair": 1,
+      "policy_total_seconds": 29.234000000011292,
+      "restoration_actors": [
+        "script"
+      ],
+      "restore_intents": 1,
+      "scenario": "invalid-pool",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": 1.0619999999908032,
+      "candidate_decision_seconds": 6.203000000008615,
+      "condition": "explicit",
+      "configuration_recovery_seconds": 17.65700000000652,
+      "deployment_verdict": "rejected",
+      "error": null,
+      "functional_recovery_seconds": 20.76600000000326,
+      "number": 13,
+      "pair": 2,
+      "policy_total_seconds": 28.047000000005937,
+      "restoration_actors": [
+        "script"
+      ],
+      "restore_intents": 1,
+      "scenario": "invalid-pool",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": 0.062000000005355105,
+      "candidate_decision_seconds": 3.5160000000032596,
+      "condition": "auto",
+      "configuration_recovery_seconds": 18.843999999997322,
+      "deployment_verdict": "rejected",
+      "error": null,
+      "functional_recovery_seconds": 21.98399999999674,
+      "number": 14,
+      "pair": 2,
+      "policy_total_seconds": 25.578000000008615,
+      "restoration_actors": [
+        "policy"
+      ],
+      "restore_intents": 1,
+      "scenario": "invalid-pool",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": 0.0629999999946449,
+      "candidate_decision_seconds": 6.203000000008615,
+      "condition": "auto",
+      "configuration_recovery_seconds": 18.843999999997322,
+      "deployment_verdict": "rejected",
+      "error": null,
+      "functional_recovery_seconds": 21.937000000005355,
+      "number": 15,
+      "pair": 3,
+      "policy_total_seconds": 28.203000000008615,
+      "restoration_actors": [
+        "policy"
+      ],
+      "restore_intents": 1,
+      "scenario": "invalid-pool",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": 1.0780000000086147,
+      "candidate_decision_seconds": 6.5,
+      "condition": "explicit",
+      "configuration_recovery_seconds": 18.843999999997322,
+      "deployment_verdict": "rejected",
+      "error": null,
+      "functional_recovery_seconds": 21.952999999994063,
+      "number": 16,
+      "pair": 3,
+      "policy_total_seconds": 29.547000000005937,
+      "restoration_actors": [
+        "script"
+      ],
+      "restore_intents": 1,
+      "scenario": "invalid-pool",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": 1.062999999994645,
+      "candidate_decision_seconds": 6.125,
+      "condition": "explicit",
+      "configuration_recovery_seconds": 18.827999999994063,
+      "deployment_verdict": "rejected",
+      "error": null,
+      "functional_recovery_seconds": 21.906000000002678,
+      "number": 17,
+      "pair": 4,
+      "policy_total_seconds": 29.093999999997322,
+      "restoration_actors": [
+        "script"
+      ],
+      "restore_intents": 1,
+      "scenario": "invalid-pool",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": 0.09399999999732245,
+      "candidate_decision_seconds": 6.187999999994645,
+      "condition": "auto",
+      "configuration_recovery_seconds": 17.562000000005355,
+      "deployment_verdict": "rejected",
+      "error": null,
+      "functional_recovery_seconds": 20.734000000011292,
+      "number": 18,
+      "pair": 4,
+      "policy_total_seconds": 27.01600000000326,
+      "restoration_actors": [
+        "policy"
+      ],
+      "restore_intents": 1,
+      "scenario": "invalid-pool",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": 0.062000000005355105,
+      "candidate_decision_seconds": 3.485000000000582,
+      "condition": "auto",
+      "configuration_recovery_seconds": 17.64100000000326,
+      "deployment_verdict": "rejected",
+      "error": null,
+      "functional_recovery_seconds": 20.76600000000326,
+      "number": 19,
+      "pair": 5,
+      "policy_total_seconds": 24.313000000009197,
+      "restoration_actors": [
+        "policy"
+      ],
+      "restore_intents": 1,
+      "scenario": "invalid-pool",
+      "scenario_passed": true,
+      "usable": true
+    },
+    {
+      "activation_seconds": 1.0780000000086147,
+      "candidate_decision_seconds": 3.5319999999919673,
+      "condition": "explicit",
+      "configuration_recovery_seconds": 18.75,
+      "deployment_verdict": "rejected",
+      "error": null,
+      "functional_recovery_seconds": 21.85899999999674,
+      "number": 20,
+      "pair": 5,
+      "policy_total_seconds": 26.468999999997322,
+      "restoration_actors": [
+        "script"
+      ],
+      "restore_intents": 1,
+      "scenario": "invalid-pool",
+      "scenario_passed": true,
+      "usable": true
+    }
+  ],
+  "complete": true,
+  "elapsed_seconds": 918.8129999999946,
+  "error": null,
+  "groups": [
+    {
+      "attempted": 5,
+      "condition": "explicit",
+      "metrics": {
+        "activation_seconds": {
+          "max": null,
+          "median": null,
+          "min": null,
+          "n": 0
+        },
+        "candidate_decision_seconds": {
+          "max": 22.702999999994063,
+          "median": 21.735000000000582,
+          "min": 20.390999999988708,
+          "n": 5
+        },
+        "configuration_recovery_seconds": {
+          "max": null,
+          "median": null,
+          "min": null,
+          "n": 0
+        },
+        "functional_recovery_seconds": {
+          "max": null,
+          "median": null,
+          "min": null,
+          "n": 0
+        },
+        "policy_total_seconds": {
+          "max": 22.702999999994063,
+          "median": 21.735000000000582,
+          "min": 20.390999999988708,
+          "n": 5
+        }
+      },
+      "passed": 5,
+      "planned": 5,
+      "scenario": "healthy",
+      "usable": 5
+    },
+    {
+      "attempted": 5,
+      "condition": "auto",
+      "metrics": {
+        "activation_seconds": {
+          "max": null,
+          "median": null,
+          "min": null,
+          "n": 0
+        },
+        "candidate_decision_seconds": {
+          "max": 21.687000000005355,
+          "median": 21.546999999991385,
+          "min": 20.578000000008615,
+          "n": 5
+        },
+        "configuration_recovery_seconds": {
+          "max": null,
+          "median": null,
+          "min": null,
+          "n": 0
+        },
+        "functional_recovery_seconds": {
+          "max": null,
+          "median": null,
+          "min": null,
+          "n": 0
+        },
+        "policy_total_seconds": {
+          "max": 21.687000000005355,
+          "median": 21.546999999991385,
+          "min": 20.578000000008615,
+          "n": 5
+        }
+      },
+      "passed": 5,
+      "planned": 5,
+      "scenario": "healthy",
+      "usable": 5
+    },
+    {
+      "attempted": 5,
+      "condition": "explicit",
+      "metrics": {
+        "activation_seconds": {
+          "max": 1.0780000000086147,
+          "median": 1.0780000000086147,
+          "min": 1.0619999999908032,
+          "n": 5
+        },
+        "candidate_decision_seconds": {
+          "max": 6.5,
+          "median": 6.203000000008615,
+          "min": 3.5319999999919673,
+          "n": 5
+        },
+        "configuration_recovery_seconds": {
+          "max": 18.843999999997322,
+          "median": 18.764999999999418,
+          "min": 17.65700000000652,
+          "n": 5
+        },
+        "functional_recovery_seconds": {
+          "max": 21.952999999994063,
+          "median": 21.906000000002678,
+          "min": 20.76600000000326,
+          "n": 5
+        },
+        "policy_total_seconds": {
+          "max": 29.547000000005937,
+          "median": 29.093999999997322,
+          "min": 26.468999999997322,
+          "n": 5
+        }
+      },
+      "passed": 5,
+      "planned": 5,
+      "scenario": "invalid-pool",
+      "usable": 5
+    },
+    {
+      "attempted": 5,
+      "condition": "auto",
+      "metrics": {
+        "activation_seconds": {
+          "max": 0.09399999999732245,
+          "median": 0.062000000005355105,
+          "min": 0.030999999988125637,
+          "n": 5
+        },
+        "candidate_decision_seconds": {
+          "max": 6.25,
+          "median": 6.187999999994645,
+          "min": 3.485000000000582,
+          "n": 5
+        },
+        "configuration_recovery_seconds": {
+          "max": 18.843999999997322,
+          "median": 18.797000000005937,
+          "min": 17.562000000005355,
+          "n": 5
+        },
+        "functional_recovery_seconds": {
+          "max": 21.98399999999674,
+          "median": 21.937000000005355,
+          "min": 20.734000000011292,
+          "n": 5
+        },
+        "policy_total_seconds": {
+          "max": 28.218999999997322,
+          "median": 27.01600000000326,
+          "min": 24.313000000009197,
+          "n": 5
+        }
+      },
+      "passed": 5,
+      "planned": 5,
+      "scenario": "invalid-pool",
+      "usable": 5
+    }
+  ],
+  "limits": [
+    "Explicit activation by script, not human reaction",
+    "Single-node Kind, no capacity or AKS claim",
+    "Startup failure offers no event before recovery",
+    "Same-host archive is not independent backup",
+    "No automatic retry or replacement; incomplete series remains incomplete"
+  ],
+  "paired_differences": [
+    {
+      "auto_minus_explicit_seconds": {
+        "candidate_decision_seconds": -0.0629999999946449,
+        "policy_total_seconds": -0.0629999999946449
+      },
+      "pair": 1,
+      "scenario": "healthy"
+    },
+    {
+      "auto_minus_explicit_seconds": {
+        "candidate_decision_seconds": -1.1560000000026776,
+        "policy_total_seconds": -1.1560000000026776
+      },
+      "pair": 2,
+      "scenario": "healthy"
+    },
+    {
+      "auto_minus_explicit_seconds": {
+        "candidate_decision_seconds": 0.18700000001990702,
+        "policy_total_seconds": 0.18700000001990702
+      },
+      "pair": 3,
+      "scenario": "healthy"
+    },
+    {
+      "auto_minus_explicit_seconds": {
+        "candidate_decision_seconds": -1.110000000000582,
+        "policy_total_seconds": -1.110000000000582
+      },
+      "pair": 4,
+      "scenario": "healthy"
+    },
+    {
+      "auto_minus_explicit_seconds": {
+        "candidate_decision_seconds": 1.124999999985448,
+        "policy_total_seconds": 1.139999999984866
+      },
+      "pair": 5,
+      "scenario": "healthy"
+    },
+    {
+      "auto_minus_explicit_seconds": {
+        "activation_seconds": -1.047000000020489,
+        "candidate_decision_seconds": 0.0,
+        "configuration_recovery_seconds": 0.03200000000651926,
+        "functional_recovery_seconds": 0.03200000000651926,
+        "policy_total_seconds": -1.0150000000139698
+      },
+      "pair": 1,
+      "scenario": "invalid-pool"
+    },
+    {
+      "auto_minus_explicit_seconds": {
+        "activation_seconds": -0.9999999999854481,
+        "candidate_decision_seconds": -2.687000000005355,
+        "configuration_recovery_seconds": 1.1869999999908032,
+        "functional_recovery_seconds": 1.2179999999934807,
+        "policy_total_seconds": -2.4689999999973224
+      },
+      "pair": 2,
+      "scenario": "invalid-pool"
+    },
+    {
+      "auto_minus_explicit_seconds": {
+        "activation_seconds": -1.0150000000139698,
+        "candidate_decision_seconds": -0.29699999999138527,
+        "configuration_recovery_seconds": 0.0,
+        "functional_recovery_seconds": -0.015999999988707714,
+        "policy_total_seconds": -1.3439999999973224
+      },
+      "pair": 3,
+      "scenario": "invalid-pool"
+    },
+    {
+      "auto_minus_explicit_seconds": {
+        "activation_seconds": -0.9689999999973224,
+        "candidate_decision_seconds": 0.0629999999946449,
+        "configuration_recovery_seconds": -1.2659999999887077,
+        "functional_recovery_seconds": -1.1719999999913853,
+        "policy_total_seconds": -2.077999999994063
+      },
+      "pair": 4,
+      "scenario": "invalid-pool"
+    },
+    {
+      "auto_minus_explicit_seconds": {
+        "activation_seconds": -1.0160000000032596,
+        "candidate_decision_seconds": -0.046999999991385266,
+        "configuration_recovery_seconds": -1.1089999999967404,
+        "functional_recovery_seconds": -1.0929999999934807,
+        "policy_total_seconds": -2.1559999999881256
+      },
+      "pair": 5,
+      "scenario": "invalid-pool"
+    }
+  ],
+  "shutdown": {
+    "data_preserved": true,
+    "mode": "pause",
+    "replicas": 0,
+    "scenario_passed": true
+  }
+}

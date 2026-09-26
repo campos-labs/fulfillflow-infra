@@ -1,0 +1,24 @@
+{
+  "acceptance_observed": true,
+  "acceptance_verified": true,
+  "checkpoint": {
+    "event_id": "infra-smoke-7c908807-6834-4c74-aabb-efeb119aa1f5",
+    "inbox_event_id": "48ba54a0-aa84-4058-8156-ce2da9d6d5e5",
+    "order_id": "a1d11137-e21d-4fab-949c-7d39143b9a5a",
+    "run_id": "7c908807-6834-4c74-aabb-efeb119aa1f5",
+    "shipment_id": "0b916515-8c5b-4bdf-9342-a2a28ad242ae",
+    "tracking_event_id": "57240a1c-71e5-5546-aad3-4aeb5c522a00"
+  },
+  "duplicate_verified": false,
+  "error": null,
+  "event_id": "infra-smoke-7c908807-6834-4c74-aabb-efeb119aa1f5",
+  "last_operation": "effects_observation",
+  "notifications_simulated": true,
+  "observation_only": true,
+  "order_completed": true,
+  "run_id": "7c908807-6834-4c74-aabb-efeb119aa1f5",
+  "success": true,
+  "tracking_completed": true,
+  "verdict": "approved",
+  "webhook_offered": true
+}

@@ -1,0 +1,188 @@
+{
+  "source": "a2-comparison-03",
+  "infra_sha": "08a68234932557f29c65911cab17f850adc4b23d",
+  "application_sha": "9e3a135a00db218643633c7165d3106f0c8285e1",
+  "files_and_zip_entries_verified": 638,
+  "journal_records_verified": 235,
+  "attempts_passed": 20,
+  "complete_pairs": 10,
+  "healthy_false_restores": 0,
+  "fault_restores": 10,
+  "fresh_flows_with_duplicate": 30,
+  "read_only_reobservations": 10,
+  "medians_recomputed": true,
+  "paired_differences_recomputed": true,
+  "baseline_restored": true,
+  "node_stopped": true,
+  "elapsed_seconds": 918.8129999999946,
+  "groups": [
+    {
+      "attempted": 5,
+      "condition": "explicit",
+      "metrics": {
+        "activation_seconds": {
+          "max": null,
+          "median": null,
+          "min": null,
+          "n": 0
+        },
+        "candidate_decision_seconds": {
+          "max": 22.702999999994063,
+          "median": 21.735000000000582,
+          "min": 20.390999999988708,
+          "n": 5
+        },
+        "configuration_recovery_seconds": {
+          "max": null,
+          "median": null,
+          "min": null,
+          "n": 0
+        },
+        "functional_recovery_seconds": {
+          "max": null,
+          "median": null,
+          "min": null,
+          "n": 0
+        },
+        "policy_total_seconds": {
+          "max": 22.702999999994063,
+          "median": 21.735000000000582,
+          "min": 20.390999999988708,
+          "n": 5
+        }
+      },
+      "passed": 5,
+      "planned": 5,
+      "scenario": "healthy",
+      "usable": 5
+    },
+    {
+      "attempted": 5,
+      "condition": "auto",
+      "metrics": {
+        "activation_seconds": {
+          "max": null,
+          "median": null,
+          "min": null,
+          "n": 0
+        },
+        "candidate_decision_seconds": {
+          "max": 21.687000000005355,
+          "median": 21.546999999991385,
+          "min": 20.578000000008615,
+          "n": 5
+        },
+        "configuration_recovery_seconds": {
+          "max": null,
+          "median": null,
+          "min": null,
+          "n": 0
+        },
+        "functional_recovery_seconds": {
+          "max": null,
+          "median": null,
+          "min": null,
+          "n": 0
+        },
+        "policy_total_seconds": {
+          "max": 21.687000000005355,
+          "median": 21.546999999991385,
+          "min": 20.578000000008615,
+          "n": 5
+        }
+      },
+      "passed": 5,
+      "planned": 5,
+      "scenario": "healthy",
+      "usable": 5
+    },
+    {
+      "attempted": 5,
+      "condition": "explicit",
+      "metrics": {
+        "activation_seconds": {
+          "max": 1.0780000000086147,
+          "median": 1.0780000000086147,
+          "min": 1.0619999999908032,
+          "n": 5
+        },
+        "candidate_decision_seconds": {
+          "max": 6.5,
+          "median": 6.203000000008615,
+          "min": 3.5319999999919673,
+          "n": 5
+        },
+        "configuration_recovery_seconds": {
+          "max": 18.843999999997322,
+          "median": 18.764999999999418,
+          "min": 17.65700000000652,
+          "n": 5
+        },
+        "functional_recovery_seconds": {
+          "max": 21.952999999994063,
+          "median": 21.906000000002678,
+          "min": 20.76600000000326,
+          "n": 5
+        },
+        "policy_total_seconds": {
+          "max": 29.547000000005937,
+          "median": 29.093999999997322,
+          "min": 26.468999999997322,
+          "n": 5
+        }
+      },
+      "passed": 5,
+      "planned": 5,
+      "scenario": "invalid-pool",
+      "usable": 5
+    },
+    {
+      "attempted": 5,
+      "condition": "auto",
+      "metrics": {
+        "activation_seconds": {
+          "max": 0.09399999999732245,
+          "median": 0.062000000005355105,
+          "min": 0.030999999988125637,
+          "n": 5
+        },
+        "candidate_decision_seconds": {
+          "max": 6.25,
+          "median": 6.187999999994645,
+          "min": 3.485000000000582,
+          "n": 5
+        },
+        "configuration_recovery_seconds": {
+          "max": 18.843999999997322,
+          "median": 18.797000000005937,
+          "min": 17.562000000005355,
+          "n": 5
+        },
+        "functional_recovery_seconds": {
+          "max": 21.98399999999674,
+          "median": 21.937000000005355,
+          "min": 20.734000000011292,
+          "n": 5
+        },
+        "policy_total_seconds": {
+          "max": 28.218999999997322,
+          "median": 27.01600000000326,
+          "min": 24.313000000009197,
+          "n": 5
+        }
+      },
+      "passed": 5,
+      "planned": 5,
+      "scenario": "invalid-pool",
+      "usable": 5
+    }
+  ],
+  "limits": [
+    "Explicit activation by script, not human reaction",
+    "Single-node Kind, no capacity or AKS claim",
+    "Startup failure offers no event before recovery",
+    "Same-host archive is not independent backup",
+    "No automatic retry or replacement; incomplete series remains incomplete"
+  ],
+  "comparison_archive_sha256": "fc0c5896a32a23944873c296d85256162d52769b33b2d1bbbb56d2b51cb66676"
+}

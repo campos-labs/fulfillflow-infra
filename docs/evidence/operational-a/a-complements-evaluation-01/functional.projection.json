@@ -1,0 +1,4913 @@
+{
+  "nature": "projection",
+  "source_campaign": "a-complements-evaluation-01",
+  "selection": "All nine attempts; complete method/status records for each selected observation stream, selected response/effect records, source line numbers (one-based), policy chronology and abstention identity proofs. Original files unchanged. No raw cluster dumps or credential values included.",
+  "semantics": {
+    "webhook_offered": "In resumed result.json, true is inherited event history; use observation_only plus HTTP records to establish GET-only phase.",
+    "counts": "One original event per attempt; parallel/previous reads and fresh smoke checks are not additional repetitions.",
+    "convergence": "Composite healthy revision convergence, not exact Pod Ready transition.",
+    "same_sample": "Pending completion and parallel convergence use the same six attempts.",
+    "canonical_identity_digest": "SHA-256 of UTF-8 JSON with sorted keys, separators comma/colon, ensure_ascii=true.",
+    "preparation_result": "Initial pending result.success=false and verdict=pending describe intentional pre-restoration preparation, not a failed evaluation attempt."
+  },
+  "attempts": [
+    {
+      "attempt": "01-pending-explicit",
+      "number": 1,
+      "scenario": "pending",
+      "condition": "explicit",
+      "pair": 1,
+      "journal": {
+        "policy_window": [
+          {
+            "source": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0000.json",
+            "value": {
+              "elapsed_seconds": 0.3120000000053551,
+              "mode": "complement",
+              "phase": "operation_started",
+              "process_id": "b0d53483-96db-4678-8736-698515d881a0",
+              "utc": "2026-09-25T22:30:38.807368+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0001.json",
+            "value": {
+              "elapsed_seconds": 0.75,
+              "phase": "candidate_send_intent",
+              "process_id": "b0d53483-96db-4678-8736-698515d881a0",
+              "template_hash": "2fa6feb35f94a6508af3c3dcc882894bd5add1c20c613c6be9f37fd96cd25b90",
+              "utc": "2026-09-25T22:30:39.246406+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0003.json",
+            "value": {
+              "elapsed_seconds": 7.030999999988126,
+              "phase": "candidate_decided",
+              "process_id": "b0d53483-96db-4678-8736-698515d881a0",
+              "utc": "2026-09-25T22:30:45.537263+00:00",
+              "verdict": "rejected"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0004.json",
+            "value": {
+              "elapsed_seconds": 7.092999999993481,
+              "phase": "preparation_started",
+              "process_id": "b0d53483-96db-4678-8736-698515d881a0",
+              "utc": "2026-09-25T22:30:45.599157+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0005.json",
+            "value": {
+              "elapsed_seconds": 10.062000000005355,
+              "pending_stage": "published_not_received",
+              "phase": "preparation_finished",
+              "process_id": "b0d53483-96db-4678-8736-698515d881a0",
+              "utc": "2026-09-25T22:30:48.562016+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0006.json",
+            "value": {
+              "elapsed_seconds": 10.48399999999674,
+              "phase": "policy_authorized",
+              "process_id": "b0d53483-96db-4678-8736-698515d881a0",
+              "utc": "2026-09-25T22:30:48.985919+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0007.json",
+            "value": {
+              "elapsed_seconds": 10.48399999999674,
+              "phase": "awaiting_explicit_request",
+              "process_id": "b0d53483-96db-4678-8736-698515d881a0",
+              "utc": "2026-09-25T22:30:48.988671+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0008.json",
+            "value": {
+              "actor": "script",
+              "elapsed_seconds": 11.51500000001397,
+              "phase": "restoration_requested",
+              "process_id": "b0d53483-96db-4678-8736-698515d881a0",
+              "utc": "2026-09-25T22:30:50.009248+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0009.json",
+            "value": {
+              "elapsed_seconds": 11.73399999999674,
+              "phase": "restore_send_intent",
+              "process_id": "b0d53483-96db-4678-8736-698515d881a0",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:30:50.238854+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0010.json",
+            "value": {
+              "elapsed_seconds": 11.84299999999348,
+              "phase": "restore_sent",
+              "process_id": "b0d53483-96db-4678-8736-698515d881a0",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:30:50.346823+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0011.json",
+            "value": {
+              "elapsed_seconds": 30.328000000008615,
+              "phase": "healthy_converged",
+              "process_id": "b0d53483-96db-4678-8736-698515d881a0",
+              "utc": "2026-09-25T22:31:08.822828+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0012.json",
+            "value": {
+              "directory": "recovery-flow-315a371d-e1e5-48f0-8584-fe0a670b1e46",
+              "elapsed_seconds": 30.76500000001397,
+              "phase": "recovery_flow_started",
+              "process_id": "b0d53483-96db-4678-8736-698515d881a0",
+              "utc": "2026-09-25T22:31:09.261871+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0013.json",
+            "value": {
+              "elapsed_seconds": 33.937000000005355,
+              "phase": "recovery_observed",
+              "process_id": "b0d53483-96db-4678-8736-698515d881a0",
+              "success": true,
+              "utc": "2026-09-25T22:31:12.432827+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0014.json",
+            "value": {
+              "elapsed_seconds": 33.937000000005355,
+              "phase": "operation_finished",
+              "process_id": "b0d53483-96db-4678-8736-698515d881a0",
+              "success": true,
+              "utc": "2026-09-25T22:31:12.437899+00:00"
+            }
+          }
+        ],
+        "later_cleanup": [],
+        "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+      },
+      "initial": {
+        "result_source": "artifacts/a-complements-evaluation-01/01-pending-explicit/flow/result.json",
+        "result": {
+          "acceptance_observed": true,
+          "acceptance_verified": true,
+          "checkpoint": {
+            "event_id": "infra-smoke-7c908807-6834-4c74-aabb-efeb119aa1f5",
+            "inbox_event_id": "48ba54a0-aa84-4058-8156-ce2da9d6d5e5",
+            "order_id": "a1d11137-e21d-4fab-949c-7d39143b9a5a",
+            "run_id": "7c908807-6834-4c74-aabb-efeb119aa1f5",
+            "shipment_id": "0b916515-8c5b-4bdf-9342-a2a28ad242ae",
+            "tracking_event_id": "57240a1c-71e5-5546-aad3-4aeb5c522a00"
+          },
+          "duplicate_verified": false,
+          "error": null,
+          "event_id": "infra-smoke-7c908807-6834-4c74-aabb-efeb119aa1f5",
+          "last_operation": "business_observation",
+          "notification_projection": {
+            "notification_id": null,
+            "processing": "NOT_RECEIVED",
+            "publication": "SENT",
+            "required": true,
+            "simulated_at": null,
+            "status": null,
+            "tracking_event_id": "57240a1c-71e5-5546-aad3-4aeb5c522a00"
+          },
+          "notifications_simulated": false,
+          "observation_only": false,
+          "order_completed": true,
+          "pending_stage": "published_not_received",
+          "run_id": "7c908807-6834-4c74-aabb-efeb119aa1f5",
+          "success": false,
+          "tracking_completed": true,
+          "verdict": "pending",
+          "webhook_offered": true
+        },
+        "observation_source": "artifacts/a-complements-evaluation-01/01-pending-explicit/flow/observations.jsonl",
+        "observation_line_count": 27,
+        "http_records": [
+          {
+            "line": 2,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.046999999991385266
+          },
+          {
+            "line": 4,
+            "method": "POST",
+            "http_status": 200,
+            "operation": "prepare",
+            "elapsed_seconds": 0.0629999999946449
+          },
+          {
+            "line": 5,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.09400000001187436
+          },
+          {
+            "line": 8,
+            "method": "POST",
+            "http_status": 202,
+            "operation": "admission",
+            "elapsed_seconds": 0.17199999999138527
+          },
+          {
+            "line": 11,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 0.21900000001187436
+          },
+          {
+            "line": 14,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 1.2820000000065193
+          },
+          {
+            "line": 17,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 2.312999999994645
+          },
+          {
+            "line": 20,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.3440000000118744
+          },
+          {
+            "line": 22,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.375
+          },
+          {
+            "line": 25,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.4070000000065193
+          }
+        ],
+        "http_method_counts": {
+          "POST": 4,
+          "GET": 6
+        },
+        "selected_records": [
+          {
+            "line": 19,
+            "value": {
+              "elapsed_seconds": 2.312999999994645,
+              "observed_at": "2026-09-25T22:30:48.114738+00:00",
+              "phase": "tracking_completed",
+              "result": "APPLIED",
+              "tracking_event_id": "57240a1c-71e5-5546-aad3-4aeb5c522a00"
+            }
+          },
+          {
+            "line": 24,
+            "value": {
+              "elapsed_seconds": 2.375,
+              "observed_at": "2026-09-25T22:30:48.170227+00:00",
+              "order_status": "FULFILLED",
+              "phase": "business_completed",
+              "shipment_status": "DELIVERED"
+            }
+          }
+        ]
+      },
+      "read_only_phases": {
+        "parallel-flow": {
+          "result_source": "artifacts/a-complements-evaluation-01/01-pending-explicit/parallel-flow/result.json",
+          "result": {
+            "acceptance_observed": true,
+            "acceptance_verified": true,
+            "checkpoint": {
+              "event_id": "infra-smoke-7c908807-6834-4c74-aabb-efeb119aa1f5",
+              "inbox_event_id": "48ba54a0-aa84-4058-8156-ce2da9d6d5e5",
+              "order_id": "a1d11137-e21d-4fab-949c-7d39143b9a5a",
+              "run_id": "7c908807-6834-4c74-aabb-efeb119aa1f5",
+              "shipment_id": "0b916515-8c5b-4bdf-9342-a2a28ad242ae",
+              "tracking_event_id": "57240a1c-71e5-5546-aad3-4aeb5c522a00"
+            },
+            "duplicate_verified": false,
+            "error": null,
+            "event_id": "infra-smoke-7c908807-6834-4c74-aabb-efeb119aa1f5",
+            "last_operation": "effects_observation",
+            "notifications_simulated": true,
+            "observation_only": true,
+            "order_completed": true,
+            "run_id": "7c908807-6834-4c74-aabb-efeb119aa1f5",
+            "success": true,
+            "tracking_completed": true,
+            "verdict": "approved",
+            "webhook_offered": true
+          },
+          "observation_source": "artifacts/a-complements-evaluation-01/01-pending-explicit/parallel-flow/observations.jsonl",
+          "observation_line_count": 32,
+          "http_records": [
+            {
+              "line": 2,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "tracking_observation",
+              "elapsed_seconds": 0.030999999988125637
+            },
+            {
+              "line": 5,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.0629999999946449
+            },
+            {
+              "line": 7,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.09399999998277053
+            },
+            {
+              "line": 10,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 0.1409999999741558
+            },
+            {
+              "line": 13,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 1.1719999999913853
+            },
+            {
+              "line": 16,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 2.2189999999827705
+            },
+            {
+              "line": 19,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 3.265999999974156
+            },
+            {
+              "line": 22,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 4.280999999988126
+            },
+            {
+              "line": 25,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 5.327999999979511
+            },
+            {
+              "line": 28,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 5.35999999998603
+            },
+            {
+              "line": 30,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 5.405999999988126
+            }
+          ],
+          "http_method_counts": {
+            "GET": 11
+          },
+          "selected_records": [
+            {
+              "line": 1,
+              "value": {
+                "elapsed_seconds": 0.0,
+                "event_id": "infra-smoke-7c908807-6834-4c74-aabb-efeb119aa1f5",
+                "inbox_event_id": "48ba54a0-aa84-4058-8156-ce2da9d6d5e5",
+                "observed_at": "2026-09-25T22:30:48.514214+00:00",
+                "order_id": "a1d11137-e21d-4fab-949c-7d39143b9a5a",
+                "phase": "resumed_observation",
+                "run_id": "7c908807-6834-4c74-aabb-efeb119aa1f5",
+                "shipment_id": "0b916515-8c5b-4bdf-9342-a2a28ad242ae",
+                "tracking_event_id": "57240a1c-71e5-5546-aad3-4aeb5c522a00"
+              }
+            },
+            {
+              "line": 4,
+              "value": {
+                "elapsed_seconds": 0.030999999988125637,
+                "observed_at": "2026-09-25T22:30:48.550939+00:00",
+                "phase": "tracking_completed",
+                "result": "APPLIED",
+                "tracking_event_id": "57240a1c-71e5-5546-aad3-4aeb5c522a00"
+              }
+            },
+            {
+              "line": 9,
+              "value": {
+                "elapsed_seconds": 0.10999999998603016,
+                "observed_at": "2026-09-25T22:30:48.618625+00:00",
+                "order_status": "FULFILLED",
+                "phase": "business_completed",
+                "shipment_status": "DELIVERED"
+              }
+            },
+            {
+              "line": 32,
+              "value": {
+                "elapsed_seconds": 5.405999999988126,
+                "notifications_count": 1,
+                "observed_at": "2026-09-25T22:30:53.916713+00:00",
+                "phase": "effects_observed",
+                "tracking_count": 1
+              }
+            },
+            {
+              "line": 26,
+              "value": {
+                "elapsed_seconds": 5.327999999979511,
+                "observed_at": "2026-09-25T22:30:53.838229+00:00",
+                "operation": "notifications_observation",
+                "phase": "public_query",
+                "response": {
+                  "notification_id": "dab9b2d6-7c81-4225-adb6-5b6ebfc9ccfb",
+                  "processing": "DONE",
+                  "publication": "SENT",
+                  "required": true,
+                  "simulated_at": "2026-09-25T22:30:53.157556Z",
+                  "status": "SIMULATED",
+                  "tracking_event_id": "57240a1c-71e5-5546-aad3-4aeb5c522a00"
+                }
+              }
+            }
+          ]
+        },
+        "previous-flow": {
+          "result_source": "artifacts/a-complements-evaluation-01/01-pending-explicit/previous-flow/result.json",
+          "result": {
+            "acceptance_observed": true,
+            "acceptance_verified": true,
+            "checkpoint": {
+              "event_id": "infra-smoke-7c908807-6834-4c74-aabb-efeb119aa1f5",
+              "inbox_event_id": "48ba54a0-aa84-4058-8156-ce2da9d6d5e5",
+              "order_id": "a1d11137-e21d-4fab-949c-7d39143b9a5a",
+              "run_id": "7c908807-6834-4c74-aabb-efeb119aa1f5",
+              "shipment_id": "0b916515-8c5b-4bdf-9342-a2a28ad242ae",
+              "tracking_event_id": "57240a1c-71e5-5546-aad3-4aeb5c522a00"
+            },
+            "duplicate_verified": false,
+            "error": null,
+            "event_id": "infra-smoke-7c908807-6834-4c74-aabb-efeb119aa1f5",
+            "last_operation": "effects_observation",
+            "notifications_simulated": true,
+            "observation_only": true,
+            "order_completed": true,
+            "run_id": "7c908807-6834-4c74-aabb-efeb119aa1f5",
+            "success": true,
+            "tracking_completed": true,
+            "verdict": "approved",
+            "webhook_offered": true
+          },
+          "observation_source": "artifacts/a-complements-evaluation-01/01-pending-explicit/previous-flow/observations.jsonl",
+          "observation_line_count": 17,
+          "http_records": [
+            {
+              "line": 2,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "tracking_observation",
+              "elapsed_seconds": 0.030999999988125637
+            },
+            {
+              "line": 5,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.046000000002095476
+            },
+            {
+              "line": 7,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.09299999999348074
+            },
+            {
+              "line": 10,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 0.125
+            },
+            {
+              "line": 13,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.15599999998812564
+            },
+            {
+              "line": 15,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.1870000000053551
+            }
+          ],
+          "http_method_counts": {
+            "GET": 6
+          },
+          "selected_records": [
+            {
+              "line": 1,
+              "value": {
+                "elapsed_seconds": 0.0,
+                "event_id": "infra-smoke-7c908807-6834-4c74-aabb-efeb119aa1f5",
+                "inbox_event_id": "48ba54a0-aa84-4058-8156-ce2da9d6d5e5",
+                "observed_at": "2026-09-25T22:31:08.992074+00:00",
+                "order_id": "a1d11137-e21d-4fab-949c-7d39143b9a5a",
+                "phase": "resumed_observation",
+                "run_id": "7c908807-6834-4c74-aabb-efeb119aa1f5",
+                "shipment_id": "0b916515-8c5b-4bdf-9342-a2a28ad242ae",
+                "tracking_event_id": "57240a1c-71e5-5546-aad3-4aeb5c522a00"
+              }
+            },
+            {
+              "line": 4,
+              "value": {
+                "elapsed_seconds": 0.030999999988125637,
+                "observed_at": "2026-09-25T22:31:09.032784+00:00",
+                "phase": "tracking_completed",
+                "result": "APPLIED",
+                "tracking_event_id": "57240a1c-71e5-5546-aad3-4aeb5c522a00"
+              }
+            },
+            {
+              "line": 9,
+              "value": {
+                "elapsed_seconds": 0.09299999999348074,
+                "observed_at": "2026-09-25T22:31:09.088038+00:00",
+                "order_status": "FULFILLED",
+                "phase": "business_completed",
+                "shipment_status": "DELIVERED"
+              }
+            },
+            {
+              "line": 17,
+              "value": {
+                "elapsed_seconds": 0.1870000000053551,
+                "notifications_count": 1,
+                "observed_at": "2026-09-25T22:31:09.183416+00:00",
+                "phase": "effects_observed",
+                "tracking_count": 1
+              }
+            },
+            {
+              "line": 11,
+              "value": {
+                "elapsed_seconds": 0.125,
+                "observed_at": "2026-09-25T22:31:09.121345+00:00",
+                "operation": "notifications_observation",
+                "phase": "public_query",
+                "response": {
+                  "notification_id": "dab9b2d6-7c81-4225-adb6-5b6ebfc9ccfb",
+                  "processing": "DONE",
+                  "publication": "SENT",
+                  "required": true,
+                  "simulated_at": "2026-09-25T22:30:53.157556Z",
+                  "status": "SIMULATED",
+                  "tracking_event_id": "57240a1c-71e5-5546-aad3-4aeb5c522a00"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "parallel_signals": {
+        "source": "artifacts/a-complements-evaluation-01/01-pending-explicit/parallel-signals.json",
+        "values": {
+          "signal": "healthy_revision_convergence_not_exact_Ready_transition",
+          "converged_seconds": 29.51500000001397,
+          "notification_observed_seconds": 15.34299999999348,
+          "difference_seconds": -14.172000000020489,
+          "poll_seconds": 1,
+          "errors": []
+        },
+        "clock": "Same attempt runtime monotonic origin as policy journal; HTTP and snapshot endpoints include query/polling delay."
+      }
+    },
+    {
+      "attempt": "02-pending-auto",
+      "number": 2,
+      "scenario": "pending",
+      "condition": "auto",
+      "pair": 1,
+      "journal": {
+        "policy_window": [
+          {
+            "source": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0000.json",
+            "value": {
+              "elapsed_seconds": 0.29699999999138527,
+              "mode": "complement",
+              "phase": "operation_started",
+              "process_id": "4e0fdc7e-a589-4357-b2e4-38f7c036ce01",
+              "utc": "2026-09-25T22:31:14.612555+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0001.json",
+            "value": {
+              "elapsed_seconds": 0.7189999999827705,
+              "phase": "candidate_send_intent",
+              "process_id": "4e0fdc7e-a589-4357-b2e4-38f7c036ce01",
+              "template_hash": "d0d54de6518c815da26acd41500b5bc332992ea2f062bb73d2d54ea30b48acfb",
+              "utc": "2026-09-25T22:31:15.035695+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0003.json",
+            "value": {
+              "elapsed_seconds": 4.3439999999827705,
+              "phase": "candidate_decided",
+              "process_id": "4e0fdc7e-a589-4357-b2e4-38f7c036ce01",
+              "utc": "2026-09-25T22:31:18.652861+00:00",
+              "verdict": "rejected"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0004.json",
+            "value": {
+              "elapsed_seconds": 4.39100000000326,
+              "phase": "preparation_started",
+              "process_id": "4e0fdc7e-a589-4357-b2e4-38f7c036ce01",
+              "utc": "2026-09-25T22:31:18.702741+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0005.json",
+            "value": {
+              "elapsed_seconds": 7.171999999991385,
+              "pending_stage": "published_not_received",
+              "phase": "preparation_finished",
+              "process_id": "4e0fdc7e-a589-4357-b2e4-38f7c036ce01",
+              "utc": "2026-09-25T22:31:21.482396+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0006.json",
+            "value": {
+              "elapsed_seconds": 7.578000000008615,
+              "phase": "policy_authorized",
+              "process_id": "4e0fdc7e-a589-4357-b2e4-38f7c036ce01",
+              "utc": "2026-09-25T22:31:21.894700+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0007.json",
+            "value": {
+              "actor": "policy",
+              "elapsed_seconds": 7.5939999999827705,
+              "phase": "restoration_requested",
+              "process_id": "4e0fdc7e-a589-4357-b2e4-38f7c036ce01",
+              "utc": "2026-09-25T22:31:21.897739+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0008.json",
+            "value": {
+              "elapsed_seconds": 7.796999999991385,
+              "phase": "restore_send_intent",
+              "process_id": "4e0fdc7e-a589-4357-b2e4-38f7c036ce01",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:31:22.102488+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0009.json",
+            "value": {
+              "elapsed_seconds": 7.89100000000326,
+              "phase": "restore_sent",
+              "process_id": "4e0fdc7e-a589-4357-b2e4-38f7c036ce01",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:31:22.205908+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0010.json",
+            "value": {
+              "elapsed_seconds": 26.421999999991385,
+              "phase": "healthy_converged",
+              "process_id": "4e0fdc7e-a589-4357-b2e4-38f7c036ce01",
+              "utc": "2026-09-25T22:31:40.730255+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0011.json",
+            "value": {
+              "directory": "recovery-flow-df2ca25a-8f6b-4f2b-a892-5f5a3d4b1669",
+              "elapsed_seconds": 26.953000000008615,
+              "phase": "recovery_flow_started",
+              "process_id": "4e0fdc7e-a589-4357-b2e4-38f7c036ce01",
+              "utc": "2026-09-25T22:31:41.266801+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0012.json",
+            "value": {
+              "elapsed_seconds": 30.125,
+              "phase": "recovery_observed",
+              "process_id": "4e0fdc7e-a589-4357-b2e4-38f7c036ce01",
+              "success": true,
+              "utc": "2026-09-25T22:31:44.440667+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0013.json",
+            "value": {
+              "elapsed_seconds": 30.14100000000326,
+              "phase": "operation_finished",
+              "process_id": "4e0fdc7e-a589-4357-b2e4-38f7c036ce01",
+              "success": true,
+              "utc": "2026-09-25T22:31:44.445631+00:00"
+            }
+          }
+        ],
+        "later_cleanup": [],
+        "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+      },
+      "initial": {
+        "result_source": "artifacts/a-complements-evaluation-01/02-pending-auto/flow/result.json",
+        "result": {
+          "acceptance_observed": true,
+          "acceptance_verified": true,
+          "checkpoint": {
+            "event_id": "infra-smoke-c4534c56-dd09-4c67-93c7-da6515b04fcc",
+            "inbox_event_id": "98ecd06e-7013-4bc8-b387-0a411596f226",
+            "order_id": "e19c893e-5f56-4519-a365-8a74d910cef4",
+            "run_id": "c4534c56-dd09-4c67-93c7-da6515b04fcc",
+            "shipment_id": "4c4313b7-693f-4aa5-9b74-4a66c51161f4",
+            "tracking_event_id": "c31c4e79-6eeb-535b-a6ae-18bf3cadaae6"
+          },
+          "duplicate_verified": false,
+          "error": null,
+          "event_id": "infra-smoke-c4534c56-dd09-4c67-93c7-da6515b04fcc",
+          "last_operation": "business_observation",
+          "notification_projection": {
+            "notification_id": null,
+            "processing": "NOT_RECEIVED",
+            "publication": "SENT",
+            "required": true,
+            "simulated_at": null,
+            "status": null,
+            "tracking_event_id": "c31c4e79-6eeb-535b-a6ae-18bf3cadaae6"
+          },
+          "notifications_simulated": false,
+          "observation_only": false,
+          "order_completed": true,
+          "pending_stage": "published_not_received",
+          "run_id": "c4534c56-dd09-4c67-93c7-da6515b04fcc",
+          "success": false,
+          "tracking_completed": true,
+          "verdict": "pending",
+          "webhook_offered": true
+        },
+        "observation_source": "artifacts/a-complements-evaluation-01/02-pending-auto/flow/observations.jsonl",
+        "observation_line_count": 27,
+        "http_records": [
+          {
+            "line": 2,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.046999999991385266
+          },
+          {
+            "line": 4,
+            "method": "POST",
+            "http_status": 200,
+            "operation": "prepare",
+            "elapsed_seconds": 0.062000000005355105
+          },
+          {
+            "line": 5,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.10899999999674037
+          },
+          {
+            "line": 8,
+            "method": "POST",
+            "http_status": 202,
+            "operation": "admission",
+            "elapsed_seconds": 0.14100000000325963
+          },
+          {
+            "line": 11,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 0.17199999999138527
+          },
+          {
+            "line": 14,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 1.2030000000086147
+          },
+          {
+            "line": 17,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 2.2190000000118744
+          },
+          {
+            "line": 20,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.25
+          },
+          {
+            "line": 22,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.2810000000172295
+          },
+          {
+            "line": 25,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.3280000000086147
+          }
+        ],
+        "http_method_counts": {
+          "POST": 4,
+          "GET": 6
+        },
+        "selected_records": [
+          {
+            "line": 19,
+            "value": {
+              "elapsed_seconds": 2.2190000000118744,
+              "observed_at": "2026-09-25T22:31:21.079765+00:00",
+              "phase": "tracking_completed",
+              "result": "APPLIED",
+              "tracking_event_id": "c31c4e79-6eeb-535b-a6ae-18bf3cadaae6"
+            }
+          },
+          {
+            "line": 24,
+            "value": {
+              "elapsed_seconds": 2.2969999999913853,
+              "observed_at": "2026-09-25T22:31:21.148592+00:00",
+              "order_status": "FULFILLED",
+              "phase": "business_completed",
+              "shipment_status": "DELIVERED"
+            }
+          }
+        ]
+      },
+      "read_only_phases": {
+        "parallel-flow": {
+          "result_source": "artifacts/a-complements-evaluation-01/02-pending-auto/parallel-flow/result.json",
+          "result": {
+            "acceptance_observed": true,
+            "acceptance_verified": true,
+            "checkpoint": {
+              "event_id": "infra-smoke-c4534c56-dd09-4c67-93c7-da6515b04fcc",
+              "inbox_event_id": "98ecd06e-7013-4bc8-b387-0a411596f226",
+              "order_id": "e19c893e-5f56-4519-a365-8a74d910cef4",
+              "run_id": "c4534c56-dd09-4c67-93c7-da6515b04fcc",
+              "shipment_id": "4c4313b7-693f-4aa5-9b74-4a66c51161f4",
+              "tracking_event_id": "c31c4e79-6eeb-535b-a6ae-18bf3cadaae6"
+            },
+            "duplicate_verified": false,
+            "error": null,
+            "event_id": "infra-smoke-c4534c56-dd09-4c67-93c7-da6515b04fcc",
+            "last_operation": "effects_observation",
+            "notifications_simulated": true,
+            "observation_only": true,
+            "order_completed": true,
+            "run_id": "c4534c56-dd09-4c67-93c7-da6515b04fcc",
+            "success": true,
+            "tracking_completed": true,
+            "verdict": "approved",
+            "webhook_offered": true
+          },
+          "observation_source": "artifacts/a-complements-evaluation-01/02-pending-auto/parallel-flow/observations.jsonl",
+          "observation_line_count": 29,
+          "http_records": [
+            {
+              "line": 2,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "tracking_observation",
+              "elapsed_seconds": 0.030999999988125637
+            },
+            {
+              "line": 5,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.0629999999946449
+            },
+            {
+              "line": 7,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.09399999998277053
+            },
+            {
+              "line": 10,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 0.125
+            },
+            {
+              "line": 13,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 1.1559999999881256
+            },
+            {
+              "line": 16,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 2.187999999994645
+            },
+            {
+              "line": 19,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 3.2189999999827705
+            },
+            {
+              "line": 22,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 4.23399999999674
+            },
+            {
+              "line": 25,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 4.280999999988126
+            },
+            {
+              "line": 27,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 4.296999999991385
+            }
+          ],
+          "http_method_counts": {
+            "GET": 10
+          },
+          "selected_records": [
+            {
+              "line": 1,
+              "value": {
+                "elapsed_seconds": 0.0,
+                "event_id": "infra-smoke-c4534c56-dd09-4c67-93c7-da6515b04fcc",
+                "inbox_event_id": "98ecd06e-7013-4bc8-b387-0a411596f226",
+                "observed_at": "2026-09-25T22:31:21.431829+00:00",
+                "order_id": "e19c893e-5f56-4519-a365-8a74d910cef4",
+                "phase": "resumed_observation",
+                "run_id": "c4534c56-dd09-4c67-93c7-da6515b04fcc",
+                "shipment_id": "4c4313b7-693f-4aa5-9b74-4a66c51161f4",
+                "tracking_event_id": "c31c4e79-6eeb-535b-a6ae-18bf3cadaae6"
+              }
+            },
+            {
+              "line": 4,
+              "value": {
+                "elapsed_seconds": 0.030999999988125637,
+                "observed_at": "2026-09-25T22:31:21.467023+00:00",
+                "phase": "tracking_completed",
+                "result": "APPLIED",
+                "tracking_event_id": "c31c4e79-6eeb-535b-a6ae-18bf3cadaae6"
+              }
+            },
+            {
+              "line": 9,
+              "value": {
+                "elapsed_seconds": 0.09399999998277053,
+                "observed_at": "2026-09-25T22:31:21.536232+00:00",
+                "order_status": "FULFILLED",
+                "phase": "business_completed",
+                "shipment_status": "DELIVERED"
+              }
+            },
+            {
+              "line": 29,
+              "value": {
+                "elapsed_seconds": 4.296999999991385,
+                "notifications_count": 1,
+                "observed_at": "2026-09-25T22:31:25.739239+00:00",
+                "phase": "effects_observed",
+                "tracking_count": 1
+              }
+            },
+            {
+              "line": 23,
+              "value": {
+                "elapsed_seconds": 4.23399999999674,
+                "observed_at": "2026-09-25T22:31:25.678348+00:00",
+                "operation": "notifications_observation",
+                "phase": "public_query",
+                "response": {
+                  "notification_id": "4a4a74f8-db13-40af-8773-0ad9cddc3488",
+                  "processing": "DONE",
+                  "publication": "SENT",
+                  "required": true,
+                  "simulated_at": "2026-09-25T22:31:24.883520Z",
+                  "status": "SIMULATED",
+                  "tracking_event_id": "c31c4e79-6eeb-535b-a6ae-18bf3cadaae6"
+                }
+              }
+            }
+          ]
+        },
+        "previous-flow": {
+          "result_source": "artifacts/a-complements-evaluation-01/02-pending-auto/previous-flow/result.json",
+          "result": {
+            "acceptance_observed": true,
+            "acceptance_verified": true,
+            "checkpoint": {
+              "event_id": "infra-smoke-c4534c56-dd09-4c67-93c7-da6515b04fcc",
+              "inbox_event_id": "98ecd06e-7013-4bc8-b387-0a411596f226",
+              "order_id": "e19c893e-5f56-4519-a365-8a74d910cef4",
+              "run_id": "c4534c56-dd09-4c67-93c7-da6515b04fcc",
+              "shipment_id": "4c4313b7-693f-4aa5-9b74-4a66c51161f4",
+              "tracking_event_id": "c31c4e79-6eeb-535b-a6ae-18bf3cadaae6"
+            },
+            "duplicate_verified": false,
+            "error": null,
+            "event_id": "infra-smoke-c4534c56-dd09-4c67-93c7-da6515b04fcc",
+            "last_operation": "effects_observation",
+            "notifications_simulated": true,
+            "observation_only": true,
+            "order_completed": true,
+            "run_id": "c4534c56-dd09-4c67-93c7-da6515b04fcc",
+            "success": true,
+            "tracking_completed": true,
+            "verdict": "approved",
+            "webhook_offered": true
+          },
+          "observation_source": "artifacts/a-complements-evaluation-01/02-pending-auto/previous-flow/observations.jsonl",
+          "observation_line_count": 17,
+          "http_records": [
+            {
+              "line": 2,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "tracking_observation",
+              "elapsed_seconds": 0.0470000000204891
+            },
+            {
+              "line": 5,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.07800000000861473
+            },
+            {
+              "line": 7,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.11000000001513399
+            },
+            {
+              "line": 10,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 0.14100000000325963
+            },
+            {
+              "line": 13,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.1720000000204891
+            },
+            {
+              "line": 15,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.21900000001187436
+            }
+          ],
+          "http_method_counts": {
+            "GET": 6
+          },
+          "selected_records": [
+            {
+              "line": 1,
+              "value": {
+                "elapsed_seconds": 0.0,
+                "event_id": "infra-smoke-c4534c56-dd09-4c67-93c7-da6515b04fcc",
+                "inbox_event_id": "98ecd06e-7013-4bc8-b387-0a411596f226",
+                "observed_at": "2026-09-25T22:31:40.964064+00:00",
+                "order_id": "e19c893e-5f56-4519-a365-8a74d910cef4",
+                "phase": "resumed_observation",
+                "run_id": "c4534c56-dd09-4c67-93c7-da6515b04fcc",
+                "shipment_id": "4c4313b7-693f-4aa5-9b74-4a66c51161f4",
+                "tracking_event_id": "c31c4e79-6eeb-535b-a6ae-18bf3cadaae6"
+              }
+            },
+            {
+              "line": 4,
+              "value": {
+                "elapsed_seconds": 0.0470000000204891,
+                "observed_at": "2026-09-25T22:31:41.019989+00:00",
+                "phase": "tracking_completed",
+                "result": "APPLIED",
+                "tracking_event_id": "c31c4e79-6eeb-535b-a6ae-18bf3cadaae6"
+              }
+            },
+            {
+              "line": 9,
+              "value": {
+                "elapsed_seconds": 0.11000000001513399,
+                "observed_at": "2026-09-25T22:31:41.072149+00:00",
+                "order_status": "FULFILLED",
+                "phase": "business_completed",
+                "shipment_status": "DELIVERED"
+              }
+            },
+            {
+              "line": 17,
+              "value": {
+                "elapsed_seconds": 0.21900000001187436,
+                "notifications_count": 1,
+                "observed_at": "2026-09-25T22:31:41.184863+00:00",
+                "phase": "effects_observed",
+                "tracking_count": 1
+              }
+            },
+            {
+              "line": 11,
+              "value": {
+                "elapsed_seconds": 0.14100000000325963,
+                "observed_at": "2026-09-25T22:31:41.110041+00:00",
+                "operation": "notifications_observation",
+                "phase": "public_query",
+                "response": {
+                  "notification_id": "4a4a74f8-db13-40af-8773-0ad9cddc3488",
+                  "processing": "DONE",
+                  "publication": "SENT",
+                  "required": true,
+                  "simulated_at": "2026-09-25T22:31:24.883520Z",
+                  "status": "SIMULATED",
+                  "tracking_event_id": "c31c4e79-6eeb-535b-a6ae-18bf3cadaae6"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "parallel_signals": {
+        "source": "artifacts/a-complements-evaluation-01/02-pending-auto/parallel-signals.json",
+        "values": {
+          "signal": "healthy_revision_convergence_not_exact_Ready_transition",
+          "converged_seconds": 26.780999999988126,
+          "notification_observed_seconds": 11.35899999999674,
+          "difference_seconds": -15.421999999991385,
+          "poll_seconds": 1,
+          "errors": []
+        },
+        "clock": "Same attempt runtime monotonic origin as policy journal; HTTP and snapshot endpoints include query/polling delay."
+      }
+    },
+    {
+      "attempt": "03-pending-auto",
+      "number": 3,
+      "scenario": "pending",
+      "condition": "auto",
+      "pair": 2,
+      "journal": {
+        "policy_window": [
+          {
+            "source": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0000.json",
+            "value": {
+              "elapsed_seconds": 0.34399999998277053,
+              "mode": "complement",
+              "phase": "operation_started",
+              "process_id": "ff8525fd-6f3a-499d-b14a-9ed49abbd04b",
+              "utc": "2026-09-25T22:31:46.650659+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0001.json",
+            "value": {
+              "elapsed_seconds": 0.7969999999913853,
+              "phase": "candidate_send_intent",
+              "process_id": "ff8525fd-6f3a-499d-b14a-9ed49abbd04b",
+              "template_hash": "28fae2241a11742990821c68e48683455af2f59809caefdc01c954e23316739c",
+              "utc": "2026-09-25T22:31:47.115931+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0003.json",
+            "value": {
+              "elapsed_seconds": 4.328000000008615,
+              "phase": "candidate_decided",
+              "process_id": "ff8525fd-6f3a-499d-b14a-9ed49abbd04b",
+              "utc": "2026-09-25T22:31:50.640669+00:00",
+              "verdict": "rejected"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0004.json",
+            "value": {
+              "elapsed_seconds": 4.39100000000326,
+              "phase": "preparation_started",
+              "process_id": "ff8525fd-6f3a-499d-b14a-9ed49abbd04b",
+              "utc": "2026-09-25T22:31:50.703838+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0005.json",
+            "value": {
+              "elapsed_seconds": 7.26600000000326,
+              "pending_stage": "published_not_received",
+              "phase": "preparation_finished",
+              "process_id": "ff8525fd-6f3a-499d-b14a-9ed49abbd04b",
+              "utc": "2026-09-25T22:31:53.571225+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0006.json",
+            "value": {
+              "elapsed_seconds": 7.687999999994645,
+              "phase": "policy_authorized",
+              "process_id": "ff8525fd-6f3a-499d-b14a-9ed49abbd04b",
+              "utc": "2026-09-25T22:31:54.003416+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0007.json",
+            "value": {
+              "actor": "policy",
+              "elapsed_seconds": 7.687999999994645,
+              "phase": "restoration_requested",
+              "process_id": "ff8525fd-6f3a-499d-b14a-9ed49abbd04b",
+              "utc": "2026-09-25T22:31:54.005712+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0008.json",
+            "value": {
+              "elapsed_seconds": 7.921999999991385,
+              "phase": "restore_send_intent",
+              "process_id": "ff8525fd-6f3a-499d-b14a-9ed49abbd04b",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:31:54.228440+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0009.json",
+            "value": {
+              "elapsed_seconds": 8.01600000000326,
+              "phase": "restore_sent",
+              "process_id": "ff8525fd-6f3a-499d-b14a-9ed49abbd04b",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:31:54.328439+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0010.json",
+            "value": {
+              "elapsed_seconds": 26.437999999994645,
+              "phase": "healthy_converged",
+              "process_id": "ff8525fd-6f3a-499d-b14a-9ed49abbd04b",
+              "utc": "2026-09-25T22:32:12.745782+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0011.json",
+            "value": {
+              "directory": "recovery-flow-28c0436a-8b80-4159-aaa0-ee8554ce4e7c",
+              "elapsed_seconds": 26.875,
+              "phase": "recovery_flow_started",
+              "process_id": "ff8525fd-6f3a-499d-b14a-9ed49abbd04b",
+              "utc": "2026-09-25T22:32:13.190913+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0012.json",
+            "value": {
+              "elapsed_seconds": 30.046999999991385,
+              "phase": "recovery_observed",
+              "process_id": "ff8525fd-6f3a-499d-b14a-9ed49abbd04b",
+              "success": true,
+              "utc": "2026-09-25T22:32:16.352905+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0013.json",
+            "value": {
+              "elapsed_seconds": 30.046999999991385,
+              "phase": "operation_finished",
+              "process_id": "ff8525fd-6f3a-499d-b14a-9ed49abbd04b",
+              "success": true,
+              "utc": "2026-09-25T22:32:16.361969+00:00"
+            }
+          }
+        ],
+        "later_cleanup": [],
+        "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+      },
+      "initial": {
+        "result_source": "artifacts/a-complements-evaluation-01/03-pending-auto/flow/result.json",
+        "result": {
+          "acceptance_observed": true,
+          "acceptance_verified": true,
+          "checkpoint": {
+            "event_id": "infra-smoke-0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+            "inbox_event_id": "554d556c-853f-49a3-8f05-7102b6c33b93",
+            "order_id": "2a4e5ca4-edc1-4b5e-9f01-2dffb37541b7",
+            "run_id": "0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+            "shipment_id": "757b99b1-3eb8-4a62-a18c-36440d4f6985",
+            "tracking_event_id": "2e1fb1a5-40bc-5fc3-b63a-9ddbc44dae69"
+          },
+          "duplicate_verified": false,
+          "error": null,
+          "event_id": "infra-smoke-0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+          "last_operation": "business_observation",
+          "notification_projection": {
+            "notification_id": null,
+            "processing": "NOT_RECEIVED",
+            "publication": "SENT",
+            "required": true,
+            "simulated_at": null,
+            "status": null,
+            "tracking_event_id": "2e1fb1a5-40bc-5fc3-b63a-9ddbc44dae69"
+          },
+          "notifications_simulated": false,
+          "observation_only": false,
+          "order_completed": true,
+          "pending_stage": "published_not_received",
+          "run_id": "0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+          "success": false,
+          "tracking_completed": true,
+          "verdict": "pending",
+          "webhook_offered": true
+        },
+        "observation_source": "artifacts/a-complements-evaluation-01/03-pending-auto/flow/observations.jsonl",
+        "observation_line_count": 27,
+        "http_records": [
+          {
+            "line": 2,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.030999999988125637
+          },
+          {
+            "line": 4,
+            "method": "POST",
+            "http_status": 200,
+            "operation": "prepare",
+            "elapsed_seconds": 0.0629999999946449
+          },
+          {
+            "line": 5,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.09399999998277053
+          },
+          {
+            "line": 8,
+            "method": "POST",
+            "http_status": 202,
+            "operation": "admission",
+            "elapsed_seconds": 0.125
+          },
+          {
+            "line": 11,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 0.15599999998812564
+          },
+          {
+            "line": 14,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 1.187999999994645
+          },
+          {
+            "line": 17,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 2.23499999998603
+          },
+          {
+            "line": 20,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.25
+          },
+          {
+            "line": 22,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.2809999999881256
+          },
+          {
+            "line": 25,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.312999999994645
+          }
+        ],
+        "http_method_counts": {
+          "POST": 4,
+          "GET": 6
+        },
+        "selected_records": [
+          {
+            "line": 19,
+            "value": {
+              "elapsed_seconds": 2.23499999998603,
+              "observed_at": "2026-09-25T22:31:53.120214+00:00",
+              "phase": "tracking_completed",
+              "result": "APPLIED",
+              "tracking_event_id": "2e1fb1a5-40bc-5fc3-b63a-9ddbc44dae69"
+            }
+          },
+          {
+            "line": 24,
+            "value": {
+              "elapsed_seconds": 2.2809999999881256,
+              "observed_at": "2026-09-25T22:31:53.177117+00:00",
+              "order_status": "FULFILLED",
+              "phase": "business_completed",
+              "shipment_status": "DELIVERED"
+            }
+          }
+        ]
+      },
+      "read_only_phases": {
+        "parallel-flow": {
+          "result_source": "artifacts/a-complements-evaluation-01/03-pending-auto/parallel-flow/result.json",
+          "result": {
+            "acceptance_observed": true,
+            "acceptance_verified": true,
+            "checkpoint": {
+              "event_id": "infra-smoke-0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+              "inbox_event_id": "554d556c-853f-49a3-8f05-7102b6c33b93",
+              "order_id": "2a4e5ca4-edc1-4b5e-9f01-2dffb37541b7",
+              "run_id": "0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+              "shipment_id": "757b99b1-3eb8-4a62-a18c-36440d4f6985",
+              "tracking_event_id": "2e1fb1a5-40bc-5fc3-b63a-9ddbc44dae69"
+            },
+            "duplicate_verified": false,
+            "error": null,
+            "event_id": "infra-smoke-0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+            "last_operation": "effects_observation",
+            "notifications_simulated": true,
+            "observation_only": true,
+            "order_completed": true,
+            "run_id": "0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+            "success": true,
+            "tracking_completed": true,
+            "verdict": "approved",
+            "webhook_offered": true
+          },
+          "observation_source": "artifacts/a-complements-evaluation-01/03-pending-auto/parallel-flow/observations.jsonl",
+          "observation_line_count": 29,
+          "http_records": [
+            {
+              "line": 2,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "tracking_observation",
+              "elapsed_seconds": 0.046999999991385266
+            },
+            {
+              "line": 5,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.0779999999795109
+            },
+            {
+              "line": 7,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.10999999998603016
+            },
+            {
+              "line": 10,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 0.1409999999741558
+            },
+            {
+              "line": 13,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 1.1719999999913853
+            },
+            {
+              "line": 16,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 2.202999999979511
+            },
+            {
+              "line": 19,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 3.23499999998603
+            },
+            {
+              "line": 22,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 4.265999999974156
+            },
+            {
+              "line": 25,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 4.296999999991385
+            },
+            {
+              "line": 27,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 4.327999999979511
+            }
+          ],
+          "http_method_counts": {
+            "GET": 10
+          },
+          "selected_records": [
+            {
+              "line": 1,
+              "value": {
+                "elapsed_seconds": 0.0,
+                "event_id": "infra-smoke-0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+                "inbox_event_id": "554d556c-853f-49a3-8f05-7102b6c33b93",
+                "observed_at": "2026-09-25T22:31:53.517772+00:00",
+                "order_id": "2a4e5ca4-edc1-4b5e-9f01-2dffb37541b7",
+                "phase": "resumed_observation",
+                "run_id": "0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+                "shipment_id": "757b99b1-3eb8-4a62-a18c-36440d4f6985",
+                "tracking_event_id": "2e1fb1a5-40bc-5fc3-b63a-9ddbc44dae69"
+              }
+            },
+            {
+              "line": 4,
+              "value": {
+                "elapsed_seconds": 0.046999999991385266,
+                "observed_at": "2026-09-25T22:31:53.564075+00:00",
+                "phase": "tracking_completed",
+                "result": "APPLIED",
+                "tracking_event_id": "2e1fb1a5-40bc-5fc3-b63a-9ddbc44dae69"
+              }
+            },
+            {
+              "line": 9,
+              "value": {
+                "elapsed_seconds": 0.10999999998603016,
+                "observed_at": "2026-09-25T22:31:53.627113+00:00",
+                "order_status": "FULFILLED",
+                "phase": "business_completed",
+                "shipment_status": "DELIVERED"
+              }
+            },
+            {
+              "line": 29,
+              "value": {
+                "elapsed_seconds": 4.327999999979511,
+                "notifications_count": 1,
+                "observed_at": "2026-09-25T22:31:57.848358+00:00",
+                "phase": "effects_observed",
+                "tracking_count": 1
+              }
+            },
+            {
+              "line": 23,
+              "value": {
+                "elapsed_seconds": 4.265999999974156,
+                "observed_at": "2026-09-25T22:31:57.787868+00:00",
+                "operation": "notifications_observation",
+                "phase": "public_query",
+                "response": {
+                  "notification_id": "b7f5733b-dedf-48df-a347-da03bde807ea",
+                  "processing": "DONE",
+                  "publication": "SENT",
+                  "required": true,
+                  "simulated_at": "2026-09-25T22:31:57.085821Z",
+                  "status": "SIMULATED",
+                  "tracking_event_id": "2e1fb1a5-40bc-5fc3-b63a-9ddbc44dae69"
+                }
+              }
+            }
+          ]
+        },
+        "previous-flow": {
+          "result_source": "artifacts/a-complements-evaluation-01/03-pending-auto/previous-flow/result.json",
+          "result": {
+            "acceptance_observed": true,
+            "acceptance_verified": true,
+            "checkpoint": {
+              "event_id": "infra-smoke-0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+              "inbox_event_id": "554d556c-853f-49a3-8f05-7102b6c33b93",
+              "order_id": "2a4e5ca4-edc1-4b5e-9f01-2dffb37541b7",
+              "run_id": "0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+              "shipment_id": "757b99b1-3eb8-4a62-a18c-36440d4f6985",
+              "tracking_event_id": "2e1fb1a5-40bc-5fc3-b63a-9ddbc44dae69"
+            },
+            "duplicate_verified": false,
+            "error": null,
+            "event_id": "infra-smoke-0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+            "last_operation": "effects_observation",
+            "notifications_simulated": true,
+            "observation_only": true,
+            "order_completed": true,
+            "run_id": "0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+            "success": true,
+            "tracking_completed": true,
+            "verdict": "approved",
+            "webhook_offered": true
+          },
+          "observation_source": "artifacts/a-complements-evaluation-01/03-pending-auto/previous-flow/observations.jsonl",
+          "observation_line_count": 17,
+          "http_records": [
+            {
+              "line": 2,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "tracking_observation",
+              "elapsed_seconds": 0.031000000017229468
+            },
+            {
+              "line": 5,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.062000000005355105
+            },
+            {
+              "line": 7,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.09400000001187436
+            },
+            {
+              "line": 10,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 0.125
+            },
+            {
+              "line": 13,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.15600000001722947
+            },
+            {
+              "line": 15,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.20300000000861473
+            }
+          ],
+          "http_method_counts": {
+            "GET": 6
+          },
+          "selected_records": [
+            {
+              "line": 1,
+              "value": {
+                "elapsed_seconds": 0.0,
+                "event_id": "infra-smoke-0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+                "inbox_event_id": "554d556c-853f-49a3-8f05-7102b6c33b93",
+                "observed_at": "2026-09-25T22:32:12.905322+00:00",
+                "order_id": "2a4e5ca4-edc1-4b5e-9f01-2dffb37541b7",
+                "phase": "resumed_observation",
+                "run_id": "0dd9cc03-337e-441e-9ceb-1952b83ba68a",
+                "shipment_id": "757b99b1-3eb8-4a62-a18c-36440d4f6985",
+                "tracking_event_id": "2e1fb1a5-40bc-5fc3-b63a-9ddbc44dae69"
+              }
+            },
+            {
+              "line": 4,
+              "value": {
+                "elapsed_seconds": 0.031000000017229468,
+                "observed_at": "2026-09-25T22:32:12.940080+00:00",
+                "phase": "tracking_completed",
+                "result": "APPLIED",
+                "tracking_event_id": "2e1fb1a5-40bc-5fc3-b63a-9ddbc44dae69"
+              }
+            },
+            {
+              "line": 9,
+              "value": {
+                "elapsed_seconds": 0.09400000001187436,
+                "observed_at": "2026-09-25T22:32:12.996583+00:00",
+                "order_status": "FULFILLED",
+                "phase": "business_completed",
+                "shipment_status": "DELIVERED"
+              }
+            },
+            {
+              "line": 17,
+              "value": {
+                "elapsed_seconds": 0.20300000000861473,
+                "notifications_count": 1,
+                "observed_at": "2026-09-25T22:32:13.105132+00:00",
+                "phase": "effects_observed",
+                "tracking_count": 1
+              }
+            },
+            {
+              "line": 11,
+              "value": {
+                "elapsed_seconds": 0.125,
+                "observed_at": "2026-09-25T22:32:13.030151+00:00",
+                "operation": "notifications_observation",
+                "phase": "public_query",
+                "response": {
+                  "notification_id": "b7f5733b-dedf-48df-a347-da03bde807ea",
+                  "processing": "DONE",
+                  "publication": "SENT",
+                  "required": true,
+                  "simulated_at": "2026-09-25T22:31:57.085821Z",
+                  "status": "SIMULATED",
+                  "tracking_event_id": "2e1fb1a5-40bc-5fc3-b63a-9ddbc44dae69"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "parallel_signals": {
+        "source": "artifacts/a-complements-evaluation-01/03-pending-auto/parallel-signals.json",
+        "values": {
+          "signal": "healthy_revision_convergence_not_exact_Ready_transition",
+          "converged_seconds": 26.85899999999674,
+          "notification_observed_seconds": 11.46899999998277,
+          "difference_seconds": -15.39000000001397,
+          "poll_seconds": 1,
+          "errors": []
+        },
+        "clock": "Same attempt runtime monotonic origin as policy journal; HTTP and snapshot endpoints include query/polling delay."
+      }
+    },
+    {
+      "attempt": "04-pending-explicit",
+      "number": 4,
+      "scenario": "pending",
+      "condition": "explicit",
+      "pair": 2,
+      "journal": {
+        "policy_window": [
+          {
+            "source": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0000.json",
+            "value": {
+              "elapsed_seconds": 0.32800000000861473,
+              "mode": "complement",
+              "phase": "operation_started",
+              "process_id": "84d76381-c878-4a8a-a354-c6721b316033",
+              "utc": "2026-09-25T22:32:18.633675+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0001.json",
+            "value": {
+              "elapsed_seconds": 0.75,
+              "phase": "candidate_send_intent",
+              "process_id": "84d76381-c878-4a8a-a354-c6721b316033",
+              "template_hash": "6d3e898be8c59c461475c1f9c8153a40738d4ee51bb5bfda29796d30dc82de18",
+              "utc": "2026-09-25T22:32:19.064560+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0003.json",
+            "value": {
+              "elapsed_seconds": 4.187999999994645,
+              "phase": "candidate_decided",
+              "process_id": "84d76381-c878-4a8a-a354-c6721b316033",
+              "utc": "2026-09-25T22:32:22.504507+00:00",
+              "verdict": "rejected"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0004.json",
+            "value": {
+              "elapsed_seconds": 4.25,
+              "phase": "preparation_started",
+              "process_id": "84d76381-c878-4a8a-a354-c6721b316033",
+              "utc": "2026-09-25T22:32:22.557814+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0005.json",
+            "value": {
+              "elapsed_seconds": 7.10899999999674,
+              "pending_stage": "published_not_received",
+              "phase": "preparation_finished",
+              "process_id": "84d76381-c878-4a8a-a354-c6721b316033",
+              "utc": "2026-09-25T22:32:25.418707+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0006.json",
+            "value": {
+              "elapsed_seconds": 7.546999999991385,
+              "phase": "policy_authorized",
+              "process_id": "84d76381-c878-4a8a-a354-c6721b316033",
+              "utc": "2026-09-25T22:32:25.852418+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0007.json",
+            "value": {
+              "elapsed_seconds": 7.546999999991385,
+              "phase": "awaiting_explicit_request",
+              "process_id": "84d76381-c878-4a8a-a354-c6721b316033",
+              "utc": "2026-09-25T22:32:25.857582+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0008.json",
+            "value": {
+              "actor": "script",
+              "elapsed_seconds": 8.562999999994645,
+              "phase": "restoration_requested",
+              "process_id": "84d76381-c878-4a8a-a354-c6721b316033",
+              "utc": "2026-09-25T22:32:26.873221+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0009.json",
+            "value": {
+              "elapsed_seconds": 8.796999999991385,
+              "phase": "restore_send_intent",
+              "process_id": "84d76381-c878-4a8a-a354-c6721b316033",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:32:27.107288+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0010.json",
+            "value": {
+              "elapsed_seconds": 8.89100000000326,
+              "phase": "restore_sent",
+              "process_id": "84d76381-c878-4a8a-a354-c6721b316033",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:32:27.203227+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0011.json",
+            "value": {
+              "elapsed_seconds": 27.34399999998277,
+              "phase": "healthy_converged",
+              "process_id": "84d76381-c878-4a8a-a354-c6721b316033",
+              "utc": "2026-09-25T22:32:45.647459+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0012.json",
+            "value": {
+              "directory": "recovery-flow-56ef30c2-e496-41a6-8a6c-8082a58b81e2",
+              "elapsed_seconds": 27.796999999991385,
+              "phase": "recovery_flow_started",
+              "process_id": "84d76381-c878-4a8a-a354-c6721b316033",
+              "utc": "2026-09-25T22:32:46.104677+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0013.json",
+            "value": {
+              "elapsed_seconds": 30.953000000008615,
+              "phase": "recovery_observed",
+              "process_id": "84d76381-c878-4a8a-a354-c6721b316033",
+              "success": true,
+              "utc": "2026-09-25T22:32:49.260684+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0014.json",
+            "value": {
+              "elapsed_seconds": 30.953000000008615,
+              "phase": "operation_finished",
+              "process_id": "84d76381-c878-4a8a-a354-c6721b316033",
+              "success": true,
+              "utc": "2026-09-25T22:32:49.265200+00:00"
+            }
+          }
+        ],
+        "later_cleanup": [],
+        "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+      },
+      "initial": {
+        "result_source": "artifacts/a-complements-evaluation-01/04-pending-explicit/flow/result.json",
+        "result": {
+          "acceptance_observed": true,
+          "acceptance_verified": true,
+          "checkpoint": {
+            "event_id": "infra-smoke-be75bbb7-f280-43b7-ab10-125b7b216b44",
+            "inbox_event_id": "7d3ca9bf-8828-4e20-a36a-c5c64e6523cc",
+            "order_id": "4d896f19-4206-47d4-809f-02119269ff32",
+            "run_id": "be75bbb7-f280-43b7-ab10-125b7b216b44",
+            "shipment_id": "6d263f62-2ba5-4b49-8e18-c34e1b314d73",
+            "tracking_event_id": "921c428b-c482-5fa2-8346-6ab8699d584b"
+          },
+          "duplicate_verified": false,
+          "error": null,
+          "event_id": "infra-smoke-be75bbb7-f280-43b7-ab10-125b7b216b44",
+          "last_operation": "business_observation",
+          "notification_projection": {
+            "notification_id": null,
+            "processing": "NOT_RECEIVED",
+            "publication": "SENT",
+            "required": true,
+            "simulated_at": null,
+            "status": null,
+            "tracking_event_id": "921c428b-c482-5fa2-8346-6ab8699d584b"
+          },
+          "notifications_simulated": false,
+          "observation_only": false,
+          "order_completed": true,
+          "pending_stage": "published_not_received",
+          "run_id": "be75bbb7-f280-43b7-ab10-125b7b216b44",
+          "success": false,
+          "tracking_completed": true,
+          "verdict": "pending",
+          "webhook_offered": true
+        },
+        "observation_source": "artifacts/a-complements-evaluation-01/04-pending-explicit/flow/observations.jsonl",
+        "observation_line_count": 27,
+        "http_records": [
+          {
+            "line": 2,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.031000000017229468
+          },
+          {
+            "line": 4,
+            "method": "POST",
+            "http_status": 200,
+            "operation": "prepare",
+            "elapsed_seconds": 0.062000000005355105
+          },
+          {
+            "line": 5,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.07800000000861473
+          },
+          {
+            "line": 8,
+            "method": "POST",
+            "http_status": 202,
+            "operation": "admission",
+            "elapsed_seconds": 0.125
+          },
+          {
+            "line": 11,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 0.15600000001722947
+          },
+          {
+            "line": 14,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 1.2030000000086147
+          },
+          {
+            "line": 17,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 2.2339999999967404
+          },
+          {
+            "line": 20,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.25
+          },
+          {
+            "line": 22,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.2969999999913853
+          },
+          {
+            "line": 25,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.3280000000086147
+          }
+        ],
+        "http_method_counts": {
+          "POST": 4,
+          "GET": 6
+        },
+        "selected_records": [
+          {
+            "line": 19,
+            "value": {
+              "elapsed_seconds": 2.2339999999967404,
+              "observed_at": "2026-09-25T22:32:24.962691+00:00",
+              "phase": "tracking_completed",
+              "result": "APPLIED",
+              "tracking_event_id": "921c428b-c482-5fa2-8346-6ab8699d584b"
+            }
+          },
+          {
+            "line": 24,
+            "value": {
+              "elapsed_seconds": 2.2969999999913853,
+              "observed_at": "2026-09-25T22:32:25.026606+00:00",
+              "order_status": "FULFILLED",
+              "phase": "business_completed",
+              "shipment_status": "DELIVERED"
+            }
+          }
+        ]
+      },
+      "read_only_phases": {
+        "parallel-flow": {
+          "result_source": "artifacts/a-complements-evaluation-01/04-pending-explicit/parallel-flow/result.json",
+          "result": {
+            "acceptance_observed": true,
+            "acceptance_verified": true,
+            "checkpoint": {
+              "event_id": "infra-smoke-be75bbb7-f280-43b7-ab10-125b7b216b44",
+              "inbox_event_id": "7d3ca9bf-8828-4e20-a36a-c5c64e6523cc",
+              "order_id": "4d896f19-4206-47d4-809f-02119269ff32",
+              "run_id": "be75bbb7-f280-43b7-ab10-125b7b216b44",
+              "shipment_id": "6d263f62-2ba5-4b49-8e18-c34e1b314d73",
+              "tracking_event_id": "921c428b-c482-5fa2-8346-6ab8699d584b"
+            },
+            "duplicate_verified": false,
+            "error": null,
+            "event_id": "infra-smoke-be75bbb7-f280-43b7-ab10-125b7b216b44",
+            "last_operation": "effects_observation",
+            "notifications_simulated": true,
+            "observation_only": true,
+            "order_completed": true,
+            "run_id": "be75bbb7-f280-43b7-ab10-125b7b216b44",
+            "success": true,
+            "tracking_completed": true,
+            "verdict": "approved",
+            "webhook_offered": true
+          },
+          "observation_source": "artifacts/a-complements-evaluation-01/04-pending-explicit/parallel-flow/observations.jsonl",
+          "observation_line_count": 32,
+          "http_records": [
+            {
+              "line": 2,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "tracking_observation",
+              "elapsed_seconds": 0.03200000000651926
+            },
+            {
+              "line": 5,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.07800000000861473
+            },
+            {
+              "line": 7,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.125
+            },
+            {
+              "line": 10,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 0.15700000000651926
+            },
+            {
+              "line": 13,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 1.187999999994645
+            },
+            {
+              "line": 16,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 2.2190000000118744
+            },
+            {
+              "line": 19,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 3.25
+            },
+            {
+              "line": 22,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 4.297000000020489
+            },
+            {
+              "line": 25,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 5.328000000008615
+            },
+            {
+              "line": 28,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 5.360000000015134
+            },
+            {
+              "line": 30,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 5.39100000000326
+            }
+          ],
+          "http_method_counts": {
+            "GET": 11
+          },
+          "selected_records": [
+            {
+              "line": 1,
+              "value": {
+                "elapsed_seconds": 0.0,
+                "event_id": "infra-smoke-be75bbb7-f280-43b7-ab10-125b7b216b44",
+                "inbox_event_id": "7d3ca9bf-8828-4e20-a36a-c5c64e6523cc",
+                "observed_at": "2026-09-25T22:32:25.339016+00:00",
+                "order_id": "4d896f19-4206-47d4-809f-02119269ff32",
+                "phase": "resumed_observation",
+                "run_id": "be75bbb7-f280-43b7-ab10-125b7b216b44",
+                "shipment_id": "6d263f62-2ba5-4b49-8e18-c34e1b314d73",
+                "tracking_event_id": "921c428b-c482-5fa2-8346-6ab8699d584b"
+              }
+            },
+            {
+              "line": 4,
+              "value": {
+                "elapsed_seconds": 0.0470000000204891,
+                "observed_at": "2026-09-25T22:32:25.385528+00:00",
+                "phase": "tracking_completed",
+                "result": "APPLIED",
+                "tracking_event_id": "921c428b-c482-5fa2-8346-6ab8699d584b"
+              }
+            },
+            {
+              "line": 9,
+              "value": {
+                "elapsed_seconds": 0.125,
+                "observed_at": "2026-09-25T22:32:25.464405+00:00",
+                "order_status": "FULFILLED",
+                "phase": "business_completed",
+                "shipment_status": "DELIVERED"
+              }
+            },
+            {
+              "line": 32,
+              "value": {
+                "elapsed_seconds": 5.39100000000326,
+                "notifications_count": 1,
+                "observed_at": "2026-09-25T22:32:30.727146+00:00",
+                "phase": "effects_observed",
+                "tracking_count": 1
+              }
+            },
+            {
+              "line": 26,
+              "value": {
+                "elapsed_seconds": 5.328000000008615,
+                "observed_at": "2026-09-25T22:32:30.668484+00:00",
+                "operation": "notifications_observation",
+                "phase": "public_query",
+                "response": {
+                  "notification_id": "c2528c2b-0e2e-49c4-8ddf-0e3db95c089c",
+                  "processing": "DONE",
+                  "publication": "SENT",
+                  "required": true,
+                  "simulated_at": "2026-09-25T22:32:29.974513Z",
+                  "status": "SIMULATED",
+                  "tracking_event_id": "921c428b-c482-5fa2-8346-6ab8699d584b"
+                }
+              }
+            }
+          ]
+        },
+        "previous-flow": {
+          "result_source": "artifacts/a-complements-evaluation-01/04-pending-explicit/previous-flow/result.json",
+          "result": {
+            "acceptance_observed": true,
+            "acceptance_verified": true,
+            "checkpoint": {
+              "event_id": "infra-smoke-be75bbb7-f280-43b7-ab10-125b7b216b44",
+              "inbox_event_id": "7d3ca9bf-8828-4e20-a36a-c5c64e6523cc",
+              "order_id": "4d896f19-4206-47d4-809f-02119269ff32",
+              "run_id": "be75bbb7-f280-43b7-ab10-125b7b216b44",
+              "shipment_id": "6d263f62-2ba5-4b49-8e18-c34e1b314d73",
+              "tracking_event_id": "921c428b-c482-5fa2-8346-6ab8699d584b"
+            },
+            "duplicate_verified": false,
+            "error": null,
+            "event_id": "infra-smoke-be75bbb7-f280-43b7-ab10-125b7b216b44",
+            "last_operation": "effects_observation",
+            "notifications_simulated": true,
+            "observation_only": true,
+            "order_completed": true,
+            "run_id": "be75bbb7-f280-43b7-ab10-125b7b216b44",
+            "success": true,
+            "tracking_completed": true,
+            "verdict": "approved",
+            "webhook_offered": true
+          },
+          "observation_source": "artifacts/a-complements-evaluation-01/04-pending-explicit/previous-flow/observations.jsonl",
+          "observation_line_count": 17,
+          "http_records": [
+            {
+              "line": 2,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "tracking_observation",
+              "elapsed_seconds": 0.030999999988125637
+            },
+            {
+              "line": 5,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.046999999991385266
+            },
+            {
+              "line": 7,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.09399999998277053
+            },
+            {
+              "line": 10,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 0.125
+            },
+            {
+              "line": 13,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.15599999998812564
+            },
+            {
+              "line": 15,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.20300000000861473
+            }
+          ],
+          "http_method_counts": {
+            "GET": 6
+          },
+          "selected_records": [
+            {
+              "line": 1,
+              "value": {
+                "elapsed_seconds": 0.0,
+                "event_id": "infra-smoke-be75bbb7-f280-43b7-ab10-125b7b216b44",
+                "inbox_event_id": "7d3ca9bf-8828-4e20-a36a-c5c64e6523cc",
+                "observed_at": "2026-09-25T22:32:45.814448+00:00",
+                "order_id": "4d896f19-4206-47d4-809f-02119269ff32",
+                "phase": "resumed_observation",
+                "run_id": "be75bbb7-f280-43b7-ab10-125b7b216b44",
+                "shipment_id": "6d263f62-2ba5-4b49-8e18-c34e1b314d73",
+                "tracking_event_id": "921c428b-c482-5fa2-8346-6ab8699d584b"
+              }
+            },
+            {
+              "line": 4,
+              "value": {
+                "elapsed_seconds": 0.030999999988125637,
+                "observed_at": "2026-09-25T22:32:45.843178+00:00",
+                "phase": "tracking_completed",
+                "result": "APPLIED",
+                "tracking_event_id": "921c428b-c482-5fa2-8346-6ab8699d584b"
+              }
+            },
+            {
+              "line": 9,
+              "value": {
+                "elapsed_seconds": 0.09399999998277053,
+                "observed_at": "2026-09-25T22:32:45.901394+00:00",
+                "order_status": "FULFILLED",
+                "phase": "business_completed",
+                "shipment_status": "DELIVERED"
+              }
+            },
+            {
+              "line": 17,
+              "value": {
+                "elapsed_seconds": 0.20300000000861473,
+                "notifications_count": 1,
+                "observed_at": "2026-09-25T22:32:46.011145+00:00",
+                "phase": "effects_observed",
+                "tracking_count": 1
+              }
+            },
+            {
+              "line": 11,
+              "value": {
+                "elapsed_seconds": 0.125,
+                "observed_at": "2026-09-25T22:32:45.932091+00:00",
+                "operation": "notifications_observation",
+                "phase": "public_query",
+                "response": {
+                  "notification_id": "c2528c2b-0e2e-49c4-8ddf-0e3db95c089c",
+                  "processing": "DONE",
+                  "publication": "SENT",
+                  "required": true,
+                  "simulated_at": "2026-09-25T22:32:29.974513Z",
+                  "status": "SIMULATED",
+                  "tracking_event_id": "921c428b-c482-5fa2-8346-6ab8699d584b"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "parallel_signals": {
+        "source": "artifacts/a-complements-evaluation-01/04-pending-explicit/parallel-signals.json",
+        "values": {
+          "signal": "healthy_revision_convergence_not_exact_Ready_transition",
+          "converged_seconds": 27.953000000008615,
+          "notification_observed_seconds": 12.35899999999674,
+          "difference_seconds": -15.594000000011874,
+          "poll_seconds": 1,
+          "errors": []
+        },
+        "clock": "Same attempt runtime monotonic origin as policy journal; HTTP and snapshot endpoints include query/polling delay."
+      }
+    },
+    {
+      "attempt": "05-pending-explicit",
+      "number": 5,
+      "scenario": "pending",
+      "condition": "explicit",
+      "pair": 3,
+      "journal": {
+        "policy_window": [
+          {
+            "source": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0000.json",
+            "value": {
+              "elapsed_seconds": 0.3129999999946449,
+              "mode": "complement",
+              "phase": "operation_started",
+              "process_id": "dac21f22-c7b8-4e6f-90f0-a1dfed04e9a4",
+              "utc": "2026-09-25T22:32:51.409745+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0001.json",
+            "value": {
+              "elapsed_seconds": 0.75,
+              "phase": "candidate_send_intent",
+              "process_id": "dac21f22-c7b8-4e6f-90f0-a1dfed04e9a4",
+              "template_hash": "aa82166f8bd5c56bd16a3ac968f6a721d50a1194d724861404093a8440100d1f",
+              "utc": "2026-09-25T22:32:51.846018+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0003.json",
+            "value": {
+              "elapsed_seconds": 7.062999999994645,
+              "phase": "candidate_decided",
+              "process_id": "dac21f22-c7b8-4e6f-90f0-a1dfed04e9a4",
+              "utc": "2026-09-25T22:32:58.148174+00:00",
+              "verdict": "rejected"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0004.json",
+            "value": {
+              "elapsed_seconds": 7.094000000011874,
+              "phase": "preparation_started",
+              "process_id": "dac21f22-c7b8-4e6f-90f0-a1dfed04e9a4",
+              "utc": "2026-09-25T22:32:58.181873+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0005.json",
+            "value": {
+              "elapsed_seconds": 9.89100000000326,
+              "pending_stage": "published_not_received",
+              "phase": "preparation_finished",
+              "process_id": "dac21f22-c7b8-4e6f-90f0-a1dfed04e9a4",
+              "utc": "2026-09-25T22:33:00.977393+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0006.json",
+            "value": {
+              "elapsed_seconds": 10.312999999994645,
+              "phase": "policy_authorized",
+              "process_id": "dac21f22-c7b8-4e6f-90f0-a1dfed04e9a4",
+              "utc": "2026-09-25T22:33:01.401520+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0007.json",
+            "value": {
+              "elapsed_seconds": 10.312999999994645,
+              "phase": "awaiting_explicit_request",
+              "process_id": "dac21f22-c7b8-4e6f-90f0-a1dfed04e9a4",
+              "utc": "2026-09-25T22:33:01.406019+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0008.json",
+            "value": {
+              "actor": "script",
+              "elapsed_seconds": 11.328000000008615,
+              "phase": "restoration_requested",
+              "process_id": "dac21f22-c7b8-4e6f-90f0-a1dfed04e9a4",
+              "utc": "2026-09-25T22:33:02.417699+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0009.json",
+            "value": {
+              "elapsed_seconds": 11.547000000020489,
+              "phase": "restore_send_intent",
+              "process_id": "dac21f22-c7b8-4e6f-90f0-a1dfed04e9a4",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:33:02.638690+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0010.json",
+            "value": {
+              "elapsed_seconds": 11.672000000020489,
+              "phase": "restore_sent",
+              "process_id": "dac21f22-c7b8-4e6f-90f0-a1dfed04e9a4",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:33:02.759289+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0011.json",
+            "value": {
+              "elapsed_seconds": 30.187999999994645,
+              "phase": "healthy_converged",
+              "process_id": "dac21f22-c7b8-4e6f-90f0-a1dfed04e9a4",
+              "utc": "2026-09-25T22:33:21.273354+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0012.json",
+            "value": {
+              "directory": "recovery-flow-794d9a73-57be-4c63-9b8c-6de9a0ecc89e",
+              "elapsed_seconds": 30.625,
+              "phase": "recovery_flow_started",
+              "process_id": "dac21f22-c7b8-4e6f-90f0-a1dfed04e9a4",
+              "utc": "2026-09-25T22:33:21.712882+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0013.json",
+            "value": {
+              "elapsed_seconds": 33.735000000015134,
+              "phase": "recovery_observed",
+              "process_id": "dac21f22-c7b8-4e6f-90f0-a1dfed04e9a4",
+              "success": true,
+              "utc": "2026-09-25T22:33:24.833690+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0014.json",
+            "value": {
+              "elapsed_seconds": 33.75,
+              "phase": "operation_finished",
+              "process_id": "dac21f22-c7b8-4e6f-90f0-a1dfed04e9a4",
+              "success": true,
+              "utc": "2026-09-25T22:33:24.840596+00:00"
+            }
+          }
+        ],
+        "later_cleanup": [],
+        "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+      },
+      "initial": {
+        "result_source": "artifacts/a-complements-evaluation-01/05-pending-explicit/flow/result.json",
+        "result": {
+          "acceptance_observed": true,
+          "acceptance_verified": true,
+          "checkpoint": {
+            "event_id": "infra-smoke-a4501958-b0fb-4497-a653-ada95c9a3e7a",
+            "inbox_event_id": "a1762dee-548e-4d36-9d05-b89b1d0dfc8e",
+            "order_id": "9ea379a8-d0c5-4f9f-bf94-9e7581314f4a",
+            "run_id": "a4501958-b0fb-4497-a653-ada95c9a3e7a",
+            "shipment_id": "e9fc200a-0138-4d9f-b46b-7ba1ae31c3fd",
+            "tracking_event_id": "21e6a2d4-c54a-50a5-bd0b-a3b5b4f2d3fb"
+          },
+          "duplicate_verified": false,
+          "error": null,
+          "event_id": "infra-smoke-a4501958-b0fb-4497-a653-ada95c9a3e7a",
+          "last_operation": "business_observation",
+          "notification_projection": {
+            "notification_id": null,
+            "processing": "NOT_RECEIVED",
+            "publication": "SENT",
+            "required": true,
+            "simulated_at": null,
+            "status": null,
+            "tracking_event_id": "21e6a2d4-c54a-50a5-bd0b-a3b5b4f2d3fb"
+          },
+          "notifications_simulated": false,
+          "observation_only": false,
+          "order_completed": true,
+          "pending_stage": "published_not_received",
+          "run_id": "a4501958-b0fb-4497-a653-ada95c9a3e7a",
+          "success": false,
+          "tracking_completed": true,
+          "verdict": "pending",
+          "webhook_offered": true
+        },
+        "observation_source": "artifacts/a-complements-evaluation-01/05-pending-explicit/flow/observations.jsonl",
+        "observation_line_count": 27,
+        "http_records": [
+          {
+            "line": 2,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.031000000017229468
+          },
+          {
+            "line": 4,
+            "method": "POST",
+            "http_status": 200,
+            "operation": "prepare",
+            "elapsed_seconds": 0.062000000005355105
+          },
+          {
+            "line": 5,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.09400000001187436
+          },
+          {
+            "line": 8,
+            "method": "POST",
+            "http_status": 202,
+            "operation": "admission",
+            "elapsed_seconds": 0.14100000000325963
+          },
+          {
+            "line": 11,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 0.1870000000053551
+          },
+          {
+            "line": 14,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 1.2030000000086147
+          },
+          {
+            "line": 17,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 2.2339999999967404
+          },
+          {
+            "line": 20,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.25
+          },
+          {
+            "line": 22,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.2660000000032596
+          },
+          {
+            "line": 25,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.2969999999913853
+          }
+        ],
+        "http_method_counts": {
+          "POST": 4,
+          "GET": 6
+        },
+        "selected_records": [
+          {
+            "line": 19,
+            "value": {
+              "elapsed_seconds": 2.2339999999967404,
+              "observed_at": "2026-09-25T22:33:00.591711+00:00",
+              "phase": "tracking_completed",
+              "result": "APPLIED",
+              "tracking_event_id": "21e6a2d4-c54a-50a5-bd0b-a3b5b4f2d3fb"
+            }
+          },
+          {
+            "line": 24,
+            "value": {
+              "elapsed_seconds": 2.2660000000032596,
+              "observed_at": "2026-09-25T22:33:00.627921+00:00",
+              "order_status": "FULFILLED",
+              "phase": "business_completed",
+              "shipment_status": "DELIVERED"
+            }
+          }
+        ]
+      },
+      "read_only_phases": {
+        "parallel-flow": {
+          "result_source": "artifacts/a-complements-evaluation-01/05-pending-explicit/parallel-flow/result.json",
+          "result": {
+            "acceptance_observed": true,
+            "acceptance_verified": true,
+            "checkpoint": {
+              "event_id": "infra-smoke-a4501958-b0fb-4497-a653-ada95c9a3e7a",
+              "inbox_event_id": "a1762dee-548e-4d36-9d05-b89b1d0dfc8e",
+              "order_id": "9ea379a8-d0c5-4f9f-bf94-9e7581314f4a",
+              "run_id": "a4501958-b0fb-4497-a653-ada95c9a3e7a",
+              "shipment_id": "e9fc200a-0138-4d9f-b46b-7ba1ae31c3fd",
+              "tracking_event_id": "21e6a2d4-c54a-50a5-bd0b-a3b5b4f2d3fb"
+            },
+            "duplicate_verified": false,
+            "error": null,
+            "event_id": "infra-smoke-a4501958-b0fb-4497-a653-ada95c9a3e7a",
+            "last_operation": "effects_observation",
+            "notifications_simulated": true,
+            "observation_only": true,
+            "order_completed": true,
+            "run_id": "a4501958-b0fb-4497-a653-ada95c9a3e7a",
+            "success": true,
+            "tracking_completed": true,
+            "verdict": "approved",
+            "webhook_offered": true
+          },
+          "observation_source": "artifacts/a-complements-evaluation-01/05-pending-explicit/parallel-flow/observations.jsonl",
+          "observation_line_count": 32,
+          "http_records": [
+            {
+              "line": 2,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "tracking_observation",
+              "elapsed_seconds": 0.0470000000204891
+            },
+            {
+              "line": 5,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.07800000000861473
+            },
+            {
+              "line": 7,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.1090000000258442
+            },
+            {
+              "line": 10,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 0.14000000001396984
+            },
+            {
+              "line": 13,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 1.187000000005355
+            },
+            {
+              "line": 16,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 2.2030000000086147
+            },
+            {
+              "line": 19,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 3.25
+            },
+            {
+              "line": 22,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 4.297000000020489
+            },
+            {
+              "line": 25,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 5.328000000008615
+            },
+            {
+              "line": 28,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 5.375
+            },
+            {
+              "line": 30,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 5.4060000000172295
+            }
+          ],
+          "http_method_counts": {
+            "GET": 11
+          },
+          "selected_records": [
+            {
+              "line": 1,
+              "value": {
+                "elapsed_seconds": 0.0,
+                "event_id": "infra-smoke-a4501958-b0fb-4497-a653-ada95c9a3e7a",
+                "inbox_event_id": "a1762dee-548e-4d36-9d05-b89b1d0dfc8e",
+                "observed_at": "2026-09-25T22:33:00.912260+00:00",
+                "order_id": "9ea379a8-d0c5-4f9f-bf94-9e7581314f4a",
+                "phase": "resumed_observation",
+                "run_id": "a4501958-b0fb-4497-a653-ada95c9a3e7a",
+                "shipment_id": "e9fc200a-0138-4d9f-b46b-7ba1ae31c3fd",
+                "tracking_event_id": "21e6a2d4-c54a-50a5-bd0b-a3b5b4f2d3fb"
+              }
+            },
+            {
+              "line": 4,
+              "value": {
+                "elapsed_seconds": 0.0470000000204891,
+                "observed_at": "2026-09-25T22:33:00.953246+00:00",
+                "phase": "tracking_completed",
+                "result": "APPLIED",
+                "tracking_event_id": "21e6a2d4-c54a-50a5-bd0b-a3b5b4f2d3fb"
+              }
+            },
+            {
+              "line": 9,
+              "value": {
+                "elapsed_seconds": 0.1090000000258442,
+                "observed_at": "2026-09-25T22:33:01.017359+00:00",
+                "order_status": "FULFILLED",
+                "phase": "business_completed",
+                "shipment_status": "DELIVERED"
+              }
+            },
+            {
+              "line": 32,
+              "value": {
+                "elapsed_seconds": 5.4060000000172295,
+                "notifications_count": 1,
+                "observed_at": "2026-09-25T22:33:06.311991+00:00",
+                "phase": "effects_observed",
+                "tracking_count": 1
+              }
+            },
+            {
+              "line": 26,
+              "value": {
+                "elapsed_seconds": 5.328000000008615,
+                "observed_at": "2026-09-25T22:33:06.235426+00:00",
+                "operation": "notifications_observation",
+                "phase": "public_query",
+                "response": {
+                  "notification_id": "2c462ac3-8092-4cdf-980a-1c5c39106f61",
+                  "processing": "DONE",
+                  "publication": "SENT",
+                  "required": true,
+                  "simulated_at": "2026-09-25T22:33:05.560316Z",
+                  "status": "SIMULATED",
+                  "tracking_event_id": "21e6a2d4-c54a-50a5-bd0b-a3b5b4f2d3fb"
+                }
+              }
+            }
+          ]
+        },
+        "previous-flow": {
+          "result_source": "artifacts/a-complements-evaluation-01/05-pending-explicit/previous-flow/result.json",
+          "result": {
+            "acceptance_observed": true,
+            "acceptance_verified": true,
+            "checkpoint": {
+              "event_id": "infra-smoke-a4501958-b0fb-4497-a653-ada95c9a3e7a",
+              "inbox_event_id": "a1762dee-548e-4d36-9d05-b89b1d0dfc8e",
+              "order_id": "9ea379a8-d0c5-4f9f-bf94-9e7581314f4a",
+              "run_id": "a4501958-b0fb-4497-a653-ada95c9a3e7a",
+              "shipment_id": "e9fc200a-0138-4d9f-b46b-7ba1ae31c3fd",
+              "tracking_event_id": "21e6a2d4-c54a-50a5-bd0b-a3b5b4f2d3fb"
+            },
+            "duplicate_verified": false,
+            "error": null,
+            "event_id": "infra-smoke-a4501958-b0fb-4497-a653-ada95c9a3e7a",
+            "last_operation": "effects_observation",
+            "notifications_simulated": true,
+            "observation_only": true,
+            "order_completed": true,
+            "run_id": "a4501958-b0fb-4497-a653-ada95c9a3e7a",
+            "success": true,
+            "tracking_completed": true,
+            "verdict": "approved",
+            "webhook_offered": true
+          },
+          "observation_source": "artifacts/a-complements-evaluation-01/05-pending-explicit/previous-flow/observations.jsonl",
+          "observation_line_count": 17,
+          "http_records": [
+            {
+              "line": 2,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "tracking_observation",
+              "elapsed_seconds": 0.030999999988125637
+            },
+            {
+              "line": 5,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.062000000005355105
+            },
+            {
+              "line": 7,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.09299999999348074
+            },
+            {
+              "line": 10,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 0.125
+            },
+            {
+              "line": 13,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.15599999998812564
+            },
+            {
+              "line": 15,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.1870000000053551
+            }
+          ],
+          "http_method_counts": {
+            "GET": 6
+          },
+          "selected_records": [
+            {
+              "line": 1,
+              "value": {
+                "elapsed_seconds": 0.0,
+                "event_id": "infra-smoke-a4501958-b0fb-4497-a653-ada95c9a3e7a",
+                "inbox_event_id": "a1762dee-548e-4d36-9d05-b89b1d0dfc8e",
+                "observed_at": "2026-09-25T22:33:21.454478+00:00",
+                "order_id": "9ea379a8-d0c5-4f9f-bf94-9e7581314f4a",
+                "phase": "resumed_observation",
+                "run_id": "a4501958-b0fb-4497-a653-ada95c9a3e7a",
+                "shipment_id": "e9fc200a-0138-4d9f-b46b-7ba1ae31c3fd",
+                "tracking_event_id": "21e6a2d4-c54a-50a5-bd0b-a3b5b4f2d3fb"
+              }
+            },
+            {
+              "line": 4,
+              "value": {
+                "elapsed_seconds": 0.046999999991385266,
+                "observed_at": "2026-09-25T22:33:21.491933+00:00",
+                "phase": "tracking_completed",
+                "result": "APPLIED",
+                "tracking_event_id": "21e6a2d4-c54a-50a5-bd0b-a3b5b4f2d3fb"
+              }
+            },
+            {
+              "line": 9,
+              "value": {
+                "elapsed_seconds": 0.09299999999348074,
+                "observed_at": "2026-09-25T22:33:21.547539+00:00",
+                "order_status": "FULFILLED",
+                "phase": "business_completed",
+                "shipment_status": "DELIVERED"
+              }
+            },
+            {
+              "line": 17,
+              "value": {
+                "elapsed_seconds": 0.1870000000053551,
+                "notifications_count": 1,
+                "observed_at": "2026-09-25T22:33:21.641882+00:00",
+                "phase": "effects_observed",
+                "tracking_count": 1
+              }
+            },
+            {
+              "line": 11,
+              "value": {
+                "elapsed_seconds": 0.125,
+                "observed_at": "2026-09-25T22:33:21.579231+00:00",
+                "operation": "notifications_observation",
+                "phase": "public_query",
+                "response": {
+                  "notification_id": "2c462ac3-8092-4cdf-980a-1c5c39106f61",
+                  "processing": "DONE",
+                  "publication": "SENT",
+                  "required": true,
+                  "simulated_at": "2026-09-25T22:33:05.560316Z",
+                  "status": "SIMULATED",
+                  "tracking_event_id": "21e6a2d4-c54a-50a5-bd0b-a3b5b4f2d3fb"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "parallel_signals": {
+        "source": "artifacts/a-complements-evaluation-01/05-pending-explicit/parallel-signals.json",
+        "values": {
+          "signal": "healthy_revision_convergence_not_exact_Ready_transition",
+          "converged_seconds": 29.437999999994645,
+          "notification_observed_seconds": 15.14100000000326,
+          "difference_seconds": -14.296999999991385,
+          "poll_seconds": 1,
+          "errors": []
+        },
+        "clock": "Same attempt runtime monotonic origin as policy journal; HTTP and snapshot endpoints include query/polling delay."
+      }
+    },
+    {
+      "attempt": "06-pending-auto",
+      "number": 6,
+      "scenario": "pending",
+      "condition": "auto",
+      "pair": 3,
+      "journal": {
+        "policy_window": [
+          {
+            "source": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0000.json",
+            "value": {
+              "elapsed_seconds": 0.32800000000861473,
+              "mode": "complement",
+              "phase": "operation_started",
+              "process_id": "b381a21b-f0ff-4b63-95b2-b647d31b750c",
+              "utc": "2026-09-25T22:33:27.075322+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0001.json",
+            "value": {
+              "elapsed_seconds": 0.7960000000020955,
+              "phase": "candidate_send_intent",
+              "process_id": "b381a21b-f0ff-4b63-95b2-b647d31b750c",
+              "template_hash": "9cba454a867bab072b2ddd0652335bdada7205699bb3d8ae6eebe63b34ab7c55",
+              "utc": "2026-09-25T22:33:27.549911+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0003.json",
+            "value": {
+              "elapsed_seconds": 4.342999999993481,
+              "phase": "candidate_decided",
+              "process_id": "b381a21b-f0ff-4b63-95b2-b647d31b750c",
+              "utc": "2026-09-25T22:33:31.093749+00:00",
+              "verdict": "rejected"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0004.json",
+            "value": {
+              "elapsed_seconds": 4.405999999988126,
+              "phase": "preparation_started",
+              "process_id": "b381a21b-f0ff-4b63-95b2-b647d31b750c",
+              "utc": "2026-09-25T22:33:31.151219+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0005.json",
+            "value": {
+              "elapsed_seconds": 7.217999999993481,
+              "pending_stage": "published_not_received",
+              "phase": "preparation_finished",
+              "process_id": "b381a21b-f0ff-4b63-95b2-b647d31b750c",
+              "utc": "2026-09-25T22:33:33.961955+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0006.json",
+            "value": {
+              "elapsed_seconds": 7.64000000001397,
+              "phase": "policy_authorized",
+              "process_id": "b381a21b-f0ff-4b63-95b2-b647d31b750c",
+              "utc": "2026-09-25T22:33:34.396895+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0007.json",
+            "value": {
+              "actor": "policy",
+              "elapsed_seconds": 7.655999999988126,
+              "phase": "restoration_requested",
+              "process_id": "b381a21b-f0ff-4b63-95b2-b647d31b750c",
+              "utc": "2026-09-25T22:33:34.399060+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0008.json",
+            "value": {
+              "elapsed_seconds": 7.85899999999674,
+              "phase": "restore_send_intent",
+              "process_id": "b381a21b-f0ff-4b63-95b2-b647d31b750c",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:33:34.611025+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0009.json",
+            "value": {
+              "elapsed_seconds": 7.967999999993481,
+              "phase": "restore_sent",
+              "process_id": "b381a21b-f0ff-4b63-95b2-b647d31b750c",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:33:34.711186+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0010.json",
+            "value": {
+              "elapsed_seconds": 26.546000000002095,
+              "phase": "healthy_converged",
+              "process_id": "b381a21b-f0ff-4b63-95b2-b647d31b750c",
+              "utc": "2026-09-25T22:33:53.289558+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0011.json",
+            "value": {
+              "directory": "recovery-flow-a15f31aa-45a8-4736-8f06-15536ab17def",
+              "elapsed_seconds": 27.046000000002095,
+              "phase": "recovery_flow_started",
+              "process_id": "b381a21b-f0ff-4b63-95b2-b647d31b750c",
+              "utc": "2026-09-25T22:33:53.794469+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0012.json",
+            "value": {
+              "elapsed_seconds": 30.280999999988126,
+              "phase": "recovery_observed",
+              "process_id": "b381a21b-f0ff-4b63-95b2-b647d31b750c",
+              "success": true,
+              "utc": "2026-09-25T22:33:57.023316+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0013.json",
+            "value": {
+              "elapsed_seconds": 30.280999999988126,
+              "phase": "operation_finished",
+              "process_id": "b381a21b-f0ff-4b63-95b2-b647d31b750c",
+              "success": true,
+              "utc": "2026-09-25T22:33:57.023316+00:00"
+            }
+          }
+        ],
+        "later_cleanup": [],
+        "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+      },
+      "initial": {
+        "result_source": "artifacts/a-complements-evaluation-01/06-pending-auto/flow/result.json",
+        "result": {
+          "acceptance_observed": true,
+          "acceptance_verified": true,
+          "checkpoint": {
+            "event_id": "infra-smoke-575c7112-7f93-44c6-8d69-4fc72439fd18",
+            "inbox_event_id": "33ec8494-552c-4d87-bb83-14868a5039d3",
+            "order_id": "ef2c7d38-c757-48b7-b10a-f0612c327b74",
+            "run_id": "575c7112-7f93-44c6-8d69-4fc72439fd18",
+            "shipment_id": "253e8fa2-f7cd-46d3-932d-6e171995fbb0",
+            "tracking_event_id": "eb5e3fc1-69bc-5457-b88c-402258c145fb"
+          },
+          "duplicate_verified": false,
+          "error": null,
+          "event_id": "infra-smoke-575c7112-7f93-44c6-8d69-4fc72439fd18",
+          "last_operation": "business_observation",
+          "notification_projection": {
+            "notification_id": null,
+            "processing": "NOT_RECEIVED",
+            "publication": "SENT",
+            "required": true,
+            "simulated_at": null,
+            "status": null,
+            "tracking_event_id": "eb5e3fc1-69bc-5457-b88c-402258c145fb"
+          },
+          "notifications_simulated": false,
+          "observation_only": false,
+          "order_completed": true,
+          "pending_stage": "published_not_received",
+          "run_id": "575c7112-7f93-44c6-8d69-4fc72439fd18",
+          "success": false,
+          "tracking_completed": true,
+          "verdict": "pending",
+          "webhook_offered": true
+        },
+        "observation_source": "artifacts/a-complements-evaluation-01/06-pending-auto/flow/observations.jsonl",
+        "observation_line_count": 27,
+        "http_records": [
+          {
+            "line": 2,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.030999999988125637
+          },
+          {
+            "line": 4,
+            "method": "POST",
+            "http_status": 200,
+            "operation": "prepare",
+            "elapsed_seconds": 0.0629999999946449
+          },
+          {
+            "line": 5,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.09399999998277053
+          },
+          {
+            "line": 8,
+            "method": "POST",
+            "http_status": 202,
+            "operation": "admission",
+            "elapsed_seconds": 0.14100000000325963
+          },
+          {
+            "line": 11,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 0.1879999999946449
+          },
+          {
+            "line": 14,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 1.2189999999827705
+          },
+          {
+            "line": 17,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 2.25
+          },
+          {
+            "line": 20,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.2809999999881256
+          },
+          {
+            "line": 22,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.2969999999913853
+          },
+          {
+            "line": 25,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.3280000000086147
+          }
+        ],
+        "http_method_counts": {
+          "POST": 4,
+          "GET": 6
+        },
+        "selected_records": [
+          {
+            "line": 19,
+            "value": {
+              "elapsed_seconds": 2.25,
+              "observed_at": "2026-09-25T22:33:33.567836+00:00",
+              "phase": "tracking_completed",
+              "result": "APPLIED",
+              "tracking_event_id": "eb5e3fc1-69bc-5457-b88c-402258c145fb"
+            }
+          },
+          {
+            "line": 24,
+            "value": {
+              "elapsed_seconds": 2.2969999999913853,
+              "observed_at": "2026-09-25T22:33:33.607439+00:00",
+              "order_status": "FULFILLED",
+              "phase": "business_completed",
+              "shipment_status": "DELIVERED"
+            }
+          }
+        ]
+      },
+      "read_only_phases": {
+        "parallel-flow": {
+          "result_source": "artifacts/a-complements-evaluation-01/06-pending-auto/parallel-flow/result.json",
+          "result": {
+            "acceptance_observed": true,
+            "acceptance_verified": true,
+            "checkpoint": {
+              "event_id": "infra-smoke-575c7112-7f93-44c6-8d69-4fc72439fd18",
+              "inbox_event_id": "33ec8494-552c-4d87-bb83-14868a5039d3",
+              "order_id": "ef2c7d38-c757-48b7-b10a-f0612c327b74",
+              "run_id": "575c7112-7f93-44c6-8d69-4fc72439fd18",
+              "shipment_id": "253e8fa2-f7cd-46d3-932d-6e171995fbb0",
+              "tracking_event_id": "eb5e3fc1-69bc-5457-b88c-402258c145fb"
+            },
+            "duplicate_verified": false,
+            "error": null,
+            "event_id": "infra-smoke-575c7112-7f93-44c6-8d69-4fc72439fd18",
+            "last_operation": "effects_observation",
+            "notifications_simulated": true,
+            "observation_only": true,
+            "order_completed": true,
+            "run_id": "575c7112-7f93-44c6-8d69-4fc72439fd18",
+            "success": true,
+            "tracking_completed": true,
+            "verdict": "approved",
+            "webhook_offered": true
+          },
+          "observation_source": "artifacts/a-complements-evaluation-01/06-pending-auto/parallel-flow/observations.jsonl",
+          "observation_line_count": 29,
+          "http_records": [
+            {
+              "line": 2,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "tracking_observation",
+              "elapsed_seconds": 0.031000000017229468
+            },
+            {
+              "line": 5,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.062000000005355105
+            },
+            {
+              "line": 7,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.09400000001187436
+            },
+            {
+              "line": 10,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 0.1090000000258442
+            },
+            {
+              "line": 13,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 1.1560000000172295
+            },
+            {
+              "line": 16,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 2.187000000005355
+            },
+            {
+              "line": 19,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 3.2030000000086147
+            },
+            {
+              "line": 22,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 4.234000000025844
+            },
+            {
+              "line": 25,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 4.26500000001397
+            },
+            {
+              "line": 27,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 4.2810000000172295
+            }
+          ],
+          "http_method_counts": {
+            "GET": 10
+          },
+          "selected_records": [
+            {
+              "line": 1,
+              "value": {
+                "elapsed_seconds": 0.0,
+                "event_id": "infra-smoke-575c7112-7f93-44c6-8d69-4fc72439fd18",
+                "inbox_event_id": "33ec8494-552c-4d87-bb83-14868a5039d3",
+                "observed_at": "2026-09-25T22:33:33.907355+00:00",
+                "order_id": "ef2c7d38-c757-48b7-b10a-f0612c327b74",
+                "phase": "resumed_observation",
+                "run_id": "575c7112-7f93-44c6-8d69-4fc72439fd18",
+                "shipment_id": "253e8fa2-f7cd-46d3-932d-6e171995fbb0",
+                "tracking_event_id": "eb5e3fc1-69bc-5457-b88c-402258c145fb"
+              }
+            },
+            {
+              "line": 4,
+              "value": {
+                "elapsed_seconds": 0.0470000000204891,
+                "observed_at": "2026-09-25T22:33:33.945070+00:00",
+                "phase": "tracking_completed",
+                "result": "APPLIED",
+                "tracking_event_id": "eb5e3fc1-69bc-5457-b88c-402258c145fb"
+              }
+            },
+            {
+              "line": 9,
+              "value": {
+                "elapsed_seconds": 0.09400000001187436,
+                "observed_at": "2026-09-25T22:33:33.996909+00:00",
+                "order_status": "FULFILLED",
+                "phase": "business_completed",
+                "shipment_status": "DELIVERED"
+              }
+            },
+            {
+              "line": 29,
+              "value": {
+                "elapsed_seconds": 4.297000000020489,
+                "notifications_count": 1,
+                "observed_at": "2026-09-25T22:33:38.196392+00:00",
+                "phase": "effects_observed",
+                "tracking_count": 1
+              }
+            },
+            {
+              "line": 23,
+              "value": {
+                "elapsed_seconds": 4.234000000025844,
+                "observed_at": "2026-09-25T22:33:38.133618+00:00",
+                "operation": "notifications_observation",
+                "phase": "public_query",
+                "response": {
+                  "notification_id": "6a44f02d-22a9-48c4-9edb-3d0e944de3fb",
+                  "processing": "DONE",
+                  "publication": "SENT",
+                  "required": true,
+                  "simulated_at": "2026-09-25T22:33:37.461710Z",
+                  "status": "SIMULATED",
+                  "tracking_event_id": "eb5e3fc1-69bc-5457-b88c-402258c145fb"
+                }
+              }
+            }
+          ]
+        },
+        "previous-flow": {
+          "result_source": "artifacts/a-complements-evaluation-01/06-pending-auto/previous-flow/result.json",
+          "result": {
+            "acceptance_observed": true,
+            "acceptance_verified": true,
+            "checkpoint": {
+              "event_id": "infra-smoke-575c7112-7f93-44c6-8d69-4fc72439fd18",
+              "inbox_event_id": "33ec8494-552c-4d87-bb83-14868a5039d3",
+              "order_id": "ef2c7d38-c757-48b7-b10a-f0612c327b74",
+              "run_id": "575c7112-7f93-44c6-8d69-4fc72439fd18",
+              "shipment_id": "253e8fa2-f7cd-46d3-932d-6e171995fbb0",
+              "tracking_event_id": "eb5e3fc1-69bc-5457-b88c-402258c145fb"
+            },
+            "duplicate_verified": false,
+            "error": null,
+            "event_id": "infra-smoke-575c7112-7f93-44c6-8d69-4fc72439fd18",
+            "last_operation": "effects_observation",
+            "notifications_simulated": true,
+            "observation_only": true,
+            "order_completed": true,
+            "run_id": "575c7112-7f93-44c6-8d69-4fc72439fd18",
+            "success": true,
+            "tracking_completed": true,
+            "verdict": "approved",
+            "webhook_offered": true
+          },
+          "observation_source": "artifacts/a-complements-evaluation-01/06-pending-auto/previous-flow/observations.jsonl",
+          "observation_line_count": 17,
+          "http_records": [
+            {
+              "line": 2,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "tracking_observation",
+              "elapsed_seconds": 0.046999999991385266
+            },
+            {
+              "line": 5,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.0779999999795109
+            },
+            {
+              "line": 7,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.10999999998603016
+            },
+            {
+              "line": 10,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 0.1409999999741558
+            },
+            {
+              "line": 13,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.17199999999138527
+            },
+            {
+              "line": 15,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.2029999999795109
+            }
+          ],
+          "http_method_counts": {
+            "GET": 6
+          },
+          "selected_records": [
+            {
+              "line": 1,
+              "value": {
+                "elapsed_seconds": 0.0,
+                "event_id": "infra-smoke-575c7112-7f93-44c6-8d69-4fc72439fd18",
+                "inbox_event_id": "33ec8494-552c-4d87-bb83-14868a5039d3",
+                "observed_at": "2026-09-25T22:33:53.515983+00:00",
+                "order_id": "ef2c7d38-c757-48b7-b10a-f0612c327b74",
+                "phase": "resumed_observation",
+                "run_id": "575c7112-7f93-44c6-8d69-4fc72439fd18",
+                "shipment_id": "253e8fa2-f7cd-46d3-932d-6e171995fbb0",
+                "tracking_event_id": "eb5e3fc1-69bc-5457-b88c-402258c145fb"
+              }
+            },
+            {
+              "line": 4,
+              "value": {
+                "elapsed_seconds": 0.046999999991385266,
+                "observed_at": "2026-09-25T22:33:53.567357+00:00",
+                "phase": "tracking_completed",
+                "result": "APPLIED",
+                "tracking_event_id": "eb5e3fc1-69bc-5457-b88c-402258c145fb"
+              }
+            },
+            {
+              "line": 9,
+              "value": {
+                "elapsed_seconds": 0.10999999998603016,
+                "observed_at": "2026-09-25T22:33:53.631151+00:00",
+                "order_status": "FULFILLED",
+                "phase": "business_completed",
+                "shipment_status": "DELIVERED"
+              }
+            },
+            {
+              "line": 17,
+              "value": {
+                "elapsed_seconds": 0.2029999999795109,
+                "notifications_count": 1,
+                "observed_at": "2026-09-25T22:33:53.718489+00:00",
+                "phase": "effects_observed",
+                "tracking_count": 1
+              }
+            },
+            {
+              "line": 11,
+              "value": {
+                "elapsed_seconds": 0.1409999999741558,
+                "observed_at": "2026-09-25T22:33:53.660025+00:00",
+                "operation": "notifications_observation",
+                "phase": "public_query",
+                "response": {
+                  "notification_id": "6a44f02d-22a9-48c4-9edb-3d0e944de3fb",
+                  "processing": "DONE",
+                  "publication": "SENT",
+                  "required": true,
+                  "simulated_at": "2026-09-25T22:33:37.461710Z",
+                  "status": "SIMULATED",
+                  "tracking_event_id": "eb5e3fc1-69bc-5457-b88c-402258c145fb"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "parallel_signals": {
+        "source": "artifacts/a-complements-evaluation-01/06-pending-auto/parallel-signals.json",
+        "values": {
+          "signal": "healthy_revision_convergence_not_exact_Ready_transition",
+          "converged_seconds": 26.905999999988126,
+          "notification_observed_seconds": 11.39000000001397,
+          "difference_seconds": -15.515999999974156,
+          "poll_seconds": 1,
+          "errors": []
+        },
+        "clock": "Same attempt runtime monotonic origin as policy journal; HTTP and snapshot endpoints include query/polling delay."
+      }
+    },
+    {
+      "attempt": "07-inconclusive-auto",
+      "number": 7,
+      "scenario": "inconclusive",
+      "condition": "auto",
+      "pair": 1,
+      "journal": {
+        "policy_window": [
+          {
+            "source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0000.json",
+            "value": {
+              "elapsed_seconds": 0.3289999999979045,
+              "mode": "complement",
+              "phase": "operation_started",
+              "process_id": "8c38351b-112c-4e98-84be-9705657f8cc4",
+              "utc": "2026-09-25T22:33:59.242148+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0001.json",
+            "value": {
+              "elapsed_seconds": 0.7660000000032596,
+              "phase": "candidate_send_intent",
+              "process_id": "8c38351b-112c-4e98-84be-9705657f8cc4",
+              "template_hash": "3707207d855411d6e4c37184787d77b8b9398aec6d7df97cf0cc49427d54182e",
+              "utc": "2026-09-25T22:33:59.679054+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0003.json",
+            "value": {
+              "elapsed_seconds": 22.437999999994645,
+              "phase": "candidate_decided",
+              "process_id": "8c38351b-112c-4e98-84be-9705657f8cc4",
+              "utc": "2026-09-25T22:34:21.361867+00:00",
+              "verdict": "inconclusive"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0004.json",
+            "value": {
+              "elapsed_seconds": 22.703999999997905,
+              "injection": "observer_transport_503",
+              "phase": "abstention_verified",
+              "process_id": "8c38351b-112c-4e98-84be-9705657f8cc4",
+              "utc": "2026-09-25T22:34:21.618495+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0005.json",
+            "value": {
+              "elapsed_seconds": 23.375,
+              "phase": "operation_finished",
+              "process_id": "8c38351b-112c-4e98-84be-9705657f8cc4",
+              "success": true,
+              "utc": "2026-09-25T22:34:22.290535+00:00"
+            }
+          }
+        ],
+        "later_cleanup": [
+          {
+            "source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0006.json",
+            "value": {
+              "actor": "script",
+              "cleanup": true,
+              "elapsed_seconds": 0.39100000000325963,
+              "phase": "restoration_requested",
+              "process_id": "0bded5a8-9669-462f-8e54-c72aebe19744",
+              "utc": "2026-09-25T22:34:22.682799+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0007.json",
+            "value": {
+              "elapsed_seconds": 0.6410000000032596,
+              "phase": "restore_send_intent",
+              "process_id": "0bded5a8-9669-462f-8e54-c72aebe19744",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:34:22.942407+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0008.json",
+            "value": {
+              "elapsed_seconds": 0.75,
+              "phase": "restore_sent",
+              "process_id": "0bded5a8-9669-462f-8e54-c72aebe19744",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:34:23.040609+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0009.json",
+            "value": {
+              "elapsed_seconds": 19.296999999991385,
+              "phase": "healthy_converged",
+              "process_id": "0bded5a8-9669-462f-8e54-c72aebe19744",
+              "utc": "2026-09-25T22:34:41.595804+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0010.json",
+            "value": {
+              "directory": "recovery-flow-beb2ffef-1353-48d7-b670-0b7e74161be3",
+              "elapsed_seconds": 19.719000000011874,
+              "phase": "recovery_flow_started",
+              "process_id": "0bded5a8-9669-462f-8e54-c72aebe19744",
+              "utc": "2026-09-25T22:34:42.021524+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0011.json",
+            "value": {
+              "elapsed_seconds": 22.828999999997905,
+              "phase": "recovery_observed",
+              "process_id": "0bded5a8-9669-462f-8e54-c72aebe19744",
+              "success": true,
+              "utc": "2026-09-25T22:34:45.118396+00:00"
+            }
+          }
+        ],
+        "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+      },
+      "initial": {
+        "result_source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/flow/result.json",
+        "result": {
+          "acceptance_observed": true,
+          "acceptance_verified": true,
+          "checkpoint": {
+            "event_id": "infra-smoke-89aac64f-7f29-46db-bdb6-d8aeef21774e",
+            "inbox_event_id": "2f9962a8-aab6-4e48-be1d-bb73e8743963",
+            "order_id": "502c91e6-5ca6-45a0-a158-8f79386971fd",
+            "run_id": "89aac64f-7f29-46db-bdb6-d8aeef21774e",
+            "shipment_id": "624be637-2245-466a-97fb-fb1a9fa8ecb1",
+            "tracking_event_id": "6c04d09b-2262-5093-a5d6-fa23709c3a20"
+          },
+          "duplicate_verified": false,
+          "error": "HTTP_STATUS_UNEXPECTED",
+          "event_id": "infra-smoke-89aac64f-7f29-46db-bdb6-d8aeef21774e",
+          "last_operation": "notifications_observation",
+          "notifications_simulated": false,
+          "observation_only": false,
+          "order_completed": true,
+          "run_id": "89aac64f-7f29-46db-bdb6-d8aeef21774e",
+          "success": false,
+          "tracking_completed": true,
+          "verdict": "inconclusive",
+          "webhook_offered": true
+        },
+        "observation_source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/flow/observations.jsonl",
+        "observation_line_count": 25,
+        "http_records": [
+          {
+            "line": 2,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.030999999988125637
+          },
+          {
+            "line": 4,
+            "method": "POST",
+            "http_status": 200,
+            "operation": "prepare",
+            "elapsed_seconds": 0.062000000005355105
+          },
+          {
+            "line": 5,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.09299999999348074
+          },
+          {
+            "line": 8,
+            "method": "POST",
+            "http_status": 202,
+            "operation": "admission",
+            "elapsed_seconds": 0.15599999998812564
+          },
+          {
+            "line": 11,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 0.2029999999795109
+          },
+          {
+            "line": 14,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 1.2179999999934807
+          },
+          {
+            "line": 17,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 2.25
+          },
+          {
+            "line": 20,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.264999999984866
+          },
+          {
+            "line": 22,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.2969999999913853
+          },
+          {
+            "line": 25,
+            "method": "GET",
+            "http_status": 503,
+            "operation": "notifications_observation",
+            "elapsed_seconds": 2.312000000005355
+          }
+        ],
+        "http_method_counts": {
+          "POST": 4,
+          "GET": 6
+        },
+        "selected_records": [
+          {
+            "line": 19,
+            "value": {
+              "elapsed_seconds": 2.264999999984866,
+              "observed_at": "2026-09-25T22:34:20.960227+00:00",
+              "phase": "tracking_completed",
+              "result": "APPLIED",
+              "tracking_event_id": "6c04d09b-2262-5093-a5d6-fa23709c3a20"
+            }
+          },
+          {
+            "line": 24,
+            "value": {
+              "elapsed_seconds": 2.312000000005355,
+              "observed_at": "2026-09-25T22:34:21.006856+00:00",
+              "order_status": "FULFILLED",
+              "phase": "business_completed",
+              "shipment_status": "DELIVERED"
+            }
+          }
+        ]
+      },
+      "read_only_phases": {
+        "resumed-read": {
+          "result_source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/resumed-read/result.json",
+          "result": {
+            "acceptance_observed": true,
+            "acceptance_verified": true,
+            "checkpoint": {
+              "event_id": "infra-smoke-89aac64f-7f29-46db-bdb6-d8aeef21774e",
+              "inbox_event_id": "2f9962a8-aab6-4e48-be1d-bb73e8743963",
+              "order_id": "502c91e6-5ca6-45a0-a158-8f79386971fd",
+              "run_id": "89aac64f-7f29-46db-bdb6-d8aeef21774e",
+              "shipment_id": "624be637-2245-466a-97fb-fb1a9fa8ecb1",
+              "tracking_event_id": "6c04d09b-2262-5093-a5d6-fa23709c3a20"
+            },
+            "duplicate_verified": false,
+            "error": null,
+            "event_id": "infra-smoke-89aac64f-7f29-46db-bdb6-d8aeef21774e",
+            "last_operation": "effects_observation",
+            "notifications_simulated": true,
+            "observation_only": true,
+            "order_completed": true,
+            "run_id": "89aac64f-7f29-46db-bdb6-d8aeef21774e",
+            "success": true,
+            "tracking_completed": true,
+            "verdict": "approved",
+            "webhook_offered": true
+          },
+          "observation_source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/resumed-read/observations.jsonl",
+          "observation_line_count": 17,
+          "http_records": [
+            {
+              "line": 2,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "tracking_observation",
+              "elapsed_seconds": 0.031000000017229468
+            },
+            {
+              "line": 5,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.062000000005355105
+            },
+            {
+              "line": 7,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.09400000001187436
+            },
+            {
+              "line": 10,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 0.125
+            },
+            {
+              "line": 13,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.15600000001722947
+            },
+            {
+              "line": 15,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.1870000000053551
+            }
+          ],
+          "http_method_counts": {
+            "GET": 6
+          },
+          "selected_records": [
+            {
+              "line": 1,
+              "value": {
+                "elapsed_seconds": 0.0,
+                "event_id": "infra-smoke-89aac64f-7f29-46db-bdb6-d8aeef21774e",
+                "inbox_event_id": "2f9962a8-aab6-4e48-be1d-bb73e8743963",
+                "observed_at": "2026-09-25T22:34:21.785843+00:00",
+                "order_id": "502c91e6-5ca6-45a0-a158-8f79386971fd",
+                "phase": "resumed_observation",
+                "run_id": "89aac64f-7f29-46db-bdb6-d8aeef21774e",
+                "shipment_id": "624be637-2245-466a-97fb-fb1a9fa8ecb1",
+                "tracking_event_id": "6c04d09b-2262-5093-a5d6-fa23709c3a20"
+              }
+            },
+            {
+              "line": 4,
+              "value": {
+                "elapsed_seconds": 0.031000000017229468,
+                "observed_at": "2026-09-25T22:34:21.819056+00:00",
+                "phase": "tracking_completed",
+                "result": "APPLIED",
+                "tracking_event_id": "6c04d09b-2262-5093-a5d6-fa23709c3a20"
+              }
+            },
+            {
+              "line": 9,
+              "value": {
+                "elapsed_seconds": 0.09400000001187436,
+                "observed_at": "2026-09-25T22:34:21.877588+00:00",
+                "order_status": "FULFILLED",
+                "phase": "business_completed",
+                "shipment_status": "DELIVERED"
+              }
+            },
+            {
+              "line": 17,
+              "value": {
+                "elapsed_seconds": 0.1870000000053551,
+                "notifications_count": 1,
+                "observed_at": "2026-09-25T22:34:21.971855+00:00",
+                "phase": "effects_observed",
+                "tracking_count": 1
+              }
+            },
+            {
+              "line": 11,
+              "value": {
+                "elapsed_seconds": 0.125,
+                "observed_at": "2026-09-25T22:34:21.910621+00:00",
+                "operation": "notifications_observation",
+                "phase": "public_query",
+                "response": {
+                  "notification_id": "1d64985e-0fbf-4f34-82e3-132cabdd32da",
+                  "processing": "DONE",
+                  "publication": "SENT",
+                  "required": true,
+                  "simulated_at": "2026-09-25T22:34:20.117138Z",
+                  "status": "SIMULATED",
+                  "tracking_event_id": "6c04d09b-2262-5093-a5d6-fa23709c3a20"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "abstention": {
+        "source": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/abstention-proof.json",
+        "before": {
+          "uid": "fdf5ee09-cd11-411b-b832-13f4ed47bca4",
+          "generation": 168,
+          "replicas": 1,
+          "template_hash": "3707207d855411d6e4c37184787d77b8b9398aec6d7df97cf0cc49427d54182e"
+        },
+        "after": {
+          "uid": "fdf5ee09-cd11-411b-b832-13f4ed47bca4",
+          "generation": 168,
+          "replicas": 1,
+          "template_hash": "3707207d855411d6e4c37184787d77b8b9398aec6d7df97cf0cc49427d54182e"
+        },
+        "before_full_identity_sha256_canonical_json": "23fb545ed576347b67eb889da0a2236c6eab12eff4fa3638e129fe6ce073b245",
+        "after_full_identity_sha256_canonical_json": "23fb545ed576347b67eb889da0a2236c6eab12eff4fa3638e129fe6ce073b245",
+        "full_identity_includes": [
+          "uid",
+          "generation",
+          "replicas",
+          "template_hash",
+          "inventory",
+          "references"
+        ],
+        "restore_intents": 0,
+        "restore_sent": 0,
+        "window": "During policy and resumed observation; later cleanup is separate."
+      }
+    },
+    {
+      "attempt": "08-inconclusive-auto",
+      "number": 8,
+      "scenario": "inconclusive",
+      "condition": "auto",
+      "pair": 2,
+      "journal": {
+        "policy_window": [
+          {
+            "source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0000.json",
+            "value": {
+              "elapsed_seconds": 0.32800000000861473,
+              "mode": "complement",
+              "phase": "operation_started",
+              "process_id": "03260b5a-8c94-4819-80fc-a9560221a379",
+              "utc": "2026-09-25T22:34:47.384868+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0001.json",
+            "value": {
+              "elapsed_seconds": 0.7809999999881256,
+              "phase": "candidate_send_intent",
+              "process_id": "03260b5a-8c94-4819-80fc-a9560221a379",
+              "template_hash": "8f95551ae0e82baf9004dbf5f0a3d485f1237f02ef74887b41252321b34f5870",
+              "utc": "2026-09-25T22:34:47.838591+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0003.json",
+            "value": {
+              "elapsed_seconds": 21.437999999994645,
+              "phase": "candidate_decided",
+              "process_id": "03260b5a-8c94-4819-80fc-a9560221a379",
+              "utc": "2026-09-25T22:35:08.496558+00:00",
+              "verdict": "inconclusive"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0004.json",
+            "value": {
+              "elapsed_seconds": 21.671999999991385,
+              "injection": "observer_transport_503",
+              "phase": "abstention_verified",
+              "process_id": "03260b5a-8c94-4819-80fc-a9560221a379",
+              "utc": "2026-09-25T22:35:08.740751+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0005.json",
+            "value": {
+              "elapsed_seconds": 22.328000000008615,
+              "phase": "operation_finished",
+              "process_id": "03260b5a-8c94-4819-80fc-a9560221a379",
+              "success": true,
+              "utc": "2026-09-25T22:35:09.396954+00:00"
+            }
+          }
+        ],
+        "later_cleanup": [
+          {
+            "source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0006.json",
+            "value": {
+              "actor": "script",
+              "cleanup": true,
+              "elapsed_seconds": 0.3590000000258442,
+              "phase": "restoration_requested",
+              "process_id": "7889f444-614b-486d-ac93-626cebe5d615",
+              "utc": "2026-09-25T22:35:09.771348+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0007.json",
+            "value": {
+              "elapsed_seconds": 0.625,
+              "phase": "restore_send_intent",
+              "process_id": "7889f444-614b-486d-ac93-626cebe5d615",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:35:10.027569+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0008.json",
+            "value": {
+              "elapsed_seconds": 0.7190000000118744,
+              "phase": "restore_sent",
+              "process_id": "7889f444-614b-486d-ac93-626cebe5d615",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:35:10.127632+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0009.json",
+            "value": {
+              "elapsed_seconds": 19.234000000025844,
+              "phase": "healthy_converged",
+              "process_id": "7889f444-614b-486d-ac93-626cebe5d615",
+              "utc": "2026-09-25T22:35:28.640594+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0010.json",
+            "value": {
+              "directory": "recovery-flow-ee15543e-61ce-4c61-86fd-8b896e5e1a55",
+              "elapsed_seconds": 19.64000000001397,
+              "phase": "recovery_flow_started",
+              "process_id": "7889f444-614b-486d-ac93-626cebe5d615",
+              "utc": "2026-09-25T22:35:29.041320+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0011.json",
+            "value": {
+              "elapsed_seconds": 22.719000000011874,
+              "phase": "recovery_observed",
+              "process_id": "7889f444-614b-486d-ac93-626cebe5d615",
+              "success": true,
+              "utc": "2026-09-25T22:35:32.120830+00:00"
+            }
+          }
+        ],
+        "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+      },
+      "initial": {
+        "result_source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/flow/result.json",
+        "result": {
+          "acceptance_observed": true,
+          "acceptance_verified": true,
+          "checkpoint": {
+            "event_id": "infra-smoke-cfbda8fd-4a02-4176-a9cd-41e429da16ac",
+            "inbox_event_id": "33337177-3d7f-42c4-ae1a-42df9f48c314",
+            "order_id": "72cea920-60a3-406d-a75e-d9ed4fe91ac8",
+            "run_id": "cfbda8fd-4a02-4176-a9cd-41e429da16ac",
+            "shipment_id": "e5abdb3e-7bce-4ad2-9c70-6e2818a5f9fb",
+            "tracking_event_id": "89805bc9-2d59-5b5b-a454-f13812ca2603"
+          },
+          "duplicate_verified": false,
+          "error": "HTTP_STATUS_UNEXPECTED",
+          "event_id": "infra-smoke-cfbda8fd-4a02-4176-a9cd-41e429da16ac",
+          "last_operation": "notifications_observation",
+          "notifications_simulated": false,
+          "observation_only": false,
+          "order_completed": true,
+          "run_id": "cfbda8fd-4a02-4176-a9cd-41e429da16ac",
+          "success": false,
+          "tracking_completed": true,
+          "verdict": "inconclusive",
+          "webhook_offered": true
+        },
+        "observation_source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/flow/observations.jsonl",
+        "observation_line_count": 22,
+        "http_records": [
+          {
+            "line": 2,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.031000000017229468
+          },
+          {
+            "line": 4,
+            "method": "POST",
+            "http_status": 200,
+            "operation": "prepare",
+            "elapsed_seconds": 0.062000000005355105
+          },
+          {
+            "line": 5,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.09400000001187436
+          },
+          {
+            "line": 8,
+            "method": "POST",
+            "http_status": 202,
+            "operation": "admission",
+            "elapsed_seconds": 0.14100000000325963
+          },
+          {
+            "line": 11,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 0.17199999999138527
+          },
+          {
+            "line": 14,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 1.187000000005355
+          },
+          {
+            "line": 17,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 1.2190000000118744
+          },
+          {
+            "line": 19,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 1.25
+          },
+          {
+            "line": 22,
+            "method": "GET",
+            "http_status": 503,
+            "operation": "notifications_observation",
+            "elapsed_seconds": 1.25
+          }
+        ],
+        "http_method_counts": {
+          "POST": 4,
+          "GET": 5
+        },
+        "selected_records": [
+          {
+            "line": 16,
+            "value": {
+              "elapsed_seconds": 1.187000000005355,
+              "observed_at": "2026-09-25T22:35:08.052654+00:00",
+              "phase": "tracking_completed",
+              "result": "APPLIED",
+              "tracking_event_id": "89805bc9-2d59-5b5b-a454-f13812ca2603"
+            }
+          },
+          {
+            "line": 21,
+            "value": {
+              "elapsed_seconds": 1.25,
+              "observed_at": "2026-09-25T22:35:08.111647+00:00",
+              "order_status": "FULFILLED",
+              "phase": "business_completed",
+              "shipment_status": "DELIVERED"
+            }
+          }
+        ]
+      },
+      "read_only_phases": {
+        "resumed-read": {
+          "result_source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/resumed-read/result.json",
+          "result": {
+            "acceptance_observed": true,
+            "acceptance_verified": true,
+            "checkpoint": {
+              "event_id": "infra-smoke-cfbda8fd-4a02-4176-a9cd-41e429da16ac",
+              "inbox_event_id": "33337177-3d7f-42c4-ae1a-42df9f48c314",
+              "order_id": "72cea920-60a3-406d-a75e-d9ed4fe91ac8",
+              "run_id": "cfbda8fd-4a02-4176-a9cd-41e429da16ac",
+              "shipment_id": "e5abdb3e-7bce-4ad2-9c70-6e2818a5f9fb",
+              "tracking_event_id": "89805bc9-2d59-5b5b-a454-f13812ca2603"
+            },
+            "duplicate_verified": false,
+            "error": null,
+            "event_id": "infra-smoke-cfbda8fd-4a02-4176-a9cd-41e429da16ac",
+            "last_operation": "effects_observation",
+            "notifications_simulated": true,
+            "observation_only": true,
+            "order_completed": true,
+            "run_id": "cfbda8fd-4a02-4176-a9cd-41e429da16ac",
+            "success": true,
+            "tracking_completed": true,
+            "verdict": "approved",
+            "webhook_offered": true
+          },
+          "observation_source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/resumed-read/observations.jsonl",
+          "observation_line_count": 17,
+          "http_records": [
+            {
+              "line": 2,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "tracking_observation",
+              "elapsed_seconds": 0.0470000000204891
+            },
+            {
+              "line": 5,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.07800000000861473
+            },
+            {
+              "line": 7,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.09400000001187436
+            },
+            {
+              "line": 10,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 0.125
+            },
+            {
+              "line": 13,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.15600000001722947
+            },
+            {
+              "line": 15,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.1870000000053551
+            }
+          ],
+          "http_method_counts": {
+            "GET": 6
+          },
+          "selected_records": [
+            {
+              "line": 1,
+              "value": {
+                "elapsed_seconds": 0.0,
+                "event_id": "infra-smoke-cfbda8fd-4a02-4176-a9cd-41e429da16ac",
+                "inbox_event_id": "33337177-3d7f-42c4-ae1a-42df9f48c314",
+                "observed_at": "2026-09-25T22:35:08.900012+00:00",
+                "order_id": "72cea920-60a3-406d-a75e-d9ed4fe91ac8",
+                "phase": "resumed_observation",
+                "run_id": "cfbda8fd-4a02-4176-a9cd-41e429da16ac",
+                "shipment_id": "e5abdb3e-7bce-4ad2-9c70-6e2818a5f9fb",
+                "tracking_event_id": "89805bc9-2d59-5b5b-a454-f13812ca2603"
+              }
+            },
+            {
+              "line": 4,
+              "value": {
+                "elapsed_seconds": 0.0470000000204891,
+                "observed_at": "2026-09-25T22:35:08.953967+00:00",
+                "phase": "tracking_completed",
+                "result": "APPLIED",
+                "tracking_event_id": "89805bc9-2d59-5b5b-a454-f13812ca2603"
+              }
+            },
+            {
+              "line": 9,
+              "value": {
+                "elapsed_seconds": 0.09400000001187436,
+                "observed_at": "2026-09-25T22:35:08.993954+00:00",
+                "order_status": "FULFILLED",
+                "phase": "business_completed",
+                "shipment_status": "DELIVERED"
+              }
+            },
+            {
+              "line": 17,
+              "value": {
+                "elapsed_seconds": 0.1870000000053551,
+                "notifications_count": 1,
+                "observed_at": "2026-09-25T22:35:09.091368+00:00",
+                "phase": "effects_observed",
+                "tracking_count": 1
+              }
+            },
+            {
+              "line": 11,
+              "value": {
+                "elapsed_seconds": 0.125,
+                "observed_at": "2026-09-25T22:35:09.030584+00:00",
+                "operation": "notifications_observation",
+                "phase": "public_query",
+                "response": {
+                  "notification_id": "46108ec2-e591-46ed-8f68-e28f082671af",
+                  "processing": "DONE",
+                  "publication": "SENT",
+                  "required": true,
+                  "simulated_at": "2026-09-25T22:35:08.276793Z",
+                  "status": "SIMULATED",
+                  "tracking_event_id": "89805bc9-2d59-5b5b-a454-f13812ca2603"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "abstention": {
+        "source": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/abstention-proof.json",
+        "before": {
+          "uid": "fdf5ee09-cd11-411b-b832-13f4ed47bca4",
+          "generation": 170,
+          "replicas": 1,
+          "template_hash": "8f95551ae0e82baf9004dbf5f0a3d485f1237f02ef74887b41252321b34f5870"
+        },
+        "after": {
+          "uid": "fdf5ee09-cd11-411b-b832-13f4ed47bca4",
+          "generation": 170,
+          "replicas": 1,
+          "template_hash": "8f95551ae0e82baf9004dbf5f0a3d485f1237f02ef74887b41252321b34f5870"
+        },
+        "before_full_identity_sha256_canonical_json": "2bc0c6d34bc7aac6200b7e409fa643f5588b07337fd9aaa846abea899acc3c00",
+        "after_full_identity_sha256_canonical_json": "2bc0c6d34bc7aac6200b7e409fa643f5588b07337fd9aaa846abea899acc3c00",
+        "full_identity_includes": [
+          "uid",
+          "generation",
+          "replicas",
+          "template_hash",
+          "inventory",
+          "references"
+        ],
+        "restore_intents": 0,
+        "restore_sent": 0,
+        "window": "During policy and resumed observation; later cleanup is separate."
+      }
+    },
+    {
+      "attempt": "09-inconclusive-auto",
+      "number": 9,
+      "scenario": "inconclusive",
+      "condition": "auto",
+      "pair": 3,
+      "journal": {
+        "policy_window": [
+          {
+            "source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0000.json",
+            "value": {
+              "elapsed_seconds": 0.3120000000053551,
+              "mode": "complement",
+              "phase": "operation_started",
+              "process_id": "c60a4761-523b-478a-9d93-2a2189c2bc2f",
+              "utc": "2026-09-25T22:35:34.289750+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0001.json",
+            "value": {
+              "elapsed_seconds": 0.7339999999967404,
+              "phase": "candidate_send_intent",
+              "process_id": "c60a4761-523b-478a-9d93-2a2189c2bc2f",
+              "template_hash": "62c186e166b3eeb028fb5424712d72903f6419bf9f6c7daf84ce63acaf70fdfa",
+              "utc": "2026-09-25T22:35:34.724222+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0003.json",
+            "value": {
+              "elapsed_seconds": 22.35899999999674,
+              "phase": "candidate_decided",
+              "process_id": "c60a4761-523b-478a-9d93-2a2189c2bc2f",
+              "utc": "2026-09-25T22:35:56.348778+00:00",
+              "verdict": "inconclusive"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0004.json",
+            "value": {
+              "elapsed_seconds": 22.625,
+              "injection": "observer_transport_503",
+              "phase": "abstention_verified",
+              "process_id": "c60a4761-523b-478a-9d93-2a2189c2bc2f",
+              "utc": "2026-09-25T22:35:56.601320+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0005.json",
+            "value": {
+              "elapsed_seconds": 23.26600000000326,
+              "phase": "operation_finished",
+              "process_id": "c60a4761-523b-478a-9d93-2a2189c2bc2f",
+              "success": true,
+              "utc": "2026-09-25T22:35:57.244389+00:00"
+            }
+          }
+        ],
+        "later_cleanup": [
+          {
+            "source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0006.json",
+            "value": {
+              "actor": "script",
+              "cleanup": true,
+              "elapsed_seconds": 0.4370000000053551,
+              "phase": "restoration_requested",
+              "process_id": "227821e7-4d20-44a2-b282-4f59ae140138",
+              "utc": "2026-09-25T22:35:57.689418+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0007.json",
+            "value": {
+              "elapsed_seconds": 0.6870000000053551,
+              "phase": "restore_send_intent",
+              "process_id": "227821e7-4d20-44a2-b282-4f59ae140138",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:35:57.940667+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0008.json",
+            "value": {
+              "elapsed_seconds": 0.7960000000020955,
+              "phase": "restore_sent",
+              "process_id": "227821e7-4d20-44a2-b282-4f59ae140138",
+              "template_hash": "66bf5dac91805a197b75114adce213e5eb331d68f717041a12689c1998016154",
+              "utc": "2026-09-25T22:35:58.045350+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0009.json",
+            "value": {
+              "elapsed_seconds": 19.25,
+              "phase": "healthy_converged",
+              "process_id": "227821e7-4d20-44a2-b282-4f59ae140138",
+              "utc": "2026-09-25T22:36:16.500533+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0010.json",
+            "value": {
+              "directory": "recovery-flow-5f41a31d-e170-4ccb-891a-d677bbb4bd94",
+              "elapsed_seconds": 19.703000000008615,
+              "phase": "recovery_flow_started",
+              "process_id": "227821e7-4d20-44a2-b282-4f59ae140138",
+              "utc": "2026-09-25T22:36:16.945680+00:00"
+            }
+          },
+          {
+            "source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0011.json",
+            "value": {
+              "elapsed_seconds": 21.796000000002095,
+              "phase": "recovery_observed",
+              "process_id": "227821e7-4d20-44a2-b282-4f59ae140138",
+              "success": true,
+              "utc": "2026-09-25T22:36:19.053218+00:00"
+            }
+          }
+        ],
+        "clock_note": "elapsed_seconds are comparable only for matching process_id. Later cleanup is not a policy restoration."
+      },
+      "initial": {
+        "result_source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/flow/result.json",
+        "result": {
+          "acceptance_observed": true,
+          "acceptance_verified": true,
+          "checkpoint": {
+            "event_id": "infra-smoke-b8aeae1d-51e4-4108-b593-d60eee89470a",
+            "inbox_event_id": "c4e7fcb3-a708-43ab-a25e-dd63fff1294b",
+            "order_id": "75f8a8c1-82bd-4d11-bdaf-b96c51cd0b9d",
+            "run_id": "b8aeae1d-51e4-4108-b593-d60eee89470a",
+            "shipment_id": "bbf1ce56-7816-4242-9a1e-39e0f4bc1e9f",
+            "tracking_event_id": "97ddf597-a4b0-51e3-856a-30975f85a952"
+          },
+          "duplicate_verified": false,
+          "error": "HTTP_STATUS_UNEXPECTED",
+          "event_id": "infra-smoke-b8aeae1d-51e4-4108-b593-d60eee89470a",
+          "last_operation": "notifications_observation",
+          "notifications_simulated": false,
+          "observation_only": false,
+          "order_completed": true,
+          "run_id": "b8aeae1d-51e4-4108-b593-d60eee89470a",
+          "success": false,
+          "tracking_completed": true,
+          "verdict": "inconclusive",
+          "webhook_offered": true
+        },
+        "observation_source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/flow/observations.jsonl",
+        "observation_line_count": 25,
+        "http_records": [
+          {
+            "line": 2,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.030999999988125637
+          },
+          {
+            "line": 4,
+            "method": "POST",
+            "http_status": 200,
+            "operation": "prepare",
+            "elapsed_seconds": 0.062000000005355105
+          },
+          {
+            "line": 5,
+            "method": "POST",
+            "http_status": 201,
+            "operation": "prepare",
+            "elapsed_seconds": 0.0779999999795109
+          },
+          {
+            "line": 8,
+            "method": "POST",
+            "http_status": 202,
+            "operation": "admission",
+            "elapsed_seconds": 0.125
+          },
+          {
+            "line": 11,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 0.17199999999138527
+          },
+          {
+            "line": 14,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 1.202999999979511
+          },
+          {
+            "line": 17,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "tracking_observation",
+            "elapsed_seconds": 2.2339999999967404
+          },
+          {
+            "line": 20,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.25
+          },
+          {
+            "line": 22,
+            "method": "GET",
+            "http_status": 200,
+            "operation": "business_observation",
+            "elapsed_seconds": 2.264999999984866
+          },
+          {
+            "line": 25,
+            "method": "GET",
+            "http_status": 503,
+            "operation": "notifications_observation",
+            "elapsed_seconds": 2.264999999984866
+          }
+        ],
+        "http_method_counts": {
+          "POST": 4,
+          "GET": 6
+        },
+        "selected_records": [
+          {
+            "line": 19,
+            "value": {
+              "elapsed_seconds": 2.2339999999967404,
+              "observed_at": "2026-09-25T22:35:55.932271+00:00",
+              "phase": "tracking_completed",
+              "result": "APPLIED",
+              "tracking_event_id": "97ddf597-a4b0-51e3-856a-30975f85a952"
+            }
+          },
+          {
+            "line": 24,
+            "value": {
+              "elapsed_seconds": 2.264999999984866,
+              "observed_at": "2026-09-25T22:35:55.969431+00:00",
+              "order_status": "FULFILLED",
+              "phase": "business_completed",
+              "shipment_status": "DELIVERED"
+            }
+          }
+        ]
+      },
+      "read_only_phases": {
+        "resumed-read": {
+          "result_source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/resumed-read/result.json",
+          "result": {
+            "acceptance_observed": true,
+            "acceptance_verified": true,
+            "checkpoint": {
+              "event_id": "infra-smoke-b8aeae1d-51e4-4108-b593-d60eee89470a",
+              "inbox_event_id": "c4e7fcb3-a708-43ab-a25e-dd63fff1294b",
+              "order_id": "75f8a8c1-82bd-4d11-bdaf-b96c51cd0b9d",
+              "run_id": "b8aeae1d-51e4-4108-b593-d60eee89470a",
+              "shipment_id": "bbf1ce56-7816-4242-9a1e-39e0f4bc1e9f",
+              "tracking_event_id": "97ddf597-a4b0-51e3-856a-30975f85a952"
+            },
+            "duplicate_verified": false,
+            "error": null,
+            "event_id": "infra-smoke-b8aeae1d-51e4-4108-b593-d60eee89470a",
+            "last_operation": "effects_observation",
+            "notifications_simulated": true,
+            "observation_only": true,
+            "order_completed": true,
+            "run_id": "b8aeae1d-51e4-4108-b593-d60eee89470a",
+            "success": true,
+            "tracking_completed": true,
+            "verdict": "approved",
+            "webhook_offered": true
+          },
+          "observation_source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/resumed-read/observations.jsonl",
+          "observation_line_count": 17,
+          "http_records": [
+            {
+              "line": 2,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "tracking_observation",
+              "elapsed_seconds": 0.0159999999741558
+            },
+            {
+              "line": 5,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.030999999988125637
+            },
+            {
+              "line": 7,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "business_observation",
+              "elapsed_seconds": 0.0779999999795109
+            },
+            {
+              "line": 10,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "notifications_observation",
+              "elapsed_seconds": 0.10999999998603016
+            },
+            {
+              "line": 13,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.1409999999741558
+            },
+            {
+              "line": 15,
+              "method": "GET",
+              "http_status": 200,
+              "operation": "effects_observation",
+              "elapsed_seconds": 0.17199999999138527
+            }
+          ],
+          "http_method_counts": {
+            "GET": 6
+          },
+          "selected_records": [
+            {
+              "line": 1,
+              "value": {
+                "elapsed_seconds": 0.0,
+                "event_id": "infra-smoke-b8aeae1d-51e4-4108-b593-d60eee89470a",
+                "inbox_event_id": "c4e7fcb3-a708-43ab-a25e-dd63fff1294b",
+                "observed_at": "2026-09-25T22:35:56.762500+00:00",
+                "order_id": "75f8a8c1-82bd-4d11-bdaf-b96c51cd0b9d",
+                "phase": "resumed_observation",
+                "run_id": "b8aeae1d-51e4-4108-b593-d60eee89470a",
+                "shipment_id": "bbf1ce56-7816-4242-9a1e-39e0f4bc1e9f",
+                "tracking_event_id": "97ddf597-a4b0-51e3-856a-30975f85a952"
+              }
+            },
+            {
+              "line": 4,
+              "value": {
+                "elapsed_seconds": 0.0159999999741558,
+                "observed_at": "2026-09-25T22:35:56.782214+00:00",
+                "phase": "tracking_completed",
+                "result": "APPLIED",
+                "tracking_event_id": "97ddf597-a4b0-51e3-856a-30975f85a952"
+              }
+            },
+            {
+              "line": 9,
+              "value": {
+                "elapsed_seconds": 0.0779999999795109,
+                "observed_at": "2026-09-25T22:35:56.838827+00:00",
+                "order_status": "FULFILLED",
+                "phase": "business_completed",
+                "shipment_status": "DELIVERED"
+              }
+            },
+            {
+              "line": 17,
+              "value": {
+                "elapsed_seconds": 0.17199999999138527,
+                "notifications_count": 1,
+                "observed_at": "2026-09-25T22:35:56.935046+00:00",
+                "phase": "effects_observed",
+                "tracking_count": 1
+              }
+            },
+            {
+              "line": 11,
+              "value": {
+                "elapsed_seconds": 0.10999999998603016,
+                "observed_at": "2026-09-25T22:35:56.872191+00:00",
+                "operation": "notifications_observation",
+                "phase": "public_query",
+                "response": {
+                  "notification_id": "c3332e2e-8fca-41aa-9fea-0017a1f08b98",
+                  "processing": "DONE",
+                  "publication": "SENT",
+                  "required": true,
+                  "simulated_at": "2026-09-25T22:35:55.210566Z",
+                  "status": "SIMULATED",
+                  "tracking_event_id": "97ddf597-a4b0-51e3-856a-30975f85a952"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "abstention": {
+        "source": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/abstention-proof.json",
+        "before": {
+          "uid": "fdf5ee09-cd11-411b-b832-13f4ed47bca4",
+          "generation": 172,
+          "replicas": 1,
+          "template_hash": "62c186e166b3eeb028fb5424712d72903f6419bf9f6c7daf84ce63acaf70fdfa"
+        },
+        "after": {
+          "uid": "fdf5ee09-cd11-411b-b832-13f4ed47bca4",
+          "generation": 172,
+          "replicas": 1,
+          "template_hash": "62c186e166b3eeb028fb5424712d72903f6419bf9f6c7daf84ce63acaf70fdfa"
+        },
+        "before_full_identity_sha256_canonical_json": "2c735f57b1c3e53301c9337c23bb3707f42fe9d448082122705230e03309c0c9",
+        "after_full_identity_sha256_canonical_json": "2c735f57b1c3e53301c9337c23bb3707f42fe9d448082122705230e03309c0c9",
+        "full_identity_includes": [
+          "uid",
+          "generation",
+          "replicas",
+          "template_hash",
+          "inventory",
+          "references"
+        ],
+        "restore_intents": 0,
+        "restore_sent": 0,
+        "window": "During policy and resumed observation; later cleanup is separate."
+      }
+    }
+  ]
+}
