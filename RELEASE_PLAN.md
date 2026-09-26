@@ -366,6 +366,50 @@ diagnóstico descritivo: uma execução sucessora sem alternância/repetições
 não estima ganho causal nem isola todo o custo da observação. Reavaliar após
 essa coleta; não aumentar carga automaticamente.
 
+**Resultado:** `artifacts/scale-instrumentation-reuse-01`, instrumento `12cb801`;
+300/300 aceitos e concluídos no prazo, efeitos e atribuição confirmados, sem
+pendência elegível final. 613 hashes conferidos; nó parado, volumes preservados.
+Conferência: `artifacts/scale-instrumentation-reuse-01-review.json`. Síntese dos
+dois diagnósticos: `artifacts/scale-observer-assessment-01.json`; registros locais,
+não anexados a uma release.
+
+| Medida | Releituras (`instrumentation-01`) | Reutilização (`reuse-01`) |
+| --- | --- | --- |
+| GETs do observador, todos 200 | 2.409 | 1.812 |
+| Mediana da verificação terminal (s) | 2,2895 | 1,5855 |
+| Mediana aceite → conclusão observada (s) | 9,828 | 5,109 |
+| p95 aceite → conclusão observada (s) | 13,313 | 6,203 |
+| Core API: períodos com throttling | 406/527 | 301/551 |
+| Core worker: períodos com throttling | 206/586 | 199/560 |
+| Maior idade elegível amostrada (s) | 0,553917 | 0,350512 |
+
+Foram retiradas 600 releituras terminais; consultas adicionais de espera passaram
+de nove para doze, resultando em 597 GETs a menos. O teste do instrumento confirma
+seis em vez de oito GETs por observação terminal com as mesmas asserções.
+A duração terminal começa em `observed_monotonic` da chamada bem-sucedida e
+termina após confirmar efeitos. Não inclui toda a espera anterior de polling ou
+agendamento dos observadores; medianas de componentes não são aditivas.
+
+**Conclusão delimitada:** menos consultas redundantes e resultado funcional
+preservado justificam preferir a reutilização na próxima versão do instrumento.
+A queda descritiva dos tempos não mede aceleração da aplicação. A diferença
+entre dois ensaios em momentos distintos, com estado acumulado e janelas cAdvisor
+diferentes, não estima efeito causal ou significância. Não demonstra que a CPU
+do Core API era o gargalo global nem que o custo do observador foi eliminado.
+O tempo até confirmação pode ser sensível ao instrumento mesmo com o mesmo
+contrato de conclusão. Comparar políticas requer fixar esse instrumento em todas
+as condições; resultados anteriores permanecem identificados e separados.
+
+**Próxima decisão:** encerrar os ajustes do observador nesta etapa. Se houver
+continuidade, propagar explicitamente o modo validado ao piloto KEDA e definir
+uma caracterização curta da capacidade com uma réplica, patamares escolhidos
+antes da coleta e interrupção por limites do gerador, observador ou outra etapa.
+Isso é mais informativo que prolongar automaticamente 8/s para 540 eventos.
+Não definir capacidade máxima nem atribuir benefício de escala a partir destes
+ensaios. Taxas novas, recursos, limiar e adoção do modo no KEDA permanecem para
+essa decisão; o padrão anterior continua disponível. AKS não resolve a lacuna
+atual de caracterização e continua adiado.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da

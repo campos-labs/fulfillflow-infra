@@ -108,6 +108,13 @@ def review(source):
                 if r.get("completed_monotonic")
             ]
         ),
+        "terminal_verification_duration": durations(
+            [
+                r["completed_monotonic"] - r["observed_monotonic"]
+                for r in events
+                if r.get("completed_monotonic")
+            ]
+        ),
         "max_eligible": max(s["inbox"]["eligible"] for s in series),
         "max_oldest_eligible_seconds": max(s["inbox"]["oldest_eligible_seconds"] for s in series),
         "samples": len(series),
