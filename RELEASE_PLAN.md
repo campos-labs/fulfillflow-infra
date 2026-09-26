@@ -630,6 +630,27 @@ no worker que justifique comparar escalonamento. Não ampliar ferramentas ou AKS
 para contornar a indefinição. Código validado por 207 testes e Ruff; sem alteração
 da aplicação ou dos resultados congelados.
 
+### Diagnóstico sucessor de admissão a 12/s
+
+Antes da execução `scale-admission-12-c16-01`, fixar somente o teto HTTP em
+16; perfil de 420 eventos, uma réplica, recursos, observadores 16, reutilização,
+prazos e coleta permanecem os de `scale-capacity-12-01`. Durante o patamar anterior,
+338 respostas apresentaram média de 0,459914 s, p95 aproximado de 0,844 s e máximo
+de 1,828 s. Taxa pretendida 12/s multiplicada pela média sugere 5,52 requisições
+em voo como aproximação, sem comprovar regime estacionário. O teto 16 deixa margem
+sobre a ocupação média e sobre 12 vezes o p95 (~10,13); esta última conta é
+heurística, não uma aplicação exata da Lei de Little nem garantia contra caudas.
+Não variar a concorrência durante a execução nem buscar automaticamente um teto maior.
+
+O instrumento permite esse desvio apenas no diagnóstico controlado a 12/s e
+registra `admission_concurrency_changed=true`. Padrões históricos preservados.
+Avaliar oferta realizada, duração/ocupação HTTP, conclusão, backlog/idade e
+CPU/throttling. Uma oferta mais completa também aumenta a demanda efetiva, mesmo
+com taxa pretendida igual; não atribuir toda diferença ao teto isoladamente.
+Preservar a execução anterior como diagnóstico, sem tratá-la como controle formal.
+Aplicar os limites de host, prazo, observação e encerramento já definidos. Revisar
+antes de novo ensaio; não executar 16/s ou mudar worker/CPU/política nesta tentativa.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da

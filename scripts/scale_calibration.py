@@ -406,6 +406,7 @@ def _execute(
     reuse_terminal_reads=False,
     controlled_host=False,
     peak_rate=8,
+    http_concurrency=8,
 ):
     if controlled_host and (not diagnostic or not reuse_terminal_reads):
         raise RuntimeError("CONTROLLED_REFERENCE_REQUIRES_REUSE_DIAGNOSTIC")
@@ -434,6 +435,7 @@ def _execute(
         reuse=reuse_terminal_reads,
         controlled=controlled_host,
         extension=extension,
+        http_concurrency=http_concurrency,
     )
     if peak_rate != 8:
         work_deadline = time.monotonic() + 20 * 60
@@ -456,6 +458,7 @@ def _execute(
                 "fixed_replicas": 1 if diagnostic else None,
                 "load_changed": peak_rate != 8,
                 "peak_rate": peak_rate,
+                "admission_concurrency_changed": http_concurrency != 8,
                 "controlled_host": controlled_host,
                 "reuse_terminal_reads": reuse_terminal_reads,
             },
@@ -687,6 +690,7 @@ def execute(
     reuse_terminal_reads=False,
     controlled_host=False,
     peak_rate=8,
+    http_concurrency=8,
 ):
     if private.is_relative_to(output) or output.is_relative_to(private):
         raise RuntimeError("PRIVATE_OUTPUT_OVERLAP")
@@ -698,6 +702,7 @@ def execute(
             reuse_terminal_reads=reuse_terminal_reads,
             controlled_host=controlled_host,
             peak_rate=peak_rate,
+            http_concurrency=http_concurrency,
         )
 
 
@@ -709,6 +714,7 @@ def main():
     parser.add_argument("--reuse-terminal-reads", action="store_true")
     parser.add_argument("--controlled-host", action="store_true")
     parser.add_argument("--peak-rate", type=int, choices=(8, 12, 16), default=8)
+    parser.add_argument("--http-concurrency", type=int, choices=(8, 16), default=8)
     args = parser.parse_args()
     try:
         execute(
@@ -718,6 +724,7 @@ def main():
             reuse_terminal_reads=args.reuse_terminal_reads,
             controlled_host=args.controlled_host,
             peak_rate=args.peak_rate,
+            http_concurrency=args.http_concurrency,
         )
         print(
             json.dumps(

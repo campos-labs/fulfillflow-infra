@@ -468,6 +468,11 @@ A progressão entre perfis depende da revisão dos limites definidos previamente
 no RELEASE_PLAN. Não extrapolar capacidade máxima nem transportar essas taxas
 para KEDA automaticamente.
 
+No diagnóstico de admissão a 12/s, permitir teto HTTP 16 em lugar de oito,
+sem mudar agenda, observador ou workload. Identificar o instrumento e a mudança
+no protocolo; oferta planejada igual não garante demanda efetiva igual.
+Essa exceção não altera os padrões das calibrações ou do piloto KEDA.
+
 **Controle e sinal.** KEDA é a opção preferencial e integra-se ao HPA; não criar
 outro HPA independente sobre o mesmo alvo. Na condição fixa, o controlador não
 pode disputar réplicas com o executor. Na adaptativa, manifests de rotina e scripts

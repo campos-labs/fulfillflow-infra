@@ -604,3 +604,7 @@ A caracterização `scale-capacity-12-01` atingiu o limite de concorrência do
 gerador (22 ofertas não realizadas; 398/398 aceites concluídos). O gate impediu
 a execução de 16/s. Não repetir nem aumentar a taxa automaticamente; preservar
 os registros e definir um protocolo sucessor antes de mudar o instrumento.
+
+Diagnóstico sucessor de admissão: acrescentar `-HttpConcurrency 16` somente com
+`-PeakRate 12 -ControlledHost -ReuseTerminalReads`, em pasta nova. Os demais
+parâmetros permanecem iguais; consultar a justificativa e os limites no RELEASE_PLAN.

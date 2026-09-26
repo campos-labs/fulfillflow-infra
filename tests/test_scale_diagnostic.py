@@ -244,3 +244,27 @@ class CharacterizationSettingsTests(unittest.TestCase):
             schedule(stages)
         with self.assertRaisesRegex(ValueError, "CHARACTERIZATION_PROFILE_NOT_ALLOWED"):
             schedule([{"seconds": 60, "rate": 16}], characterization=True)
+
+    def test_admission_override_changes_only_concurrency(self):
+        from scripts.scale_diagnostic import characterization_settings
+
+        base = {
+            "stages": [
+                {"seconds": 15, "rate": 2},
+                {"seconds": 30, "rate": 8},
+                {"seconds": 15, "rate": 2},
+            ],
+            "replicas": [1, 2],
+            "http_concurrency": 8,
+        }
+        flags = dict(diagnostic=True, reuse=True, controlled=True, extension=None)
+        before = characterization_settings(base, 12, **flags)
+        after = characterization_settings(base, 12, http_concurrency=16, **flags)
+        self.assertEqual(after, {**before, "http_concurrency": 16})
+        self.assertEqual(base["http_concurrency"], 8)
+        for rate, concurrency in [(8, 16), (16, 16), (12, 32)]:
+            with (
+                self.subTest(rate=rate, concurrency=concurrency),
+                self.assertRaisesRegex(RuntimeError, "ADMISSION_CONCURRENCY_PROFILE_NOT_ALLOWED"),
+            ):
+                characterization_settings(base, rate, http_concurrency=concurrency, **flags)
