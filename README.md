@@ -4,8 +4,8 @@ Implantação e recuperação operacional do FulfillFlow em Kubernetes. A entreg
 atual usa Kind, uma aplicação congelada e réplicas fixas. A configuração de
 referência AKS/ACR está preparada para uma extensão futura, ainda não implantada.
 
-**Plano A concluído; desenvolvimento e execuções pausados.** Foram conferidas uma
-comparação de 20 tentativas e uma avaliação complementar de nove tentativas,
+**Avaliação operacional concluída em Kind; desenvolvimento e execuções pausados.**
+Foram conferidas uma comparação de 20 tentativas e uma avaliação complementar de nove tentativas,
 tratadas separadamente. O último encerramento preservou dados e parou o laboratório.
 
 ## Comece por aqui
@@ -26,9 +26,9 @@ possuem API e worker próprios, com três bancos/roles em PostgreSQL e RabbitMQ.
 Notifications registra entrega simulada; não envia mensagens a provedores externos.
 Este repositório consome a aplicação e seus contratos, sem copiar código de negócio.
 
-A1 verifica uma revisão e fornece restauração explícita. A2 acrescenta acionamento
-automático delimitado: confirma a falha de inicialização do `notifications-worker`,
-confere sua identidade e restaura uma configuração conhecida. A comparação mantém
+A ferramenta verifica revisões e oferece restauração explícita. A política
+automática confirma uma falha de inicialização do `notifications-worker`, confere
+sua identidade e restaura uma configuração conhecida. A comparação mantém
 aplicação, detector e verificador comuns às duas condições; o acionamento explícito
 é realizado por script. Os complementos observam trabalho aguardando consumo e
 abstenção diante de falha de consulta injetada. A política não reverte dados nem
@@ -71,5 +71,7 @@ a pausa atual não autoriza repetir as séries concluídas.
 - `artifacts/`: saída local ignorada pelo Git; não presumir acesso por link ao repositório.
 
 O [índice de evidências](docs/OPERATIONAL_EVALUATION.md#8-evidências-e-reprodução-da-leitura)
-informa o que está versionado e o que permanece local. Os pacotes completos ainda
-não foram anexados a uma release, e uma cópia independente não foi verificada.
+reúne a leitura guiada e os [dois ZIPs completos](docs/evidence/operational-a/archives)
+dos conjuntos concluídos, com checksums. Pilotos e séries interrompidas permanecem
+locais, com suas exclusões documentadas. Nenhuma release/tag foi criada; restauração
+de backup independente não foi verificada.

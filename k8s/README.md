@@ -6,8 +6,9 @@ em cluster local. Os exemplos AKS continuam bloqueados; o ensaio local não veri
 pull ACR, identidade, isolamento de rede ou armazenamento/recuperação no AKS.
 
 Este guia descreve configuração e comandos. Começar pelo [Kind local](#caminho-kind-local),
-[A1](#procedimento-a1), [A2](#a2--operação-delimitada) ou
-[complementos](#complementos-a--pendência-e-observação-inconclusiva).
+[verificação e restauração explícita](#verificação-e-restauração-explícita),
+[restauração automática](#restauração-automática) ou
+[trabalho pendente e inconclusão](#trabalho-pendente-e-observação-inconclusiva).
 Resultados e fontes estão na [avaliação operacional](../docs/OPERATIONAL_EVALUATION.md);
 entregas, pausa e extensões, no [RELEASE_PLAN](../RELEASE_PLAN.md).
 
@@ -230,12 +231,12 @@ container do nó, preservando-o. Não o excluir: os volumes locais estão associ
 a ele. Reiniciar Docker não autoriza campanha ou mudança de escopo. O estado atual
 e a situação de backup/restauração pertencem ao RELEASE_PLAN.
 
-## Procedimento A1
+## Verificação e restauração explícita
 
-A interface A1 segue [DESIGN §8.1–8.4](../DESIGN.md#81-a1--verificação-de-uma-revisão-de-runtime)
-e é reutilizada por A2. Usa Kind existente e uma alteração em um único Deployment;
-não cria cluster, secrets ou migrations. O [histórico](https://github.com/campos-labs/fulfillflow-infra/blob/47dbd111ad4eff89a8e64c7b50d7d2c59c23baf7/RELEASE_PLAN.md)
-preserva o aceite do piloto, incluindo restauração e pausa.
+A interface segue [DESIGN §8.1–8.4](../DESIGN.md#81-verificação-de-uma-revisão-de-runtime).
+Usa Kind existente e uma alteração em um único Deployment; não cria cluster, secrets
+ou migrations. Nomes dos scripts/configurações são preservados como interfaces
+existentes, sem representar etapas pendentes de implementação.
 
 Interface: `scripts/Invoke-A1.ps1 -Python <executável> -Config <arquivo.json>
 -OutputDirectory <destino-novo> -Mode <modo>`. O equivalente Python é
@@ -269,7 +270,7 @@ Sequência operacional, quando autorizada:
 
 1. Conferir ferramentas, contexto, namespace, imagens e recursos dedicados. Retomar
    o ambiente preservado pelo procedimento acima e verificar sua referência saudável;
-   preparação de ambiente novo, quando necessária, é separada do piloto. Não excluir
+   preparação de ambiente novo, quando necessária, é separada da avaliação. Não excluir
    ou reutilizar recursos históricos, regenerar secrets ou repetir migrations concluídas.
 2. Registrar o workload-alvo, configuração saudável restaurável e candidata,
    consumidores de qualquer configuração compartilhada e comandos de restauração.
@@ -284,17 +285,17 @@ Sequência operacional, quando autorizada:
    cenário. Na falha prevista, seguir o encerramento preparado; na inesperada, parar
    mutações e diagnosticar. Não reenviar eventos nem substituir registros anteriores.
 6. Restaurar explicitamente a revisão/configuração saudável e conferir tanto os
-   eventos aceitos durante o piloto quanto um novo evento identificado. Registrar
+   eventos aceitos durante a tentativa quanto um novo evento identificado. Registrar
    pendências e eventuais falhas de restauração. Exportar evidências e parar os
    recursos dedicados, preservando dados. Respeitar o encerramento previsto no plano.
 
-O procedimento A1 não instala HPA/KEDA, rollback automático ou novas ferramentas
+A verificação isolada não instala HPA/KEDA, rollback automático ou novas ferramentas
 de observabilidade. Seus testes não substituem a execução integrada nem validam AKS.
 
-## A2 — Operação delimitada
+## Restauração automática
 
-A interface A2 reutiliza a configuração local A1 e segue [DESIGN §8.5](../DESIGN.md#85-a2--restauração-automatizada-de-runtime-em-kind).
-O [relatório operacional](../docs/OPERATIONAL_EVALUATION.md) separa pilotos e comparação.
+A política reutiliza a configuração local da verificação explícita e segue
+[DESIGN §8.5](../DESIGN.md#85-restauração-automatizada-de-runtime-em-kind).
 ACR não é necessário: o Kind usa a imagem local verificada, sem publicação externa.
 
 Interface: `scripts/Invoke-A2.ps1 -Python <executável> -Config <arquivo.json>
@@ -309,8 +310,8 @@ Interface: `scripts/Invoke-A2.ps1 -Python <executável> -Config <arquivo.json>
 | `request -Source <tentativa> -Actor <human/agent/script>` | Registra solicitação atômica em outro terminal; não altera o cluster diretamente |
 | `recover -Source <tentativa> -Actor <ator>` | Encerramento explícito ou reconciliação após interrupção; exige destino novo e valida identidade/configuração |
 
-Usar A1 `resume`/`pause` para o ciclo de vida do laboratório existente. O segredo
-continua entrando apenas pela variável de processo `CARRIER_ALPHA_WEBHOOK_SECRET`.
+Usar `Invoke-A1.ps1` nos modos `resume`/`pause` para o ciclo de vida do laboratório
+existente. O segredo continua entrando apenas pela variável de processo `CARRIER_ALPHA_WEBHOOK_SECRET`.
 `request` dispensa esse segredo e não disputa o lock mantido pelo observador.
 Registrar o ator real; acionamento por script/agente não mede reação humana.
 
@@ -326,12 +327,11 @@ por consulta, quando identificável, e um fluxo novo com duplicata controlada. R
 uma recuperação já iniciada somente observa seu evento conhecido; não cria substituto.
 Uma candidata rejeitada continua rejeitada mesmo quando sua restauração é aprovada.
 
-Antes dos pilotos, conferir Docker, porta da API, contexto/UID, recursos e ausência
+Antes da execução, conferir Docker, porta da API, contexto/UID, recursos e ausência
 de carga concorrente. Não excluir volumes, repetir bootstrap/migrations ou modificar
 probes. Parar na primeira falha inesperada, preservar evidências e encerrar o laboratório.
-Os quatro pilotos A2-I não são repetições da comparação A2-II.
 
-## A2-II — Comparação por comando único
+## Comparação de acionamento
 
 **Ciclo concluído; comandos abaixo são referência operacional.** A série 03 foi
 conferida com 20/20 tentativas e ambiente parado. Não repetir para este aceite;
@@ -342,11 +342,11 @@ exige decisão, referência e destino próprios, sem sobrescrever as séries exi
 `scripts/Invoke-A2Comparison.ps1 -SettingsFile <arquivo-local.json> -Mode Check`
 faz a conferência inicial sem iniciar o Kind ou criar o destino de coleta.
 `-Mode Execute` retoma o laboratório existente, congela o protocolo, executa as
-20 tentativas e tenta parar o ambiente ao concluir ou interromper. A política A2-I
-permanece inalterada; não há reposição automática, novo cluster ou recurso Azure.
+20 tentativas e tenta parar o ambiente ao concluir ou interromper. A política de
+restauração permanece inalterada; não há reposição automática, novo cluster ou recurso Azure.
 
 O arquivo local, fora do Git, contém caminhos absolutos: `python`, `config`
-(configuração A1 conferida), `output` (destino novo), `secret_file` (JSON privado
+(configuração operacional conferida), `output` (destino novo), `secret_file` (JSON privado
 existente, campo `alpha`) e `expected_sha` (commit limpo aprovado). Valores de
 segredos nunca entram nesse arquivo nem nos argumentos. O launcher carrega o segredo
 apenas no ambiente do processo e restaura a variável anterior ao sair.
@@ -360,8 +360,8 @@ do host. Não é monitoramento contínuo de energia/sessão durante cada tentati
 
 O acionamento explícito usa subprocesso independente, identificado como `script`;
 o observador continua responsável pela restauração. A espera de solicitação usa
-polling de 0,1 s; a observação A2-I mantém 1 s. A leitura de log vazio de startup pode aguardar até 5 s, com identidade conferida;
-isso integra a detecção e não repete a implantação. Não há atraso artificial. Os tempos
+polling de 0,1 s; a observação mantém 1 s. A leitura de log vazio de startup pode
+aguardar até 5 s, com identidade conferida; isso integra a detecção e não repete a implantação. Não há atraso artificial. Os tempos
 de limpeza das candidatas saudáveis ficam fora da avaliação da política.
 
 São até quatro horas, reservando 30 minutos para limpeza, verificações e pausa.
@@ -378,15 +378,15 @@ de sucesso. Saída zero exige as 20 tentativas e encerramento aprovado.
 Se houver erro, preservar tudo e não repetir o comando ou trocar o destino para
 completar a quota. Consultar o diagnóstico antes de qualquer nova execução.
 
-## Complementos A — pendência e observação inconclusiva
+## Trabalho pendente e observação inconclusiva
 
 **Ciclo encerrado:** avaliação 01 conferida, 9/9 tentativas; laboratório parado.
 Os comandos abaixo documentam a interface. Não repetir a série concluída;
 nova execução depende de protocolo/destino próprios e decisão após a pausa.
 
 Protocolo executado e resultados: [avaliação operacional](../docs/OPERATIONAL_EVALUATION.md#2-referências-e-método);
-estado: [RELEASE_PLAN](../RELEASE_PLAN.md); contratos: [DESIGN §8.6](../DESIGN.md#86-complementos-a--pendência-e-observação-inconclusiva). O executor
-`scripts/Invoke-AComplements.ps1` usa os mesmos campos locais do launcher A2
+estado: [RELEASE_PLAN](../RELEASE_PLAN.md); contratos: [DESIGN §8.6](../DESIGN.md#86-trabalho-pendente-e-observação-inconclusiva). O executor
+`scripts/Invoke-AComplements.ps1` usa os mesmos campos locais do launcher de comparação
 (`python`, `config`, `output`, `secret_file`, `expected_sha`). `output` deve ser novo.
 Para avaliação, acrescentar `pilot_source`, apontando ao pacote completo dos três
 pilotos com checksums e a mesma implementação dos scripts. Não versionar settings,
@@ -408,8 +408,8 @@ reposição. Se uma tentativa falhar, consultar `summary.json` e o journal antes
 retomar: pausa de recursos não equivale a restauração de configuração.
 
 Os tempos de sinais paralelos incluem consultas/polling; o CSV dos complementos
-não integra as medianas A2 anteriores. A falha 503 é injeção identificada no
-transporte do observador, não indisponibilidade real da API. A abstenção é verificada
+não integra as medianas da comparação de acionamento. A falha 503 é injeção
+identificada no transporte do observador, não indisponibilidade real da API. A abstenção é verificada
 antes da limpeza explícita. A retomada dos eventos anteriores usa apenas GET.
 
 ## Sequência operacional AKS — ainda não executada

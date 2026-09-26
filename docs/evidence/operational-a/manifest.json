@@ -1,23 +1,29 @@
 {
   "schema_version": 1,
   "scope": "Operational A evaluation on frozen application v1.3; curated offline copies, no new runtime execution.",
-  "published_availability": "These files become available with the repository commit. No release asset or independently verified backup is asserted.",
+  "published_availability": "Selected records and two byte-identical complete campaign archives are versioned in Git. No release/tag was created. Pilots and interrupted series remain local; their exclusions are documented.",
   "complete_archives": [
     {
       "campaign": "a2-comparison-03",
-      "availability": "local_only",
+      "availability": "versioned_original_archive",
       "sha256": "fc0c5896a32a23944873c296d85256162d52769b33b2d1bbbb56d2b51cb66676",
-      "manifest_files_verified": 638
+      "manifest_files_verified": 638,
+      "path": "archives/a2-comparison-03.zip",
+      "bytes": 476724,
+      "internal_root": "a2-comparison-03/"
     },
     {
       "campaign": "a-complements-evaluation-01",
-      "availability": "local_only",
+      "availability": "versioned_original_archive",
       "sha256": "19317e812794fd0b117836fca93f61d29853ed0d9f4d13ed1b4a5b3d6bbfedda",
-      "manifest_files_verified": 379
+      "manifest_files_verified": 379,
+      "path": "archives/a-complements-evaluation-01.zip",
+      "bytes": 306773,
+      "internal_root": "a-complements-evaluation-01/"
     }
   ],
-  "archive_verification": "All original manifest entries and corresponding ZIP member bytes rechecked during this documentation consolidation; no mismatch. Original reviews retain their earlier dates and meaning.",
-  "privacy": "No personal filesystem paths, personal names, secret values or host powercfg dump published. Event and workload identifiers are synthetic/local evidence identities. Source paths are repository-relative and do not imply versioned raw artifacts.",
+  "archive_verification": "The prior documentation consolidation verified 638 and 379 original manifest entries and corresponding ZIP member bytes without mismatch. This update reused that audit, inspected content for distribution, and verified copies against the existing ZIP hashes; no new campaign or raw-result audit.",
+  "privacy": "Distribution review found no personal filesystem paths, personal names, credential values, database dumps or kubeconfig content. Archives retain original synthetic event/workload identities, opaque secret references and local host power diagnostics. Source paths are repository-relative.",
   "files": [
     {
       "path": "a2-comparison-03/attempts.csv",
@@ -561,968 +567,996 @@
         "artifacts/a2-interruption-review-02/closure.json"
       ],
       "transformation": "Retains exclusion counts, causes, original-log limitation and later read-only conclusion; omits absolute paths, event payloads and unrelated machine metadata."
+    },
+    {
+      "path": "archives/a2-comparison-03.zip",
+      "nature": "original_archive",
+      "sha256": "fc0c5896a32a23944873c296d85256162d52769b33b2d1bbbb56d2b51cb66676",
+      "sources": [
+        "artifacts/a2-comparison-03.zip"
+      ],
+      "transformation": "Byte-identical copy; no recompression or member changes."
+    },
+    {
+      "path": "archives/a-complements-evaluation-01.zip",
+      "nature": "original_archive",
+      "sha256": "19317e812794fd0b117836fca93f61d29853ed0d9f4d13ed1b4a5b3d6bbfedda",
+      "sources": [
+        "artifacts/a-complements-evaluation-01.zip"
+      ],
+      "transformation": "Byte-identical copy; no recompression or member changes."
+    },
+    {
+      "path": "archives/checksums.sha256",
+      "nature": "distribution_checksums",
+      "sha256": "88383a8d697cf332e8c2a87b0c14b5aafabd57c6d2212697614aa6c12b926fc4",
+      "sources": [
+        "artifacts/a2-comparison-03.zip",
+        "artifacts/a-complements-evaluation-01.zip"
+      ],
+      "transformation": "Lists the previously recorded SHA-256 of the two byte-identical published archives."
     }
   ],
   "sources": [
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/complement-row.json",
       "sha256": "8b7a3ed5e3301df41f25b3fb1c3c3373367ae7531e628326e3bf3bf844df12c9",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/flow/observations.jsonl",
       "sha256": "a9009d9379384087bf85e52523455287eefa5776ddb124e7511218a737f537d4",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/flow/result.json",
       "sha256": "b6610a02589b66b48256682af2e5b0b515cdb87682328eb5d9474e734f130e1d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0000.json",
       "sha256": "b4ad6e0d9bf6e5a1aded595d0c8d1daeb4c904a39ff3f1c32d7d8ad101513ad3",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0001.json",
       "sha256": "4a88bb23b1f2e1aaeeb17e4dde49cc2800f0368b1c881151a2a9b5f30a8632c0",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0002.json",
       "sha256": "d26d0891e51dfa65960c3ddd8f9690f3c00927e7d51f9f3139d774e4b28f59df",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0003.json",
       "sha256": "58baaf1702a8c03c7f3ec7564a40c9f116a2f87e69a7ede1712e7043688e045d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0004.json",
       "sha256": "70f060fac3d4cf1526b9d8fa8eba3541931f614e7e48d5d7a74d99f49158c78e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0005.json",
       "sha256": "0d1d889aa17ed46ce8a4adc5f9453a0da5f43e86f2e7d5ee12b1fe69294066b2",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0006.json",
       "sha256": "aa126d97028a7c933996e68a975fe1d7f7ffa78520b32f577ca09ccae655ce94",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0007.json",
       "sha256": "208a490aff382331def59039b73e93b398ad6db93b73dd30d95e949c2180e0ea",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0008.json",
       "sha256": "b1922b054a86aff76cc9ddba048909c4a83bc9d61ac46b9135d6ea65cd5c9262",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0009.json",
       "sha256": "ae061b583cfd7b809c1174b2dd6b11eae34221742d5832b755ecedd03331c98e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0010.json",
       "sha256": "2fad252c8a37ab9c414b8d9611d1a52d538d53fd12eea51edccadf5d4774560a",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0011.json",
       "sha256": "7550e990ee8107bd4bf1c3e07d590521e8f5ef63f7de79151eaa314dd3844c6f",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0012.json",
       "sha256": "2dfbb82dd0aa6ab66ba2f698091b506bc5a1a54c8a1ae75e2002651fec1ed0ad",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0013.json",
       "sha256": "df6c502dd985b61f4ff212e3c7a66aa99b0e7560aadab57d79796b9e3f254ee8",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/journal/0014.json",
       "sha256": "95d865ef7d721d83233221e36e9a2066666483cca371dc75408247b9bf4bab1f",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/parallel-flow/observations.jsonl",
       "sha256": "4a6d702a8f4d8dd9bb86834ed8e70d09168607284c9b5e6380d62f4f7f489fcb",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/parallel-flow/result.json",
       "sha256": "9a6edd1f174682befadb0128b8db7ff52f2003c698ce9f396555c741239b7ac6",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/parallel-signals.json",
       "sha256": "45a727b0d5320692447a3520e461a3784ebc4d88f50eecf455c42ce3c39ea685",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/previous-flow/observations.jsonl",
       "sha256": "6a1c069828aa2da35c181487873eda4512dea9f6568473329b862ae1c00f933c",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/01-pending-explicit/previous-flow/result.json",
       "sha256": "9a6edd1f174682befadb0128b8db7ff52f2003c698ce9f396555c741239b7ac6",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/complement-row.json",
       "sha256": "623f837c65f6012aa508930d6f02de495c9087a04ddf811b948b97af7c3b7d50",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/flow/observations.jsonl",
       "sha256": "7489a4a046e8b8e580269103626b8d0b683c8452ef64612702c5e1d6f1b8b825",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/flow/result.json",
       "sha256": "58a7eca6690ee518dc2a7f78af20d77dcce461fa52fa80437ef8ef75217846b2",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0000.json",
       "sha256": "fafc2ba892ddf71e3fc11f6ea1728a0919dc753d999ec6520b7408d09945ff1c",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0001.json",
       "sha256": "e31743b830ee22c0dc58bf94aa5a18608938750b8f2d2858a1190153fb10ee8d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0002.json",
       "sha256": "cfc5d7a1570d3c77e3157974b40090961154b160ce34cb45c8ffbede3723b33e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0003.json",
       "sha256": "88aa2a8aec4465c7fad84d90bc0c4744861771d2ed8d58b3b5f079f47eec9787",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0004.json",
       "sha256": "b1c3bbb95e39f784e8881bed6256c18fd118b0ac668b93fab9636d100a8294cd",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0005.json",
       "sha256": "7622e9ea32213e913116f91adb0d81f67a655d3cf03923d07262cd928d5a01b7",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0006.json",
       "sha256": "6f5afdad3165101b46949f451512f8e7836fe73ed5cb9d8a6d20f0a2b269f8ea",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0007.json",
       "sha256": "81c43b9689ea8e6b31866a59f80b37dbb1b26a2bbe81a873dc17666a1437c655",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0008.json",
       "sha256": "c513c59d22190e7d907bc1068b1b07cf1c51d0864b249a646faaf2e7d6df2bc3",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0009.json",
       "sha256": "134faac3f8be2d4b448bece3c129045c619c726f76b63cf393c20e94f6829247",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0010.json",
       "sha256": "4cafc0004c0b9c7c59369c97d0ba44ac698906cad1504564ce824364426af99d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0011.json",
       "sha256": "6df28ee177df67b4b613aeaa688646ed73b4caa755c6d238c397fbbb690838e2",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0012.json",
       "sha256": "bf7a4c2066ebba866644c6a1184766c0405133c9ebcffe3b04ae4d6ace6b5d74",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/journal/0013.json",
       "sha256": "406a649bf0a46301284dc3ac394883c01fc66504b0a527e6ec62bdd3f651098b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/parallel-flow/observations.jsonl",
       "sha256": "2adb82e41ec29a9dd3526a0c338fe3cade2fef70be29b9b526727166b4cd3dd5",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/parallel-flow/result.json",
       "sha256": "0acbfb0549060cc30d4e25fc767338866a09d443df340d05e452333cd8fc9f46",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/parallel-signals.json",
       "sha256": "61d1a459bd0c8a64bb3dc0a69bf23fa8b82d0f4a589840189cb2e86e3c5273ff",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/previous-flow/observations.jsonl",
       "sha256": "9a95a618df0f5eab3fdc532283841d4aafe41146764fda9fd65cf9e36295da10",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/02-pending-auto/previous-flow/result.json",
       "sha256": "0acbfb0549060cc30d4e25fc767338866a09d443df340d05e452333cd8fc9f46",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/complement-row.json",
       "sha256": "7b62e0b4ece3f283a2acced16f19af114dbc5d054fd09a5f19c07d0bf6354032",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/flow/observations.jsonl",
       "sha256": "06098ceb00930ff3a61e58097a154fc205233e05e2a454abcd219c399a30df98",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/flow/result.json",
       "sha256": "c3650bf96f8e28c347f8de914369ae7ee151f65f9e7872cad0ee31846f560b5d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0000.json",
       "sha256": "6f1016310f34fd5ada1ed015f71e935562ac37435bff2751144f53fc4b55043d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0001.json",
       "sha256": "c8d03209cf1d796a81f853cc94b70dcb7b28c76490f7817ecff206932c2ca1d8",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0002.json",
       "sha256": "b98553b73c3826eb3caa289b9391e1c581668fcbc33d7599242e207a7bd9d7bd",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0003.json",
       "sha256": "325f329479cc35d99e0e31e2afa5c829ca1c67184b4a21c06a0d8ee973ea212c",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0004.json",
       "sha256": "a59e464a8ddbc481d3251b0b16a987ebd4123518a5915dd67ae8dac3ce973704",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0005.json",
       "sha256": "51fb6b1c78de115bd6b8a3dd9c722e1fb9e84a7fa127271e9d4334b8d9cfba26",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0006.json",
       "sha256": "42b03c46e19e9444e75271e5ef7a8e8cfa28c2446e44f8c9f0593b0326ae7099",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0007.json",
       "sha256": "11a7fee62e393b96a639c4242469eccfdbb3f22846f00bc2fd4c7889ef59166b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0008.json",
       "sha256": "2e3d650db17da8312f000817a1762a79bcfbb48aad9d39a0189f4c704c1ec107",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0009.json",
       "sha256": "5e0ebc594e8894665f8bd17b8def4a726fc81981edf20c98813fcc40eaf2bc71",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0010.json",
       "sha256": "7cebe5e03644d5c17aa048e0006de78f1cf67f7b8096869d30fde76e72e0e736",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0011.json",
       "sha256": "6d91d74a08d45163aabe1c2705d84c7a02a76263ae1b5473861376adbd5d8a42",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0012.json",
       "sha256": "ce14034a536199b0d6bf6efd739eb55094aea2dff53db1a3874a5eec61c0594d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/journal/0013.json",
       "sha256": "3bdc7063940af9b45852a9f6687dea87448f8ac76face9e3260a52778537feae",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/parallel-flow/observations.jsonl",
       "sha256": "cabe2e067dd54f133cc4373ddc59e1068d09555ce130dddf599c0c37f03a6b2f",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/parallel-flow/result.json",
       "sha256": "ce679760b3d170368b78a4d38708e4c974f5930f29ce402a38919797e7522cf2",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/parallel-signals.json",
       "sha256": "34d24bc70cf872ee4cadae603f2c4b7967c75d717a8175ed9aee03e25cdad74e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/previous-flow/observations.jsonl",
       "sha256": "51a9cefb935110e9602322511ce4068abc66fdaec96843d092d7806f266c0f6d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/03-pending-auto/previous-flow/result.json",
       "sha256": "ce679760b3d170368b78a4d38708e4c974f5930f29ce402a38919797e7522cf2",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/complement-row.json",
       "sha256": "d77e7641ddb94d646a7313f218fc527c3fde49e907d84567bc4f8f4ccb793d0e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/flow/observations.jsonl",
       "sha256": "b525ecaedd1ca79d0ac0682cf38ec308ac6ab742365c7b867e9647a1ae5d5869",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/flow/result.json",
       "sha256": "96d9cff8134cb0b621d5d522ad74a18af6606c33707d8fc0f4f1a8ae12119639",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0000.json",
       "sha256": "e8e2a1a3fa1d7d942857304d1b33e7c86ee192aa3df735cdf58da29c36c658fb",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0001.json",
       "sha256": "72e1517ad843a085d8c825f4e14384f6850ee4a9caeae0f9b13e45af3acc29ac",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0002.json",
       "sha256": "f1cf799ee7f5bec387db88a89cda58bc76aedf2869504089deb0e414eddc4db4",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0003.json",
       "sha256": "bb40fe1611a3f18e2d1b149b68788a8516fff008ea32ca2d03b479cfac215087",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0004.json",
       "sha256": "fa4b8a5fbb1384fe9aaed7e5458b00e5f0defbc883405147af543204b3b626b0",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0005.json",
       "sha256": "85015b2d75018583471e288d365d26318082e4c1e4edb1fa3b847f6714792902",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0006.json",
       "sha256": "14d77f1627b901ef8f7cde0dec39e9eedf7360b012e0a414bb7d7af949895f07",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0007.json",
       "sha256": "1ed2ebd501efda02ff057d359a731ff9bbfc4180d4729b8647c7d8bd7be6c7d0",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0008.json",
       "sha256": "9f49a39bd18c016124196f7342b147e218e93607c9bf73e97b62cef935676711",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0009.json",
       "sha256": "f03ae4aead0fb9d1085ab17bd6d392e4ffdb14e28d708827937b6554ba0f51c7",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0010.json",
       "sha256": "9580963c387c3d621da6151d257f082bd1631b1e7302d318a578f5cc197e028a",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0011.json",
       "sha256": "1502c71ce3a8f8ecc2b25a024d16269c82ce5b3b72be4d712e4a538712dcd3d3",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0012.json",
       "sha256": "3b2130e82017579d544ba31400b1e78d6e4379851b04730f59758f4e19d9fff6",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0013.json",
       "sha256": "01209e2b79251f1d18b5c5092b4e51e850f349f56cfcdbf1dea3416cef34031e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/journal/0014.json",
       "sha256": "04ae050cbda390a38f2ca7d0cb56c9db1402e2dfe5cdedea51294adbfe0e1e26",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/parallel-flow/observations.jsonl",
       "sha256": "d78c6663c0bd4cdbac7b75f6e8418c50242e38ea74704b287f8b7b22d4d5ebe7",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/parallel-flow/result.json",
       "sha256": "55ed75c310bdec636ffb9deb303f1b8dfe6a4e95a6623cb5ada9024e8860e1ff",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/parallel-signals.json",
       "sha256": "116cd15651ce39917ea5bce287591fb9a85fc5c4161afec7938d3cd808f8a419",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/previous-flow/observations.jsonl",
       "sha256": "a97da980ac531119d9cdf2dae7f20fbde080faa27ff72cb341861e970f0eccb9",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/04-pending-explicit/previous-flow/result.json",
       "sha256": "55ed75c310bdec636ffb9deb303f1b8dfe6a4e95a6623cb5ada9024e8860e1ff",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/complement-row.json",
       "sha256": "1a458680f502ffa883410ca3fd77cfb79cb49d057603d528af7d4c0a3822ce6e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/flow/observations.jsonl",
       "sha256": "6b511e9c876b52001a9f7865352c37f14ecc4765e80bb0872fdacd358ccdec98",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/flow/result.json",
       "sha256": "e81b41c0d89215ac3e9c6b9a27138910512d4b2dba3724232b04927ca3b16290",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0000.json",
       "sha256": "733cc86ebf4c6e8e9220e1a11da4ce5822353e8f91bbc4629e82cb3156141876",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0001.json",
       "sha256": "68b76ca4a531a1b08b29b7af4cad0875d9468f0aefcc27947114476819a2e486",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0002.json",
       "sha256": "430fca630cbd460d75c54f7f75f2ee0897805dcdd55be1d13782cd61e0c50308",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0003.json",
       "sha256": "429b35d648a2b8fdda18544947c3bdd6a6ccd50cb0ba21d1a9006fd9ec45ffe1",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0004.json",
       "sha256": "bf868431273f3e0507c2eb24518b8123c36cbc32378ca427e87bedd0d320738e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0005.json",
       "sha256": "f21c35331d95fefe5b9139169805147dd43276223ef5d8d2e06d596aa6db226f",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0006.json",
       "sha256": "b7a728ade44b7f22a0990e1f45cfd25cd1b4c793d0de1eb4faa7b7db67d4ec11",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0007.json",
       "sha256": "697fc9fbd25747028b1b682b6b2418c003e510e585220d97e4aa9eeda6195d8c",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0008.json",
       "sha256": "8d79f6f2bf4655db13f305175f6fcc053c93e0c4fb6f75a0fb29da2cef9373c3",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0009.json",
       "sha256": "db4394b1f67becf7e7800c300c85d32f980c5d5277e36f9e6a7deea0021153b4",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0010.json",
       "sha256": "a2876e9068512c5eaf2c119f95b85aa843c1a2e7972a3d4122ba4a5e847b3861",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0011.json",
       "sha256": "b0d1e86324dc5120073d58adb98a410902092de0323373c7a35eb8069612c3a0",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0012.json",
       "sha256": "aab0863e7b72d245c19beb14941e93db33812b5e61144990f0fa51d3dfeb847b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0013.json",
       "sha256": "c3a129a97d626025fa7fa330b3b1ac81ced10f3bd5e4233bd4caf71394b79344",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/journal/0014.json",
       "sha256": "aa3cfdfbb1a278081ee8d6f1ee75eea9eab4933c2cb4a171651b23ffea079c9c",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/parallel-flow/observations.jsonl",
       "sha256": "d31bd10a960530ada4e097495eedef3e9ced17d9bc6d8eddcc0b370298d857a3",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/parallel-flow/result.json",
       "sha256": "46447a6c583921b2331a4a1cab9be95591664ed7767df29a59b813e71b4d414c",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/parallel-signals.json",
       "sha256": "5c7ede77f21ec9341709a50f761ac3e7bdb0fb859d79855100b8a277852b07d8",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/previous-flow/observations.jsonl",
       "sha256": "001debd137fb6799df46a8ce9f00a81f6f62b66455b728da2cd85260fc7b2c5e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/05-pending-explicit/previous-flow/result.json",
       "sha256": "46447a6c583921b2331a4a1cab9be95591664ed7767df29a59b813e71b4d414c",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/complement-row.json",
       "sha256": "d5d183007dd8bf1056fd289f66deb7ca2a6f7f46304b25aa222c5580d2e133e7",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/flow/observations.jsonl",
       "sha256": "1740c18f0b8f739fbd627b3fa3267ba9fec75f58ce1d9975294e4f3f0686bc69",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/flow/result.json",
       "sha256": "58375d805ed9abb053df77efeb229f724740cc57c368629af3c85a58f4d15f92",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0000.json",
       "sha256": "be7fdc904428771d42ed7549bfec06d52812fefb99800e6b3c7752287016e077",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0001.json",
       "sha256": "ef0833a323cd0dd8501e1bd8b1b36c73f1e79a8c2f4b3e4dfff6c848c74406eb",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0002.json",
       "sha256": "9d8c06f4eac800fcd05631b28304370096c4e21094631d8375d7ef596d0485c2",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0003.json",
       "sha256": "2a428d5fbcc0b1c3c59cf7334bc2e5d3c735039f5fec26338912fc42df4ddf9b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0004.json",
       "sha256": "81fd20348a9a1d0a1f9287e143611fa261826d536ce618b8a57793bd949021e0",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0005.json",
       "sha256": "d0f4fcb8528962c99403d6c994106802d95e8c1d8d296793b5ec367b9608d4ff",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0006.json",
       "sha256": "af4f7ef76c3046060ebaf5cf7933c1dedbee943cd340cb9469a640252b7c941d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0007.json",
       "sha256": "fd0e76d2d595ea97351d255525ccc1af66c940daa42829dfd18fbe2e5eb5bb3d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0008.json",
       "sha256": "590e6624cdcbdb58cf22981bc6a062635177c37f43dedaf944697987ed6eb892",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0009.json",
       "sha256": "8ccb7a353c1dbc713d223d7b44f628d389d588cf1abd2104c8eba9722df6b974",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0010.json",
       "sha256": "b47183040ef0084a277d66c7a0ce85d9ba49467f059f76f67741392dbc3d2707",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0011.json",
       "sha256": "08bc49f7da59019c3797fbc9c3d806975e91cacf5eeac378e0f55d242935891e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0012.json",
       "sha256": "27e024a46f10565e2b12e4599c3c0db1d1d9e708374801fc8b06e814a814a293",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/journal/0013.json",
       "sha256": "cd8f1abe7829c0094c5d49b4e98effc865bf07751a488eb3a5f327904619b028",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/parallel-flow/observations.jsonl",
       "sha256": "c1776ce4d97244ee4b94098c9ead1a60518985c77b1f9f70bbf8cfa509528eae",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/parallel-flow/result.json",
       "sha256": "08d117080e4ba3d01d2af609069a7b8ab53f5f57b104c91150f0c9630b800119",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/parallel-signals.json",
       "sha256": "b305964632c67e6795bd3ba166a0dba321b99c93a6912528ed3b9a5b65cf761e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/previous-flow/observations.jsonl",
       "sha256": "0784fc1600827bccc698d8fb3469a91042ad7f4c13f1e0f4612e5fe93ac7630a",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/06-pending-auto/previous-flow/result.json",
       "sha256": "08d117080e4ba3d01d2af609069a7b8ab53f5f57b104c91150f0c9630b800119",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/abstention-proof.json",
       "sha256": "e2d3188b229b1727d54154cc618d46b6d4baabed62066584341380573508fa1e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/complement-row.json",
       "sha256": "b7901fdcfe56bb8522a3f316c2b4aa1eb4f9923c82cd21870223368f4075c8c3",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/flow/observations.jsonl",
       "sha256": "8a89314a9c5b9216bc53dddf7f0d9b009066d14a19802835166ef683facb5a27",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/flow/result.json",
       "sha256": "52993b915656d81ae363f782253dc9eafa3a6f60b20f3a53dfd84ad93732f274",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0000.json",
       "sha256": "886bf4db62ca1840bc1d1f25fed472e4a897f462bef9b8bec1cfc421c2140f33",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0001.json",
       "sha256": "224a54d1c618edcd0ca3f50473671177a10baf5e7cbc0c52e48ad73f4a42add3",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0002.json",
       "sha256": "b740d7141bdf1664dd196c95810639ac0896442ac9458666fcd099c33224061c",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0003.json",
       "sha256": "4910b83a657de1b4551595737ad310fdcdf21663e95b6c57fcf1a9644e5753fd",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0004.json",
       "sha256": "0045d7cf5e4c77c8c5eba66951e6a58ca3a209c413602117676cc246fd5f13bf",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0005.json",
       "sha256": "6968460248df89cbfb5672701751e784d01ab8c294888d2fec4af27b9dade858",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0006.json",
       "sha256": "9cd9cb57ddb92241202362d19c99ea8934275305f3ad2a9c16106b4f298b1c80",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0007.json",
       "sha256": "5f52c397bf134ecac706f61e1a7e759c6c417a176ac9e9aece7c0c2943b36a04",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0008.json",
       "sha256": "eec9c1bf4f947c8ca73b4422ede20965267d4153fedb70f16fc891846343d3cf",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0009.json",
       "sha256": "357ae2c854ac48f4ba93d0a8ee1e68f08b18465b7002a3b53e5fddd919843276",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0010.json",
       "sha256": "60ebe412034f168b4a348fbc4549422fcff8f2cbcf267f79a53155e791d72393",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/journal/0011.json",
       "sha256": "44534b0986241675d5a3aecf35be4c842e1f01101c927f2f5c2e040dc64864a4",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/resumed-read/observations.jsonl",
       "sha256": "b944a77fb103b4c890cfaa57a0ac1d4883dbb239bbd540fdf5698c3a7a77cd7d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/07-inconclusive-auto/resumed-read/result.json",
       "sha256": "f07129d9f63a29db0bcd1bf41865d681b22eed89ed00bab63c818eccdee32241",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/abstention-proof.json",
       "sha256": "00eb15b59b64c6f37172fbfd2407555862435d7725e6ee913fc7bb288dadc378",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/complement-row.json",
       "sha256": "34f4be35f6fe52ea3484b7875ae6ef129ec627fabd7e1fb4a5af012cc46ca12f",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/flow/observations.jsonl",
       "sha256": "a8511ef3eeb11fb11eec64be8f2e63d515f90e7ecb710667191e6be666f46a30",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/flow/result.json",
       "sha256": "d862c5ab4335dab1471ed274386d4885520742f10cedb1b00b5b21d1f042cefd",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0000.json",
       "sha256": "af62b27e63d3f69efe295aa3b16f9d39f75c8669f21b53acce1f0fb387228ab5",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0001.json",
       "sha256": "2121e6b6e442a825e4c24361a0903794e46c7ba3ac7767731899cc24087bafa0",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0002.json",
       "sha256": "176260c8a88f3c893a36e3b16ce91e9a0679366198414a783718fd80f845b4c5",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0003.json",
       "sha256": "d46e4adfa2d01bcbb73703293fe0dd33d85036dfa75e4155f9e60808496f3721",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0004.json",
       "sha256": "69013f45483df88fd673013c8ce04033e38df5a40e58e4e2f2b6fc2d6dfe14f7",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0005.json",
       "sha256": "63df1904b3ac2b9ef08a3d2459058ebac1c673841a79b74533179d14e23132e7",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0006.json",
       "sha256": "354d011d8261e2143a981998a0f4588c09c8c93c589fcab6d65f353a39f35695",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0007.json",
       "sha256": "a31deda7ecf7ddeb771cbde382a85440147f5cfabce4a4e00af94f1b6b23d45d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0008.json",
       "sha256": "0850ccec49992336a3f61ceb2e01b6102c6e165459d3e5e10a087cfebca4264f",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0009.json",
       "sha256": "e9ad547c9f7e96a4c12bac00a6a4f729b3427fbbf27d9350b1767c55d844bb40",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0010.json",
       "sha256": "4f0060ed77839cf9cd0b7b6f9ad35875046cd0ecfcacf7c717315a7626a39054",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/journal/0011.json",
       "sha256": "75d483966010ab48012087190b2394d9413850c92b774360144e3afacab726ef",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/resumed-read/observations.jsonl",
       "sha256": "13d05092c26675f02ede1171bf1d762b5d5e4c2b786d3948862b6e03ad78f6d4",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/08-inconclusive-auto/resumed-read/result.json",
       "sha256": "db64f277dcdef11bfd8f9c31afe63c196f877aaed2cc7b9e2a9d6ca2ba160fb8",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/abstention-proof.json",
       "sha256": "6210816a81e816846d48b567092663041484014949ff8fef7701c3bf0c533773",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/complement-row.json",
       "sha256": "21392f53522fde1f36278c4a751dbfb49542160262d65eb75de5194114f5e88c",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/flow/observations.jsonl",
       "sha256": "c250bc2bf63fc4457bb79d04f96cd5dc78a183bfbbdcfdad00bce56b499fa998",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/flow/result.json",
       "sha256": "bcd4d077abd710712fa799afde41c17f7eb972e68eb914803fd1d14c13140a3b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0000.json",
       "sha256": "029601f94684775e8181cc61bbcc445770f8a6834d2fa2d5cf183df8907cf7a6",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0001.json",
       "sha256": "4daea2e1e75c2b0947e826692fbfc97af37da5f6056abe9c56ead19fd9177d33",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0002.json",
       "sha256": "00e81dca0bef53e8926674d1c832d46f73c1ba53e6f2ecaed0275f0f119dc429",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0003.json",
       "sha256": "43a71547469997c7ef38332d81f1772291df1b686afbff564eb0047662bf9881",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0004.json",
       "sha256": "65ed1ff80d95ea601d94383c2757bdc24a86c2a54fca0df5be1d60a266c28de6",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0005.json",
       "sha256": "4bccc455b6ee657ff515bb09342fdec00d3cf147d976aea9573707ebd4fac330",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0006.json",
       "sha256": "ad34b05e701ad5f10114f74279336318d3f3067dd4799a4dff7c8fd6f59382fd",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0007.json",
       "sha256": "0d7f262a54bc6a15a7e03d792f65e58bfea536c54fe5d8a7719b6bae630ee3f9",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0008.json",
       "sha256": "be100c0e8f85499ccf2a540d441bd94f5cb2232a49a81d521cd137dcaf0bcc96",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0009.json",
       "sha256": "651af65fca6e2e89138addd2b844ec4a5bc5b598bd6db02d28abf46b68513f34",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0010.json",
       "sha256": "f882f38fd14fef0889742c65d09c1120a3d22cfc638c1ef8d613cbc29bc04ce5",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/journal/0011.json",
       "sha256": "5b392cd6b075b50722f299b1d4484de6d7689765f45e4de0193874cf693fa2f7",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/resumed-read/observations.jsonl",
       "sha256": "f929973c66fb9a4e9ae139c6d28e15cad282141bffabc2fe5da756aef92f112d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/09-inconclusive-auto/resumed-read/result.json",
       "sha256": "8669cda265bae79739d777bfd2c91665275e93d7803af5e9b82a377fd963879b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/attempts.csv",
       "sha256": "348fcfa43640dd58c8582ecf72c819db8a8d10a3bdc3cfc2e398b3287e2355d8",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/protocol.json",
       "sha256": "a7141dbc45fcc731eda825f4978ce86ff378117a83620baa8dd3f257194ccebc",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-01/summary.json",
       "sha256": "b9986ba7190540f7cfb6c4c92ec6477cbd21c5b564d7a9e1ca5e5ac39ca9c09e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a-complements-evaluation-review-01/review.json",
@@ -1532,1192 +1566,1192 @@
     {
       "path": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0000.json",
       "sha256": "5f7d22b2ac0cfcc1b369df1d36bc5c9345d4604853e896a1df9aed7d5e546377",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0001.json",
       "sha256": "247e1d39a3b7dc3277fbf578be625e9d8bc09d77140aa3162962343ea9aad98c",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0002.json",
       "sha256": "5b3ad8ba78e823b7f74154a9fd80998091e4f7429a6fb9662e8d3f8aa5a69d6b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0003.json",
       "sha256": "273baef922a49a9ae913789cb0e958889e28a14795f423cee51b40e9039d534a",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0004.json",
       "sha256": "e1be4065089e5aba02f5b2b6b773f284f26da0eeea1c8d70a0d3056b76e1e56d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0005.json",
       "sha256": "96a2837f882604ffd427d2298cd7121510a244307e5265fc5756daef0214b2f8",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0006.json",
       "sha256": "90ed91c938cc97cd29cce505d9c559322d83a13d6b6a11debdc066f28f29b8c7",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0007.json",
       "sha256": "e7c1c295e788e0db99b12f9e63e8c177bb780b5c49f1aa171430bc818a9cfdd3",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0008.json",
       "sha256": "1249bae556eaf378169964447bc3499b7019ad99cad0645c77bdef61d043d955",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0009.json",
       "sha256": "2a9826a4c4974a328b7ef347805706b9180f3ead98741a57be673d13642de062",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0010.json",
       "sha256": "5750076c2a419cb9b66e7e6921de73aa8022c3c37abc361148cee31324449d25",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/01-healthy-explicit/journal/0011.json",
       "sha256": "8605b71e2687b15f5dfa42abee94bc3bdf65b5b7310829ccb6fd6375962d70a7",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/02-healthy-auto/journal/0000.json",
       "sha256": "cb51511a879888a08ae37af69b396d38451eae18dc892cb1f17579bf3d480ec6",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/02-healthy-auto/journal/0001.json",
       "sha256": "b672b29d7743a91c46b9d64a527f2cba7cd7a10fc2ece0139e4ee6c794408d8f",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/02-healthy-auto/journal/0002.json",
       "sha256": "7673393107d68230782a18b6e4891cd4e8b372eb096e64599aa87d3171181ce7",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/02-healthy-auto/journal/0003.json",
       "sha256": "d4f7dcb3fbe6c1bf8fa3f76bf24776aeb79a86f214e0b6b21ba427a0af53863f",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/02-healthy-auto/journal/0004.json",
       "sha256": "975ebfb2aaf2bf86486744ca9a32a8f6b03debcc1abb8214af170687defe798b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/02-healthy-auto/journal/0005.json",
       "sha256": "75eca8a2b095f793f2f718c36b3a766a93d8bb4e54142c1422507e16014e652e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/02-healthy-auto/journal/0006.json",
       "sha256": "ac7836bc9f2b7fa9fa7728e86ba9b63b863b5f3634d1ff57492487865421c058",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/02-healthy-auto/journal/0007.json",
       "sha256": "b102b09e9e9291918fb629d2ea9a96e80de3bc22a42a47ce621a19aa9ab7884a",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/02-healthy-auto/journal/0008.json",
       "sha256": "8057e7f19b6047371c2669b6aff4c99f5992edf1fac5cb64883d54fa5f2f7229",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/02-healthy-auto/journal/0009.json",
       "sha256": "a5f8fe4af0919de4e80505c9a9650dd3da7d1819de976ec2cbbf3283b91e8cc4",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/02-healthy-auto/journal/0010.json",
       "sha256": "cf23e58e88daeacceb5deb22b23b9b021b7c1b3fc638710167412afb8cc1f65b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/02-healthy-auto/journal/0011.json",
       "sha256": "c4a8d30a1ed867ebaa778854f40048516516c7f333e4a2e5e96401de66e2b3ac",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/03-healthy-auto/journal/0000.json",
       "sha256": "0275c1e6ad59b569b6bb5af97f84b0dd3726cf02cfc6d72a5e68dea2b75884df",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/03-healthy-auto/journal/0001.json",
       "sha256": "f5f01947a3d3062bac30718463f00d1aba6a24286956dd5342a75ef80f179c5b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/03-healthy-auto/journal/0002.json",
       "sha256": "5855b9f44d799e6c68c7113ea7647ff87d4ff6802c8d208016dc66d8e27e296b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/03-healthy-auto/journal/0003.json",
       "sha256": "68d80418501275a3fb57fb237cd736574732e7fcea486b87bb9059411cabd39e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/03-healthy-auto/journal/0004.json",
       "sha256": "1fc55bc3cacd2b5e007ff3e3173ddba8f4ee65eddaa61c1d3bda797fe8b6ebcb",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/03-healthy-auto/journal/0005.json",
       "sha256": "84b073471420aef5297afb09fb6171efa423e77b103fc059feaf2d3f20199ec0",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/03-healthy-auto/journal/0006.json",
       "sha256": "087ffaa1bb7b8b716c02479b5584bb9b0110be0519655e07f18793d6dfc58517",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/03-healthy-auto/journal/0007.json",
       "sha256": "215a896fdcb500dc47aea46481b5c1e3a2b7da3f87ca2b2c9af25994fcf437d5",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/03-healthy-auto/journal/0008.json",
       "sha256": "2c0c82d5bdaaa6b3444c9bda70893d8dd9bcd5ee3ee2b079de8a483ffd4c8fbe",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/03-healthy-auto/journal/0009.json",
       "sha256": "965d63da622d6e7a9172ddb37cf22a2847ed9c388c6a0bbafece9050880cf4b5",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/03-healthy-auto/journal/0010.json",
       "sha256": "e3ce2a6ec862fcd8cb21b644cae6aafa28f5713cbef7a0692ddf64a4b216d222",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/03-healthy-auto/journal/0011.json",
       "sha256": "d932b5a868c5ddd008f573e7ca06661fb709b22dd767c2655835ba1e0311a7c5",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0000.json",
       "sha256": "be0993f59bbfab28b46575bdb43869c87d05d15787f5761bfc7afdeba08e2664",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0001.json",
       "sha256": "8af88b6b7bf028966410388f9bb82a9c136b088c036d553de290ce45fb25c491",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0002.json",
       "sha256": "61e048084c8dbb0baa2ee229e46e31b74bbaaf3de96ddfef0f5c36cf24b4f2c4",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0003.json",
       "sha256": "4cc69fe9b973b37d5809f7f3dfa67d98b40f7afefefa4d1c86cd80bb8758c965",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0004.json",
       "sha256": "72fb7277ed1de039a46e907d5ce5c9c064cd02a54ec9f7a01ced0fbab6c59732",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0005.json",
       "sha256": "5797bed44f8d1f42eec50b70a1394cbcb4bce3a7332a7329fb73d922c0a4dd74",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0006.json",
       "sha256": "ee46f96d251d0da98461f72a09ac019bf8b14af65d74185d1397c8869f385491",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0007.json",
       "sha256": "9f664e7a9c36173220b1618a3b40dd91d6cd51137b30d62dd96fd09294964e8d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0008.json",
       "sha256": "15e8859d8f8620252d8c387fbfd15d3f0db046ef9d9db2b065f7771018a0f417",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0009.json",
       "sha256": "0c1ed6b5883d9a3344d047ec48d302d375430afb5a97b5079b355bc5d0877480",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0010.json",
       "sha256": "a28717480fdd0080ce12f7cfca99f3b1093604c99cab5baa3357e69eeb5c7093",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/04-healthy-explicit/journal/0011.json",
       "sha256": "331c88dec4e36fd612f943b7d09fbc1c8536184d58394ec8be3f83f580035f4f",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0000.json",
       "sha256": "66af5f69598a1d690664198e70602825cb76a6d9223c115d00f95fec12bc9b3a",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0001.json",
       "sha256": "695d52aa6365ffa81e6c906454d822cc4b6646c9801da7535382cabffab94ecc",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0002.json",
       "sha256": "14959f986be179a8e599eff137a2f3d9387d694fd00a98cf4b8571dd329f2ad5",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0003.json",
       "sha256": "1178cf76581f6fb412c894dea8ff8e2887c7c4c0bd79cd2a4923127182e70ca8",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0004.json",
       "sha256": "81b4901de9ccc8f05dd2303d16a6d050d34184b0167bc7122a933a398280b139",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0005.json",
       "sha256": "1468db83be15b20c747bd6e189642ec6ccd9d1ca004d302b7782441e77db55ea",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0006.json",
       "sha256": "3f3c7cf3cebd78d86d79b4e57ad3d014b0225708a8f31e2a6ed2c9a1a4ee9726",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0007.json",
       "sha256": "0027670912345454346be8262d4b9986e1e28a0e2ad427541ad14abfb7985936",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0008.json",
       "sha256": "4fa9f3774d670f6fea71cfc961cff373c6d4e597151777f3da2af482226952d0",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0009.json",
       "sha256": "3b004a8362616783af4907e7d39782fc697b01c7f6bc027babe3d7ad964163f0",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0010.json",
       "sha256": "e8b23fea48396c601f89ad515deed3195471a28233a79011973b1daf319b2175",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/05-healthy-explicit/journal/0011.json",
       "sha256": "bfed8bb13056b1cb69eeb7cf2a72e20b364dfed845897cece9c0926cb5f27879",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/06-healthy-auto/journal/0000.json",
       "sha256": "7e3da9f65d4c4ceec70ae297f11ffeebaedb51812d6f42193401ea483777685b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/06-healthy-auto/journal/0001.json",
       "sha256": "b843d3556a388f59d6a9612b8a851b51488c449381bf1d6565ee62d1d655fb63",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/06-healthy-auto/journal/0002.json",
       "sha256": "40872c85e4082de4c03d3c6fe26f1c4e92f39469f60ff91b476028ef479a6648",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/06-healthy-auto/journal/0003.json",
       "sha256": "7a743a537af0b3624e0bb22bc6125969a46d55d083401462c85f97dcdf859a03",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/06-healthy-auto/journal/0004.json",
       "sha256": "5fecf182b518edc6033bca04e473cfa7e7d16c7b38975150f34aa4c0177e8388",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/06-healthy-auto/journal/0005.json",
       "sha256": "1d70aef6a9bc7bc9cfa844caf2e98371faa1ae1809f92ccd47ec8cd284fa4846",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/06-healthy-auto/journal/0006.json",
       "sha256": "3d269649210515f94163bf1a84ee39949ed95ad7da08f2fe1d4035283c38b6e7",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/06-healthy-auto/journal/0007.json",
       "sha256": "1f5720e85ed87431c0d7f2c5bb728d9cd19d9acc0b24600e0b8319d60b89c857",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/06-healthy-auto/journal/0008.json",
       "sha256": "fb99f1c1e047a3d4d54ab5d0a573816d7750f986ad93b6408b593f58000c9338",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/06-healthy-auto/journal/0009.json",
       "sha256": "8718c48bb2c6bac63fda8fdbf52c64c30da0a6a4646aeb0a74b7635b8615e4ce",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/06-healthy-auto/journal/0010.json",
       "sha256": "8dd2569da849dd693af060526f3329daa5def9398b8f17bcd95d8fa70605d0e6",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/06-healthy-auto/journal/0011.json",
       "sha256": "5eb299f1c5e1c7a86743a0f2605c2e371a8447d740d2d2ae7ceba1cf7fdfa7f8",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/07-healthy-auto/journal/0000.json",
       "sha256": "39f597a9af5dccdda6803626671cff18e7ce31ef38a45bfbf832536b9c3b5fb3",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/07-healthy-auto/journal/0001.json",
       "sha256": "33c4da0cf95fca674228f384bbd7c9d2ababdcfdf51c1fa49b4b85d6bdb7c4c9",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/07-healthy-auto/journal/0002.json",
       "sha256": "0320b26daaf9a30eb80ea70cfca85707a9599295fbd604501ce36147ce006c21",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/07-healthy-auto/journal/0003.json",
       "sha256": "80329de9ed81e8ac6fc4927c72802a2663d4ecaf9f466bec7ce1605b105dc8a4",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/07-healthy-auto/journal/0004.json",
       "sha256": "88a75bd1fa8c6473a8f11e07d59c4a62b1d744b8af7dc458bde3d64b93396910",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/07-healthy-auto/journal/0005.json",
       "sha256": "c2a048254a776810bbf3496d82645e3a7ed1439f7871463a58648cfb3c1145fa",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/07-healthy-auto/journal/0006.json",
       "sha256": "05d467c316fe1f92e89391b20bbf3b25fbbf996421c68cdf7c8f1c057ad374e3",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/07-healthy-auto/journal/0007.json",
       "sha256": "d1bd5bcb6efe73e6b16d07ca48b3c5bf5b930740dbe763220112a605d2d89f20",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/07-healthy-auto/journal/0008.json",
       "sha256": "5e530b4e728b41052c58728fc8fe66dda9cff694515b9df2f557c3947c9a8b89",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/07-healthy-auto/journal/0009.json",
       "sha256": "0c8905926f5e6e50db07a3e0520c59763187548845d7f1cca3df8a98c3c0e8f1",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/07-healthy-auto/journal/0010.json",
       "sha256": "1a0b2420b2a48440722edf8de21acb9202a42bbb6cc27515b5893f1a6f032884",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/07-healthy-auto/journal/0011.json",
       "sha256": "a2eb09f83598de117fed45c643f9ff302865551a1712f58c14ecdc0aa8e20bf1",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0000.json",
       "sha256": "e631a423bdcf8848385a9b515ebf4f845697577f1c65dab4c2def4ef5cfb946f",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0001.json",
       "sha256": "374ae3ee7d0696e8faea783c87b222fdb68d7386ecc97d67fcad8323d64daf6b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0002.json",
       "sha256": "9a9cb1c3912a143e9a5664b9ea9acb5bee5a20301c674939f50b6f30f6f5ee4c",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0003.json",
       "sha256": "5cefadfe1016961657068a57120509edbff0ea12c4a3203eda2457942ca6930d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0004.json",
       "sha256": "f3952b34b99190651003a72a4c616f83063388ea00f2b97ae8c45256f84a4507",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0005.json",
       "sha256": "7b2f23ceec5ab5f01f0d35c13665c3fe5b7cedee81eb7157b9775a462c7ed169",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0006.json",
       "sha256": "8649e5fe9f3111c94456814bb203545e81de66da9d377e9e5d926728e26bd07c",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0007.json",
       "sha256": "0447e9e10e43c026b4aad46187661e582f284bee35f9a66ce2207b5bd8c5bcbc",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0008.json",
       "sha256": "c12b0d99319c15c5cce07aba98b05ffa075a9633d44169da6884e9099a703dcd",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0009.json",
       "sha256": "63e6a39116290bc509b6eeed9bfeb9c5e39faa16a2fd574b140fe7ccb4051b0e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0010.json",
       "sha256": "72083e80e414db21d0c51737a8de79c9c93d21a0d436a98cf3e2c50cd8ed70fc",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/08-healthy-explicit/journal/0011.json",
       "sha256": "5b0c0867b79f6ef49ead9d8d4d76db53d3ce8f65dc23613902ea4e7371b674f1",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0000.json",
       "sha256": "5c698697195bcf97227b7bc0dd9750b9efeb2d4fb78c27d69037cdecfe873b4d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0001.json",
       "sha256": "6380765c2d6953daaa5aecc042de89a66b6b9a930d091eaf3de429418feab1be",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0002.json",
       "sha256": "f6cf3457cd93c350f04482ee5c7bf3122ff1f60eeb9461f255f384361a455a82",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0003.json",
       "sha256": "caa472d9bea6457cb73944660056ddb4f5a128dfb325e8d4f8d5a8f0de0b3cb8",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0004.json",
       "sha256": "d24818127feca95313d04ef89ab02d318b55fd6404f8a005c206fd1a5dee97fc",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0005.json",
       "sha256": "0d1ca6cd0c3d27477274f69c111121d3068f326ccc7e13ca94a3d8dba7090875",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0006.json",
       "sha256": "2e53a731dc08523260a572d9896a3c1c3723a4b584af8e55fcb4c7aca5d25004",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0007.json",
       "sha256": "512050480371633550682b8dbce2f58aca46e9f8cbe7be0cab15246f79fb70bd",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0008.json",
       "sha256": "f31074b31de383e015aa871ef6d5f04e098114301b3441050593806753d9d9c1",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0009.json",
       "sha256": "9aab849557be762922b6228e64a0a86b08dcd9ae2dfc7c54ee433b9d20412f2d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0010.json",
       "sha256": "549172b3d2fb7e4b16589dc8c166b4dc842c11450ca67fd1aad9a5f6019cbe6f",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/09-healthy-explicit/journal/0011.json",
       "sha256": "eab5df840d9ba85a56043434bcc656447260159651ec4dc5b7c4f6ff50871fc9",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/10-healthy-auto/journal/0000.json",
       "sha256": "398dbeaa94f604b281bc2cf782e338add8e2aa9eb57f6eb35f548aeb7ef7e321",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/10-healthy-auto/journal/0001.json",
       "sha256": "b1009ce95440c4e5e5c19d0e2c3b21750c312fb34c3f3dc37ee301ce67055e40",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/10-healthy-auto/journal/0002.json",
       "sha256": "54bf1db8d5fe75da08781bca67165131de3b04c571720dfbb8c26fc3a297b36c",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/10-healthy-auto/journal/0003.json",
       "sha256": "de3c5933b8525d08ad303e0f5fb7f5e57970833ac767a6149b2079f885add1a6",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/10-healthy-auto/journal/0004.json",
       "sha256": "e9de091297dc410572e05e529bfc3019ffa22dfdef4bcb95e322f27329a8c18d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/10-healthy-auto/journal/0005.json",
       "sha256": "b734d9aecc1598f9310aec42b10115063ad721a2a468d8884458bb78e2157b2e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/10-healthy-auto/journal/0006.json",
       "sha256": "e591c9698642b106ea1f33d8692b0571c7aa7e4c15a3b1da814c0f99389ef877",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/10-healthy-auto/journal/0007.json",
       "sha256": "90638f667b46b336698b54e4d964a97aa63678b3596094bc227302e38a459642",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/10-healthy-auto/journal/0008.json",
       "sha256": "34d8c53e16bad1d5a6d3c9f2db52c2d28d64b2f79096d021e0f8eb61e282c155",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/10-healthy-auto/journal/0009.json",
       "sha256": "6df3d882e57d68d01960b4937a33e3776818bd8d0b55087f52b684f328a7a15e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/10-healthy-auto/journal/0010.json",
       "sha256": "4d22d65eba8f1b2643f36bf916a68c11eada97190fc77c00a3aba422383a30c4",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/10-healthy-auto/journal/0011.json",
       "sha256": "5e940a01a461712192af28e0c1339a9a51830e78d495d29198405572bf9d6cd6",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0000.json",
       "sha256": "70a6100be4df821dd0c58945964f92ef2ea12540b783d75d2dac0a9b98ea44cc",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0001.json",
       "sha256": "ac579d8f7108f3c145be50d624a6e082a9858db756463592f03397fa055570ca",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0002.json",
       "sha256": "db5c0bc252f8ff1f4e5011abf31cefe9b7fdb46dd2f9dc67baadbb8c28e4d7d1",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0003.json",
       "sha256": "f22cbc6bcf1bd79b29e00ae237296d510b505054b4f68cab6785c6067c21a344",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0004.json",
       "sha256": "8d45e5e7da4cf49c8c2421384a92bff7d6f52e84a3219e81c8d3c030fd191692",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0005.json",
       "sha256": "ceb1c733606179eb6f2362d9a0395c0be532cbbb610b1ace4703bed6f9f61509",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0006.json",
       "sha256": "e8533fb7b44b120f3ab17705af9234993b6a50fe76a915bb79a4aedcb4cbf993",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0007.json",
       "sha256": "b18440b272d30485359306efd4d096663983cb6c113e5287b58447e559a3c9ac",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0008.json",
       "sha256": "a39a2ad38908605914125ae92d7b94ace45e53f1731d27612091ce6ca32d17ac",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0009.json",
       "sha256": "9ce3135fab2688f91901f49b2ff8d249b0ddaa4cf3142709b871bdbb2fc245bc",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/11-invalid-pool-auto/journal/0010.json",
       "sha256": "783b2500595f81ac3294969a750ed17d1a0ce411f1a1bf39b9e7f166969bae7c",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0000.json",
       "sha256": "3fe11f5d95e17c6161505e5844741c93e76a95ce5c96b90fbaa76f4d1f507bc7",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0001.json",
       "sha256": "79b024fe866717fd6c44e66ed3953d62de3f0a9cfcf0348837127d416d1fbe05",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0002.json",
       "sha256": "572d03372bf87c91e97eeb0eb72bf8f307f4f32f53a9f94ca9b85cea045edff5",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0003.json",
       "sha256": "b301cf7faaa85f61dbd951e5a75c5b466653418172489238fe283996988cc0b6",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0004.json",
       "sha256": "35664709df39868d3a921ca80399b6ef4202817281ebd9da6c6a7c93de412167",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0005.json",
       "sha256": "9ccd69f56cbe1ebf004489f2e7f3f4a50e25f2a821f10ee1f28f4e40daac98b3",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0006.json",
       "sha256": "9beb98e6e2d914d3dc9dd5c3ade4c7a5f7ee94c0cbfe49e07c01e3e299ffa573",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0007.json",
       "sha256": "dcd0ac7761f935f4fdad9eb270076f731971ba4ce4a54ccc9f83d78dcff906e2",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0008.json",
       "sha256": "8d4d2b91cfb84f74bb4cc4a772cea298493309da0fc3b085c368c32dfc642d96",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0009.json",
       "sha256": "2bbe8200e3866b3b11e771d3c099b19b03512f03821940adf5b2bba20c6396c5",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0010.json",
       "sha256": "8eb6a1fd3765021b422096721d092e4e871c6dddbc59709c72c5d05550db1da4",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/12-invalid-pool-explicit/journal/0011.json",
       "sha256": "3c20bbee861d4ed27721f5db1f78c376eafab3ff212759e34ba744e8ac9806cf",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0000.json",
       "sha256": "d326136aaab117b4ad5fbc141a0a34ac8bcf249aca6911b5dcc40c4ac6661b35",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0001.json",
       "sha256": "0d29c14c459dc49bf42c3dc58bab69389638662299810837f74d2271b40b7e4d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0002.json",
       "sha256": "acbbcaaaa21ae3bc8ac3ebca65b70868ec6ebf2c0b3c7ffc811dc23bc2e5b1c9",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0003.json",
       "sha256": "18edd780231c6d7058c20b168a714bcdce6ee6668dd765a86a23b98e827b14bf",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0004.json",
       "sha256": "f7f79db73acdc23cae66898e3e3c049601e87c4fa2efb840c1a21ea2c10feca0",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0005.json",
       "sha256": "e2095782fe008f98aa90bb917f979630b86459d3660bb24148e188b81edac491",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0006.json",
       "sha256": "c35fc9924c3b966c1dbc8cb915dec19898313a714d6220253083f011a70c4014",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0007.json",
       "sha256": "f4979d2db327d00a36d026fe3e1efa5144fb62dd3f3350fff2d65649a73c5b4b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0008.json",
       "sha256": "a1b216288cd5a7752692c9c84ef19c7f658e519c2c2102aa913d5d6d23da2dab",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0009.json",
       "sha256": "76230a0328e73705a5b069b6f2f088251f74d55a21de5339ec9e9f825618edf6",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0010.json",
       "sha256": "4f7cb658b224251b37a841e4104d0237fad23dc25a61bfd5dde667352b6d95ef",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/13-invalid-pool-explicit/journal/0011.json",
       "sha256": "41dfa2146f5c142e929d74d86454c6c112224cea29b61e574762f9f499877e57",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0000.json",
       "sha256": "7f15a12c6d6821a28e4bbfadef6df25196b18b908e6fb17e3bcbfea58916c208",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0001.json",
       "sha256": "aca07b31e7fd1276c7ce661c09ffab09887bfcd4ee0719fbc66aab2ec9c4073f",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0002.json",
       "sha256": "2faec5f171dea0da8e0190137fc46ee4e1b27abf3e1944937cce022c9506de64",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0003.json",
       "sha256": "d3eddd4add791c4c752d5cb13a7d39fbfd1db107d3a580e64c3842eda8b9c0ce",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0004.json",
       "sha256": "ee399ccc0d2f6c218ac5870e82ff7e5989157262f111dc6f96a8286dee4fe648",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0005.json",
       "sha256": "6fef5df980a56b74f4bb0e6db40377b4aac336c34fac41cb8fcb720f69900c9e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0006.json",
       "sha256": "84d7914edc1ac99f9e328dae3b934652b3bea9ad755c74a75e5b4a80a148afa6",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0007.json",
       "sha256": "a5a7542be6549ae5357743f7ca250c37477339cafdb29b57efa7760592db0a6e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0008.json",
       "sha256": "9f36dd6da172af2d123e5adf16aac1601962015b92f69f0622928fb99eb46a59",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0009.json",
       "sha256": "5946e307e2c318191c19524cdfb5885edc9c58b8bbeb600e08b4afad594e77a5",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/14-invalid-pool-auto/journal/0010.json",
       "sha256": "b7cb05b460e79a5bf3c14318f10ea149239839b2b996db5816d42e2bfd93a642",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0000.json",
       "sha256": "99b7769e04df4740ff559e3a140c00b73b006d5dcbfc25fbc2c35626b7a2b546",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0001.json",
       "sha256": "8f78524ebbab7291a9f6acdf3b76129f29cd268b48d7c1b35473193fadc13fe6",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0002.json",
       "sha256": "801e55752b0bc312cb2d2a6d3fc8bbc645888e6e8572b03b78560246d3ce492b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0003.json",
       "sha256": "98fa65e5c5b5bf6f14a9eb4359b78d0c96b442d3ea2068c69b1ae7495d298186",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0004.json",
       "sha256": "6ae7745084a1ad48355992fb512e0415b3fada4bc8766b4dc7662137c9d67e2a",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0005.json",
       "sha256": "a34e46ff1c45cf8d9ceee072a162831d5b3f8a6bb71280f453bb9026fd6fdcd1",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0006.json",
       "sha256": "f4f01edf12890900b2d54c0cc0c921b4c71eb0782e5f9344ef28306004b8625e",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0007.json",
       "sha256": "18d1d9986e621a3ad41a513c52be708cdf8ddc28b109eb4ce9e64dc6e59012fb",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0008.json",
       "sha256": "0da33d139581d834b27d35a8973f5f08a1a2f36dd7b268d6185f692c7901def0",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0009.json",
       "sha256": "5f4dbda21b384efa34ad89fc1a94c3c619d33a3b38f9b16e08621463fceea565",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/15-invalid-pool-auto/journal/0010.json",
       "sha256": "811626a64c739053e490a2a0c13ee52e94ee4ef9b085d1e36a1577fa4cf52bfe",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0000.json",
       "sha256": "e973dcaaff637a99388e91a93e7393c4701c81475d16e900dcafd693228dfb9c",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0001.json",
       "sha256": "fc031370bcfe73622e5076a18857bb2c1f6ca00f2bf97cd9a8c086eb879e446a",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0002.json",
       "sha256": "6599ce6048ff0254f15f16c88bc6ea7596346f056e056989be8fd5d726851080",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0003.json",
       "sha256": "5ee54b797a31af34b33a1a68f2bd86f454b361989dfe75aaada311700df6cb13",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0004.json",
       "sha256": "539f1b47ab4c2701c3980fef2eedebb92edff09f8cb2f3927faf2299d86275ad",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0005.json",
       "sha256": "f8925bf3905cb9a0883e1a37014e87d2fa9be7dfd4d11c2dd24e91d7c7b91374",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0006.json",
       "sha256": "02db4e6d6a3160332ce2783f54375d1823ecde4def55e49995a055b2d704f8b8",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0007.json",
       "sha256": "c98e121f35eb2423bb710d8a47a95550bb929e76fa0ad861b517bc309b3be9dd",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0008.json",
       "sha256": "8773206c89f88087666e69d8f69cc921d1414103b9fea5f46f376d2fe86d0ec5",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0009.json",
       "sha256": "beb06785deac5e5ba5224a1d8b1aa4db9c638b41f6ca991f485793c7379d741a",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0010.json",
       "sha256": "98cdf1d7d5b1a1acc045c7b32bd6a267f919f979174bbd3a41e8c2d4d848cea2",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/16-invalid-pool-explicit/journal/0011.json",
       "sha256": "19bb6f4335e647394d587283edc80ecbcad7d634aa9f95cfa8722893c7dd4275",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0000.json",
       "sha256": "81b85f453eeebd8dd0efc05a1664b784ee84b6a2bf8ffc10182a468719599a47",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0001.json",
       "sha256": "2979ec70863133faca8ed958e91ae5bf9a43ac8cf16f3e7b7ee91e4935998ba9",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0002.json",
       "sha256": "401f639898004b2688191fa6e2b2274c67caf2426f73638689571536e88e1ed7",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0003.json",
       "sha256": "706bed29e7d78549953dfce02b9b0869288f95723df939cc1288cd5ddcefb6e8",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0004.json",
       "sha256": "29f47342e8d5c0372ca539c8503554b769ff8cfc97c66ef78109a06910e0764d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0005.json",
       "sha256": "5138b3dcc7b5e48d98c73c72ea164b2647940b3ba43f1d2b622661bd5d5add04",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0006.json",
       "sha256": "88a232fc162b201a17e88aef619478c4afe0fea882ed60f810385f2d0d75a8c4",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0007.json",
       "sha256": "febf451c3406c12de72fb95947222a67eef3342ce13d672f8d0c7846d837557d",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0008.json",
       "sha256": "e3295c0e22c0ff8fac1c933873910ee8ff3b6468c6ebbff44a929f28772c7660",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0009.json",
       "sha256": "720aecf398174ec7211f6cc1403f14fd0b746dfbdb63e1807b23428623398051",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0010.json",
       "sha256": "463f539f17c97f5cab3e248b8fe8a06a4b2c24721d6a941e6c5ed079f7a9c06b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/17-invalid-pool-explicit/journal/0011.json",
       "sha256": "6d435692612e7365d09baf7c7458e0e5b4a9e925423ff40b3c8ded4188880f86",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0000.json",
       "sha256": "4508c3a78af4e2bf46d2bde303e3dc2e43936cda3ab343e16f9b4dafc58f48ba",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0001.json",
       "sha256": "08f7a7c370aeb028aea725abb944429b02c7c74a3dbbca67368400ec2f4bb866",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0002.json",
       "sha256": "491b32e00cef6cc12972a8f9327c5a9c08a4b4a03d362fe77ac027f4426f1810",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0003.json",
       "sha256": "946ca9147661cc93fb0f7d782132ccf6b6a01a4f161667077437eaa286eb2e00",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0004.json",
       "sha256": "407425d36f29efb8531db986627444acc45d0b9f6e01a7f9dbeed0e6c8f961c8",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0005.json",
       "sha256": "68adcd62db7c84571a889da43d84c3d5e5e43eab47cf16ef06d2fdccb80c07be",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0006.json",
       "sha256": "5b7bc64a801833daf449c6334bed2ea2137a2e4212ad167dd4cf35c54a88190f",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0007.json",
       "sha256": "7031da0db718002af2f81fb79514d7be64bcb791d24bb69e7cd0fda3cda1d080",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0008.json",
       "sha256": "67dac846f3e8da755ee2561dbf32a93bc64488a38ee339e2fa7ceafa01fa1db2",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0009.json",
       "sha256": "f26938aba64efe02f215505ff4c1d3f6fdde693e8742e4857285aa8769aca088",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/18-invalid-pool-auto/journal/0010.json",
       "sha256": "a28aaf894f4e3cf9fb3e91f452ca627752087aaafd7b7c1267c9d4b3da32f786",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0000.json",
       "sha256": "73810cc06672c73f314677d40f40bcb121aefdc5d85481fb005f1e69124da330",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0001.json",
       "sha256": "966a50e8a16e263edb784325e13144b5bd846ccfb600b3778a88d8a9430e4a41",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0002.json",
       "sha256": "154cb607ca720ec964ab1fb227bda8638c725829102b5723f583d7d86f7a4a45",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0003.json",
       "sha256": "efd626610ec4e2a137e9e3c176a9f9f37ff1b879d9929c36ca753b2503e672b9",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0004.json",
       "sha256": "04300c70286151775239629fbcd0a35d50ca1d45d4c3a9537d657a8f0e79a240",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0005.json",
       "sha256": "db53efb3532920375b01d784d0b60c7c13d70235572e6dfdb341a658506031ce",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0006.json",
       "sha256": "be64cf78cb2d0e5a66b84123ab7fa9a96541d18d9f5ae16038daa3fc20477573",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0007.json",
       "sha256": "9d30b818d55bac3f1e26322c879a6a4b5fa655c2ace262d15bc659c63ac77c25",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0008.json",
       "sha256": "684a7695ba995bcdb684c76e31a9ea2aa287cc551389abcca4557df7c4885e97",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0009.json",
       "sha256": "47f6ab4ea21beb1cd9d59acb7b76a38df1ad4f6d67b7a0519689853c7c01c3d2",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/19-invalid-pool-auto/journal/0010.json",
       "sha256": "eb1f31969b21b7538faab1872ffc7744dadbf56e7892ade003a2d69fff8a2827",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0000.json",
       "sha256": "ae3489e5fa55e71b75faa78c605a167a6671f329eadad0a273b7d1a7c9b1f2d4",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0001.json",
       "sha256": "722e199db9d307671411b9540dc0e1c4ea7748d9ebfdb20450e3ade6aa5b6f10",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0002.json",
       "sha256": "911fe288a9c012d4286d32bb9c4ebab50e0ff1abb5c2be5ba0bea4782ce74634",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0003.json",
       "sha256": "a7edfe14a97a4251ae833bb8f94403fa311084f4358e0d450ad61364cbbd6db0",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0004.json",
       "sha256": "6713cb3cf8d09c7a49c8b91c2bea9dd71dd9f2e7aae1bcc594e60669a3bb6dd4",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0005.json",
       "sha256": "ed43219e0dfb3429a50b4662bae88fbf3bc7615854cea16805d4864b94a722e3",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0006.json",
       "sha256": "8fd9950910e0aee264dc0ca8b7fe2408bc07d8856d6bd751df9173841f75ca3b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0007.json",
       "sha256": "67100a1e2afd955c20e6992c14c115abd248ff7e2c1f20bfc930a2c99dc616df",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0008.json",
       "sha256": "6a94876887224c6d1f44467a11cefe527fc84450151f89af3a54a42d978c073b",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0009.json",
       "sha256": "8a6598b9a687cfa8ec8de881baa833b5943b66253b252693d7cc1be914e923bf",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0010.json",
       "sha256": "6a91f8575683e247cd19e3c5bcae65cd136959d32c0f78d5d0a21946d0483cfe",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/20-invalid-pool-explicit/journal/0011.json",
       "sha256": "89bb57bdb799f7e7455ee2cff485d793a9e8bcc5225f5d28ca7a687b666330b1",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/attempts.csv",
       "sha256": "627071e47e05c0e78cb0d4cef6f24474abcc9a90e6245ada1b21197ad1fba0f9",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/protocol.json",
       "sha256": "c03772ee7ba6668ac43cb087749d68665be2d3bfb0446da5ad550da790e75e06",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-03/summary.json",
       "sha256": "a947c333ef86f67a689ba995104c2b88160b48890328743e0f41a57031ad5bf7",
-      "availability": "local_only_original"
+      "availability": "local_and_versioned_archive"
     },
     {
       "path": "artifacts/a2-comparison-review-03/review.json",
@@ -2738,6 +2772,29 @@
       "path": "artifacts/a2-interruption-review-02/partial-audit.json",
       "sha256": "164644d23712a2fe680b7f4a20976706b512c22099ed1449448ac9ccadc1c13b",
       "availability": "local_only_original"
+    },
+    {
+      "path": "artifacts/a2-comparison-03.zip",
+      "sha256": "fc0c5896a32a23944873c296d85256162d52769b33b2d1bbbb56d2b51cb66676",
+      "availability": "local_and_versioned_archive"
+    },
+    {
+      "path": "artifacts/a-complements-evaluation-01.zip",
+      "sha256": "19317e812794fd0b117836fca93f61d29853ed0d9f4d13ed1b4a5b3d6bbfedda",
+      "availability": "local_and_versioned_archive"
     }
-  ]
+  ],
+  "distribution_review": {
+    "scope": "Two complete archives only; original bytes retained. No raw-result re-audit or runtime execution.",
+    "checks": [
+      "File inventory and safe member paths",
+      "Personal filesystem paths, names and email patterns",
+      "Credential/token/connection-string/private-key patterns",
+      "Sensitive JSON keys: only opaque secretKeyRef and disabled automountServiceAccountToken",
+      "All request logs: empty stderr and fixed non-sensitive request confirmation",
+      "Local host diagnostic fields inspected",
+      "Copy hashes match original ZIP hashes"
+    ],
+    "limitation": "A content review for distribution does not prove backup restoration or create a new operational result."
+  }
 }

@@ -3,7 +3,7 @@
 ## 1. Estado e autoridade
 
 Este documento define a arquitetura e os contratos operacionais da entrega em
-Kind: verificação de implantação (A1), restauração delimitada (A2) e observação
+Kind: verificação de implantação, restauração delimitada e observação
 posterior do trabalho aceito. AKS/ACR é uma configuração de referência opcional,
 ainda não implantada; não é dependência da entrega local.
 
@@ -226,21 +226,21 @@ de implantação, dependência e negócio. Nenhum body, segredo ou kubeconfig em
 Opções `METRICS_ENABLED`/`OTEL_ENABLED` não comprovam instrumentação implementada;
 Prometheus e tracing amplos permanecem fora do aceite inicial.
 
-Relatórios pequenos e sanitizados podem ser versionados. Dados brutos ficam em
-armazenamento controlado, com inventário, hashes e retenção definidos; um caminho
-ignorado pelo Git não equivale a backup. Falha inesperada interrompe mutações e
-exige diagnóstico antes de nova tentativa em destino identificado; falhas deliberadas
+Relatórios e pacotes delimitados de evidências podem ser versionados após revisão
+de conteúdo para compartilhamento, com inventário e hashes. Demais saídas ficam em
+armazenamento controlado; um caminho ignorado pelo Git não equivale a backup.
+Falha inesperada interrompe mutações e exige diagnóstico antes de nova tentativa em destino identificado; falhas deliberadas
 seguem o encerramento definido na seção 8.4.
 Retries ou reposição automática de tentativa falha são proibidos. As repetições
-planejadas de A2 seguem o protocolo fixado; retries internos da aplicação e
+planejadas da comparação seguem o protocolo fixado; retries internos da aplicação e
 reconciliação normal do Kubernetes permanecem distintos.
 
-### 8.1. A1 — Verificação de uma revisão de runtime
+### 8.1. Verificação de uma revisão de runtime
 
-Separar implantação, observação funcional e restauração. A1 detecta e registra;
-seu veredito nunca aciona rollback, rearme, reenvio de evento ou reparo automático.
-O encerramento do piloto inclui restauração manual explícita e conferência do
-funcionamento; não equivale a uma política de recuperação automática.
+Separar implantação, observação funcional e restauração. A verificação isolada
+detecta e registra; seu veredito não dispara rollback, rearme, reenvio de evento
+ou reparo. A restauração explícita e a conferência de funcionamento encerram a
+tentativa. A política automática da seção 8.5 é uma operação distinta.
 
 Cada tentativa altera um único Deployment, mantendo os demais workloads, réplicas,
 recursos, probes e contratos da aplicação congelada. A mudança experimental não
@@ -285,7 +285,8 @@ uma falha esperada corretamente detectada aprova o teste, nunca a implantação.
 Conferir o resultado com registros/consultas existentes além do booleano final do
 verificador, sem construir outro sistema de observação. Preservar o diagnóstico
 das probes e do rollout para avaliar informação adicional ou sobreposição.
-Não exigir vantagem de A1 nem mudar o cenário após observar o resultado.
+Não exigir vantagem da verificação funcional nem mudar o cenário após observar
+o resultado.
 
 Usar relógio monotônico para durações e UTC para correlação; não subtrair relógios
 monotônicos de processos distintos. Fixar prazos finitos por etapa e limite total
@@ -298,7 +299,7 @@ ou incerta, conclusões, falhas de consulta e pendência final. Não é carga co
 
 Na primeira falha inesperada, parar mutações do cenário e preservar evidências;
 uma falha deliberada prevista segue somente a observação e o encerramento definidos.
-Em A1 e na condição explícita de A2, restauração é comando separado, com alvo e
+Na operação explícita, restauração é comando separado, com alvo e
 configuração conhecidos, nunca efeito automático do veredito. A única exceção
 automatizada é a política restrita da seção 8.5. Restaurar imagem e configuração
 pertinente, não apenas a tag; registrar falha de restauração sem declarar sucesso
@@ -307,19 +308,19 @@ ou repetir automaticamente.
 Depois da restauração, observar os eventos já aceitos durante o cenário sem
 reentregá-los e identificar separadamente um evento novo de verificação. Este não
 comprova recuperação das pendências anteriores. Trabalho BLOCKED exige o rearme
-auditável previsto na aplicação, fora dos procedimentos de restauração A1/A2. Preservar lacunas,
+auditável previsto na aplicação, fora da restauração de configuração. Preservar lacunas,
 finalizar o registro e parar os recursos dedicados conforme o procedimento local.
 
-### 8.5. A2 — Restauração automatizada de runtime em Kind
+### 8.5. Restauração automatizada de runtime em Kind
 
-A2 reutiliza a identidade, observação e restauração de A1. Não modifica a semântica
-de seus comandos nem o aceite congelado. Comparar duas condições com o mesmo
-detector, aplicação, cenário, prazos e verificação de resultado: restauração por
+A política reutiliza identidade, observação e restauração explícita, preservando
+os contratos dos comandos. Comparar duas condições com o mesmo detector, aplicação,
+cenário, prazos e verificação de resultado: restauração por
 acionamento explícito e restauração acionada automaticamente. A diferença estudada
 é o acionamento da recuperação; não atribuir ganho de detecção a essa automação.
 
 O alvo único é `notifications-worker`. São permitidas a revisão saudável marcada
-por tentativa e a falha de inicialização `DB_POOL_SIZE=0`, já exercitada em A1.
+por tentativa e a falha de inicialização `DB_POOL_SIZE=0`.
 Demais workloads, réplicas, imagens, probes, recursos e referências de secrets
 permanecem estáveis. Não adicionar outra falha para procurar resultado favorável.
 
@@ -349,8 +350,8 @@ ou secrets. Não fazer rearme de BLOCKED, reentrega de webhook ou edição de es
 Só declarar recuperação funcional após comprovar identidade saudável e um evento
 novo concluído em Tracking/Order e Notifications SIMULATED, com duplicata sem novo
 efeito. Eventos previamente admitidos, quando existirem, são observados por leitura
-e classificados separadamente. Na campanha A2 original, nenhum evento foi oferecido
-durante a falha de startup; o complemento da seção 8.6 tem protocolo próprio.
+e classificados separadamente. A comparação de acionamento e a observação do
+trabalho previamente aceito seguem protocolos distintos; ver seção 8.6 e relatório.
 
 Separar veredito da implantação candidata, resultado da política, recuperação e
 julgamento do cenário. Uma restauração bem-sucedida não aprova a implantação
@@ -364,11 +365,12 @@ do acionamento explícito; execução por agente não mede tempo de reação hum
 Não acrescentar espera artificial à condição explícita. Métricas, ordem e quantidade
 de repetições executadas estão no [relatório operacional](docs/OPERATIONAL_EVALUATION.md).
 
-### 8.6. Complementos A — pendência e observação inconclusiva
+### 8.6. Trabalho pendente e observação inconclusiva
 
-Os complementos mantêm aplicação, workload, política e guarda de identidade de A2,
-mas têm protocolos próprios. Não combinar falha de implantação e falha de consulta
-na mesma tentativa; não juntar seus tempos ou denominadores aos da comparação A2.
+Os cenários de pendência e inconclusão mantêm aplicação, workload, política e
+guardas de identidade, com preparação e protocolo próprios. Não combinar falha de implantação
+e falha de consulta na mesma tentativa; não juntar tempos ou denominadores aos da
+comparação de acionamento.
 
 **Pendência:** após confirmar a candidata `DB_POOL_SIZE=0`, admitir um evento novo,
 confirmar Tracking/Order e observar publicação `SENT` com Notifications ainda
@@ -415,17 +417,17 @@ O aceite local não encerra as verificações específicas da nuvem. Nenhum dos 
 marcos, isoladamente, demonstra HA, SLA de produção, capacidade, estabilidade
 prolongada ou solução dos incidentes históricos da aplicação/ferramenta de medição.
 
-A2 e seus complementos permitem somente a recuperação das seções 8.5–8.6 e
+A entrega permite somente a recuperação das seções 8.5–8.6 e
 sua avaliação delimitada em Kind. HPA/KEDA, cluster autoscaler, Argo CD, canary/blue-green,
 campanhas de capacidade e novos provedores de entrega continuam fora do escopo.
-Autoescalonamento (B) e implantação Azure são extensões não implementadas. Suas
+Autoescalonamento e implantação Azure são extensões não implementadas. Suas
 condições de entrada ficam no [RELEASE_PLAN](RELEASE_PLAN.md); não são requisitos
-para encerrar o Plano A nem conclusões dos resultados locais.
+para encerrar a avaliação nem conclusões dos resultados locais.
 
 ## 10. Ambiente local e avaliação em Kind
 
-Kind é o ambiente do Plano A. Ambas as condições usam o mesmo ambiente; não misturar
-tempos locais com resultados futuros de AKS. A aplicação congelada e a topologia
+Kind é o ambiente da avaliação operacional. Ambas as condições usam o mesmo
+ambiente; não misturar tempos locais com resultados futuros de AKS. A aplicação congelada e a topologia
 de serviços não mudam. O overlay `k8s/overlays/kind-local`
 usa um único nó, local-path com Retain,
 credenciais próprias e imagem carregada localmente com `imagePullPolicy: Never`.

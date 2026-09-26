@@ -4,9 +4,9 @@
 
 A avaliação verificou benefícios e limites do acionamento automático de uma
 restauração delimitada, mantendo a mesma aplicação e o mesmo verificador nas duas
-condições. O Plano A foi concluído em Kind: a série A2-03 teve 20 tentativas
-utilizáveis; os complementos tiveram seis tentativas com pendência e três com
-observação inconclusiva, em protocolo separado.
+condições. A avaliação foi concluída em Kind: a comparação de acionamento teve
+20 tentativas utilizáveis; as verificações complementares tiveram seis tentativas
+com pendência e três com observação inconclusiva, em protocolo separado.
 
 Ambos os procedimentos restauraram a configuração elegível e confirmaram o fluxo.
 Nos complementos, ambos confirmaram a conclusão posterior do trabalho que aguardava
@@ -36,13 +36,13 @@ entre versões da aplicação.
 | Imagem local executada | `fulfillflow-kind-runtime:source-9e3a135a00db`; ID `sha256:cc882fab4e5294ed7e516131a1b4ace90a2d7e019467ca5c929b14381b680daa` |
 | Ambiente | Kind v0.30.0, Kubernetes v1.34.0, um nó em Docker Linux/WSL no Windows; [versões fixadas](../config/kind-toolchain.json) |
 | Runtime | Três APIs, três workers, PostgreSQL com três bancos/roles e RabbitMQ; configuração [Kind](../k8s/overlays/kind-local) |
-| A2-03 | Infra `08a68234932557f29c65911cab17f850adc4b23d`; [CI](https://github.com/campos-labs/fulfillflow-infra/actions/runs/36088273634) |
-| Complementos avaliação 01 | Infra `f7a6111bffd2e2ce736a1560dbd957dadb6cb806`; [CI](https://github.com/campos-labs/fulfillflow-infra/actions/runs/36195418341) |
+| Comparação de acionamento (`a2-comparison-03`) | Infra `08a68234932557f29c65911cab17f850adc4b23d`; [CI](https://github.com/campos-labs/fulfillflow-infra/actions/runs/36088273634) |
+| Trabalho pendente e inconclusão (`a-complements-evaluation-01`) | Infra `f7a6111bffd2e2ce736a1560dbd957dadb6cb806`; [CI](https://github.com/campos-labs/fulfillflow-infra/actions/runs/36195418341) |
 
 As execuções do cluster foram locais; a CI verificou código, contratos, manifests
 e planos Terraform simulados. A aprovação da CI não equivale à execução das séries.
-Os [contratos da política](../DESIGN.md#85-a2--restauração-automatizada-de-runtime-em-kind)
-e o [procedimento operacional](../k8s/README.md#a2--operação-delimitada) permanecem
+Os [contratos da política](../DESIGN.md#85-restauração-automatizada-de-runtime-em-kind)
+e o [procedimento operacional](../k8s/README.md#restauração-automática) permanecem
 separados deste registro de resultados.
 
 ### Condições e protocolos
@@ -50,31 +50,31 @@ separados deste registro de resultados.
 `explicit` usa uma solicitação externa registrada por subprocesso; `auto` integra
 o acionamento ao executor. Detector, configuração saudável, restauração e
 verificador são comuns. Ordem, prazos e código foram fixados antes das execuções.
-O cenário saudável precedeu a falha na série A2; os pares alternaram qual condição
+O cenário saudável precedeu a falha na comparação de acionamento; os pares alternaram qual condição
 começou. Nos complementos: explicit/auto, auto/explicit, explicit/auto, seguidos
 pelos três casos de inconclusão. Não houve randomização.
 
 | Protocolo | Tentativas | Evento acompanhado | Origem dos tempos e observação |
 | --- | --- | --- | --- |
-| A2-03 saudável | 5 pares, 10 tentativas | Evento novo na candidata saudável; limpeza posterior separada | Intenção de aplicar candidata → decisão funcional; sem restauração pela política |
-| A2-03 falha de startup | 5 pares, 10 tentativas | Nenhum evento oferecido à candidata defeituosa; evento novo depois da restauração | Decisão → solicitação → convergência → verificação funcional sequencial |
+| Comparação: saudável | 5 pares, 10 tentativas | Evento novo na candidata saudável; limpeza posterior separada | Intenção de aplicar candidata → decisão funcional; sem restauração pela política |
+| Comparação: falha de startup | 5 pares, 10 tentativas | Nenhum evento oferecido à candidata defeituosa; evento novo depois da restauração | Decisão → solicitação → convergência → verificação funcional sequencial |
 | Complemento pendência | 3 pares, 6 tentativas | Evento já aceito, Tracking/Order concluídos e Notifications `SENT/NOT_RECEIVED` | Preparação → autorização → solicitação; observadores de convergência e negócio em paralelo |
 | Complemento inconclusão | 3 tentativas auto | Evento aceito em candidata saudável; 503 injetado no transporte da consulta | Decisão inconclusiva, conferência de ausência de mutação e consulta posterior dos mesmos IDs |
 
-**Pendência e convergência analisam as mesmas seis tentativas.** Não são duas
-amostras independentes. Smokes adicionais e duplicatas intencionais também não
-acrescentam repetições. Os conjuntos A2 e complementos não são combinados nas
+**Pendência e convergência analisam as mesmas seis tentativas.** Não são duas amostras
+independentes. Smokes adicionais e duplicatas intencionais também não acrescentam
+repetições. A comparação de acionamento e os complementos não são combinados nas
 medianas nem numa taxa geral de sucesso.
 
-Rollout e fluxo tiveram prazo de 90 s; operação, 600 s; polling de observação, 1 s.
-A solicitação externa foi assistida por script com polling de 0,1 s. A2 reservou
-30 min para encerramento em janela de até quatro horas; complementos, janela de
-45 min. Os protocolos registram os limites efetivos. No A2, log vazio após término
-do processo pode ser relido por até 5 s, com identidade conferida, dentro da detecção.
-Isso não repete a implantação. Não houve atraso artificial exclusivo de uma condição.
+Rollout e fluxo tiveram prazo de 90 s; operação, 600 s; polling de observação, 1 s. A
+solicitação externa foi assistida por script com polling de 0,1 s. A comparação reservou
+30 min para encerramento em janela de até quatro horas; complementos, janela de 45 min.
+Os protocolos registram os limites efetivos. Na comparação, log vazio após término do
+processo pode ser relido por até 5 s, com identidade conferida, dentro da detecção. Isso
+não repete a implantação. Não houve atraso artificial exclusivo de uma condição.
 
 As durações usam relógio monotônico com origem identificada; UTC serve à correlação.
-Não se subtraem relógios de processos distintos. O início A2 é
+Não se subtraem relógios de processos distintos. O início da comparação é
 `candidate_send_intent`, não a confirmação de aplicação. Nos complementos,
 `policy_authorized` vem depois da preparação e do início dos dois observadores.
 **Autorização até conclusão não é a duração completa da indisponibilidade.**
@@ -87,9 +87,9 @@ controladas pelo executor, sem comprovar monitoramento contínuo de todo o host.
 
 ## 3. Acionamento e restauração da configuração
 
-Na série A2-03, as dez candidatas saudáveis foram aprovadas sem restauração pela
-política. As dez candidatas com falha de startup foram rejeitadas, cada uma com
-uma restauração e confirmação funcional. Uma recuperação aprovada não muda o
+Na comparação de acionamento, as dez candidatas saudáveis foram aprovadas sem
+restauração pela política. As dez candidatas com falha de startup foram rejeitadas, cada
+uma com uma restauração e confirmação funcional. Uma recuperação aprovada não muda o
 veredito de reprovação da candidata. A limpeza explícita das candidatas saudáveis
 ocorreu fora da avaliação da política e não conta como restauração indevida.
 
@@ -104,7 +104,7 @@ Medianas em segundos, cinco tentativas por condição em cada cenário:
 | Falha: solicitação → confirmação funcional | 21,906 | 21,937 |
 | Falha: intenção de aplicar → encerramento da política | 29,094 | 27,016 |
 
-Fonte: [tentativas A2](evidence/operational-a/a2-comparison-03/attempts.csv) e
+Fonte: [tentativas da comparação](evidence/operational-a/a2-comparison-03/attempts.csv) e
 [resumo original](evidence/operational-a/a2-comparison-03/summary.json), com
 mínimos, máximos e diferenças pareadas. As medianas das etapas não devem ser somadas.
 
@@ -165,10 +165,10 @@ revisão, imagem, réplicas e readiness, não o instante exato de transição de
 As consultas têm duração e polling; não foi isolada a causa desse intervalo.
 
 Esse resultado mostra que conclusão de negócio e convergência são verificações
-complementares. Não demonstra inadequação das probes nem autoriza concluir que
-negócio sempre termina antes da prontidão. A observação paralela difere da sequência
-A2: os aproximadamente 3,8 s dos complementos não representam melhoria sobre os
-aproximadamente 21,9 s da confirmação sequencial de outro evento no A2.
+complementares. Não demonstra inadequação das probes nem autoriza concluir que negócio
+sempre termina antes da prontidão. A observação paralela difere da comparação de
+acionamento: os aproximadamente 3,8 s dos complementos não representam melhoria sobre os
+aproximadamente 21,9 s da confirmação sequencial de outro evento.
 
 ## 6. Interpretação e limites operacionais
 
@@ -179,8 +179,8 @@ aproximadamente 21,9 s da confirmação sequencial de outro evento no A2.
 | Conclusão da pendência | Depende dos mecanismos persistentes, das dependências e da política de tentativas da aplicação |
 
 A infraestrutura restabeleceu a configuração elegível; os mecanismos da aplicação
-permitiram concluir o trabalho; o verificador confirmou identidades e efeitos.
-Trabalho `BLOCKED` pode exigir rearme auditável, fora do A2. Os complementos não
+permitiram concluir o trabalho; o verificador confirmou identidades e efeitos. Trabalho
+`BLOCKED` pode exigir rearme auditável, fora da política avaliada. Os complementos não
 verificaram esse rearme. `SIMULATED` é resultado terminal de simulação, sem entrega
 externa ou promessa de exactly-once no transporte.
 
@@ -213,41 +213,41 @@ identifica registros locais e limitações. Não entram nos denominadores compar
 
 ## 7. Exclusões e correções do instrumento
 
-| Conjunto | Tratamento e motivo |
+| Registros excluídos | Motivo e tratamento |
 | --- | --- |
-| A2 série 01, `9acb798` | Incompleta na tentativa 11 após dez saudáveis; diagnóstico de startup não confirmado. Correção posterior permitiu reler log vazio por prazo limitado, sem recuperar o log original ausente |
-| A2 série 02, `6ee2093` | Incompleta na tentativa 18: projeção intermediária válida de Tracking rejeitada pelo verificador. Correção passou a aguardar o terminal preservando identidade; consulta posterior não recuperou o horário original nem validou retroativamente a tentativa |
-| Pilotos A1/A2 | Preparação e validação do executor; não são repetições da série 03 |
-| Complementos piloto 01 | Resultados funcionais preservados; identificação herdada de cenário corrigida antes do piloto sucessor |
-| Complementos piloto 02 | Três pilotos aprovados, usados como requisito de liberação; excluídos das nove tentativas de avaliação |
+| Comparação interrompida 01, `9acb798` | Parou na tentativa 11 por diagnóstico de startup não confirmado. Correção posterior limitou a espera por log; o log original ausente não foi recuperado |
+| Comparação interrompida 02, `6ee2093` | Parou na tentativa 18 por rejeição indevida de projeção intermediária pelo verificador. Consulta posterior não recuperou o horário nem validou retroativamente a tentativa |
+| Pilotos | Prepararam e validaram o executor; não entram nos conjuntos avaliados. A correção de identificação de cenário de um piloto está preservada no histórico |
 
-Não houve reposição de tentativas, combinação de séries incompletas ou reclassificação
-posterior para completar amostra. Os registros permanecem locais; detalhes e referências
-anteriores estão no histórico Git acima. Falhas do instrumento não foram tratadas
-como prova de falha da aplicação nem apagadas da rastreabilidade.
+Não houve reposição de tentativas nem combinação de séries incompletas para
+completar amostra. A [síntese das exclusões](evidence/operational-a/excluded-series.projection.json)
+relaciona os registros locais; o histórico Git conserva os detalhes. Falhas do
+instrumento não foram tratadas como prova de falha da aplicação.
 
 ## 8. Evidências e reprodução da leitura
 
 Os dados em [docs/evidence/operational-a](evidence/operational-a) estão versionados
 junto deste relatório. O [manifesto](evidence/operational-a/manifest.json) identifica
-origem, hash, natureza de cada arquivo e disponibilidade dos pacotes completos.
-Projeções são seleções declaradas dos originais; conferências e resumos calculados
-não substituem os registros dos quais derivam. Os originais locais não foram alterados.
-A pasta de evidências não sofre conversão automática de finais de linha pelo Git,
-preservando os bytes e SHA-256 declarados entre plataformas.
+origem, hash, natureza de cada arquivo e disponibilidade dos pacotes completos. Nomes
+originais de pastas e scripts são identificadores de rastreabilidade, não etapas de
+leitura ou de desenvolvimento pendentes. Projeções são seleções declaradas dos
+originais; conferências e resumos calculados não substituem os registros dos quais
+derivam. Os originais locais não foram alterados. A pasta de evidências não sofre
+conversão automática de finais de linha pelo Git, preservando os bytes e SHA-256
+declarados entre plataformas.
 
 | Afirmação | Fonte e campo relevante | Natureza e disponibilidade |
 | --- | --- | --- |
-| A2: condições, ordem e prazos | [Protocolo A2](evidence/operational-a/a2-comparison-03/protocol.projection.json); `order`, `deadlines_seconds`, `provenance` | Projeção versionada; protocolo integral no pacote local |
-| A2: contagens e medianas | [CSV](evidence/operational-a/a2-comparison-03/attempts.csv); `scenario`, `condition`, `usable`, intervalos; [resumo](evidence/operational-a/a2-comparison-03/summary.json) | Cópias originais versionadas; resumos são agregações do executor |
+| Comparação: condições, ordem e prazos | [Protocolo](evidence/operational-a/a2-comparison-03/protocol.projection.json); `order`, `deadlines_seconds`, `provenance` | Projeção versionada; protocolo integral no ZIP da comparação |
+| Comparação: contagens e medianas | [CSV](evidence/operational-a/a2-comparison-03/attempts.csv); `scenario`, `condition`, `usable`, intervalos; [resumo](evidence/operational-a/a2-comparison-03/summary.json) | Cópias originais versionadas; resumos são agregações do executor |
 | Complementos: preparação, ordem e limites | [Protocolo](evidence/operational-a/a-complements-evaluation-01/protocol.json); `preparation`, `authorization`, `order`, `limits` | Original versionado |
 | Complementos: tempos e resultados por tentativa | [CSV](evidence/operational-a/a-complements-evaluation-01/attempts.csv) e [resumo](evidence/operational-a/a-complements-evaluation-01/summary.json) | Cópias originais versionadas; números das tabelas recalculados por condição |
-| A2: origem dos intervalos | [Cronologia](evidence/operational-a/a2-comparison-03/chronology.projection.json); `attempts[i].policy_window`, `metrics` | Projeção versionada dos journals; limpeza posterior separada |
+| Comparação: origem dos intervalos | [Cronologia](evidence/operational-a/a2-comparison-03/chronology.projection.json); `attempts[i].policy_window`, `metrics` | Projeção versionada dos journals; limpeza posterior separada |
 | Retomada, efeitos e abstenção | [Projeção funcional](evidence/operational-a/a-complements-evaluation-01/functional.projection.json); `attempts[i].initial`, `read_only_phases`, `parallel_signals`, `abstention`, `journal` | Projeção com campos, fases, métodos HTTP e linhas dos originais; nove tentativas |
 | Exemplo de pendência e conclusão | [Preparação](evidence/operational-a/a-complements-evaluation-01/examples/pending-preparation.result.json) e [consulta retomada](evidence/operational-a/a-complements-evaluation-01/examples/pending-resumed.result.json) da tentativa 01 | Cópias originais; `pending` na preparação é estado esperado, não falha da avaliação |
 | Agregação descritiva | [Estatísticas recalculadas](evidence/operational-a/descriptive-statistics.json); `campaigns` | Mediana, mínimo, máximo e n derivados dos CSVs nesta consolidação |
 | Séries interrompidas | [Exclusões](evidence/operational-a/excluded-series.projection.json); `series` | Projeção dos resumos e conferências; não integra amostras concluídas |
-| Integridade e encerramento | [Conferência A2](evidence/operational-a/a2-comparison-03/review.projection.json), [complementos](evidence/operational-a/a-complements-evaluation-01/review.projection.json) e [manifesto](evidence/operational-a/manifest.json), `files`/`sources` | Conferências anteriores identificadas e hashes reconferidos; não é nova execução |
+| Integridade e encerramento | [Conferência da comparação](evidence/operational-a/a2-comparison-03/review.projection.json), [complementos](evidence/operational-a/a-complements-evaluation-01/review.projection.json) e [manifesto](evidence/operational-a/manifest.json), `files`/`sources` | Conferências anteriores identificadas e hashes reconferidos; não é nova execução |
 
 Sem reenvio é sustentado pelos métodos HTTP registrados nas retomadas. O campo
 `webhook_offered=true` dos resumos retomados é herdado do checkpoint e representa
@@ -255,23 +255,41 @@ histórico do evento, não um POST novo nessa fase. `observation_only=true` deve
 lido junto das observações. O campo herdado `additional_functional_information`
 refere-se à detecção de startup; não resume a análise dos sinais paralelos.
 
-Os caminhos `artifacts/...` no manifesto identificam originais **somente locais**;
-não são links para arquivos do GitHub. Os ZIPs completos não estão publicados como
-assets de release. Artefatos da CI contêm validação estática e têm retenção de sete
-dias; não são arquivo permanente das séries operacionais.
+### Pacotes para download
 
-| Pacote local | SHA-256 do ZIP |
-| --- | --- |
-| `artifacts/a2-comparison-03.zip` | `fc0c5896a32a23944873c296d85256162d52769b33b2d1bbbb56d2b51cb66676` |
-| `artifacts/a-complements-evaluation-01.zip` | `19317e812794fd0b117836fca93f61d29853ed0d9f4d13ed1b4a5b3d6bbfedda` |
+Os dois ZIPs abaixo são cópias integrais dos conjuntos concluídos, com bytes e
+nomes internos preservados. A revisão para compartilhamento verificou conteúdo
+sensível, caminhos e diagnósticos; não repetiu a auditoria dos resultados. Os logs
+incluídos registram a solicitação do executor, sem credenciais ou dumps de bancos.
+Os pacotes também conservam diagnósticos do ambiente local e referências opacas a
+secrets, sem seus valores. Não são instaladores nem backups dos volumes.
 
-As conferências verificaram 638 e 379 arquivos respectivamente, além de 235 e 123
-registros encadeados. A base final coincidiu com a inicial em cada conjunto; o
-encerramento preservou volumes e parou o laboratório. Cópia independente e
-restauração de backup não foram verificadas.
+| Conjunto concluído | Download | Tamanho |
+| --- | --- | ---: |
+| Comparação de acionamento, 20 tentativas | [a2-comparison-03.zip](evidence/operational-a/archives/a2-comparison-03.zip) | 476.724 bytes |
+| Trabalho pendente e inconclusão, 9 tentativas | [a-complements-evaluation-01.zip](evidence/operational-a/archives/a-complements-evaluation-01.zip) | 306.773 bytes |
+
+[SHA-256 dos downloads](evidence/operational-a/archives/checksums.sha256). Os hashes
+coincidem com os ZIPs originais em `artifacts/`; não houve recompactação. Após baixar,
+conferir com `Get-FileHash -Algorithm SHA256 <arquivo.zip>` e extrair mantendo a
+estrutura de pastas. O manifesto distingue cópias integrais, projeções e resumos.
+
+Os caminhos `artifacts/...` identificam a origem local, não links do GitHub.
+Para os dois conjuntos concluídos, o caminho relativo seguinte ao nome da campanha
+corresponde ao mesmo arquivo dentro do ZIP. Pilotos, séries interrompidas e alguns
+registros de conferência permanecem locais, com seleções no índice acima.
+Conferências anteriores conservam o estado de disponibilidade de sua ocasião;
+este índice e o manifesto descrevem a distribuição atual.
+
+Nenhuma release/tag foi criada. Artefatos da CI contêm validação estática e têm
+retenção de sete dias; os ZIPs versionados não dependem dessa retenção.
+As auditorias anteriores verificaram 638 e 379 arquivos respectivamente, além de
+235 e 123 registros encadeados. A base final coincidiu com a inicial em cada conjunto;
+o encerramento preservou volumes e parou o laboratório. Restauração de bancos ou
+ambiente a partir de backup não foi ensaiada.
 
 Para conferir tabelas, agrupar os CSVs por cenário/condição e usar a mediana dos
-intervalos não vazios nas tentativas utilizáveis; complementar com mínimo/máximo
-e diferenças dentro do par. Não arredondar antes de agregar, somar medianas de
-etapas ou reunir A2 e complementos. A figura é uma visualização dos dados existentes,
+intervalos não vazios nas tentativas utilizáveis; complementar com mínimo/máximo e
+diferenças dentro do par. Não arredondar antes de agregar, somar medianas de etapas ou
+reunir a comparação e os complementos. A figura é uma visualização dos dados existentes,
 sem nova execução ou mudança dos registros.

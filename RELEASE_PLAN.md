@@ -2,8 +2,8 @@
 
 ## 1. Estado atual
 
-**Plano A concluído em Kind; pausa para decisão de continuidade.** A aplicação
-v1.3.0-rc.1 permanece congelada. O último encerramento conferiu a configuração
+**Avaliação operacional concluída em Kind; pausa para decisão de continuidade.**
+A aplicação v1.3.0-rc.1 permanece congelada. O último encerramento conferiu a configuração
 saudável, pausou os workloads e parou o nó, preservando dados e evidências.
 Não há implantação AKS, publicação ACR ou autoescalonamento neste aceite.
 
@@ -12,14 +12,11 @@ O [DESIGN](DESIGN.md) define os contratos; o [guia Kubernetes](k8s/README.md)
 contém os comandos. Este plano registra entregas e decisões futuras, sem repetir
 as tabelas ou o diário das execuções.
 
-| Marco | Entrega e aceite |
+| Entrega concluída | Alcance |
 | --- | --- |
-| Base local L1–L4 | Kind isolado, imagem da referência, bancos/broker, migrations, fluxo funcional e encerramento preservando volumes |
-| A1 | Verificação de revisão saudável/defeituosa e restauração explícita em um workload |
-| A2-I | Política delimitada, journal, guardas de identidade e quatro pilotos integrados |
-| A2-II | Série 03 completa, 20/20 tentativas; séries parciais 01/02 preservadas e excluídas da agregação |
-| Complementos A | Avaliação 01 completa, seis tentativas de pendência e três de inconclusão; pilotos separados |
-| Consolidação | Relatório único, seleção acessível de evidências e documentação com responsabilidades separadas |
+| Ambiente e operação | Kind isolado, aplicação congelada, persistência, verificação e restauração delimitada de um workload |
+| Avaliação | Comparação de 20 tentativas; protocolo separado com seis pendências e três inconclusões. Pilotos e séries interrompidas excluídos |
+| Documentação e evidências | Relatório, registros selecionados e dois pacotes completos versionados, com origem e hashes |
 
 Os SHAs executados, CIs e arquivos correspondentes constam no relatório. O
 [registro anterior à consolidação](https://github.com/campos-labs/fulfillflow-infra/blob/47dbd111ad4eff89a8e64c7b50d7d2c59c23baf7/RELEASE_PLAN.md)
@@ -30,8 +27,8 @@ instruções vigentes de execução.
 
 | Item | Tratamento |
 | --- | --- |
-| Evidências | Seleção no Git; pacotes completos locais. Publicação de anexos exige conferência de conteúdo, proveniência e hashes; não altera originais |
-| Cópia independente e restauração de backup | Não verificadas; preservar dados. Cópia no mesmo host não comprova recuperação após perda do equipamento |
+| Evidências | Dois conjuntos concluídos disponíveis no Git como seleção e ZIPs originais revisados para compartilhamento. Pilotos e séries interrompidas preservados localmente, com síntese de exclusões |
+| Backup e recuperação | Dois ZIPs versionados com hashes para conferência do download. Isso não comprova restauração de bancos, volumes ou ambiente após perda do equipamento |
 | Release/tag de infraestrutura | Não criada nesta consolidação; eventual marco deve identificar código, documentos e conjuntos executados sem mover referências existentes |
 | NetworkPolicies | Seletores validados; tráfego permitido/bloqueado não ensaiado. Não declarar isolamento efetivo a partir da CI |
 | Capacidade, estabilidade prolongada e HA | Não avaliadas; fora do aceite funcional e da comparação operacional |
@@ -42,8 +39,8 @@ ou SHAs das execuções. Uma nova execução exige protocolo e destino próprios
 
 ## 3. Extensões possíveis
 
-Nenhuma extensão é condição para concluir o Plano A. A escolha deve resolver uma
-lacuna definida, com referência congelada, custo, critérios e resultados esperados
+Nenhuma extensão é condição para concluir a avaliação atual. A escolha deve resolver
+uma lacuna definida, com referência congelada, custo, critérios e resultados esperados
 no sentido de verificáveis, não de necessariamente favoráveis. Não abrir uma
 branch por condição comparada nem implementar todas as alternativas abaixo.
 
@@ -65,7 +62,7 @@ um conjunto separado. Para comparar tempos no AKS, executar ambas as condições
 ali, sob protocolo previamente definido; não comparar controle local com automação
 na nuvem nem converter medições Kind em evidência de desempenho Azure.
 
-### B — autoescalonamento e trabalho concluído
+### Autoescalonamento e trabalho concluído
 
 Objetivo possível: avaliar uma política de réplicas diante de entrada variável,
 comparando réplicas fixas e escala de um workload. Manter capacidade dos nós e
@@ -83,7 +80,7 @@ Não presumir que admissão HTTP mais rápida represente maior capacidade de con
 | Capacidade | Quando pode acrescentar informação | Delimitação |
 | --- | --- | --- |
 | OpenTelemetry e métricas de pendência | Diagnosticar em qual etapa o trabalho aguarda e correlacionar tentativas | Instrumentação nova altera a identidade da avaliação; tracing completo não está comprovado pelo aceite atual |
-| Argo CD / GitOps | Avaliar reconciliação de configuração e tratamento de drift | Exige separar o controlador do executor A2 para evitar concorrência de mutações; não é necessário para a comparação concluída |
+| Argo CD / GitOps | Avaliar reconciliação de configuração e tratamento de drift | Exige separar o controlador do executor de restauração para evitar concorrência de mutações; não é necessário para a comparação concluída |
 | SAST | Acrescentar uma verificação de segurança à entrega | Definir achados e política de tratamento; não demonstra recuperação ou desempenho operacional |
 | Locust ou k6 | Gerar entrada controlada para um objetivo de capacidade | Escolher um gerador e adaptar a observação assíncrona; não reutilizar carga síncrona tratando 202 como conclusão |
 
@@ -111,9 +108,10 @@ nenhuma numeração futura ou implementação está comprometida agora.
 7. Cobrir comportamento alterado com verificações pertinentes. Não repetir suítes
    aprovadas sem mudança ou dúvida concreta; documentação sem runtime exige revisão
    de links, exemplos, dados, fronteiras e diff.
-8. Não versionar secrets, kubeconfigs, planos/state Terraform, dumps, logs brutos
-   ou caminhos pessoais. Exemplos usam placeholders; dados derivados identificam
-   fonte, transformação e hash, sem reescrever evidências originais.
+8. Não versionar secrets, kubeconfigs, planos/state Terraform, dumps ou caminhos
+   pessoais. Saídas operacionais só entram em pacotes delimitados, revisados para
+   compartilhamento e com hashes. Exemplos usam placeholders; dados derivados
+   identificam fonte e transformação, sem reescrever evidências originais.
 9. Reportar alterações, checks, SHA e limitações. Fornecer comando manual somente
    para operação preparada, necessária e autorizada. Atualizar o documento responsável
    pelo assunto, evitando cópias de resultados e documentos de contexto redundantes.
