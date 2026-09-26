@@ -2,14 +2,14 @@
 
 ## 1. Estado atual
 
-**Incremento de viabilidade em implementação na branch `feature/v1.1-autoscaling-kind`.**
+**Piloto integrado concluído; pausa de reavaliação na branch `feature/v1.1-autoscaling-kind`.**
 Base: v1.0.0, commit `cb6113e6bbd601a65ee5142de85cadc5bf6ba29d`.
 CI da branch habilitada. Bootstrap dedicado e smoke do instrumento concluídos;
 calibração com uma e duas réplicas executada, com uma oferta não realizada.
 Calibração 05 conferida: 300/300 eventos no prazo em cada condição, distribuição
 143/157 com duas réplicas e 620 checksums íntegros. Não comprova ganho de escala.
-Preparação KEDA conferida; piloto adaptativo com carga ainda pendente.
-A pausa final do incremento ainda não foi atingida. Sem nova tag, AKS ou ACR.
+Piloto KEDA `keda-pilot-04` concluído, mantendo uma réplica neste perfil.
+Pausa atingida antes de qualquer comparação formal. Sem nova tag, AKS ou ACR.
 
 ### Preparação conferida e próximo passo
 
@@ -82,10 +82,21 @@ A pausa final do incremento ainda não foi atingida. Sem nova tag, AKS ou ACR.
   estavam com `Always`; usar `IfNotPresent` com os mesmos digests preserva a
   identidade e permite reutilizar o cache. Não atribuir retrospectivamente essa
   causa às tentativas sem esse registro. Sucessora: `keda-pilot-04`.
-- Próximo passo manual: um piloto adaptativo com o mesmo perfil de 300 eventos,
-  seguido de 360 s sem nova oferta. Métrica indisponível fora da injeção torna a
-  observação incompleta; ausência de escala com métrica válida pode ser resultado.
-  Pausar após a execução, sem elevar carga ou alterar limiar automaticamente.
+- `keda-pilot-04` concluído, infraestrutura `3da855d`, aplicação congelada.
+  Mesmos 300 eventos aceitos e concluídos dentro de 60 s, efeitos e atribuição
+  conferidos; uma réplica processou todos. Nenhuma pendência elegível ao final.
+  Consulta de escala disponível nas 85 observações de carga/pós-carga, sempre
+  zero mensagens elegíveis com idade de pelo menos 5 s. Durante a carga,
+  maior idade elegível amostrada de 0,437378 s. Nas 70 amostras pós-carga,
+  HPA manteve uma réplica desejada/atual; a última condição foi `ValidMetricFound`.
+  A falha deliberada anterior à carga permanece em protocolo separado.
+  Fontes: `adaptive/summary.json`, `adaptive/series.jsonl`, `metric-availability.json`,
+  `post-load.json`, `metric-fault-probe.json` e `shutdown.json` no pacote local.
+- Pausa: integração funcional e observação da política confirmadas neste perfil;
+  acionamento 1→2→1 e vantagem de capacidade não demonstrados. Decidir se o
+  não acionamento encerra o recorte, se o sinal exige revisão fundamentada ou se
+  há justificativa para outro perfil previamente definido. Não aumentar carga
+  nem reduzir limiar automaticamente. Piloto não vira repetição comparativa.
 
 A v1.0.0 permanece encerrada: aplicação v1.3.0-rc.1 congelada, configuração saudável
 conferida e laboratório parado, com dados e evidências preservados. Resultados e
