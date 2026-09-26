@@ -5,7 +5,8 @@
 **Incremento de viabilidade em implementação na branch `feature/v1.1-autoscaling-kind`.**
 Base: v1.0.0, commit `cb6113e6bbd601a65ee5142de85cadc5bf6ba29d`.
 CI da branch habilitada. Bootstrap dedicado e smoke do instrumento concluídos;
-calibração com uma e duas réplicas preparada. KEDA ainda não instalado.
+calibração com uma e duas réplicas executada, com uma oferta não realizada.
+Revisão do gerador pendente antes de repetir ou integrar KEDA.
 A pausa final do incremento ainda não foi atingida. Sem nova tag, AKS ou ACR.
 
 ### Preparação conferida e próximo passo
@@ -24,7 +25,15 @@ A pausa final do incremento ainda não foi atingida. Sem nova tag, AKS ou ACR.
   corrida de leitura no fechamento. Série inválida como resultado de calibração;
   registros originais preservados. O executor agora exige o marcador final do
   gerador antes de encerrar a observação. Nenhuma dessas falhas comprova perda.
-- Próximo comando no [guia Kubernetes](k8s/README.md#calibracao-de-concorrencia):
+- `scale-calibration-04` executou as duas condições: 1 réplica com 300/300 ofertas
+  aceitas e concluídas no prazo; 2 réplicas com 299/299 aceitas e concluídas no prazo,
+  mais uma oferta planejada não realizada (`GENERATOR_LIMIT`). Pendência final zero
+  em ambas. O resumo geral permanece `complete=false` pela guarda de completude;
+  não interpretar como falha dos eventos aceitos. Essa causa reúne atraso da agenda
+  ou concorrência cheia; o registro atual não permite separar os dois mecanismos.
+  Cluster parado e volumes preservados. Não repetir automaticamente: revisar custo
+  do gerador/observador e o diagnóstico de oferta antes de decidir nova execução.
+- Comando de referência no [guia Kubernetes](k8s/README.md#calibracao-de-concorrencia):
   300 eventos por condição, 1 depois 2 réplicas; 15 s a 2/s, 30 s a 8/s e 15 s a 2/s.
   Prazo funcional 60 s após aceite observado, observação 120 s por evento,
   concorrência HTTP 8 e consultas até 16. Preparação das entidades fora da oferta.
