@@ -211,7 +211,7 @@ checks executados e limitações; não criar documento de contexto adicional nem
 incorporar o piloto ao relatório fechado da v1.0.0. A decisão será **continuar,
 ajustar o recorte ou encerrar a extensão**, sem pressupor a próxima etapa.
 
-### Próxima janela autorizada — piloto mínimo KEDA
+### Janela executada — piloto mínimo KEDA
 
 Uma preparação sem carga e um piloto identificado, sem repetição automática.
 KEDA 2.20.2 core com versões/hashes fixados, consulta de mensagens elegíveis com
@@ -223,8 +223,40 @@ Execução de carga fica separada, seguida de 360 s de observação sem novas of
 Distinguir leituras válidas sem demanda suficiente, indisponibilidade da métrica e
 réplicas efetivamente observadas. Permanecer em uma réplica é resultado admissível.
 Registrar subida/descida somente se ocorrerem; não fabricá-las para satisfazer aceite.
-O relatório de calibração 05 e seus arquivos permanecem intactos. O piloto formará
-conjunto próprio e termina na pausa de reavaliação, antes de comparação formal.
+O relatório de calibração 05 e seus arquivos permanecem intactos. O piloto formou
+conjunto próprio e terminou na pausa de reavaliação, antes de comparação formal.
+
+### Reavaliação do limite observado
+
+A viabilidade de concorrência e integração foi demonstrada; necessidade e benefício
+de escala continuam em aberto. Na calibração 05 duas réplicas processaram 143/157
+eventos; no piloto 04 uma concluiu 300/300 no prazo. Ausência de escala não prova
+equivalência entre políticas nem ausência de transientes entre amostras.
+
+Há um indício a esclarecer antes de elevar demanda: no piloto, a API Core esteve
+acima de 0,45 CPU em 5/14 amostras, com limite configurado de 0,5 CPU. A maior CPU
+amostrada do worker foi 0,4133, e a maior idade elegível foi 0,437378 s. O observador
+faz várias consultas por evento nessa API. Isso sugere investigar entrada/observação,
+mas não comprova throttling, gargalo causal ou capacidade máxima. O gerador não omitiu
+ofertas: atraso máximo de despacho 16 ms, concorrência amostrada máxima 5 de 8.
+Fontes locais: `keda-pilot-04/adaptive/{series,admission}.jsonl`, configuração de
+runtime e procedimentos `observe`/`verify_flow`. Picos entre amostras não são excluídos.
+
+Recomendação: um diagnóstico delimitado do custo das consultas e de throttling por
+componente antes de definir nova carga. Manter app, recursos e política inicialmente;
+não reduzir recursos do worker, baixar arbitrariamente o limiar ou mudar alvo para
+produzir escala. Separar conclusão funcional de tempo até sua observação. As medianas
+entre calibração e piloto não estimam custo causal do KEDA: instrumentação, momentos
+e estado acumulado diferem. Não são repetições de uma comparação controlada.
+
+Se o diagnóstico justificar observar demanda sustentada, perfil candidato: 15 s a
+2/s, 60 s a 8/s e 15 s a 2/s (540 eventos). Altera somente duração do patamar,
+sem subir pico, dentro dos tetos atuais; prazo funcional 60 s permanece. A pergunta
+é se a pendência cresce quando a demanda se sustenta, não se conseguimos forçar
+1→2. Primeiro caracterizar com uma réplica; testar segunda/política somente se houver
+pendência atribuível ao alvo e margem no ambiente. Interromper diante de limitação
+do gerador, observação ou outra etapa. Não prosseguir em escalada de taxas se o sinal
+continuar curto. Perfil apenas proposto; nenhuma nova execução iniciada nesta revisão.
 
 ### Depois da pausa — ainda não autorizado
 
