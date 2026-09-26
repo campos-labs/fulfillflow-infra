@@ -553,3 +553,12 @@ uv run --frozen python scripts/review_scale_diagnostic.py --input artifacts/scal
 Confere o manifesto de hashes, deduplica timestamps, identifica resets e registra
 janelas por cgroup. Percentuais de períodos com throttling não medem perda de CPU
 ou indisponibilidade. Resultados locais e decisão estão no RELEASE_PLAN.
+
+Para a avaliação optativa de reutilização das duas respostas terminais:
+
+```powershell
+.\scripts\Invoke-ScaleDiagnostic.ps1 -PrivateDirectory $scalePrivate -OutputDirectory '.\artifacts\scale-instrumentation-reuse-01' -ReuseTerminalReads
+```
+
+Modo exclusivo do diagnóstico. Preserva todas as asserções e identifica a
+mudança de instrumento no protocolo; não utiliza cache entre observações.

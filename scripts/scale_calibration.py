@@ -107,7 +107,7 @@ def verify_images(private, expected):
         raise RuntimeError("RUNTIME_INCOMPLETE")
 
 
-def observe(v, item):
+def observe(v, item, *, reuse_terminal_reads=False):
     v.deadline = time.monotonic() + 20
     state = {"event_id": item["event_id"], "observed_monotonic": time.monotonic()}
     try:
@@ -119,7 +119,12 @@ def observe(v, item):
             return {**state, "terminal_failure": True}
         if inbox.get("status") != "PROCESSED":
             return {**state, "pending_confirmed": True, "stage": "tracking"}
-        event = v.tracking(item["inbox_id"], path, item["shipment_id"])
+        event = v.tracking(
+            item["inbox_id"],
+            path,
+            item["shipment_id"],
+            **({"initial_record": inbox} if reuse_terminal_reads else {}),
+        )
         v.final_business(item["order_id"], item["shipment_id"])
         status = v.get("/api/v1/notification-status/" + event)
         if status.get("status") == "FAILED" or "BLOCKED" in (
@@ -129,7 +134,9 @@ def observe(v, item):
             return {**state, "terminal_failure": True}
         if status.get("processing") != "DONE":
             return {**state, "pending_confirmed": True, "stage": "notifications"}
-        notification = v.notifications(event)
+        notification = v.notifications(
+            event, **({"initial_record": status} if reuse_terminal_reads else {})
+        )
         v.effects(item["shipment_id"], item["inbox_id"], event, notification)
         return {
             **state,
@@ -153,7 +160,10 @@ def run_one(
     work_deadline,
     policy=None,
     diagnostic=False,
+    reuse_terminal_reads=False,
 ):
+    if reuse_terminal_reads and not diagnostic:
+        raise RuntimeError("REUSE_REQUIRES_DIAGNOSTIC")
     folder.mkdir(exist_ok=False)
     if diagnostic:
         from scripts.scale_diagnostic import TimedTransport, throttling_sample
@@ -258,7 +268,14 @@ def run_one(
                         continue
                     eligible.append({**item, "inbox_id": admission["inbox_id"]})
                 observed = list(
-                    observers.map(lambda item: observe(verifiers[item["event_id"]], item), eligible)
+                    observers.map(
+                        lambda item: observe(
+                            verifiers[item["event_id"]],
+                            item,
+                            reuse_terminal_reads=reuse_terminal_reads,
+                        ),
+                        eligible,
+                    )
                 )
                 for record in observed:
                     results[record["event_id"]] = record
@@ -343,6 +360,7 @@ def run_one(
                 "final_inbox": final_metric,
                 "latencies_are_observed_upper_bounds": True,
                 "observer_concurrency": 16,
+                "reuse_terminal_reads": reuse_terminal_reads,
                 "instrument": "Locust HttpSession; open arrival schedule; kubelet/SQL temporal collection",
             },
         )
@@ -378,7 +396,9 @@ def wait_api(private, seconds=120):
     raise RuntimeError("KUBERNETES_API_STARTUP_TIMEOUT")
 
 
-def _execute(private, output, extension=None, diagnostic=False):
+def _execute(private, output, extension=None, diagnostic=False, reuse_terminal_reads=False):
+    if reuse_terminal_reads and not diagnostic:
+        raise RuntimeError("REUSE_REQUIRES_DIAGNOSTIC")
     if diagnostic and extension:
         raise RuntimeError("DIAGNOSTIC_NOT_AUTOSCALING")
     expected = identity(private)
@@ -411,6 +431,7 @@ def _execute(private, output, extension=None, diagnostic=False):
                 "enabled": diagnostic,
                 "fixed_replicas": 1 if diagnostic else None,
                 "load_changed": False,
+                "reuse_terminal_reads": reuse_terminal_reads,
             },
             **(
                 {"policy": extension.pin, "prepare_only": extension.prepare_only}
@@ -500,6 +521,7 @@ def _execute(private, output, extension=None, diagnostic=False):
                 expected,
                 work_deadline,
                 diagnostic=True,
+                reuse_terminal_reads=reuse_terminal_reads,
             ):
                 raise RuntimeError("DIAGNOSTIC_FUNCTIONAL_OR_ATTRIBUTION_INCOMPLETE")
         elif extension:
@@ -599,11 +621,11 @@ def exclusive(private):
         lock.unlink()
 
 
-def execute(private, output, diagnostic=False):
+def execute(private, output, diagnostic=False, reuse_terminal_reads=False):
     if private.is_relative_to(output) or output.is_relative_to(private):
         raise RuntimeError("PRIVATE_OUTPUT_OVERLAP")
     with exclusive(private):
-        _execute(private, output, diagnostic=diagnostic)
+        _execute(private, output, diagnostic=diagnostic, reuse_terminal_reads=reuse_terminal_reads)
 
 
 def main():
@@ -611,9 +633,15 @@ def main():
     parser.add_argument("--private", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--diagnostic", action="store_true")
+    parser.add_argument("--reuse-terminal-reads", action="store_true")
     args = parser.parse_args()
     try:
-        execute(args.private.resolve(), args.output.resolve(), diagnostic=args.diagnostic)
+        execute(
+            args.private.resolve(),
+            args.output.resolve(),
+            diagnostic=args.diagnostic,
+            reuse_terminal_reads=args.reuse_terminal_reads,
+        )
         print(
             json.dumps(
                 {

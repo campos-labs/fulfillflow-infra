@@ -344,6 +344,28 @@ asserções, ou encerrar esta extensão com o limite demonstrado. AKS e compara�
 formal continuam fora desta coleta. KEDA permanece preferencial para eventual
 continuidade; este diagnóstico fixo não reavalia sua política.
 
+### Avaliação delimitada do observador
+
+A revisão do código identificou duas releituras na observação terminal:
+Tracking e Notifications eram consultados na triagem e novamente na validação.
+No diagnóstico sucessor, reutilizar opcionalmente somente essas respostas dentro
+da mesma chamada de observação. Executar todas as asserções de identidade,
+transição, timestamps e resultado; manter consultas de pedido, shipment e efeitos
+únicos. Não manter cache entre eventos ou ciclos de polling. Uma observação
+terminal passa de oito para seis GETs, além das consultas de espera necessárias.
+
+Uma execução de diagnóstico, mesmos 300 eventos e uma réplica fixa,
+sem mudar aplicação, recursos, cadência, prazo ou política. O protocolo registra
+`reuse_terminal_reads=true`; o modo anterior continua padrão e as evidências
+anteriores não mudam. Não remover fsync, asserções ou efeitos verificados.
+
+Critérios: 300 aceites e conclusões com efeitos/atribuição confirmados,
+menos consultas sem falhas de observação, coleta íntegra e encerramento do nó.
+Confrontar volume HTTP, tempo de verificação, backlog e throttling apenas como
+diagnóstico descritivo: uma execução sucessora sem alternância/repetições
+não estima ganho causal nem isola todo o custo da observação. Reavaliar após
+essa coleta; não aumentar carga automaticamente.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da
