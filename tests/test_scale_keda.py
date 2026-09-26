@@ -127,3 +127,45 @@ class KedaContracts(unittest.TestCase):
             args = command.call_args.args
             self.assertIn("--timeout=420s", args[1])
             self.assertEqual(args[3], 430)
+
+    def test_install_reuses_only_digest_pinned_images(self):
+        import hashlib
+        import tempfile
+
+        import yaml
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest = root / ".tools/keda/keda-2.20.2-core.yaml"
+            manifest.parent.mkdir(parents=True)
+            manifest.write_text(
+                yaml.safe_dump(
+                    {
+                        "kind": "Deployment",
+                        "metadata": {"name": "keda-operator"},
+                        "spec": {
+                            "template": {
+                                "spec": {
+                                    "containers": [
+                                        {"image": "old", "imagePullPolicy": "Always", "env": []}
+                                    ]
+                                }
+                            }
+                        },
+                    }
+                )
+            )
+            pilot = Pilot()
+            pilot.pin["manifest_sha256"] = hashlib.sha256(manifest.read_bytes()).hexdigest()
+            with (
+                patch("scripts.scale_keda.env.ROOT", root),
+                patch("scripts.scale_keda.get", return_value=None),
+                patch("scripts.scale_keda.k", side_effect=RuntimeError("stop before mutation")),
+            ):
+                with self.assertRaisesRegex(RuntimeError, "stop before mutation"):
+                    pilot.install(root, root)
+            rendered = yaml.safe_load((root / "keda-install.yaml").read_text())
+            container = rendered["spec"]["template"]["spec"]["containers"][0]
+            self.assertEqual(container["imagePullPolicy"], "IfNotPresent")
+            self.assertEqual(container["image"], pilot.pin["images"]["keda-operator"])
+            self.assertIn("@sha256:", container["image"])
