@@ -608,3 +608,8 @@ os registros e definir um protocolo sucessor antes de mudar o instrumento.
 Diagnóstico sucessor de admissão: acrescentar `-HttpConcurrency 16` somente com
 `-PeakRate 12 -ControlledHost -ReuseTerminalReads`, em pasta nova. Os demais
 parâmetros permanecem iguais; consultar a justificativa e os limites no RELEASE_PLAN.
+
+`scale-admission-12-c16-01` realizou e concluiu 420/420 eventos. A progressão
+ficou suspensa por memória disponível do host abaixo de 2 GiB durante a coleta;
+recuperar/verificar margem antes de nova carga. O sucesso funcional do resumo
+não substitui esse critério de progressão. Consulte a análise no RELEASE_PLAN.

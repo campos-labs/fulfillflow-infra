@@ -651,6 +651,56 @@ Preservar a execução anterior como diagnóstico, sem tratá-la como controle f
 Aplicar os limites de host, prazo, observação e encerramento já definidos. Revisar
 antes de novo ensaio; não executar 16/s ou mudar worker/CPU/política nesta tentativa.
 
+### Resultado da admissão com teto 16
+
+`scale-admission-12-c16-01`, instrumento `d514bb4`: 420/420 ofertas realizadas,
+aceitas e concluídas em até 60 s, uma réplica com atribuição completa e sem
+reinício entre inventários. Inbox final sem elegíveis, retry ou bloqueio. O resumo
+funcional ficou completo. Conferência local de 856 arquivos por hash em
+`artifacts/scale-admission-12-c16-01-review.json`; interpretação derivada em
+`artifacts/scale-admission-assessment-01.json`. Originais preservados, somente locais.
+
+| Medida | Teto 8 (`capacity-12-01`) | Teto 16 (`admission-12-c16-01`) |
+| --- | --- | --- |
+| Ofertas planejadas / realizadas | 420 / 398 | 420 / 420 |
+| Aceites concluídos no prazo | 398/398 | 420/420 |
+| Maior ocupação antes de um despacho | 8 | 10 |
+| Admissão no patamar: média / p95 (s) | 0,460 / 0,844 | 0,478 / 0,844 |
+| Aceite → confirmação observada: mediana / p95 (s) | 15,8985 / 18,797 | 17,156 / 20,891 |
+| Maior pendência elegível / idade amostrada (s) | 9 / 0,575 | 13 / 1,193 |
+| Menor memória disponível do host (GiB) | 2,688 | 1,078 |
+
+A segunda execução preservou as 360 ofertas do patamar de 30 s a 12/s. Foram
+2.525 GETs, todos HTTP 200, sem erro do observador ou estouro da cadência de coleta.
+O host registrou 200 amostras válidas de alimentação/plano, maior intervalo
+1,016 s; nó parado e volumes preservados. Isso não comprova isolamento de processos.
+Picos amostrados de CPU: Core API 0,500 e worker 0,474. Períodos com throttling:
+76,56% e 48,13%, respectivamente, em janelas distintas; não medem CPU perdida.
+
+**Interpretação:** remover a restrição de oito vagas permitiu observar oferta
+integral nesta tentativa e ocupação acima daquele teto. A duração HTTP do patamar
+não mostrou deterioração expressiva descritiva, mas isso não demonstra equivalência
+estatística nem isola causalidade: demanda efetiva, memória disponível e estado
+acumulado diferem. O tempo de confirmação inclui o observador. A idade apresentou
+crescimento no fim do patamar, sem alcançar cinco segundos nas amostras; não prova
+capacidade sustentável de 12/s, ausência de picos entre amostras ou inutilidade de
+escala. KEDA não participou desta carga.
+
+**Encerramento da sequência:** o mínimo de 1,078 GiB no host atingiu o critério
+predefinido que impede nova carga/réplica, embora a execução funcional tenha
+concluído. O nó tinha cerca de 5,86 GiB disponíveis na última amostra; não há
+base para atribuir a restrição ao esgotamento da memória do workload. Conferência
+posterior encontrou aplicativos de navegador residentes e memória do host de
+aproximadamente 2,83 GiB após parada; não reconstrói atividade durante a coleta
+nem identifica causa. Nenhum aplicativo foi encerrado ou recurso redimensionado.
+
+Antes de outra execução, recuperar e verificar margem do host. O candidato seguinte
+é avaliar a persistência da pressão a 12/s, com duração delimitada previamente,
+ou verificar capacidade adicional no mesmo perfil se houver margem suficiente.
+Escolher uma dessas perguntas, sem aumentar taxa, teto e réplicas conjuntamente;
+não repetir toda a preparação. Não iniciar 16/s, KEDA ou AKS para resolver a
+restrição observada. Implementação validada por 208 testes e Ruff.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da
