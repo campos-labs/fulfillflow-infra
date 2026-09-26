@@ -521,10 +521,17 @@ def _execute(
             else:
                 raise RuntimeError("TUNNEL_NOT_READY")
         if diagnostic:
-            from scripts.scale_diagnostic import require_fixed_target, throttling_sample
+            from scripts.scale_diagnostic import require_fixed_target, wait_throttling
 
             require_fixed_target(private)
-            write(output / "throttling-preflight.json", throttling_sample(private))
+            print(
+                "Diagnostic: waiting for throttling metrics (startup only, up to 90 seconds)",
+                flush=True,
+            )
+            write(
+                output / "throttling-preflight.json",
+                wait_throttling(private, output / "throttling-startup.jsonl"),
+            )
             print(
                 "Diagnostic: 300 events, one fixed replica, throttling and HTTP timing", flush=True
             )

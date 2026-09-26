@@ -586,3 +586,9 @@ condições observadas, sem comprovar exclusividade do host. Mudança detectada 
 a qualificação temporal, mas não aborta imediatamente a oferta nem apaga efeitos.
 Aguarde `JANELA ENCERRADA` e confira o resumo; um aviso de encerramento não confirmado
 exige verificar o Docker. O script não fecha programas ou altera energia/rede.
+
+Na inicialização, a pré-verificação aguarda os contadores de throttling por
+até 90 s, com consultas limitadas a 10 s. O diário `throttling-startup.jsonl`
+preserva ausências e disponibilidade; erro persistente termina antes da oferta.
+Essa espera não se aplica às amostras durante a carga. A tentativa `01` foi
+preservada; usar `scale-clean-reference-02` na próxima execução manual.

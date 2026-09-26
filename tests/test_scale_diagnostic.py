@@ -123,3 +123,62 @@ class CounterWindowTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "CONFLICTING_SOURCE_TIMESTAMP"):
             windows(self.series([(1000, 2), (1000, 3)]))
+
+
+class ThrottlingStartupTests(unittest.TestCase):
+    def run_wait(self, folder, outcomes, seconds=10):
+        from pathlib import Path
+
+        from scripts.scale_diagnostic import wait_throttling
+
+        clock = [0.0]
+
+        def sleep(duration):
+            clock[0] += duration
+
+        sampler = Mock(side_effect=outcomes)
+        result = wait_throttling(
+            None,
+            Path(folder) / "startup.jsonl",
+            seconds=seconds,
+            sample=sampler,
+            monotonic=lambda: clock[0],
+            sleep=sleep,
+        )
+        return result, sampler
+
+    def test_missing_startup_metric_is_retried_and_preserved(self):
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as folder:
+            value = {"counters": [{"value": 0}]}
+            result, sampler = self.run_wait(
+                folder, [RuntimeError("THROTTLING_METRIC_UNAVAILABLE_notifications"), value]
+            )
+            self.assertIs(result, value)
+            self.assertEqual(sampler.call_count, 2)
+            journal = [
+                json.loads(x) for x in (Path(folder) / "startup.jsonl").read_text().splitlines()
+            ]
+            self.assertEqual([x["available"] for x in journal], [False, True])
+            self.assertEqual(journal[-1]["elapsed_seconds"], 5)
+
+    def test_persistent_absence_reaches_bounded_timeout(self):
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as folder:
+            with self.assertRaisesRegex(RuntimeError, "THROTTLING_PREFLIGHT_TIMEOUT"):
+                self.run_wait(folder, RuntimeError("THROTTLING_METRIC_UNAVAILABLE_notifications"))
+            rows = (Path(folder) / "startup.jsonl").read_text().splitlines()
+            self.assertEqual(len(rows), 2)
+            self.assertTrue(all(not json.loads(x)["available"] for x in rows))
+
+    def test_invalid_counter_and_command_failure_are_not_retried(self):
+        import tempfile
+
+        for code in ("INVALID_THROTTLING_COUNTER", "COMMAND_FAILED_KUBECTL"):
+            with self.subTest(code=code), tempfile.TemporaryDirectory() as folder:
+                with self.assertRaisesRegex(RuntimeError, code):
+                    self.run_wait(folder, [RuntimeError(code), {"should_not_be_used": True}])

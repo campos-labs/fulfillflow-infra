@@ -482,6 +482,30 @@ não apenas os 60 s de oferta. O operador reserva o host antes de executar. Apó
 essa referência, revisar oferta/aceite/conclusão, observador e host; então definir
 patamares de caracterização. Não executar campanha formal automaticamente.
 
+A tentativa `scale-clean-reference-01` parou na pré-verificação com
+`THROTTLING_METRIC_UNAVAILABLE_notifications`, antes de criar `fixed-1` ou preparar/
+oferecer eventos. Host validado nas amostras (94 registros; intervalo máximo 1,016 s),
+nó parado e volumes preservados. Não é resultado funcional nem falha de negócio.
+O registro original não preservou a exposição parcial cAdvisor; causa exata não
+confirmada. Compatível com indisponibilidade transitória na inicialização, não
+prova defeito de Notifications ou efeito da alimentação.
+
+Ajuste do instrumento: antes de qualquer preparação funcional, aguardar até 90 s
+pela presença dos três contadores nos seis componentes, consultando a cada 5 s
+(além do tempo de cada consulta, limitada a 10 s). Registrar cada ausência em
+`throttling-startup.jsonl`. Repetir somente indisponibilidade de métrica nessa etapa;
+valor inválido e erro de comando continuam interrompendo. Durante a carga, a coleta
+mantém a validação estrita, sem espera adicional, preenchimento com zero ou omissão
+de componentes. Destino da próxima referência: `scale-clean-reference-02`.
+
+Verificação isolada de pré-requisitos em `throttling-startup-check-01`:
+12 consultas com ausências transitórias e a 13ª com os seis componentes
+presentes, após 61,516 s de espera. Nenhum evento preparado ou oferecido; nó
+parado e volumes preservados. Confirma que a espera resolve a disponibilidade
+nessa inicialização, sem identificar a causa interna da exposição parcial nem
+substituir a referência controlada. Validação do ajuste: 204 testes aprovados,
+Ruff e verificação documental aprovados.
+
 ### Depois da pausa — ainda não autorizado
 
 Uma comparação formal constitui um segundo incremento, se aprovada. Antes da

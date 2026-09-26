@@ -47,7 +47,7 @@ def parse_throttling(text):
             }
         )
     # Pod aggregates (empty container label) are deliberately excluded.
-    for container in CONTAINERS:
+    for container in sorted(CONTAINERS):
         if {r["metric"] for r in rows if r["container"] == container} != set(METRICS):
             raise RuntimeError("THROTTLING_METRIC_UNAVAILABLE_" + container)
     return rows
@@ -66,6 +66,63 @@ def throttling_sample(private):
         "request_end_monotonic": time.monotonic(),
         "counters": parse_throttling(text),
     }
+
+
+def wait_throttling(
+    private,
+    journal,
+    *,
+    seconds=90,
+    sample=throttling_sample,
+    monotonic=time.monotonic,
+    sleep=time.sleep,
+):
+    """Bounded startup readiness only; missing measurements never become zero."""
+    started = monotonic()
+    deadline = started + seconds
+    with journal.open("x", encoding="utf-8") as stream:
+        while monotonic() < deadline:
+            try:
+                result = sample(private)
+            except RuntimeError as error:
+                code = str(error)
+                if not code.startswith("THROTTLING_METRIC_UNAVAILABLE_"):
+                    stream.write(
+                        json.dumps(
+                            {
+                                "utc": utc(),
+                                "elapsed_seconds": monotonic() - started,
+                                "available": False,
+                                "error": "PREFLIGHT_NONRETRYABLE",
+                            }
+                        )
+                        + "\n"
+                    )
+                    stream.flush()
+                    raise
+                stream.write(
+                    json.dumps(
+                        {
+                            "utc": utc(),
+                            "elapsed_seconds": monotonic() - started,
+                            "available": False,
+                            "error": code,
+                        }
+                    )
+                    + "\n"
+                )
+                stream.flush()
+                sleep(max(0, min(5, deadline - monotonic())))
+            else:
+                stream.write(
+                    json.dumps(
+                        {"utc": utc(), "elapsed_seconds": monotonic() - started, "available": True}
+                    )
+                    + "\n"
+                )
+                stream.flush()
+                return result
+    raise RuntimeError("THROTTLING_PREFLIGHT_TIMEOUT")
 
 
 def require_fixed_target(private):
