@@ -77,6 +77,11 @@ A pausa final do incremento ainda não foi atingida. Sem nova tag, AKS ou ACR.
   prazos; não determina a causa dos reinícios (último exit 255/Unknown).
   Sucessora: `keda-pilot-03`; manter anteriores intactas. Validar sem outros
   containers ativos, inclusive o cluster histórico que pode voltar no reboot.
+- `keda-pilot-03`: diagnóstico identifica `ImagePullBackOff`, falha DNS de
+  `ghcr.io` no resolvedor Docker durante consulta ao registry. Imagens oficiais
+  estavam com `Always`; usar `IfNotPresent` com os mesmos digests preserva a
+  identidade e permite reutilizar o cache. Não atribuir retrospectivamente essa
+  causa às tentativas sem esse registro. Sucessora: `keda-pilot-04`.
 - Próximo passo manual: um piloto adaptativo com o mesmo perfil de 300 eventos,
   seguido de 360 s sem nova oferta. Métrica indisponível fora da injeção torna a
   observação incompleta; ausência de escala com métrica válida pode ser resultado.

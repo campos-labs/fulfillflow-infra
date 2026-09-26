@@ -482,6 +482,8 @@ real do controlador em falha de métrica, sem presumir que sempre conserva répl
 
 **Piloto KEDA delimitado.** KEDA 2.20.2, manifesto oficial core (sem webhook de
 admissão adicional), hash e imagens amd64 fixados em `config/keda-pilot.json`.
+Imagens por digest usam `IfNotPresent`: reaproveitar cache local sem exigir
+consulta ao registry em cada retomada; download inicial continua necessário.
 Instalação exclusiva em `fulfillflow-scale-01`; namespace `keda`, observação limitada
 a `fulfillflow`, RBAC oficial do controlador no cluster dedicado. PostgreSQL usa
 role própria somente leitura nas quatro colunas da inbox, timeout de 2 s e limite

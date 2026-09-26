@@ -151,6 +151,7 @@ class Pilot:
             if item["kind"] == "Deployment":
                 for container in item["spec"]["template"]["spec"]["containers"]:
                     container["image"] = self.pin["images"][item["metadata"]["name"]]
+                    container["imagePullPolicy"] = "IfNotPresent"
                     for variable in container["env"]:
                         if variable["name"] == "WATCH_NAMESPACE":
                             variable["value"] = "fulfillflow"
