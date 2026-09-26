@@ -2,7 +2,7 @@
 
 ## 1. Estado atual
 
-**Exploração local de escala encerrada nesta etapa; reavaliação antes de comparação formal.**
+**Exploração de escala retomada com margem conferida; comparação formal pendente.**
 Branch `feature/v1.1-autoscaling-kind`.
 Base: v1.0.0, commit `cb6113e6bbd601a65ee5142de85cadc5bf6ba29d`.
 CI da branch habilitada. Bootstrap dedicado e smoke do instrumento concluídos;
@@ -15,6 +15,9 @@ Diagnósticos posteriores chegaram a 600/600 conclusões com uma réplica, sem
 acúmulo sustentado demonstrado no worker. A progressão encerrou por margem do
 host e um 503 de consulta cuja causa permanece indeterminada; ver
 [fechamento do diagnóstico](#fechamento-do-diagnóstico-de-consulta-e-memória).
+A sucessora manual preservou 4,55 GiB livres, 600/600 conclusões e consultas
+sem erro. Um diagnóstico fixo a 16/s está preparado, ainda não executado; ver
+[resultado e próximo passo](#resultado-manual-e-próximo-diagnóstico).
 
 ### Preparação conferida e próximo passo
 
@@ -900,9 +903,9 @@ Trocar de worker exige justificar seu trabalho escalável e validar seu sinal;
 não é atalho para obter escala. KEDA permanece preferencial. Refatoração,
 plataforma adicional de observabilidade e AKS não são requisitos desta preparação.
 
-### Verificação manual sucessora preparada
+### Protocolo da verificação manual sucessora
 
-Uma tentativa `scale-observability-12-45-01`, com a captura HTTP v2, avaliará
+A tentativa `scale-observability-12-45-01`, com a captura HTTP v2, avaliou
 margem do host e coleta em execução direta pelo PowerShell. Perfil preservado:
 15 s a 2/s, 45 s a 12/s, 15 s a 2/s; 600 eventos, uma réplica, HTTP 16,
 reutilização terminal, prazo funcional de 60 s e controle do host.
@@ -920,11 +923,70 @@ carga. O preflight separado registra esse critério e o SHA. Manter as guardas
 de progressão existentes; o launcher não interrompe imediatamente por atingir
 2 GiB, e `complete=true` continua exigindo revisão de memória, HTTP e resultados.
 
-O resultado servirá para decidir se a operação manual fornece margem suficiente
+O resultado abaixo permite decidir se a operação manual fornece margem suficiente
 neste perfil. Ausência de novo 503 não explica o anterior nem prova sua correção.
 Novo erro deve usar a correlação capturada, sem ciclo automático de reprodução.
 Não compara KEDA, não aumenta demanda/recursos e não altera a aplicação.
-Esta preparação não registra execução concluída.
+
+### Resultado manual e próximo diagnóstico
+
+`scale-observability-12-45-01` concluída no SHA de infraestrutura
+`636e0d530a5355f339cd535f883d367e2ac33601`, aplicação e recursos preservados.
+Conferidos 1.216 arquivos; manifesto SHA-256
+`07140a16fd5c37e1a257dcb99c31817b14324b808a36350974e7b0233f778467`.
+Resumo e avaliação locais: `artifacts/scale-observability-12-45-01-review.json`
+e `artifacts/scale-observability-12-45-01-assessment.json`, separados da evidência original.
+
+| Critério | Resultado |
+| --- | --- |
+| Oferta / aceite / conclusão no prazo | 600 / 600 / 600; nenhum envio omitido |
+| Confirmação observada, mediana / p95 | 19,297 / 23,735 s |
+| Consultas | 3.608 GETs, todos 200, sem erro de transporte |
+| Correlação HTTP v2 | 3.608 pares de UUID enviados/recebidos coincidentes |
+| Pendência elegível máxima / idade amostrada | 10 / 1,043 s |
+| Memória livre do host | 7,51 GiB no preflight; mínimo de 4,55 GiB na janela |
+| Encerramento | Pendência/retry/bloqueio zero; nó parado, volumes preservados |
+
+Atribuição completa a um worker, mesmo UID e 32 reinícios antes/depois;
+nenhum reinício durante a medição. Controle do host válido em 235 amostras,
+maior intervalo de 1,016 s. Nó com mínimo de 5,80 GiB disponíveis.
+A captura v2 exerceu correlação em respostas saudáveis; sua extração de
+problemas segue coberta por testes, sem erro real nesta tentativa.
+
+Frente a `scale-duration-12-45-02`, a memória livre mínima passou de 1,10
+para 4,55 GiB; a mediana observada ficou próxima (19,657 versus 19,297 s).
+Adotar a execução manual com ferramentas de assistência fechadas como
+procedimento operacional preferencial. Não é comparação causal entre executores:
+ambiente, momento, estado persistido e versão de captura diferem. Ausência de
+503 nesta tentativa não explica nem resolve o caso anterior. Os períodos com
+throttling continuam presentes em Core API e worker; não identificam, sozinhos,
+o gargalo global. Não há acúmulo sustentado demonstrado nem teste de KEDA.
+
+**Próximo passo delimitado:** uma tentativa manual `scale-capacity-16-c16-01`,
+15 s a 2/s, 30 s a 16/s, 15 s a 2/s (540 eventos), uma réplica, teto HTTP 16,
+mesmo observador v2, recursos e prazo. A intensidade é o próximo patamar já
+previsto; reduzir a duração a 30 s mantém o teto de 600 eventos. Portanto,
+esta sucessora não isola o efeito da taxa frente à tentativa de 45 s e não
+substitui um controle equivalente em eventual comparação formal.
+
+Conservar teto 16: no patamar atual, admissão HTTP teve média de 0,438 s,
+p95 de 0,797 s e até dez pedidos ativos antes do despacho. A aproximação
+16 × 0,438 indica cerca de sete pedidos em voo em média se a duração
+permanecer semelhante; não cobre caudas nem garante realização da oferta.
+Voltar ao teto oito reintroduziria um limite já atingido na admissão.
+
+O launcher local `artifacts/Invoke-ScaleCapacity16.local.ps1` conserva preflight
+mínimo de 5 GiB, identifica SHA e recusa sobrescrita. Manter as guardas de
+progressão: host abaixo de 2 GiB, oferta incompleta, erro HTTP, prazo/atribuição,
+reinício ou coleta inválida impedem continuação automática. Idade amostrada
+atingindo 5 s ou p95 observado de 30 s também exige revisão, não aumento de carga.
+Essas guardas julgam a progressão; não são garantias de aborto instantâneo.
+
+Ao final, distinguir oferta restringida, limitação de admissão/consulta,
+pendência sustentada do worker e atendimento sem necessidade de expansão.
+Só a presença de trabalho escalável e margem sustenta avaliar capacidade
+adicional. Não há autorização automática para novas taxas, alteração de
+limiares, refatoração, KEDA ou AKS. Comparação formal continua na pausa.
 
 ### Depois da pausa — ainda não autorizado
 

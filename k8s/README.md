@@ -605,12 +605,14 @@ a execução de 16/s. Não repetir nem aumentar a taxa automaticamente; preserva
 os registros e definir um protocolo sucessor antes de mudar o instrumento.
 
 Diagnóstico sucessor de admissão: acrescentar `-HttpConcurrency 16` somente com
-`-PeakRate 12 -ControlledHost -ReuseTerminalReads`, em pasta nova. Os demais
+`-PeakRate 12` ou `-PeakRate 16`, sempre com `-ControlledHost -ReuseTerminalReads`,
+em pasta nova. Os demais
 parâmetros permanecem iguais; consultar a justificativa e os limites no RELEASE_PLAN.
 
 A opção `-PlateauSeconds 45` exige `-PeakRate 12 -HttpConcurrency 16`,
 `-ControlledHost -ReuseTerminalReads` e mantém o teto de 600 eventos; o padrão
-continua em 30 s. Ela já foi exercitada; a sequência está encerrada nesta etapa
-por margem do host e falha de consulta. `complete=true` não substitui as guardas
+continua em 30 s. A sucessora manual recuperou margem e concluiu sem erro HTTP;
+o próximo diagnóstico previsto usa 16/s por 30 s, teto HTTP 16 e 540 eventos.
+O 503 anterior permanece sem causa determinada. `complete=true` não substitui as guardas
 de progressão. Não reutilizar destinos nem executar outra carga antes de reavaliar
 os limites registrados no RELEASE_PLAN.

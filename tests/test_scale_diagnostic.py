@@ -262,7 +262,19 @@ class CharacterizationSettingsTests(unittest.TestCase):
         after = characterization_settings(base, 12, http_concurrency=16, **flags)
         self.assertEqual(after, {**before, "http_concurrency": 16})
         self.assertEqual(base["http_concurrency"], 8)
-        for rate, concurrency in [(8, 16), (16, 16), (12, 32)]:
+        for rate in (12, 16):
+            before = characterization_settings(base, rate, **flags)
+            after = characterization_settings(base, rate, http_concurrency=16, **flags)
+            self.assertEqual(after, {**before, "http_concurrency": 16})
+            for flag in ("diagnostic", "reuse", "controlled"):
+                with (
+                    self.subTest(rate=rate, flag=flag),
+                    self.assertRaisesRegex(RuntimeError, "REQUIRES_CONTROLLED"),
+                ):
+                    characterization_settings(
+                        base, rate, http_concurrency=16, **{**flags, flag: False}
+                    )
+        for rate, concurrency in [(8, 16), (12, 32), (16, 32)]:
             with (
                 self.subTest(rate=rate, concurrency=concurrency),
                 self.assertRaisesRegex(RuntimeError, "ADMISSION_CONCURRENCY_PROFILE_NOT_ALLOWED"),
@@ -293,7 +305,13 @@ class ExtendedPlateauTests(unittest.TestCase):
         self.assertEqual(base["stages"][1]["seconds"], 30)
         new["stages"][1]["seconds"] = 30
         self.assertEqual(old, new)
-        for rate, duration, concurrency in [(8, 45, 8), (16, 45, 8), (12, 45, 8), (12, 60, 16)]:
+        for rate, duration, concurrency in [
+            (8, 45, 8),
+            (16, 45, 8),
+            (16, 45, 16),
+            (12, 45, 8),
+            (12, 60, 16),
+        ]:
             with (
                 self.subTest(rate=rate, duration=duration, concurrency=concurrency),
                 self.assertRaisesRegex(RuntimeError, "DURATION_NOT_ALLOWED"),

@@ -14,7 +14,7 @@ $PrivateDirectory = (Resolve-Path -LiteralPath $PrivateDirectory).Path
 $OutputDirectory = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutputDirectory)
 if (Test-Path -LiteralPath $OutputDirectory) { throw 'Output already exists; use a new identifier.' }
 if ($PeakRate -ne 8 -and (-not $ReuseTerminalReads -or -not $ControlledHost)) { throw 'Characterization requires ControlledHost and ReuseTerminalReads' }
-if ($HttpConcurrency -ne 8 -and $PeakRate -ne 12) { throw 'Admission concurrency override requires PeakRate 12' }
+if ($HttpConcurrency -ne 8 -and $PeakRate -notin @(12,16)) { throw 'Admission concurrency override requires PeakRate 12 or 16' }
 $diagnosticArgs = @('--peak-rate', [string]$PeakRate, '--http-concurrency', [string]$HttpConcurrency, '--plateau-seconds', [string]$PlateauSeconds)
 if ($ReuseTerminalReads) { $diagnosticArgs += '--reuse-terminal-reads' }
 if ($ControlledHost) {

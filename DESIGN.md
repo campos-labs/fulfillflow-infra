@@ -478,7 +478,7 @@ A progressão entre perfis depende da revisão dos limites definidos previamente
 no RELEASE_PLAN. Não extrapolar capacidade máxima nem transportar essas taxas
 para KEDA automaticamente.
 
-No diagnóstico de admissão a 12/s, permitir teto HTTP 16 em lugar de oito,
+Nos diagnósticos fixos a 12/s ou 16/s, permitir teto HTTP 16 em lugar de oito,
 sem mudar agenda, observador ou workload. Identificar o instrumento e a mudança
 no protocolo; oferta planejada igual não garante demanda efetiva igual.
 Essa exceção não altera os padrões das calibrações ou do piloto KEDA.

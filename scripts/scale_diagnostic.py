@@ -142,7 +142,7 @@ def characterization_settings(
         plateau_seconds == 45 and (peak_rate != 12 or http_concurrency != 16)
     ):
         raise RuntimeError("CHARACTERIZATION_DURATION_NOT_ALLOWED")
-    if http_concurrency not in (8, 16) or (http_concurrency != 8 and peak_rate != 12):
+    if http_concurrency not in (8, 16) or (http_concurrency != 8 and peak_rate not in (12, 16)):
         raise RuntimeError("ADMISSION_CONCURRENCY_PROFILE_NOT_ALLOWED")
     if peak_rate == 8:
         return settings

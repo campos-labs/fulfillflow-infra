@@ -9,10 +9,11 @@ tratadas separadamente. O último encerramento preservou dados e parou o laborat
 
 **Extensão de escala em reavaliação.** O piloto KEDA concluiu mantendo uma
 réplica; não demonstrou ciclo 1→2→1 ou ganho de escala. Diagnósticos posteriores
-com uma réplica chegaram a 600/600 eventos no prazo, mas a margem do host e uma
-falha transitória de consulta impediram avançar para comparação formal.
-A sequência exploratória está encerrada nesta etapa; causas, lacunas e critérios
-de retomada estão no [plano](RELEASE_PLAN.md#fechamento-do-diagnóstico-de-consulta-e-memória).
+com uma réplica chegaram a 600/600 eventos no prazo. A verificação manual
+sucessora preservou margem de memória e não apresentou erro HTTP; o 503 anterior
+permanece sem causa determinada. Um novo patamar fixo está preparado, sem
+comparação formal ou ganho de escala demonstrado. Ver
+[resultados e próximo passo](RELEASE_PLAN.md#resultado-manual-e-próximo-diagnóstico).
 A branch `feature/v1.1-autoscaling-kind` preserva o incremento; não há nova release.
 AKS/ACR continuam opcionais e ainda não foram implantados.
 
