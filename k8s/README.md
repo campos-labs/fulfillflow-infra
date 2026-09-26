@@ -12,15 +12,12 @@ Este guia descreve configuração e comandos. Começar pelo [Kind local](#caminh
 Resultados e fontes estão na [avaliação operacional](../docs/OPERATIONAL_EVALUATION.md);
 entregas, pausa e extensões, no [RELEASE_PLAN](../RELEASE_PLAN.md).
 
-**Extensão v1.1 em preparação:** os comandos deste guia continuam sendo os da
-base com réplicas fixas; não instalam nem verificam autoescalonamento. O
-[alvo de escala](../DESIGN.md#87-alvo-de-autoescalonamento-em-kind) terá ambiente
-dedicado e [piloto limitado](../RELEASE_PLAN.md#3-incremento-de-viabilidade-em-kind),
-sem reutilizar bancos/volumes históricos. Não usar `resume`/`pause` ou reaplicar o
-runtime existente sobre um alvo controlado por KEDA/HPA: os comandos atuais
-restauram/escalam réplicas e não coordenam a suspensão do controlador. Instalação,
-coleta e encerramento próprios serão documentados depois de implementados;
-não há comando executável do novo piloto nesta preparação.
+**Extensão v1.1 em reavaliação:** calibração, piloto KEDA e diagnósticos
+usam cluster dedicado, sem reutilizar bancos/volumes históricos. Os comandos
+específicos estão abaixo; sua disponibilidade não autoriza nova carga durante a
+[pausa registrada](../RELEASE_PLAN.md#fechamento-do-diagnóstico-de-consulta-e-memória).
+Não usar `resume`/`pause` da base ou reaplicar o runtime sobre um alvo controlado
+por KEDA/HPA: esses comandos restauram/escalam réplicas sem coordenar o controlador.
 
 `overlays/example` é exclusivamente de validação. A imagem runtime
 `example.azurecr.io.invalid/fulfillflow/runtime@sha256:` seguida de 64 zeros é
@@ -528,7 +525,7 @@ identificador para reprodução. O resultado inclui limites e hashes das entrada
 
 ### Coleta focal de throttling e consultas
 
-`Invoke-ScaleDiagnostic.ps1` executa somente uma condição fixa de 300 eventos.
+`Invoke-ScaleDiagnostic.ps1` executa uma condição fixa, por padrão de 300 eventos.
 Usa a identidade e as guardas da calibração; exige Docker disponível, checkout
 limpo, destino novo e nenhum outro contêiner em execução. Recusa controlador
 ativo sobre o worker e contadores de throttling ausentes antes de oferecer carga.
@@ -609,7 +606,9 @@ Diagnóstico sucessor de admissão: acrescentar `-HttpConcurrency 16` somente co
 `-PeakRate 12 -ControlledHost -ReuseTerminalReads`, em pasta nova. Os demais
 parâmetros permanecem iguais; consultar a justificativa e os limites no RELEASE_PLAN.
 
-`scale-admission-12-c16-01` realizou e concluiu 420/420 eventos. A progressão
-ficou suspensa por memória disponível do host abaixo de 2 GiB durante a coleta;
-recuperar/verificar margem antes de nova carga. O sucesso funcional do resumo
-não substitui esse critério de progressão. Consulte a análise no RELEASE_PLAN.
+A opção `-PlateauSeconds 45` exige `-PeakRate 12 -HttpConcurrency 16`,
+`-ControlledHost -ReuseTerminalReads` e mantém o teto de 600 eventos; o padrão
+continua em 30 s. Ela já foi exercitada; a sequência está encerrada nesta etapa
+por margem do host e falha de consulta. `complete=true` não substitui as guardas
+de progressão. Não reutilizar destinos nem executar outra carga antes de reavaliar
+os limites registrados no RELEASE_PLAN.

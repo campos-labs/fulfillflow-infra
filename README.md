@@ -7,14 +7,14 @@ v1.0.0 usa Kind, uma aplicação congelada e réplicas fixas. Foram conferidas u
 comparação de 20 tentativas e uma avaliação complementar de nove tentativas,
 tratadas separadamente. O último encerramento preservou dados e parou o laboratório.
 
-**Em implementação: viabilidade de autoescalonamento em Kind.**
-Bootstrap e smoke conferidos; calibração sucessora preparada com coleta independente
-e atribuição de processamento por pod. Resultados anteriores permanecem preservados.
-Piloto KEDA concluído: 300 eventos no prazo, uma réplica mantida e pausa para reavaliação.
-A branch `feature/v1.1-autoscaling-kind` parte da v1.0.0. O
-[incremento planejado](RELEASE_PLAN.md#3-incremento-de-viabilidade-em-kind)
-termina com piloto limitado e pausa para reavaliação, antes de uma comparação formal.
-A configuração de referência AKS/ACR continua opcional e ainda não foi implantada.
+**Extensão de escala em reavaliação.** O piloto KEDA concluiu mantendo uma
+réplica; não demonstrou ciclo 1→2→1 ou ganho de escala. Diagnósticos posteriores
+com uma réplica chegaram a 600/600 eventos no prazo, mas a margem do host e uma
+falha transitória de consulta impediram avançar para comparação formal.
+A sequência exploratória está encerrada nesta etapa; causas, lacunas e critérios
+de retomada estão no [plano](RELEASE_PLAN.md#fechamento-do-diagnóstico-de-consulta-e-memória).
+A branch `feature/v1.1-autoscaling-kind` preserva o incremento; não há nova release.
+AKS/ACR continuam opcionais e ainda não foram implantados.
 
 ## Comece por aqui
 
@@ -68,8 +68,8 @@ O destino deve ser novo. Para caminhos com espaços ou execução em outro diret
 `-Kubectl` e `-Terraform` são opcionais. Essa validação também roda na CI Linux/Windows:
 testes, renderização, schemas e planos Terraform simulados. Não aplica recursos
 nem executa as séries no Kind. Os comandos operacionais estão no guia Kubernetes;
-as séries concluídas permanecem encerradas. O piloto de autoescalonamento terá
-configuração e destinos próprios, após implementação e verificações pertinentes.
+as séries concluídas permanecem encerradas. O piloto de autoescalonamento usa
+configuração e destinos próprios; novas cargas dependem da reavaliação registrada no plano.
 
 ## Organização e evidências
 

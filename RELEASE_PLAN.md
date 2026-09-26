@@ -2,7 +2,8 @@
 
 ## 1. Estado atual
 
-**Piloto integrado concluído; pausa de reavaliação na branch `feature/v1.1-autoscaling-kind`.**
+**Exploração local de escala encerrada nesta etapa; reavaliação antes de comparação formal.**
+Branch `feature/v1.1-autoscaling-kind`.
 Base: v1.0.0, commit `cb6113e6bbd601a65ee5142de85cadc5bf6ba29d`.
 CI da branch habilitada. Bootstrap dedicado e smoke do instrumento concluídos;
 calibração com uma e duas réplicas executada, com uma oferta não realizada.
@@ -10,6 +11,10 @@ Calibração 05 conferida: 300/300 eventos no prazo em cada condição, distribu
 143/157 com duas réplicas e 620 checksums íntegros. Não comprova ganho de escala.
 Piloto KEDA `keda-pilot-04` concluído, mantendo uma réplica neste perfil.
 Pausa atingida antes de qualquer comparação formal. Sem nova tag, AKS ou ACR.
+Diagnósticos posteriores chegaram a 600/600 conclusões com uma réplica, sem
+acúmulo sustentado demonstrado no worker. A progressão encerrou por margem do
+host e um 503 de consulta cuja causa permanece indeterminada; ver
+[fechamento do diagnóstico](#fechamento-do-diagnóstico-de-consulta-e-memória).
 
 ### Preparação conferida e próximo passo
 
@@ -803,6 +808,62 @@ Fontes ainda locais: `artifacts/scale-duration-12-45-02`,
 `artifacts/scale-duration-12-45-02-review.json` e
 `artifacts/scale-duration-12-45-02-assessment.json`. As séries anteriores
 permanecem preservadas; não formam controles homogêneos desta execução.
+
+### Fechamento do diagnóstico de consulta e memória
+
+Rodada exclusivamente sobre registros existentes, sem iniciar o nó ou gerar carga.
+Logs de Core, Tracking e PostgreSQL foram copiados do container parado; são
+coleta posterior identificada, fora do manifesto original. Derivação, localização
+das linhas e hashes estão em
+`artifacts/scale-duration-12-45-02-diagnosis/review.json` e `checksums.sha256`.
+O pacote continua local; logs brutos não foram publicados.
+
+**503 delimitado, causa indeterminada.** O acesso do Core confirma GET da inbox
+do evento 0039 com 503 às 22:13:04,150 UTC; o mesmo caminho retorna 200 às
+22:13:09,564. Tracking registra a consulta interna bem-sucedida às 22:13:09,498,
+sem acesso correspondente à tentativa malsucedida nos logs recuperados. Isso
+orienta a investigação ao caminho de consulta/encaminhamento Core–Tracking, mas
+não comprova onde a solicitação falhou ou que nunca chegou ao serviço interno.
+A referência congelada traduz diferentes falhas HTTP em indisponibilidade; os
+registros não distinguem suas categorias. Falhas de startup anteriores à carga
+e mensagens de encerramento PostgreSQL posteriores não explicam este 503.
+
+O instrumento preservou status/duração, mas não o `request_id` do GET nem o
+`code` do envelope de erro. O identificador de aceite do webhook não substitui
+o da consulta. Numa futura retomada, a captura mínima seria correlação por
+requisição, código de erro em allowlist e janela de logs dos componentes;
+sem cabeçalhos secretos ou corpos completos. Isso melhora discriminação, mas
+não garante determinar a causa sem diagnóstico adicional no serviço.
+
+**Memória: fronteiras distintas.** Na mesma execução:
+
+| Fronteira amostrada | Resultado |
+| --- | --- |
+| Windows, memória disponível mínima | 1,099 GiB |
+| Nó, memória disponível mínima | 5,915 GiB |
+| Nó, working set máximo | 1,690 GiB |
+| Árvore de processos do instrumento, RSS agregado máximo | 160,84 MiB |
+| Pod `core-worker`, working set máximo | 81,98 MiB |
+
+Não somar ou subtrair essas fronteiras para atribuir consumo: há sobreposição,
+instantes distintos e memória compartilhada/cache. A série não separa consumo
+Windows, WSL e aplicativos externos, nem mede commit/paginação do host.
+Não demonstra esgotamento de memória do worker ou causa do 503. Reduzir recursos
+da aplicação ou a guarda de 2 GiB não é uma correção fundamentada nesses dados.
+Os 19,66 s de confirmação observada e 1,33 s de idade máxima da inbox medem
+fronteiras/agregações diferentes; sua diferença não estima custo do observador.
+
+**Decisão de saída:** encerrar esta sequência exploratória de carga no host,
+sem comparação formal ou nova repetição para procurar o 503. Preservar a
+integração KEDA e a participação de duas réplicas como viabilidade funcional;
+não declarar ganho de escala, ciclo 1→2→1 ou incapacidade geral do Kind.
+A avaliação de recuperação v1.0.0 permanece independente e encerrada.
+
+Uma retomada de escala exige, antes de outra campanha, margem operacional
+verificável, captura das lacunas acima e justificativa de demanda/sinal para o
+worker escolhido. KEDA continua preferencial, mas não há execução pendente
+nem motivo demonstrado para adicionar réplicas neste perfil. Mudança de host,
+recursos ou AKS será uma nova decisão de ambiente, não ajuste silencioso.
 
 ### Depois da pausa — ainda não autorizado
 
