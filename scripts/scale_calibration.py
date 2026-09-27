@@ -108,7 +108,10 @@ def verify_images(private, expected):
 
 
 def observe(v, item, *, reuse_terminal_reads=False):
-    v.deadline = time.monotonic() + 20
+    limit = item.get("observation_deadline", float("inf"))
+    if time.monotonic() >= limit:
+        return {"event_id": item["event_id"], "observation_expired": True}
+    v.deadline = min(time.monotonic() + 20, limit)
     state = {"event_id": item["event_id"], "observed_monotonic": time.monotonic()}
     try:
         path = "/api/v1/carrier-events/" + item["inbox_id"]
@@ -184,6 +187,7 @@ def run_one(
 ):
     if reuse_terminal_reads and not diagnostic:
         raise RuntimeError("REUSE_REQUIRES_DIAGNOSTIC")
+    formal = settings.get("formal_comparison", False)
     folder.mkdir(exist_ok=False)
     if diagnostic:
         from scripts.scale_diagnostic import TimedTransport, throttling_sample
@@ -215,6 +219,11 @@ def run_one(
             evidence,
             HttpTransport(),
         )
+        if formal:
+            from uuid import NAMESPACE_URL, uuid5
+
+            v.run_id = str(uuid5(NAMESPACE_URL, f"fulfillflow-scale-comparison-v1/{index}"))
+            v.event_id = "infra-smoke-" + v.run_id
         v.deadline = min(v.deadline, work_deadline)
         order, shipment, code = v.prepare()
         prepared.append(
@@ -271,18 +280,33 @@ def run_one(
         collector.close()
         raise
     try:
+        window_start = None
         deadline = (
             started
             + sum(s["seconds"] for s in settings["stages"])
             + settings["observation_seconds"]
             + 30
         )
+        if formal:
+            deadline = started + 480
         with ThreadPoolExecutor(max_workers=16) as observers:
             while time.monotonic() < min(deadline, work_deadline):
                 if host_guard:
                     host_guard("load_observation")
                 tick = time.monotonic()
                 incoming = records(folder / "admission.jsonl")
+                if formal and window_start is None:
+                    dispatches = [r for r in incoming if r["kind"] == "dispatch_attempt"]
+                    if dispatches:
+                        window_start = dispatches[0]["scheduled_monotonic"]
+                        write(
+                            folder / "window.json",
+                            {"start": window_start, "end": window_start + 450, "seconds": 450},
+                        )
+                    elif time.monotonic() - started > 30:
+                        raise RuntimeError("LOAD_START_UNOBSERVED")
+                if formal and window_start is not None and time.monotonic() >= window_start + 450:
+                    break
                 admissions = {
                     r["event_id"]: r
                     for r in incoming
@@ -296,11 +320,27 @@ def run_one(
                         not admission
                         or "inbox_id" not in admission
                         or results.get(event, {}).get("completed_monotonic")
+                        or (formal and results.get(event, {}).get("terminal_failure"))
                     ):
                         continue
                     if time.monotonic() - admission["monotonic"] > settings["observation_seconds"]:
                         continue
-                    eligible.append({**item, "inbox_id": admission["inbox_id"]})
+                    eligible.append(
+                        {
+                            **item,
+                            "inbox_id": admission["inbox_id"],
+                            **(
+                                {
+                                    "observation_deadline": min(
+                                        admission["monotonic"] + settings["observation_seconds"],
+                                        work_deadline,
+                                    )
+                                }
+                                if formal
+                                else {}
+                            ),
+                        }
+                    )
                 observed = list(
                     observers.map(
                         lambda item: observe(
@@ -312,15 +352,17 @@ def run_one(
                     )
                 )
                 for record in observed:
-                    results[record["event_id"]] = record
+                    if not record.get("observation_expired"):
+                        results[record["event_id"]] = record
                 if collector.failed.is_set():
                     raise RuntimeError("COLLECTION_FAILED")
-                if any(r.get("terminal_failure") for r in observed):
+                if not formal and any(r.get("terminal_failure") for r in observed):
                     raise RuntimeError("BUSINESS_FAILURE")
                 if child.poll() is not None and child.returncode != 0:
                     raise RuntimeError("LOAD_PROCESS_FAILED")
                 if (
-                    child.poll() is not None
+                    not formal
+                    and child.poll() is not None
                     and load_journal_finished(incoming)
                     and len(results) == len(admissions)
                     and all(r.get("completed_monotonic") for r in results.values())
@@ -329,6 +371,8 @@ def run_one(
                 time.sleep(
                     max(0, settings["collection_interval_seconds"] - (time.monotonic() - tick))
                 )
+        if formal and (window_start is None or time.monotonic() < window_start + 450):
+            raise RuntimeError("COMMON_WINDOW_INCOMPLETE")
         child.wait(timeout=15)
         incoming = records(folder / "admission.jsonl")
         final = []
@@ -358,6 +402,8 @@ def run_one(
                     if responses and 400 <= responses[-1]["status"] < 500
                     else "acceptance_unknown"
                 )
+            if formal and admission and result.get("terminal_failure"):
+                classification = "business_failed"
             final.append(
                 {**item, **result, "classification": classification, "acceptance": admission}
             )
@@ -369,6 +415,9 @@ def run_one(
         collector.close()
         if collector.failed.is_set():
             raise RuntimeError("COLLECTION_FAILED")
+        if formal:
+            with (folder / "series.jsonl").open("a", encoding="utf-8") as stream:
+                stream.write(json.dumps(collect()) + "\n")
         distribution = (
             policy.attribution(private, admissions, folder / "worker-attribution.json")
             if policy
@@ -444,15 +493,24 @@ def _execute(
     plateau_seconds=30,
     fixed_replicas=1,
 ):
+    formal = bool(extension and getattr(extension, "formal_comparison", False))
+    if formal and (diagnostic or not controlled_host or not reuse_terminal_reads):
+        raise RuntimeError("FORMAL_CONTROLS_REQUIRED")
+    if formal:
+        extension.validate_invocation(peak_rate, http_concurrency, plateau_seconds, fixed_replicas)
     adaptive_capture = bool(extension and getattr(extension, "capacity_profile", False))
-    if adaptive_capture and (
-        diagnostic
-        or not controlled_host
-        or not reuse_terminal_reads
-        or peak_rate != 16
-        or http_concurrency != 16
-        or plateau_seconds != (60 if getattr(extension, "sustained_profile", False) else 30)
-        or fixed_replicas != 1
+    if (
+        adaptive_capture
+        and not formal
+        and (
+            diagnostic
+            or not controlled_host
+            or not reuse_terminal_reads
+            or peak_rate != 16
+            or http_concurrency != 16
+            or plateau_seconds != (60 if getattr(extension, "sustained_profile", False) else 30)
+            or fixed_replicas != 1
+        )
     ):
         raise RuntimeError("ADAPTIVE_CAPACITY_PROFILE_NOT_ALLOWED")
     if controlled_host and (not (diagnostic or adaptive_capture) or not reuse_terminal_reads):
@@ -507,7 +565,11 @@ def _execute(
             else "calibration only",
             "diagnostic": {
                 "enabled": diagnostic or adaptive_capture,
-                "condition": "adaptive" if adaptive_capture else "fixed",
+                "condition": extension.condition
+                if formal
+                else "adaptive"
+                if adaptive_capture
+                else "fixed",
                 "qualification_version": 2 if adaptive_capture else None,
                 "fixed_replicas": fixed_replicas if diagnostic else None,
                 "http_diagnostic_metadata_version": 2 if diagnostic or adaptive_capture else None,
@@ -553,6 +615,8 @@ def _execute(
         )
         if ns["metadata"]["uid"] != expected["namespace_uid"]:
             raise RuntimeError("NAMESPACE_IDENTITY")
+        if formal:
+            extension.prepare_environment(private, output, expected)
         for name in (
             "core",
             "tracking",
@@ -680,6 +744,8 @@ def _execute(
         if extension:
             try:
                 extension.cleanup(private)
+                if formal:
+                    extension.preserve_end(private, output)
             except Exception as error:
                 cleanup_error = type(error).__name__
                 write(output / "controller-cleanup-error.json", {"error": cleanup_error})

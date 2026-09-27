@@ -594,6 +594,51 @@ descida automática; descida ociosa não testa retirada durante processamento.
 Primeiro DONE é conclusão registrada, não instante de início; amostra Ready
 não identifica o instante exato da transição.
 
+**Comparação prospectiva, protocolo 1.** `config/scale-comparison.json` fixa
+três condições: uma réplica, duas réplicas e adaptação entre uma e duas.
+Todas mantêm KEDA, a consulta e a coleta do controlador; nas fixas o ScaledObject
+tem mínimo igual ao máximo (1 ou 2). Assim a disponibilidade do controlador e a
+forma de coleta não se confundem com a capacidade adaptativa. Não representa um
+ambiente fixo sem KEDA nem permite atribuir custo zero ao controlador.
+
+Cluster exclusivo `fulfillflow-scale-compare-01`, selecionado apenas por
+`FULFILLFLOW_SCALE_ENVIRONMENT=comparison-v1`. Credenciais, identidade e volumes
+próprios; nenhum banco ou volume dos pilotos ou da aplicação é reutilizado.
+O bootstrap registra uma referência dos três bancos, com processos da aplicação
+parados e broker vazio. Antes de cada tentativa, conferir UID do namespace,
+container, fonte e hashes; parar os seis workloads e restaurar os três bancos
+somente nesse cluster. Filas não vazias impedem restauração; não purgar.
+Preservar snapshots privados do estado final antes de desligar o nó.
+
+A preparação cria o mesmo conjunto lógico de 1.020 pedidos/remessas, com IDs
+externos determinísticos por posição. IDs internos e horários podem variar.
+Executar ANALYZE e 30 s comuns de estabilização, sem aquecimento de negócio.
+Restauração não elimina diferenças de cache do host; declarar essa limitação.
+O instrumento comum inclui inventário real do worker a cada 5 s e logs por pod;
+mais pods podem demandar mais leituras, mesmo usando o mesmo procedimento.
+
+Perfil de 90 s: 15 s a 2/s, 60 s a 16/s, 15 s a 2/s. Teto HTTP comum de 32,
+observador 16, prazo funcional 60 s e observação de cada aceite por até 120 s.
+Uma qualificação separada com uma réplica verifica oferta integral, coleta,
+ambiente e até 28 vagas ocupadas no gerador; não exige sucesso funcional no
+prazo. A campanha exige a mesma revisão Git e hash do protocolo qualificado.
+
+Janela de pod-tempo: [primeira oferta agendada, +450 s], independente da
+conclusão dos eventos; contém 90 s de carga e 360 s seguintes. Medida principal:
+pod-segundos **existentes**, incluindo os em encerramento; Running, Ready e
+terminating são séries auxiliares. Integração em degraus pelas amostras,
+com cobertura das duas bordas e intervalos de até 10 s; não promete observar
+pods que existam inteiramente entre amostras. HPA desejado continua separado.
+Não converter essa estimativa em custo financeiro ou consumo de CPU.
+
+Resultado tardio, pendente, falha de negócio ou observação inconclusiva
+permanece no resultado, sem substituição automática. Oferta incompleta,
+aceite desconhecido, falha do coletor/gerador, lacuna de logs, reinício do
+worker, falta de cobertura ou violação do host invalidam a execução para a
+comparação e encerram a progressão. Inconclusão funcional não demonstra
+perda; falha comprovada do instrumento continua separada. Não descartar uma
+condição por exceder p95 de 30 s ou por apresentar conclusões após 60 s.
+
 **Entrada e resultado.** Locust é o gerador preferencial. Distinguir oferta
 planejada/realizada, aceitação confirmada ou desconhecida, rejeição, conclusão e
 pendência; observar conclusão independentemente do ritmo de admissão. Fixar taxa,

@@ -2,7 +2,7 @@
 
 ## 1. Estado atual
 
-**Extensão de duração executada; pausa para reavaliação.**
+**Comparação de três condições preparada; qualificação e campanha ainda não executadas.**
 Branch `feature/v1.1-autoscaling-kind`.
 O perfil sustentado observou pedidos 1→2→1 pelo HPA e trabalho do novo pod
 sob pico, mas omitiu uma oferta: 1.019/1.020 enviados e todos os aceitos no prazo.
@@ -1411,19 +1411,67 @@ Antes de qualquer campanha, resolver prospectivamente a fidelidade de admissão
 e o que deve ser observado na redução, mantendo os dados atuais como exploratórios.
 Não há justificativa demonstrada para alterar a aplicação ou migrar para AKS.
 
-### Depois da pausa — ainda não autorizado
+### Comparação prospectiva autorizada
 
-Uma comparação formal constitui um segundo incremento, se aprovada. Antes da
-coleta, congelar condições, perfil de entrada, preparação, prazo, repetições,
-ordem e exclusões. Escolher uma referência fixa justificável: fixo em uma réplica
-versus adaptativo mistura automação com recursos adicionais; fixo no máximo
-versus adaptativo responde a outro compromisso entre atendimento e recursos.
-Não abrir automaticamente três condições nem atribuir toda diferença ao controlador.
+Implementação: `scripts/scale_comparison.py`, launcher
+`scripts/Invoke-ScaleComparison.ps1` e `config/scale-comparison.json`.
+Estado: preparação de código/protocolo; validação viva do novo ambiente e
+qualificação ainda pendentes. Não há resultados formais neste momento.
 
-Manter instrumentação equivalente entre condições. Registrar totais por tentativa;
-eventos da mesma execução não substituem repetições independentes. Benefícios,
-equivalência, piora e limites são resultados admissíveis. Uma candidata funcional
-poderá receber `v1.1.0-rc.N`; esta preparação não publica tag nem garante release.
+**Pergunta operacional:** sob o mesmo perfil de demanda, como capacidade fixa
+e adaptativa diferem no atendimento observado dentro do prazo e na capacidade
+mantida? Três condições: fixo 1, fixo 2, KEDA 1..2. Recursos por pod,
+aplicação, sinal e limiares preservados. Coletor e controlador presentes nas
+três, conforme DESIGN; nas fixas, mínimo=máximo impede adaptação.
+
+**Gerador:** a tentativa sustentada registrou HTTP de admissão com média
+0,534 s, p95 0,985 s e máximo 1,640 s. A referência conservadora
+16/s × 1,640 s = 26,24 vagas fundamenta um teto candidato de 32, sem
+prometer que esse máximo histórico se repetirá. Não aumentar taxa/duração.
+Uma qualificação de 1.020 eventos com uma réplica, fora da campanha, exige
+oferta completa e máximo de 28 vagas ocupadas (quatro livres); reprovação
+encerra o comando sem ajuste de concorrência ou nova tentativa. Guardas 5 GiB
+no início e 2 GiB durante observação, energia conectada e host reservado.
+
+**Estado inicial:** cluster novo, três bancos restaurados do mesmo baseline
+privado em cada tentativa, broker vazio, preparação lógica equivalente,
+ANALYZE e estabilização comum de 30 s. Nenhum histórico é apagado. Baseline
+com hash, container/namespace identificados; snapshots finais preservados
+privadamente. Se permanecer mensagem no broker, parar para revisão sem purga.
+Isso padroniza dados lógicos, não temperatura/cache físico do notebook.
+
+**Desenho:** três blocos com as três condições, nove tentativas no total.
+Rotações com rótulos e ordem dos blocos sorteados por seed `260927`,
+registradas antes da carga: cada condição ocupa cada posição uma vez.
+Isso balanceia posição, não todas as precedências nem elimina deriva temporal.
+Três repetições por condição são um compromisso de orçamento para descrição
+por bloco; não cálculo de poder, garantia de significância ou generalização.
+Eventos não substituem repetições. Pilotos anteriores não entram nos denominadores.
+
+**Dois eixos principais:** proporção dos aceitos confirmados em 60 s, sempre
+junto da oferta/aceite, e pod-segundos existentes na janela comum de 450 s.
+Secundários: tempos observados (informar censura), pendência/idade, drain de
+confirmação, recursos, atribuição e marcos da política. Pedidos de escala e
+inventário real separados; redução ociosa não valida retirada sob processamento.
+Comparar valores por tentativa/bloco, sem agregar todos os eventos como réplicas
+independentes. O executor preserva resultado lento/inconclusivo; condição
+válida não exige que o mecanismo vença ou conclua tudo no prazo.
+
+**Execução limitada:** `-Mode All` prepara o ambiente, executa uma qualificação
+e, somente se aprovada, as nove tentativas. Alternativamente, os modos
+`Measure` executa qualificação e campanha após a preparação;
+`Prepare`, `Qualify` e `Execute` permitem separar as janelas sem mudar a revisão.
+Até 20 minutos de trabalho por tentativa mais encerramento limitado; não
+iniciar terceira tentativa de um bloco após 40 minutos nem outra tentativa da
+campanha após 160 minutos. Planejar até cerca de três horas para a campanha,
+mais preparação/qualificação e encerramentos. A ferramenta não promete
+interrupção instantânea de uma operação já em curso.
+
+Qualquer falha de fidelidade, instrumento ou seguranção encerra progressão,
+com dados parciais preservados. Nenhuma reposição automática nem escolha das
+melhores repetições. Resultado funcional desfavorável permanece na análise.
+Ao final, pausa para interpretar o conjunto e decidir publicação; não iniciar
+AKS, nova carga, troca de limiar ou alteração da aplicação automaticamente.
 
 <a id="3-extensões-possíveis"></a>
 

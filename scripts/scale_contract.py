@@ -4,11 +4,20 @@ from __future__ import annotations
 
 import json
 import math
+import os
 from datetime import UTC, datetime
 from pathlib import Path
 
 SOURCE = "9e3a135a00db218643633c7165d3106f0c8285e1"
-CLUSTER = "fulfillflow-scale-01"
+
+
+def cluster_name(mode):
+    if mode not in ("", "comparison-v1"):
+        raise RuntimeError("UNKNOWN_SCALE_ENVIRONMENT")
+    return "fulfillflow-scale-compare-01" if mode else "fulfillflow-scale-01"
+
+
+CLUSTER = cluster_name(os.environ.get("FULFILLFLOW_SCALE_ENVIRONMENT", ""))
 TARGET = "core-worker"
 # OCI index 582a858d... resolves to manifest ffb7d2d4... and this config.
 RUNTIME_CONFIG = "sha256:cc882fab4e5294ed7e516131a1b4ace90a2d7e019467ca5c929b14381b680daa"

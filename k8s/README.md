@@ -640,3 +640,24 @@ O launcher `Invoke-KedaCapacity02.local.ps1` identifica uma tentativa, sem retry
 Oferta incompleta pode preservar observação posterior somente com host seguro,
 aceitos concluídos e atribuição íntegra; não transforma a tentativa em aprovada.
 Conferir `post-load-outcome.json` e registros incrementais mesmo em interrupção.
+
+### Comparação de capacidade fixa e adaptativa
+
+O procedimento novo usa `fulfillflow-scale-compare-01`, separado dos clusters
+históricos. Protocolo e critérios estão no
+[RELEASE_PLAN](../RELEASE_PLAN.md#comparação-prospectiva-autorizada).
+Com Docker aberto, checkout limpo e notebook reservado na tomada:
+
+```powershell
+& '<caminho-do-pwsh.exe>' -NoProfile -File '.\scripts\Invoke-ScaleComparison.ps1' -Mode All
+```
+
+O launcher resolve a pasta privada a partir do ambiente existente, cria outra
+exclusiva, para somente os nós históricos conhecidos e recusa outros containers
+ativos. `All` prepara, qualifica e prossegue para nove tentativas apenas se o
+critério do gerador for atendido. `Measure` executa qualificação e campanha após a preparação;
+`Prepare`, `Qualify` e `Execute` separam as
+etapas. Os diretórios de saída não podem existir previamente; não apagar ou
+sobrescrever evidência para repetir. Segredos e dumps ficam na pasta privada;
+os resultados ficam em `artifacts/scale-comparison-01`, ainda locais.
+Em interrupção, devolver o resultado para revisão sem repetir o comando.
