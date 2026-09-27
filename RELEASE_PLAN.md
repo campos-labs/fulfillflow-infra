@@ -2,8 +2,12 @@
 
 ## 1. Estado atual
 
-**Piloto adaptativo qualificado; uma extensão de duração autorizada, ainda não executada.**
+**Extensão de duração executada; pausa para reavaliação.**
 Branch `feature/v1.1-autoscaling-kind`.
+O perfil sustentado observou pedidos 1→2→1 pelo HPA e trabalho do novo pod
+sob pico, mas omitiu uma oferta: 1.019/1.020 enviados e todos os aceitos no prazo.
+Host seguro; 360 s posteriores completos. Ver [resultado](#resultado-da-demanda-sustentada).
+O histórico abaixo permanece exploratório, sem comparação formal.
 Base: v1.0.0, commit `cb6113e6bbd601a65ee5142de85cadc5bf6ba29d`.
 CI da branch habilitada. Bootstrap dedicado e smoke do instrumento concluídos;
 calibração com uma e duas réplicas executada, com uma oferta não realizada.
@@ -1348,6 +1352,64 @@ ferramentas e reservar o notebook; não atribuir validade ao ato de executar man
 **Pausa obrigatória depois desta tentativa:** decidir entre consolidação dos
 limites observados e planejamento de comparação formal. Não iniciar outra
 carga, AKS, refatoração ou ajuste de limiar automaticamente.
+
+### Resultado da demanda sustentada
+
+Tentativa única `keda-sustained-16-60-01`, infra
+`414f8b4f3bd20db8a280d3fff9665bbbf586b0d0`; aplicação e política preservadas.
+Conferência offline de 2.067 arquivos, manifesto SHA-256
+`07a6e8f9eb8fd9ece35a18d54ec2dbd2683a4bcaa1ef03fb483f1fdc60cbdfbf`.
+Pacote em `artifacts/keda-sustained-16-60-01` e resumo calculado adjacente
+`keda-sustained-16-60-01-review.json` são locais, não publicados na release.
+
+| Dimensão | Resultado |
+| --- | --- |
+| Fidelidade da oferta | 1.019/1.020 ofertas realizadas e aceitas; `PILOT_OFFER_INCOMPLETE` |
+| Conclusão e atribuição | Todos os 1.019 aceitos no prazo de 60 s; 819 no pod original, 200 no novo; final sem pendência/retry/blocked |
+| Consulta funcional | 6.123 GET, todos 200, sem erro de transporte |
+| Confirmação observada | Mediana 45,609 s; p95 56,406 s; máximo 57,938 s |
+| Pendência amostrada | Máximo 138; maior idade 8,755 s |
+| Host | Mínimo 4,301 GiB livres; 717 amostras, intervalo máximo 1,016 s; energia válida |
+| Política e encerramento | 99 leituras de métrica disponíveis; 360 s posteriores completos; nó parado e volumes preservados |
+
+**Oferta omitida:** `adaptive/admission.jsonl` registra uma omissão aos
+39,562 s, motivo `client_concurrency_limit`: 16 vagas ocupadas, sem atraso de
+agenda registrado. Foi trabalho não enviado, não perda de evento aceito.
+A causa imediata não isola insuficiência do cliente de ocupação por respostas
+do caminho de admissão. Não reclassificar a tentativa como carga integral
+por a diferença ser pequena, nem aumentar concorrência automaticamente.
+
+**Linha temporal, relativa à primeira oferta:** métrica positiva amostrada
+entre 48,41 e 68,45 s; HPA registra `lastScaleTime` de subida em torno de
+57,85 s. Primeiro DONE do novo pod aos 63,60 s, antes do fim do pico aos 75 s;
+142 das suas 200 conclusões ocorreram durante o pico. A pendência amostrada
+caiu de 138 aos 63,44 s para 38 aos 73,47 s, ainda sob oferta alta. Esses
+registros sustentam participação durante a demanda, sem estimar o efeito
+causal de escalar frente a uma execução equivalente com réplicas fixas.
+Fontes: `adaptive/series.jsonl` e `adaptive/worker-attribution.json`.
+
+`post-load-outcome.json` registra solicitações HPA 1→2→1; a descida foi
+amostrada às 01:22:30,836 UTC, antes do cleanup. A expansão efetiva tem
+confirmação por atribuição e duas réplicas Ready amostradas durante a
+observação funcional. **A coleta posterior registra HPA/métrica, não o
+inventário dos pods:** não atesta o instante de remoção efetiva do segundo
+pod nem preservação de trabalho durante retirada. Diferenciar solicitação
+automática de redução e reposição manual no encerramento.
+
+**Aprendizado e decisão:** a extensão permitiu observar sinal persistente nas
+amostras e participação adicional durante o pico, superando a lacuna temporal
+do piloto curto. Não demonstrou ganho de desempenho, economia nem fidelidade
+integral da oferta. O p95 de 56,406 s continua dentro do prazo, mas ultrapassa
+30 s da guarda de progressão e deixa pouca folga até 60 s; registrar como
+limite do atendimento observado, sem atribuir a causa exclusivamente ao worker
+ou observador. Não comparar esses tempos causalmente aos dos perfis curtos.
+
+Pausa atingida, sem nova execução. Recomenda-se encerrar esta rodada exploratória
+e decidir o objetivo de uma eventual comparação: benefício frente a uma
+réplica fixa ou compromisso de atendimento/recursos frente a duas fixas.
+Antes de qualquer campanha, resolver prospectivamente a fidelidade de admissão
+e o que deve ser observado na redução, mantendo os dados atuais como exploratórios.
+Não há justificativa demonstrada para alterar a aplicação ou migrar para AKS.
 
 ### Depois da pausa — ainda não autorizado
 

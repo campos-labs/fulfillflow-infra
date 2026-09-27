@@ -7,17 +7,14 @@ v1.0.0 usa Kind, uma aplicação congelada e réplicas fixas. Foram conferidas u
 comparação de 20 tentativas e uma avaliação complementar de nove tentativas,
 tratadas separadamente. O último encerramento preservou dados e parou o laboratório.
 
-**Extensão de escala: piloto conferido e uma verificação de duração preparada.** A sucessora adaptativa
-concluiu 540/540 eventos no prazo, preservou margem de memória e completou os
-360 s posteriores, mantendo uma réplica. Houve uma leitura breve de métrica
-positiva; não houve expansão nem ciclo 1→2→1 nesta tentativa.
-A anterior observou subida e participação do novo pod, mas falhou na oferta e
-na guarda de memória. Diagnósticos com duas réplicas fixas mostraram menor
-pendência amostrada; o conjunto ainda não comprova benefício do autoescalonamento.
-O 503 de consulta anterior permanece sem causa determinada. Ver
-[resultado qualificado e decisão da pausa](RELEASE_PLAN.md#sucessora-adaptativa-qualificada-e-pausa).
-Uma tentativa com patamar de 60 s a 16/s está preparada, ainda sem resultado;
-[protocolo e pausa](RELEASE_PLAN.md#extensão-de-duração-autorizada).
+**Extensão de escala na pausa de reavaliação.** O perfil sustentado
+registrou solicitações automáticas 1→2→1 pelo HPA e participação do
+novo pod ainda durante o pico. Dos 1.020 eventos planejados, 1.019 foram
+oferecidos, aceitos e concluídos no prazo; uma oferta foi omitida por ocupação
+das vagas de envio. Host e observação posterior permaneceram válidos, mas
+a carga não cumpriu integralmente o perfil. Não há comparação formal nem
+ganho causal demonstrado. Ver [resultado e limites](RELEASE_PLAN.md#resultado-da-demanda-sustentada).
+O 503 de consulta histórico permanece sem causa determinada.
 A branch `feature/v1.1-autoscaling-kind` preserva o incremento; não há nova release.
 AKS/ACR continuam opcionais e ainda não foram implantados.
 
