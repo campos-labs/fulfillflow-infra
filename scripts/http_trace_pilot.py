@@ -299,7 +299,55 @@ def await_validation(config):
         time.sleep(min(30, deadline - time.monotonic()))
 
 
-def execute(private, output):
+def capture_query(runner, evidence, output, expected_spans=4):
+    # Keep failed observer output too; it contains only the observer's allowlisted result.
+    runner.stage = "functional_query"
+    runner.query_started = True
+    result = runner.kube(
+        [
+            "exec",
+            "deployment/httpdiag-sink",
+            "--",
+            "python",
+            "/diag/http_trace_observer.py",
+            evidence["event_id"],
+            evidence["checkpoint"]["inbox_event_id"],
+            evidence["checkpoint"]["tracking_event_id"],
+        ],
+        timeout=30,
+        allow_failure=True,
+    )
+    functional = json.loads(result)
+    write(output / "functional.json", functional)
+    if not functional.get("trace_id"):
+        raise RuntimeError("OBSERVER_TRACE_NOT_CREATED")
+    runner.stage = "trace_collection"
+    snapshot = None
+    for _ in range(10):
+        snapshot = json.loads(
+            runner.kube(
+                [
+                    "exec",
+                    "deployment/httpdiag-sink",
+                    "--",
+                    "python",
+                    "-c",
+                    "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:4318/snapshot', timeout=2).read().decode())",
+                ],
+                timeout=10,
+            )
+        )
+        if (
+            len([r for r in snapshot["records"] if r["trace_id"] == functional["trace_id"]])
+            >= expected_spans
+        ):
+            break
+        time.sleep(1)
+    write(output / "trace-records.json", snapshot)
+    return snapshot, functional
+
+
+def execute(private, output, scenario="healthy"):
     if CLUSTER != "fulfillflow-observe-01":
         raise RuntimeError("WRONG_ENVIRONMENT")
     config = json.loads((ROOT / "config/http-observability.json").read_bytes())
@@ -340,7 +388,8 @@ def execute(private, output):
             "application_ci": validation,
             "infrastructure_sha": env.command(["git", "-C", ROOT, "rev-parse", "HEAD"]).strip(),
             "namespace_uid": identity["namespace_uid"],
-            "query_count": 1,
+            "query_count": 3 if scenario == "transport-fault" else 1,
+            "scenario": scenario,
             "preparation_health_checks": {
                 "paths": 3,
                 "maximum_rounds": 3,
@@ -352,6 +401,7 @@ def execute(private, output):
             "scripts": {
                 name: hashlib.sha256((ROOT / "scripts" / name).read_bytes()).hexdigest()
                 for name in (
+                    "http_trace_fault.py",
                     "http_trace_pilot.py",
                     "http_trace_contract.py",
                     "http_trace_receiver.py",
@@ -450,55 +500,16 @@ def execute(private, output):
                 for p in pods
             ],
         )
-        print("HTTP tracing: checking peer readiness paths before the single query", flush=True)
+        print("HTTP tracing: checking peer readiness paths before the diagnostic", flush=True)
         await_peer_health(runner)
-        print("HTTP tracing: one GET, no webhook, then bounded export collection", flush=True)
-        # Keep failed observer output too; it contains only the observer's allowlisted result.
-        runner.stage = "functional_query"
-        runner.query_started = True
-        result = runner.kube(
-            [
-                "exec",
-                "deployment/httpdiag-sink",
-                "--",
-                "python",
-                "/diag/http_trace_observer.py",
-                evidence["event_id"],
-                evidence["checkpoint"]["inbox_event_id"],
-                evidence["checkpoint"]["tracking_event_id"],
-            ],
-            timeout=30,
-            allow_failure=True,
-        )
-        functional = json.loads(result)
-        write(output / "functional.json", functional)
-        if not functional.get("trace_id"):
-            raise RuntimeError("OBSERVER_TRACE_NOT_CREATED")
-        runner.stage = "trace_collection"
-        snapshot = None
-        for _ in range(10):
-            snapshot = json.loads(
-                runner.kube(
-                    [
-                        "exec",
-                        "deployment/httpdiag-sink",
-                        "--",
-                        "python",
-                        "-c",
-                        "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:4318/snapshot', timeout=2).read().decode())",
-                    ],
-                    timeout=10,
-                )
-            )
-            if (
-                len([r for r in snapshot["records"] if r["trace_id"] == functional["trace_id"]])
-                >= 4
-            ):
-                break
-            time.sleep(1)
-        write(output / "trace-records.json", snapshot)
-        review = verify_trace(snapshot, functional)
-        write(output / "review.json", review)
+        print("HTTP tracing: bounded GET sequence, no webhook, then export collection", flush=True)
+        if scenario == "transport-fault":
+            from scripts.http_trace_fault import run_sequence
+
+            run_sequence(runner, evidence, capture_query)
+        else:
+            snapshot, functional = capture_query(runner, evidence, output)
+            write(output / "review.json", verify_trace(snapshot, functional))
         try:
             metrics = json.loads(
                 runner.kube(
@@ -661,13 +672,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--private", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--scenario", choices=("healthy", "transport-fault"), default="healthy")
     args = parser.parse_args()
     lock = ROOT / "artifacts/observability-pilot.lock"
     owned = False
     try:
         with lock.open("x"):
             owned = True
-        raise SystemExit(execute(args.private.resolve(), args.output.resolve()))
+        raise SystemExit(execute(args.private.resolve(), args.output.resolve(), args.scenario))
     except Exception as error:
         print(
             json.dumps(

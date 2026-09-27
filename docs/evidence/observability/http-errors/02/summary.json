@@ -1,0 +1,8 @@
+{
+  "complete": false,
+  "error": "FUNCTIONAL_QUERY_INCOMPLETE",
+  "container_stopped": true,
+  "business_writes": 0,
+  "last_stage": "trace_collection",
+  "query_started": true
+}

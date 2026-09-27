@@ -152,3 +152,16 @@ A revisão foi reproduzida offline com `scripts.http_trace_contract.verify_trace
 a conferência dos dois casos de workers acima permanece separada. Imagem, bancos,
 segredos e séries completas do host não integram esta seleção. Pausa antes de escolher
 uma perturbação adicional; não repetir a consulta saudável apenas para obter outro tempo.
+
+### Erros preparatórios HTTP preservados
+
+[Manifesto HTTP 02/03](http-errors/manifest.json): quatro arquivos originais por tentativa,
+com SHA-256 e referência da execução. A 02 contém resposta remota 503 e quatro spans;
+a 03 contém categoria `transport` no cliente Core e três spans. São observações
+preparatórias, sem injeção controlada: não estabelecem a causa original nem explicam
+os 503 das campanhas anteriores. Ausência de span isoladamente não prova onde o
+processamento parou. O caminho Tracking → Core de metadados não tem span nesta fatia.
+
+O verificador dos vinte registros de workers não cobre esses arquivos HTTP; seus
+manifestos permitem conferir os bytes publicados separadamente. A próxima verificação
+controlada terá resultado esperado próprio e não exigirá quatro spans no erro de transporte.

@@ -10,8 +10,9 @@ permitem conferir cobertura e limites sem depender dos artefatos locais selecion
 Nó parado. **Fatia HTTP saudável concluída** em `observability-http-05`: uma consulta
 200, nove conferências funcionais aprovadas e quatro spans ligados corretamente.
 [Registros e limites](docs/evidence/observability/README.md#fatia-http-com-opentelemetry)
-estão publicados. A pausa ocorre antes de escolher uma perturbação adicional; não
-há nova carga, AKS, merge ou release v1.2. As tentativas anteriores permanecem intactas.
+estão publicados. Em preparação: uma sequência controlada saudável → falha de
+transporte Core → Tracking → restauração, com três GETs sobre o mesmo evento.
+Sem nova carga, AKS, merge ou release v1.2; as tentativas anteriores ficam intactas.
 
 **Comparação de capacidade fixa e adaptativa concluída e consolidada na
 v1.1.0-rc.1.** O fechamento integra `feature/v1.1-autoscaling-kind` à `main`.
@@ -78,7 +79,7 @@ anterior ao envio e a sucessora concluída permanecem separadas. O
 preserva protocolos prospectivos, correções e limites de cada janela.
 
 **Decisão:** encerrar os cenários saudável e de pendência; sem repetição manual ou
-carga adicional para confirmá-los. A coleta atual não mede overhead causal ou
+carga adicional para confirmá-los. A coleta desses dois casos não mede overhead causal ou
 tracing distribuído, nem resolve os 503 históricos. Scripts permanecem versionados;
 claims e diretórios existentes não devem ser apagados para forçar novo ensaio.
 
@@ -176,14 +177,14 @@ e validação estática passaram após a correção. Os quatro spans localizam a
 mas não distinguem a operação interna que falhou dentro de Tracking. Não estabelecem
 causas dos 503 históricos nem comprovam superioridade geral do diagnóstico.
 
-A consulta corretiva ainda é necessária: a configuração incorreta foi comprovada,
+Naquele ponto, a consulta corretiva ainda era necessária: a configuração incorreta foi comprovada,
 mas os spans não preservam a exceção interna que originou o 503. Uma inspeção após
 reiniciar o nó encontrou o endpoint histórico do Core não pronto; esse estado não
 é apresentado como medição contemporânea à consulta 02. As oito configurações
 transitórias da tentativa foram removidas pelo run ID após conferir zero réplicas;
 volumes, dados, specs históricos e evidências continuam preservados, com o nó parado.
 
-A sucessora usa saída exclusiva `artifacts/observability-http-03`, mesmo evento,
+A sucessora foi identificada em `artifacts/observability-http-03`, com o mesmo evento,
 runtime e guardas, com retorno ao clone corrigido. Os diagnósticos locais ficam em
 `artifacts/observability-http-01-recovery.json`,
 `artifacts/observability-http-02-recovery.json` e
@@ -199,14 +200,14 @@ sem resposta HTTP remota ou span servidor de Tracking. Isso difere da resposta r
 503 da tentativa 02; não comprova uma causa comum. A falta do span, isoladamente,
 não prova ausência de processamento. Nó parado e specs históricos preservados.
 
-A sucessora `observability-http-04` acrescenta preparação limitada de comunicação:
+A sucessora `observability-http-04` acrescentou preparação limitada de comunicação:
 GET `/health/ready` nos caminhos observador → Core, Core → Tracking e Tracking → Core,
 até três rodadas. Os registros preservam status ou classe/errno de transporte, sem
 bodies nem mensagens brutas. Todos os caminhos devem responder 200 antes da única
 consulta de negócio. A espera de rollout é mantida; não há retry da consulta medida,
 redução de guardas ou mudança de imagem. As consultas de saúde são preparação explícita,
-não eventos de negócio nem spans experimentais. Essa verificação ainda não foi
-executada no Kind; não foi atribuída causa raiz ao transporte da tentativa 03.
+não eventos de negócio nem spans experimentais. A execução 04, descrita abaixo, conferiu esses caminhos no Kind; isso não
+atribui causa raiz ao transporte da tentativa 03.
 A suíte de 317 testes passou; um teste adicional da sonda HTTP passou na suíte
 focada de 14 casos. Lint e formatação aprovados.
 
@@ -217,7 +218,7 @@ lotes aceitos e zero rejeitados. O verificador confundia o resultado de negócio
 `REJECTED`. A listagem não expõe o resultado detalhado de negócio. A asserção antiga
 era incompatível com o próprio schema e foi corrigida sem alterar a aplicação.
 
-Na sucessora 05, exigir um item/total, as três identidades conhecidas (evento externo,
+Na sucessora 05, passou-se a exigir um item/total, as três identidades conhecidas (evento externo,
 inbox e tracking event), status `PROCESSED`, progresso `COMPLETED`, conclusão registrada
 e ausência de código de erro. Preservar cada conferência como booleano independente
 dos spans, sem copiar o corpo completo. Testes rejeitam `APPLIED` como status, identidades
@@ -252,10 +253,33 @@ Em futura investigação temporal, observar estado de negócio e rollout **em pa
 com diários separados, para não adiar uma consulta deliberadamente até a prontidão.
 Não modificar retroativamente os casos atuais: a espera sequencial está documentada.
 
+### Verificação HTTP controlada autorizada
+
+Executar `Invoke-HttpTracePilot.ps1 -Scenario transport-fault` em saída exclusiva.
+O contrato está no DESIGN §8.8 e em `http_trace_fault.py`: três consultas ao evento
+concluído, sem webhook, falha apenas no seletor do Service diagnóstico e restauração
+em `finally`. Preservar os três resultados funcionais, snapshots de spans, intervenção,
+restauração e julgamento próprio de cada fase. A consulta durante a falha deve ser
+inconclusiva quanto ao estado de negócio, mesmo se o diagnóstico da fronteira aprovar.
+
+A seleção [HTTP 02/03](docs/evidence/observability/http-errors/manifest.json) torna
+examináveis a resposta remota e a categoria de transporte anteriores. Esses registros
+preparatórios não equivalem a falhas controladas e não determinam causas históricas.
+Ao terminar esta única sequência, consolidar o valor acrescentado e pausar antes de
+outra fronteira de instrumentação. Métricas indisponíveis limitam a avaliação de custo;
+não bloqueiam por si só o diagnóstico funcional.
+
 ### Guardas para qualquer nova execução
 
 Avisar a janela crítica e conferir tomada, containers e margem: 5 GiB de entrada,
-2 GiB durante execução. Não reiniciar Docker/WSL, apagar volumes ou reduzir guardas.
+2 GiB durante execução. Não apagar volumes ou reduzir guardas. Antes da janela,
+com todos os containers parados, é permitida uma liberação pontual de cache Linux
+(`sync` + `drop_caches`), seguida de espera limitada e nova medição. Registrar essa
+preparação; não a apresentar como ganho causal. Os procedimentos 03/05 incluíram
+cache e a preparação 03 incluiu reinício autorizado de Docker/WSL. Reinícios ficam
+restritos à recuperação operacional necessária, com workloads parados; não são uma
+rotina de memória, especialmente após o erro de socket do Docker observado. Durante
+a medição, não limpar cache nem reiniciar Docker/WSL.
 Fixar previamente destino, número de chamadas e teto de tempo; não repetir até passar.
 Preparação, testes offline e ajustes rotineiros seguem dentro do escopo; parar diante
 de alteração de contrato, risco do ambiente, custo externo ou mudança relevante do

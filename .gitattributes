@@ -25,3 +25,5 @@ docs/assets/scaling/*.svg text eol=lf
 docs/evidence/observability/records/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 
 docs/evidence/observability/http-05/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+docs/evidence/observability/http-errors/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

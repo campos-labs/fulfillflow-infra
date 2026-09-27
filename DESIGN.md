@@ -623,6 +623,23 @@ indisponíveis separadamente. O fim do diagnóstico preserva volumes e configura
 históricas; zero réplicas dos clones e nó parado encerram a janela. Credenciais e
 bodies HTTP não integram a evidência, e nenhuma imagem histórica é sobrescrita.
 
+A verificação controlada HTTP usa três consultas únicas ao mesmo evento já concluído:
+saudável → falha conhecida → restauração. Alterar somente o seletor do Service
+`httpdiag-tracking` para um valor exclusivo sem pods; confirmar seletor e ausência
+de endpoints prontos antes da consulta. Restaurar o spec original mesmo se a coleta
+falhar, usando UID e seletor esperado como precondições. Não interromper o receptor
+OTLP nem modificar deployments, dados, timeouts ou instrumentação da aplicação.
+
+Critérios distintos: antes/depois, HTTP 200, resultado funcional e quatro spans;
+durante, HTTP 503, erro de transporte no cliente Core e três spans ligados. Confrontar
+esse trace com a intervenção registrada, nunca concluir a causa apenas da ausência
+do span Tracking. A indisponibilidade esperada da consulta não reprova o diagnóstico;
+cobertura insuficiente, coleta rejeitada ou restauração não confirmada o reprovam.
+O estado de negócio é confirmado antes/depois e inconclusivo durante a intervenção:
+não existe nesta fatia uma leitura independente do caminho interrompido. Não alegar
+continuidade de processamento, pois o evento já estava concluído. O limite temporal
+continua em 600 segundos e não há retry das três consultas.
+
 ## 9. Limites e evolução
 
 O aceite deve identificar o ambiente efetivamente exercitado: Kind ou AKS.

@@ -1,6 +1,8 @@
 [CmdletBinding()]
 param(
     [string]$PrivateDirectory,
+    [ValidateSet("healthy", "transport-fault")]
+    [string]$Scenario = "healthy",
     [string]$OutputDirectory
 )
 $ErrorActionPreference = 'Stop'
@@ -32,8 +34,8 @@ $oldMode = $env:FULFILLFLOW_SCALE_ENVIRONMENT
 $env:FULFILLFLOW_SCALE_ENVIRONMENT = 'observability-v1'
 Push-Location $root
 try {
-    Write-Host 'PRE-CHECK DA CI + JANELA RESERVADA: uma consulta GET; APIs historicas preservadas.'
-    & $python (Join-Path $PSScriptRoot 'http_trace_pilot.py') --private $PrivateDirectory --output $OutputDirectory
+    Write-Host 'PRE-CHECK DA CI + JANELA RESERVADA: consultas GET delimitadas; APIs historicas preservadas.'
+    & $python (Join-Path $PSScriptRoot 'http_trace_pilot.py') --private $PrivateDirectory --output $OutputDirectory --scenario $Scenario
     $result = $LASTEXITCODE
 } finally {
     Pop-Location

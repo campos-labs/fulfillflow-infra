@@ -60,6 +60,7 @@ def run(event, inbox, tracking_event):
             result["response_seconds"] = time.monotonic() - started
             result["status"] = response.status_code
             span.set_attribute("http.response.status_code", response.status_code)
+            result["request_id_echoed"] = response.headers.get("X-Request-ID") == request_id
             if response.status_code != 200:
                 raise ValueError("PUBLIC_QUERY_FAILED")
             payload = response.json()
