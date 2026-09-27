@@ -1415,9 +1415,9 @@ Não há justificativa demonstrada para alterar a aplicação ou migrar para AKS
 
 Implementação: `scripts/scale_comparison.py`, launcher
 `scripts/Invoke-ScaleComparison.ps1` e `config/scale-comparison.json`.
-Estado: código/protocolo preparados; cluster exclusivo e restauração dos três
-bancos validados sem carga. Qualificação e campanha ainda pendentes; não há
-resultados formais neste momento. Evidência técnica local:
+Estado: qualificação concluída, primeira tentativa adaptativa válida e
+progressão interrompida por memória antes da segunda. Continuação autorizada
+conforme emenda abaixo, sem repetição do resultado válido. Evidência técnica local:
 `artifacts/scale-comparison-01/prepare` e `baseline-check-02/result.json` nesse
 mesmo diretório. A primeira conferência parou antes da restauração porque o
 RabbitMQ ainda inicializava após reiniciar o nó. O diagnóstico preservado em
@@ -1426,8 +1426,8 @@ sucesso; acrescentada espera por SQL e broker reais, limitada a 180 s, antes da
 restauração. A sucessora restaurou e confirmou os seis workloads prontos;
 nó parado, sem ofertas de negócio. Esses checks não são repetições da campanha.
 Validação offline: 245 testes, Ruff, documentos e sintaxe PowerShell aprovados.
-No ambiente já preparado, usar `-Mode Measure`, que qualifica e só depois
-executa a campanha; `-Mode All` permanece reservado a uma preparação nova.
+Esses modos originais permanecem para uma campanha nova. No ambiente já
+qualificado/interrompido, usar exclusivamente o coordenador de continuação abaixo.
 
 **Pergunta operacional:** sob o mesmo perfil de demanda, como capacidade fixa
 e adaptativa diferem no atendimento observado dentro do prazo e na capacidade
@@ -1484,6 +1484,49 @@ com dados parciais preservados. Nenhuma reposição automática nem escolha das
 melhores repetições. Resultado funcional desfavorável permanece na análise.
 Ao final, pausa para interpretar o conjunto e decidir publicação; não iniciar
 AKS, nova carga, troca de limiar ou alteração da aplicação automaticamente.
+
+### Continuação com espera limitada
+
+Emenda de coordenação em 2026-09-27, sem alterar carga, política, aplicação,
+recursos, prazos, coleta ou critérios de validade. O executor medido permanece
+intacto. Implementação separada: `scripts/scale_continuation.py` e
+`scripts/Invoke-ScaleContinuation.ps1`. Validação: 265 testes offline, Ruff,
+formatação, documentos e sintaxe PowerShell aprovados; 67 arquivos originais
+de execução/configuração conferidos contra a referência qualificada. Nenhuma
+nova carga foi executada na preparação dessa continuação.
+
+| Evidência local preservada | Resultado |
+| --- | --- |
+| `artifacts/scale-comparison-01/qualify` | Qualificação: 1.020 aceitos/no prazo; pico de 17 vagas HTTP; um GET 503 recuperado. |
+| `artifacts/scale-comparison-02/execute/b1-p1-adaptive` | Tentativa válida: 1.020 aceitos, 666 no prazo e 354 tardios; p95 observado 70,656 s; 750,047 pod-segundos existentes; inventário 1→2→1; zero erros HTTP. |
+| Mesma tentativa, host | Mínimo 2,995 GiB durante execução; última amostra de encerramento 4,183 GiB. A condição seguinte não iniciou. |
+| `artifacts/scale-host-check-20260927-000857-186.json` | Diagnóstico sem carga: 5,19–5,52 GiB livres, após parar o nó histórico. Não prova recuperação entre tentativas. |
+
+A guarda imediata era insuficiente para coordenar a recuperação do host.
+Agora há espera de até três minutos, sem reduzir a guarda: três amostras
+consecutivas com 5 GiB, host sem containers e energia conectada. Não há
+reinício automático de Docker/WSL. Se a margem não voltar, encerrar sem iniciar
+a próxima tentativa. A retomada exige novo comando, sem laço de retries.
+
+O primeiro resultado permanece na primeira posição; não repetir por ter sido
+lento. O coordenador verifica a qualificação e os arquivos originais contra
+`6932632`, além dos hashes das evidências. A identidade nova do coordenador
+fica no manifesto e no início de cada sessão. Não modificar o marcador privado
+antigo. Posições restantes seguem a ordem original, começando por `b1-p2-fixed-2`.
+
+O primeiro bloco perdeu continuidade temporal. Manter todas as tentativas na
+apresentação, identificar sessões e não chamar o conjunto de campanha original
+ininterrupta. Futuras pausas também aparecem no resumo por bloco. Os limites de
+início em 40/160 min são controlados por sessão; o tempo fora delas continua
+registrado. Nenhuma condição inválida ou pasta parcial é substituída automaticamente.
+
+Saída nova: `artifacts/scale-comparison-continuation-01`. `Check` confere fontes,
+hashes e prefixo concluído sem carga; `Execute` continua somente as posições
+pendentes. As pastas originais permanecem intactas. Guardar também as origens
+referenciadas: o novo diretório não é um pacote autossuficiente de evidências.
+Após nova parada, revisar o motivo; não apagar arquivos, locks ou reiniciar pelo
+launcher original. Ao completar o conjunto, pausar antes de qualquer conclusão
+comparativa ou publicação.
 
 <a id="3-extensões-possíveis"></a>
 

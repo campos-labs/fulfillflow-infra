@@ -661,3 +661,21 @@ etapas. Os diretórios de saída não podem existir previamente; não apagar ou
 sobrescrever evidência para repetir. Segredos e dumps ficam na pasta privada;
 os resultados ficam em `artifacts/scale-comparison-01`, ainda locais.
 Em interrupção, devolver o resultado para revisão sem repetir o comando.
+
+Para o ambiente local já qualificado e interrompido, **não repetir `All`,
+`Measure` ou `Execute` do launcher original**. Usar a continuação identificada:
+
+```powershell
+& '<caminho-do-pwsh.exe>' -NoProfile -File '.\scripts\Invoke-ScaleContinuation.ps1' -Mode Check
+& '<caminho-do-pwsh.exe>' -NoProfile -File '.\scripts\Invoke-ScaleContinuation.ps1' -Mode Execute
+```
+
+`Check` não opera Docker nem gera carga. `Execute` para apenas os nós históricos
+conhecidos, recusa outros containers e aguarda até 180 s por margem antes de
+cada tentativa. Manter notebook na tomada e reservado. A pasta padrão é
+`artifacts/scale-comparison-continuation-01`; a origem é
+`artifacts/scale-comparison-02/execute`. Exige também a qualificação e a pasta
+privada originais. Depois de interrupção, revisar os registros antes de repetir
+`Execute`: prefixo válido é preservado, tentativa parcial bloqueia retomada.
+O primeiro bloco é explicitamente interrompido; consultar a
+[emenda e seus limites](../RELEASE_PLAN.md#continuação-com-espera-limitada).

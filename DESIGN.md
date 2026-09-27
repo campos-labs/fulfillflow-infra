@@ -622,7 +622,34 @@ Perfil de 90 s: 15 s a 2/s, 60 s a 16/s, 15 s a 2/s. Teto HTTP comum de 32,
 observador 16, prazo funcional 60 s e observação de cada aceite por até 120 s.
 Uma qualificação separada com uma réplica verifica oferta integral, coleta,
 ambiente e até 28 vagas ocupadas no gerador; não exige sucesso funcional no
-prazo. A campanha exige a mesma revisão Git e hash do protocolo qualificado.
+prazo. O executor original exige a mesma revisão Git e hash do protocolo qualificado.
+
+**Continuação autorizada da campanha interrompida.** Um coordenador separado
+preserva a qualificação e a primeira tentativa adaptativa da referência
+`6932632ecc07afbef844f6c7483cfc71d0b5799e`. Antes de continuar, compara contra essa
+referência todos os arquivos originais de `scripts/`, `config/`, `k8s/`,
+`pyproject.toml` e `uv.lock`, exceto a documentação `k8s/README.md`; somente
+os dois arquivos novos do coordenador são
+permitidos nessas áreas. Confere hashes dos pacotes, marcadores privados,
+protocolo, ordem e identidade. O SHA atual do coordenador e a referência medida
+ficam separados; não reescrever o marcador antigo para simular uma nova qualificação.
+
+Antes de cada tentativa restante, aguardar no máximo 180 s por três leituras
+consecutivas, a cada 5 s, com pelo menos 5 GiB livres, energia conectada e nenhum
+container ativo. Não reiniciar Docker/WSL nem liberar caches automaticamente.
+A espera ocorre antes da preparação e fora da janela medida, mas integra o
+orçamento da sessão. Preservar a guarda de 2 GiB durante a tentativa.
+
+Continuar somente o prefixo consecutivo de resultados válidos; resultado tardio
+não autoriza repetição. Pasta parcial, registro de início sem evidência completa,
+resultado inválido ou lock residual bloqueiam a continuação para revisão.
+Uma espera encerrada antes de iniciar a tentativa pode ser retomada por comando
+explícito. Cada invocação registra nova sessão e pausas: o primeiro bloco está
+interrompido e não pode ser descrito como bloco temporal contínuo. Os limites de
+40 min para iniciar outra posição do bloco e 160 min para iniciar outra tentativa
+valem dentro de cada sessão; não apagam o intervalo entre sessões. A análise deve
+mostrar tentativas/sessões e a limitação temporal, sem declarar que cumpriu
+integralmente o desenho original de blocos contínuos.
 
 Janela de pod-tempo: [primeira oferta agendada, +450 s], independente da
 conclusão dos eventos; contém 90 s de carga e 360 s seguintes. Medida principal:
