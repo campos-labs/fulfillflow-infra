@@ -1,0 +1,27 @@
+{
+  "complete": true,
+  "offered_business_events": 0,
+  "query_count": 1,
+  "request_id": "12138bf6-f907-4faf-92ff-359ca70b502a",
+  "trace_id": "030b5d274c75d1c4278ef000af4bed6e",
+  "response_seconds": 0.1648335090000046,
+  "status": 200,
+  "request_id_echoed": true,
+  "functional_checks": {
+    "total_is_one": true,
+    "item_count_is_one": true,
+    "event_matches": true,
+    "inbox_matches": true,
+    "tracking_event_matches": true,
+    "status_processed": true,
+    "progress_completed": true,
+    "completion_recorded": true,
+    "error_absent": true
+  },
+  "event_id": "infra-smoke-53cec0ca-6357-43f5-85f6-c0b08d664a20",
+  "inbox_id": "3c622aa2-d1f1-4e13-aa03-9eabe1e7e757",
+  "persisted_status": "PROCESSED",
+  "progress": "COMPLETED",
+  "tracking_event_id": "5cea84e6-61a3-5f91-8fd3-7d9226e44186",
+  "flush_completed": true
+}

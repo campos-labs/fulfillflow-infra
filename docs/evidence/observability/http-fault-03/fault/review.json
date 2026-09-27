@@ -1,0 +1,8 @@
+{
+  "complete": true,
+  "query_outcome": "expected_503",
+  "spans": 3,
+  "diagnostic_outcome": "core_to_tracking_transport_failure",
+  "business_state_during_fault": "not_independently_observed",
+  "limit": "Known intervention plus captured client error; missing span alone is not proof."
+}

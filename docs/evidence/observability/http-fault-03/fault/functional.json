@@ -1,0 +1,12 @@
+{
+  "complete": false,
+  "offered_business_events": 0,
+  "query_count": 1,
+  "request_id": "d0b1c822-9425-4800-b0b7-69279331f752",
+  "trace_id": "17b7ec2159dc7e9e2ea03d686158ca6b",
+  "response_seconds": 0.09369135399992956,
+  "status": 503,
+  "request_id_echoed": true,
+  "error": "PUBLIC_QUERY_FAILED",
+  "flush_completed": true
+}

@@ -10,10 +10,11 @@ permitem conferir cobertura e limites sem depender dos artefatos locais selecion
 Nó parado. **Fatia HTTP saudável concluída** em `observability-http-05`: uma consulta
 200, nove conferências funcionais aprovadas e quatro spans ligados corretamente.
 [Registros e limites](docs/evidence/observability/README.md#fatia-http-com-opentelemetry)
-estão publicados. **Tentativa controlada 02 preservada:** a consulta durante a
-alteração do Service respondeu 200 e chegou ao Tracking. A falha pretendida não foi
-produzida, apesar de zero endpoints prontos registrados. Sucessora 03 autorizada com parada somente do clone Tracking,
-confirmação da remoção do pod e restauração; nenhuma nova carga, AKS, merge ou release.
+estão publicados. **Sequência HTTP controlada 03 concluída:** 200 → 503 → 200,
+com remoção do pod diagnóstico, erro de transporte localizado no cliente Core e
+recuperação funcional após um novo pod Ready. [Evidências publicadas](docs/evidence/observability/README.md#falha-http-controlada-e-recuperação).
+Pausa de avaliação de valor: não repetir estes cenários nem ampliar instrumentação,
+carga ou nuvem automaticamente. Nenhuma release/merge v1.2 realizada.
 
 
 **Comparação de capacidade fixa e adaptativa concluída e consolidada na
@@ -313,14 +314,43 @@ Decisão autorizada para a sucessora 03: substituir a alteração de seletor por
 somente da API Tracking clonada, confirmar término do pod antes da consulta e restaurar
 uma réplica antes da conferência final. O mecanismo foi autorizado e implementado prospectivamente no DESIGN/executor.
 A sucessora 03 exige zero pods (incluindo terminating), zero endpoints e, após
-restauração, novo pod Ready antes da terceira consulta. A execução integrada ainda
-está pendente. A revisão exige tanto a intervenção quanto o erro HTTP observado.
+restauração, novo pod Ready antes da terceira consulta. A execução integrada foi concluída conforme o fechamento abaixo. A revisão exige tanto a intervenção quanto o erro HTTP observado.
 Validação: 329 testes, Ruff e formatação aprovados. O launcher local
 `artifacts/Invoke-HttpFault03.local.ps1` reconcilia por run ID os recursos da 02 antes
 da sucessora, preservando volumes e registros.
 Manter Core, receptor OTLP, workers e APIs históricos intactos. Não alterar pooling,
 latência, retries ou aplicação apenas para fabricar a resposta esperada. Encerrar aqui
 as repetições do mecanismo atual; não ampliar o estudo para investigar rede Kubernetes.
+
+### Fechamento da sequência HTTP controlada
+
+`observability-http-fault-03`, executor `416aef7`, aplicação instrumentada `045e1ca`:
+execução direta após liberação pontual de cache, sempre com containers parados na
+preparação. Entrada 5,04 GiB, mínimo observado 2,61 GiB; as guardas foram preservadas.
+Consulta inicial 200 com nove conferências e quatro spans; ausência do pod e dos
+endpoints confirmada; consulta sob interrupção 503 com três spans, erro `transport`
+no cliente Core e nenhuma resposta remota. Após restaurar uma réplica, um novo pod
+Ready e endpoint disponível precederam o terceiro GET 200 com as mesmas identidades.
+Foram oito lotes recebidos cumulativamente, zero rejeitados e onze spans distintos.
+
+O spec do clone foi restaurado, o Service permaneceu intacto, deployments históricos
+preservados e nó parado; nenhuma escrita de negócio. Os três julgamentos foram
+reproduzidos offline. Os [18 arquivos selecionados e manifesto](docs/evidence/observability/http-fault-03/manifest.json)
+estão versionados com bytes preservados; séries completas do host permanecem locais.
+API de métricas indisponível: overhead continua não quantificado.
+
+Ganho demonstrado: localizar uma falha conhecida de consulta na fronteira Core →
+Tracking, preservando a distinção entre indisponibilidade de observação e resultado
+de negócio confirmado antes/depois. Não houve leitura independente durante a falha,
+processamento em andamento ou investigação causal dos erros antigos. A restauração
+foi comandada pelo executor, não pela política de recuperação. Uma sequência não
+comprova superioridade diagnóstica geral nem desempenho da instrumentação.
+
+Encerrar esta fatia e consolidá-la como capacidade diagnóstica complementar. Não
+repetir saudável/pendência/HTTP, ampliar para SQL/AMQP, instalar plataformas ou abrir
+AKS automaticamente. A próxima decisão pode ser fechamento documental da extensão
+ou outra pergunta delimitada, sem condicionar o valor dos resultados já obtidos a
+uma nova campanha.
 
 ### Guardas para qualquer nova execução
 

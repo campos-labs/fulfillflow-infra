@@ -162,5 +162,49 @@ os 503 das campanhas anteriores. Ausência de span isoladamente não prova onde 
 processamento parou. O caminho Tracking → Core de metadados não tem span nesta fatia.
 
 O verificador dos vinte registros de workers não cobre esses arquivos HTTP; seus
-manifestos permitem conferir os bytes publicados separadamente. A próxima verificação
-controlada terá resultado esperado próprio e não exigirá quatro spans no erro de transporte.
+manifestos permitem conferir os bytes publicados separadamente. A verificação controlada abaixo possui critério próprio e exige três spans no erro
+de transporte.
+
+## Falha HTTP controlada e recuperação
+
+A [sequência 03](http-fault-03/manifest.json) usa a mesma referência instrumentada e
+um evento previamente concluído. O executor `416aef7` realiza três GETs únicos;
+nenhum webhook ou escrita de negócio. A intervenção passa apenas a API Tracking
+clonada de uma para zero réplicas e depois restaura uma, sem mudar Services, Core,
+workers ou APIs históricos.
+
+| Fase | Consulta e evidência funcional | Cobertura correlacionada |
+| --- | --- | --- |
+| Antes | [200, nove conferências aprovadas](http-fault-03/before/functional.json) | [Quatro spans](http-fault-03/before/trace-records.json) |
+| Interrupção | [503 esperado](http-fault-03/fault/functional.json); estado de negócio inconclusivo nesta fase | [Três spans](http-fault-03/fault/trace-records.json); cliente Core com `transport`, sem resposta remota |
+| Depois | [200, mesmas identidades e conclusão confirmadas](http-fault-03/after/functional.json) | [Quatro spans](http-fault-03/after/trace-records.json) |
+
+A [intervenção](http-fault-03/injection.json) comprova ausência de pods e endpoints
+antes da segunda consulta. A [restauração](http-fault-03/restoration.json), o
+[novo pod Ready](http-fault-03/restored-pod.json) e o endpoint disponível precedem
+a terceira. O [resumo](http-fault-03/summary.json) confirma encerramento com o nó parado;
+a [preservação](http-fault-03/preservation.json) registra os specs históricos intactos.
+
+**O ganho é localizar a fronteira da consulta que falhou, sem converter esse erro em
+prova de que o trabalho não terminou.** Antes/depois, a confirmação pública independe
+dos spans. Durante a falha não existe leitura independente do caminho interrompido.
+O evento já estava concluído: não se avaliou processamento sob falha nem retomada
+assíncrona. A restauração aqui é uma ação do executor, não recuperação automática.
+
+Na tentativa preparatória 02, alterar somente o seletor e observar zero endpoints
+não impediu HTTP 200 com execução no Tracking. Isso motivou a troca prospectiva do
+mecanismo; os dados não isolam reutilização de conexão versus convergência da rede.
+A tentativa 01 havia parado por erro do instrumento na leitura de endpoints vazios.
+Ambas permanecem incompletas e fora do julgamento da 03.
+
+Os [18 arquivos originais selecionados](http-fault-03/manifest.json) permitem conferir
+protocolo, intervenção, resultados, coleta e recuperação. Há onze spans distintos e
+oito lotes aceitos ao fim, zero rejeitados. Os snapshots são **cumulativos**: filtrar
+pelo `trace_id` da fase; não somar contagens de snapshots. Os três `review.json` foram
+reproduzidos offline com `verify_trace` / `verify_fault`. Os hashes do manifesto
+referem-se aos bytes publicados, sem bancos, imagens ou configuração privada.
+
+Limites: uma sequência diagnóstica, sem comparação de ferramentas; ausência de spans
+SQL, metadados Tracking → Core e retomada AMQP; sem explicação retrospectiva dos 503
+ou atrasos de capacidade. A [API de métricas indisponível](http-fault-03/resources.json)
+mantém o custo da instrumentação sem quantificação. Não é necessário repetir o caso.

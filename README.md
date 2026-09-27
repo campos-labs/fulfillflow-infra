@@ -22,10 +22,10 @@ reúne cobertura, limites, registros examináveis e conferência offline. O
 [plano](RELEASE_PLAN.md#4-exploração-de-observabilidade) registra uma fatia
 HTTP concluída com SDK em referência isolada: consulta funcional e quatro spans
 correlacionados, sem medição de overhead. O [guia](k8s/README.md#diagnóstico-http-com-tracing)
-orienta a consulta saudável e a sequência controlada de falha/restauração preparada.
-A tentativa controlada 02 recebeu 200 apesar da alteração do Service; o mecanismo
-de interrupção foi revisto para parar somente a API Tracking clonada, com sucessora
-preparada e ainda não executada. Os casos concluídos não exigem repetição.
+orienta os procedimentos. A sequência controlada 03 concluiu **200 → 503 → 200**:
+interrupção da API clonada localizada no cliente Core, com o mesmo evento confirmado
+antes/depois. Registros e limites estão no índice; não há novas execuções necessárias
+para conferir estes casos, nem medição causal de overhead.
 
 
 ## Comece por aqui

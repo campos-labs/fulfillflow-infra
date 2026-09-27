@@ -1,0 +1,18 @@
+{
+  "mechanism": "diagnostic_api_scale_to_zero",
+  "deployment": "httpdiag-tracking",
+  "uid": "1687aed2-aa07-4d0c-8991-c981f4fc30a6",
+  "original_replicas": 1,
+  "confirmed": true,
+  "previous_pod_uids": [
+    "4878973a-97a2-4014-8f67-812218172d06"
+  ],
+  "pod_state": {
+    "utc": "2026-09-27T21:36:52.238533+00:00",
+    "remaining_pods": 0
+  },
+  "endpoint_state": {
+    "utc": "2026-09-27T21:36:52.331465+00:00",
+    "ready_endpoints": 0
+  }
+}
