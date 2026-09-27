@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "selection": "All functional observations, worker records and HTTP timings for the two completed cases; intervention and pod identity records for pending; diagnosed preparation failure retained separately. No selection by favourable timing.",
+  "excluded": "Private configuration, credentials, database contents, images, raw application logs, full host/startup series and earlier unsuccessful pilot data. Earlier data remain local and are not implied to be published.",
+  "files": [
+    {
+      "path": "records/healthy-01/protocol.json",
+      "source": "artifacts/observability-healthy-01/protocol.json",
+      "sha256": "c3c899f696a52feabe55c986ffb5578706a9d96a5a8cc37f08f47c804457f8ad",
+      "bytes": 594,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/healthy-01/functional.json",
+      "source": "artifacts/observability-healthy-01/functional.json",
+      "sha256": "ce817009a6be9891ea0c461a8d5e4080ada6ee1c0670054997dbf4a7e6d3a855",
+      "bytes": 744,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/healthy-01/worker-records.json",
+      "source": "artifacts/observability-healthy-01/worker-records.json",
+      "sha256": "1bbb0e6bdee8d76850d3ee35c92d5442f65f7466d6855129bf5a1c6d5200b31d",
+      "bytes": 5264,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/healthy-01/http-timings.json",
+      "source": "artifacts/observability-healthy-01/http-timings.json",
+      "sha256": "ed92670fc5511989d110f1de8a091dc047ad7c64fff90aa6d9720052628ba9c2",
+      "bytes": 5155,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/healthy-01/event/observations.jsonl",
+      "source": "artifacts/observability-healthy-01/event/observations.jsonl",
+      "sha256": "ebb312f0031a77ca25c1f14ea2ff2ddd35acf4bb46ee9013cdfe5ba282043389",
+      "bytes": 8928,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/healthy-01/shutdown.json",
+      "source": "artifacts/observability-healthy-01/shutdown.json",
+      "sha256": "117a1a4164bc1cce6941df853d2f8b0a5bf971e35b0a1947d92535dbc388eb79",
+      "bytes": 61,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/pending-02/protocol.json",
+      "source": "artifacts/observability-pending-02/protocol.json",
+      "sha256": "698414e65fdef05b8b511a17b506b399ed3aa6c0ef7bbd3cd899ef4a4aafa8f5",
+      "bytes": 692,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/pending-02/functional.json",
+      "source": "artifacts/observability-pending-02/functional.json",
+      "sha256": "1e417222760783c85de5c33c8626d6c8f9eeb783dcf6bc04caa272a27e3d1395",
+      "bytes": 744,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/pending-02/worker-records.json",
+      "source": "artifacts/observability-pending-02/worker-records.json",
+      "sha256": "45b0f7143099762256c3ab43cffd1154cd156746e25cd660ac8560aff8767ac8",
+      "bytes": 5487,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/pending-02/http-timings.json",
+      "source": "artifacts/observability-pending-02/http-timings.json",
+      "sha256": "b2ce78c33e4258c420415dfc00258b3f59c9178d040627cfb16ccd9b49d88a25",
+      "bytes": 5952,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/pending-02/event/observations.jsonl",
+      "source": "artifacts/observability-pending-02/event/observations.jsonl",
+      "sha256": "dd143ad260c427f8901f47c3feda6dbeab76a0acaaea8c9704bd589314458016",
+      "bytes": 10384,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/pending-02/shutdown.json",
+      "source": "artifacts/observability-pending-02/shutdown.json",
+      "sha256": "117a1a4164bc1cce6941df853d2f8b0a5bf971e35b0a1947d92535dbc388eb79",
+      "bytes": 61,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/pending-02/worker-transition.json",
+      "source": "artifacts/observability-pending-02/worker-transition.json",
+      "sha256": "eefc9b3b791eca5200e7ad60704e4ec98685d2850805ce0243f88f2465517eb0",
+      "bytes": 1000,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/pending-02/intervention.jsonl",
+      "source": "artifacts/observability-pending-02/intervention.jsonl",
+      "sha256": "177ee01c7e5a591cf5c7056f053ec80a4d20a3e07fb60e3580d2cc1f010f79b1",
+      "bytes": 345,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/pending-02/restoration.json",
+      "source": "artifacts/observability-pending-02/restoration.json",
+      "sha256": "fb1e539b655315c76541569e503449d7e60226b13ccd7a3827a7c32bec3b9767",
+      "bytes": 59,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/preparation-failure-01/protocol.json",
+      "source": "artifacts/observability-pending-01/protocol.json",
+      "sha256": "0d639ed82c9074d16dc805a429645330ab92a0c963116f105a63fa5545f9b989",
+      "bytes": 618,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/preparation-failure-01/functional.json",
+      "source": "artifacts/observability-pending-01/functional.json",
+      "sha256": "2d560235ed29df71da58f960c36931bfea507d3a02570edc78e0ed1c3eb37d6e",
+      "bytes": 530,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/preparation-failure-01/http-timings.json",
+      "source": "artifacts/observability-pending-01/http-timings.json",
+      "sha256": "3a8d75fa78550a676600df4f131e3292a1fb9d5e5fe55bf3b8c22b0207dc1c5a",
+      "bytes": 555,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/preparation-failure-01/api-log-review.json",
+      "source": "artifacts/observability-pending-01/api-log-review.json",
+      "sha256": "eea1ad4b27ccc4f690ba9fe38c83701273745adfc677f50e25ac7a52861e8b8b",
+      "bytes": 1480,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    },
+    {
+      "path": "records/preparation-failure-01/shutdown.json",
+      "source": "artifacts/observability-pending-01/shutdown.json",
+      "sha256": "117a1a4164bc1cce6941df853d2f8b0a5bf971e35b0a1947d92535dbc388eb79",
+      "bytes": 61,
+      "representation": "byte-identical copy of previously allowlisted capture"
+    }
+  ]
+}

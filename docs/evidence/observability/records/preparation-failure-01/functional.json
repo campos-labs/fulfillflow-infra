@@ -1,0 +1,17 @@
+{
+  "success": false,
+  "error": "HTTP_STATUS_UNEXPECTED",
+  "last_operation": "forwarding_preflight",
+  "run_id": "edbbbf2b-0088-40d3-8d9c-aaf2d7d5a80a",
+  "event_id": "infra-smoke-edbbbf2b-0088-40d3-8d9c-aaf2d7d5a80a",
+  "webhook_offered": false,
+  "acceptance_observed": false,
+  "acceptance_verified": false,
+  "tracking_completed": false,
+  "order_completed": false,
+  "notifications_simulated": false,
+  "duplicate_verified": false,
+  "checkpoint": {
+    "event_id": "infra-smoke-edbbbf2b-0088-40d3-8d9c-aaf2d7d5a80a"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "host": {
+    "utc": "2026-09-27T10:48:03.148573+00:00",
+    "available_gib": 5.736637115478516,
+    "required_gib": 5
+  },
+  "runtime": {
+    "source": "9e3a135a00db218643633c7165d3106f0c8285e1",
+    "namespace_uid": "264fe404-8d5d-467b-b10e-194ae48c5995",
+    "healthy_event_id": "infra-smoke-53cec0ca-6357-43f5-85f6-c0b08d664a20"
+  },
+  "infrastructure_sha": "f6a31641e4286c89f1793460da6fdfbe8a2f2ffe",
+  "unique_events": 1,
+  "resumed_from": null,
+  "new_window_after": null,
+  "mode": "pending-existing-worker-logs",
+  "pending_after": "observability-healthy-01",
+  "autoscaling": false,
+  "tracing": false
+}

@@ -1,0 +1,36 @@
+{
+  "before": {
+    "core-worker": {
+      "name": "core-worker-cc74b4dbd-2sdkw",
+      "uid": "939b3ecc-e557-46eb-beec-f72dd7bff0b5",
+      "restart_count": 6
+    },
+    "tracking-worker": {
+      "name": "tracking-worker-564c9d469d-j47rq",
+      "uid": "dfa8955e-7ff0-46cb-b3cc-681a92238477",
+      "restart_count": 6
+    },
+    "notifications-worker": {
+      "name": "notifications-worker-77544c67d4-95sgt",
+      "uid": "5d6e452f-376e-4c7f-ad4e-3b6ec7474c88",
+      "restart_count": 6
+    }
+  },
+  "after": {
+    "core-worker": {
+      "name": "core-worker-cc74b4dbd-2sdkw",
+      "uid": "939b3ecc-e557-46eb-beec-f72dd7bff0b5",
+      "restart_count": 6
+    },
+    "tracking-worker": {
+      "name": "tracking-worker-564c9d469d-j47rq",
+      "uid": "dfa8955e-7ff0-46cb-b3cc-681a92238477",
+      "restart_count": 6
+    },
+    "notifications-worker": {
+      "name": "notifications-worker-77544c67d4-f8cjj",
+      "uid": "9d20f526-4c36-43fe-8784-faea9047ceaf",
+      "restart_count": 0
+    }
+  }
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "method": "GET",
+    "endpoint": "carrier-events",
+    "started_at": "2026-09-27T10:48:57.189662+00:00",
+    "start_monotonic": 4205.312,
+    "http_status": 503,
+    "error": null,
+    "end_monotonic": 4205.359,
+    "sent_request_id": "00559ff1-5066-4c1e-a6e0-2fd64b67fb7c",
+    "response_request_id": "00559ff1-5066-4c1e-a6e0-2fd64b67fb7c",
+    "problem_metadata_state": "recognized",
+    "problem_code": "SERVICE_UNAVAILABLE",
+    "problem_request_id": "00559ff1-5066-4c1e-a6e0-2fd64b67fb7c",
+    "duration_seconds": 0.04700000000048021
+  }
+]

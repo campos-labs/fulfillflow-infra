@@ -1,0 +1,4 @@
+{
+  "replicas_requested": 1,
+  "rollout_confirmed": true
+}

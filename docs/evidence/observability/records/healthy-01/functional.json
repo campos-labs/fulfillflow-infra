@@ -1,0 +1,21 @@
+{
+  "success": true,
+  "error": null,
+  "last_operation": "effects_observation",
+  "run_id": "53cec0ca-6357-43f5-85f6-c0b08d664a20",
+  "event_id": "infra-smoke-53cec0ca-6357-43f5-85f6-c0b08d664a20",
+  "webhook_offered": true,
+  "acceptance_observed": true,
+  "acceptance_verified": true,
+  "tracking_completed": true,
+  "order_completed": true,
+  "notifications_simulated": true,
+  "duplicate_verified": false,
+  "checkpoint": {
+    "event_id": "infra-smoke-53cec0ca-6357-43f5-85f6-c0b08d664a20",
+    "order_id": "e89243a1-5d99-4471-8ee9-332784a38ac7",
+    "shipment_id": "1b8cc417-fc2d-4868-919b-fbb15324b3ee",
+    "inbox_event_id": "3c622aa2-d1f1-4e13-aa03-9eabe1e7e757",
+    "tracking_event_id": "5cea84e6-61a3-5f91-8fd3-7d9226e44186"
+  }
+}

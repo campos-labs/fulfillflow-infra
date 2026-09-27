@@ -575,6 +575,9 @@ publicação, recepção durável, processamento local e confirmação pelo obse
 Um campo timestamp ou um log DONE não prova todos esses marcos. Durações monotônicas
 são locais ao processo; alinhamento UTC entre processos tem incerteza e não autoriza
 subtrair relógios sem explicitar limites. Intervalos sobrepostos não são somados.
+Quando o objetivo for localizar atrasos, observar negócio e rollout em paralelo,
+com marcos separados. A espera sequencial de um ensaio funcional não deve ser
+interpretada como atraso interno da aplicação ou comparação de desempenho.
 
 Novos ensaios usam destino próprio, dados sintéticos, uma réplica por processo,
 volume pequeno e encerramento definido. No cenário de pendência autorizado, somente

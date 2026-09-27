@@ -16,15 +16,12 @@ São duas avaliações experimentais complementares da mesma aplicação, com pr
 e conjuntos separados. As campanhas estão encerradas; não exigem nova carga para
 conferir os resultados. AKS/ACR permanecem referências opcionais não implantadas.
 
-A branch `feature/v1.2-observability` inicia uma exploração delimitada de correlação
-e diagnóstico. Seu [plano e critérios de continuidade](RELEASE_PLAN.md#4-exploração-de-observabilidade)
-são separados das avaliações encerradas. A correlação offline dos registros já é
-reproduzível; as verificações de [fluxo saudável](docs/evidence/observability/healthy-01-review.json)
-e [trabalho aguardando consumo](docs/evidence/observability/pending-02-review.json)
-confirmaram correlação entre os três workers e os estados públicos. As janelas
-estão encerradas para reavaliação; tracing ainda não foi instalado. O tempo de
-confirmação também depende da coordenação do observador. Falhas anteriores de
-preparação/admissão permanecem preservadas, sem causa interna determinada.
+A branch `feature/v1.2-observability` consolidou dois casos diagnósticos usando
+correlação existente, sem tracing. O [índice técnico e evidências](docs/evidence/observability/README.md)
+reúne cobertura, limites, registros examináveis e conferência offline. O
+[plano](RELEASE_PLAN.md#4-exploração-de-observabilidade) delimita uma possível fatia
+HTTP interna; os casos concluídos não exigem nova execução.
+
 
 ## Comece por aqui
 

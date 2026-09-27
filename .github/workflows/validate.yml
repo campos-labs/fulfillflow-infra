@@ -55,6 +55,9 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           uv run --frozen python docs/evidence/scaling/reproduce.py
           exit $LASTEXITCODE
+      - name: Verify published observability records
+        shell: pwsh
+        run: uv run --frozen python scripts/verify_observability_evidence.py
       - name: Reproduce observability discovery without cluster access
         shell: pwsh
         run: |
