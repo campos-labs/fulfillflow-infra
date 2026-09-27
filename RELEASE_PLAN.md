@@ -295,6 +295,16 @@ alterar probes, regras de negócio ou aplicação congelada para fazer o ensaio 
 OpenTelemetry ainda não foi instalado; a ocorrência sustenta incluir a fronteira
 HTTP na investigação, mas não demonstra que uma plataforma nova seja necessária.
 
+**Nova janela autorizada:** uma única tentativa saudável adicional, em
+`observability-healthy-01`, reutiliza apenas o ambiente dedicado de observabilidade.
+A consulta anterior e o nó parado são pré-requisitos; o evento terá identidade nova.
+Antes de criar pedido/remessa ou oferecer webhook, o executor exige GET 200 e lista
+vazia para essa identidade através de Core → Tracking. Uma falha encerra a tentativa,
+sem retry de oferta. O registro de consulta fica junto das medições HTTP; os logs
+dos workers continuam capturados. O limite é 15 minutos mais encerramento, com as
+mesmas guardas de memória. Essa preparação não comprova antecipadamente a admissão
+nem muda a classificação do 503 anterior. Não alterar a aplicação ou instalar tracing.
+
 ### Continuidade após a exploração
 
 Prometheus e verificações de segurança permanecem possibilidades por lacuna

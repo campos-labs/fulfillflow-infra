@@ -181,6 +181,7 @@ class PilotTests(unittest.TestCase):
                 http.return_value.return_value.status = 200
                 verifier = Mock(event_id="event")
                 verifier.prepare.return_value = ("order", "shipment", "code")
+                verifier.get.return_value = {"items": [], "total": 0}
                 verifier.webhook.return_value = (b"synthetic", {})
                 verifier.admit.return_value = ("inbox", "/inbox")
                 verifier.tracking.return_value = "event"
@@ -247,6 +248,17 @@ class PilotTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "RESUME_ALREADY_CLAIMED"):
                 pilot.resume_identity(private, private / "absent")
             command.assert_not_called()
+
+    def test_forwarding_preflight_is_get_only_and_requires_empty_valid_result(self):
+        verifier = Mock(event_id="fresh-event")
+        verifier.get.return_value = {"items": [], "total": 0}
+        pilot.check_forwarding(verifier)
+        self.assertIn("fresh-event", verifier.get.call_args.args[0])
+        verifier.prepare.assert_not_called()
+        verifier.admit.assert_not_called()
+        verifier.get.return_value = {"items": [], "total": 1}
+        with self.assertRaises(pilot.Failure):
+            pilot.check_forwarding(verifier)
 
     def test_memory_failure_terminates_owned_child(self):
         child = Mock()

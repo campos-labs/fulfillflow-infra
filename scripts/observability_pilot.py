@@ -178,6 +178,58 @@ def resume_identity(private, source):
     return bootstrap
 
 
+def new_window_identity(private, source):
+    result = json.loads((source / "inspection.json").read_bytes())
+    summary = json.loads((source / "summary.json").read_bytes())
+    if (
+        result.get("query_status") != 200
+        or result.get("finding") != "no_record_returned"
+        or not summary.get("container_stopped")
+    ):
+        raise RuntimeError("INSPECTION_NOT_REVIEWED")
+    if (private / "healthy-window-02.claim").exists():
+        raise RuntimeError("WINDOW_ALREADY_CLAIMED")
+    identity = json.loads((private / "identity.json").read_bytes())
+    if identity.get("source") != SOURCE or identity.get("image_id") != env.IMAGE_ID:
+        raise RuntimeError("APPLICATION_IDENTITY")
+    node = json.loads(env.command(["docker", "inspect", CLUSTER + "-control-plane"]))[0]
+    if (
+        node["Id"] != identity["container_id"]
+        or node["Config"]["Labels"].get("io.x-k8s.kind.cluster") != CLUSTER
+        or node["State"]["Running"]
+    ):
+        raise RuntimeError("NODE_IDENTITY")
+    if env.command(["docker", "ps", "-q"]).strip():
+        raise RuntimeError("CONCURRENT_CONTAINERS")
+    return {
+        "source": SOURCE,
+        "namespace_uid": identity["namespace_uid"],
+        "prior_event_id": result["event_id"],
+    }
+
+
+def check_forwarding(verifier):
+    # Fresh verifier identity: this GET cannot replay the prior uncertain admission.
+    from urllib.parse import urlencode
+
+    verifier.phase = "forwarding_preflight"
+    result = verifier.get(
+        "/api/v1/carrier-events?"
+        + urlencode(
+            {
+                "external_event_id": verifier.event_id,
+                "carrier_code": "carrier-alpha",
+                "page": 1,
+                "page_size": 2,
+            }
+        )
+    )
+    if result.get("items") != [] or type(result.get("total")) is not int or result["total"] != 0:
+        raise Failure("FORWARDING_PREFLIGHT_SCHEMA")
+    verifier.evidence.emit("forwarding_preflight_passed", event_id=verifier.event_id)
+    verifier.phase = "prepare"
+
+
 def flow(private, output):
     identity = json.loads((private / "identity.json").read_bytes())
     node = json.loads(env.command(["docker", "inspect", CLUSTER + "-control-plane"]))[0]
@@ -237,6 +289,7 @@ def flow(private, output):
             verifier = ObservedVerifier(flow_config, evidence, transport)
             try:
                 evidence.emit("started", event_id=verifier.event_id, unique_events=1)
+                check_forwarding(verifier)
                 order, shipment, code = verifier.prepare()
                 raw, headers = verifier.webhook(code)
                 inbox, location = verifier.admit(raw, headers)
@@ -335,17 +388,23 @@ def stage(name, private, output):
             terminate_child(child)
 
 
-def execute(private, output, resume_from=None):
+def execute(private, output, resume_from=None, new_window_from=None):
     if CLUSTER != EXPECTED_CLUSTER:
         raise RuntimeError("OBSERVABILITY_ENVIRONMENT_REQUIRED")
     if (
-        (private.exists() and resume_from is None)
+        (private.exists() and resume_from is None and new_window_from is None)
         or output.exists()
         or private.is_relative_to(env.ROOT)
     ):
         raise RuntimeError("EXCLUSIVE_PATHS_REQUIRED")
     host = guard(5)
-    facts = resume_identity(private, resume_from) if resume_from else env.preflight()
+    facts = (
+        new_window_identity(private, new_window_from)
+        if new_window_from
+        else resume_identity(private, resume_from)
+        if resume_from
+        else env.preflight()
+    )
     output.mkdir(parents=True, exist_ok=False)
     write(
         output / "protocol.json",
@@ -355,6 +414,7 @@ def execute(private, output, resume_from=None):
             "infrastructure_sha": env.command(["git", "rev-parse", "HEAD"]).strip(),
             "unique_events": 1,
             "resumed_from": resume_from.name if resume_from else None,
+            "new_window_after": new_window_from.name if new_window_from else None,
             "mode": "healthy-existing-worker-logs",
             "autoscaling": False,
             "tracing": False,
@@ -362,15 +422,17 @@ def execute(private, output, resume_from=None):
     )
     if resume_from:
         write(private / "observability-resume.claim", {"output": output.name, "utc": utc()})
+    if new_window_from:
+        write(private / "healthy-window-02.claim", {"output": output.name, "utc": utc()})
     complete, error = False, None
     stopped = False
     try:
-        if resume_from is None:
+        if resume_from is None and new_window_from is None:
             print("Observability: fresh environment (historical volumes preserved)", flush=True)
             stage("bootstrap", private, output)
         else:
             print(
-                "Observability: resuming reviewed pre-offer failure; bootstrap preserved",
+                "Observability: existing dedicated environment; bootstrap preserved",
                 flush=True,
             )
         guard(2)
@@ -421,6 +483,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--stage", choices=("bootstrap", "flow", "inspect"))
     parser.add_argument("--resume-from", type=Path)
+    parser.add_argument("--new-window-from", type=Path)
     args = parser.parse_args()
     private, output = args.private.resolve(), args.output.resolve()
     try:
@@ -441,7 +504,10 @@ def main():
                 pass
             try:
                 return execute(
-                    private, output, args.resume_from.resolve() if args.resume_from else None
+                    private,
+                    output,
+                    args.resume_from.resolve() if args.resume_from else None,
+                    args.new_window_from.resolve() if args.new_window_from else None,
                 )
             finally:
                 lock.unlink()
