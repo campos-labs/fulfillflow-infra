@@ -17,3 +17,6 @@
 
 # Preserve evidence bytes and declared SHA-256 across checkout/commit.
 docs/evidence/operational-a/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+docs/evidence/scaling/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/assets/scaling/*.svg text eol=lf

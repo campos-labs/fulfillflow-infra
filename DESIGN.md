@@ -4,13 +4,14 @@
 
 Este documento define a arquitetura e os contratos operacionais da entrega em
 Kind: verificação de implantação, restauração delimitada e observação
-posterior do trabalho aceito, entregues na v1.0.0. A seção 8.7 define o alvo de
-autoescalonamento da v1.1, ainda não implementado nem verificado. AKS/ACR é uma
+posterior do trabalho aceito, entregues na v1.0.0. A seção 8.7 define o mecanismo de
+capacidade fixa/adaptativa implementado e avaliado para a candidata v1.1. AKS/ACR é uma
 configuração de referência opcional, ainda não implantada; não é dependência local.
 
 O [RELEASE_PLAN](RELEASE_PLAN.md) registra marcos e decisões pendentes. O relatório
-[OPERATIONAL_EVALUATION](docs/OPERATIONAL_EVALUATION.md) reúne protocolos executados,
-resultados, limites e evidências. Um contrato documentado não comprova execução;
+[de recuperação](docs/OPERATIONAL_EVALUATION.md) e o
+[de capacidade](docs/SCALING_EVALUATION.md) reúnem os protocolos executados,
+resultados, limites e evidências de cada avaliação. Um contrato documentado não comprova execução;
 um teste da aplicação não substitui sua verificação no ambiente operacional.
 
 A referência é `campos-labs/fulfillflow`, `v1.3.0-rc.1`, commit
@@ -413,306 +414,137 @@ recuperação explícita. Nenhuma reposição automática ou alteração de crit
 observar resultados. Prazos, ordem e denominadores executados ficam no
 [relatório operacional](docs/OPERATIONAL_EVALUATION.md).
 
-### 8.7. Alvo de autoescalonamento em Kind
+<a id="87-alvo-de-autoescalonamento-em-kind"></a>
 
-**Contrato da extensão v1.1; piloto integrado concluído, comparação formal pendente.** A base permanece
-conforme as seções anteriores. A extensão varia apenas réplicas de um worker
-selecionado, com nós e recursos do host fixos, aplicação congelada e demais
-workloads estáveis. Calibração começa com uma e duas réplicas; a política mantém
-mínimo de uma e máximo inicial de duas. Qualquer ampliação exige capacidade
-verificada e configuração identificada antes de nova execução, fora desta calibração.
+### 8.7. Capacidade fixa e adaptativa em Kind
 
-Criar ambiente de piloto dedicado, sem reutilizar bancos, volumes ou namespace
-da avaliação encerrada; manter o laboratório histórico parado. Identificar cluster,
-UIDs, imagens, configuração e recursos do host. Réplicas compartilham CPU, memória,
-banco e broker; soma de requests não comprova folga, e mais pods não criam nós.
-Preservar os parâmetros por réplica da seção 7. Contabilizar pools multiplicados,
-limites PostgreSQL, controladores, coleta e gerador, inclusive quando externos ao cluster.
+**Contrato implementado e comparação concluída.** A referência executada e os
+resultados estão no [relatório de capacidade](docs/SCALING_EVALUATION.md).
+Esta seção define o mecanismo e as invariantes; não autoriza nova carga.
+Os contratos históricos de calibração/pilotos permanecem na
+[referência anterior à consolidação](https://github.com/campos-labs/fulfillflow-infra/blob/58f4483e0fdb2e5273b9b533d9173de494818a3c/DESIGN.md#87-alvo-de-autoescalonamento-em-kind).
 
-**Calibração preparatória.** O candidato inicial é `core-worker`: sua inbox durável
-permite observar trabalho elegível após ACK. A réplica também executa recepção e
-publicação; eventual efeito não será atribuído exclusivamente ao processamento SQL.
-A consulta conta `PENDING`/`RETRY_WAIT` vencidos de `tracking.apply.v1`, em mensagens,
-com retry futuro, `BLOCKED`, concluídos e idade apresentados separadamente.
-A leitura pode incluir trabalho em transação ainda não confirmada: não mede apenas
-mensagens ociosas. Sua utilidade ainda será avaliada. Role própria somente leitura,
-quatro colunas autorizadas e timeout SQL limitam a coleta; erro não produz zero.
+**Alvo e isolamento.** Variar somente as réplicas do `core-worker`, entre uma e
+duas, com nós, aplicação e recursos por pod fixos. Demais workloads permanecem
+estáveis. Esse processo também recebe e publica mensagens; não atribuir qualquer
+efeito exclusivamente ao processamento SQL. Réplicas compartilham host, banco e
+broker; mais pods não criam nós. Preservar os recursos, pools, prefetch, leases e
+probes da seção 7. Contabilizar pools multiplicados e componentes auxiliares.
 
-O instrumento usa Locust HttpSession em processo separado e agenda aberta limitada.
-Registra para cada despacho o horário previsto, a tentativa, atraso e concorrência;
-`client_concurrency_limit` e `scheduler_lag` podem ocorrer simultaneamente. A tolerância
-de atraso permanece 250 ms. Não corrigir retrospectivamente uma oferta não realizada.
+A comparação usa `fulfillflow-scale-compare-01`, habilitado por
+`FULFILLFLOW_SCALE_ENVIRONMENT=comparison-v1`, com identidade, namespace, bancos,
+volumes e credenciais próprios. O piloto usa `fulfillflow-scale-01`; a base de
+recuperação, `fulfillflow-local-01`. Não montar volumes históricos, reutilizar
+bancos ou apagar evidências para repetir. Kubeconfig e port-forward são exclusivos;
+acesso HTTP em loopback. O bootstrap confere imagem e fonte congeladas.
 
-A coleta SQL/Kubernetes/kubelet tem execução independente da observação funcional,
-com início/fim por amostra e atraso sobre a cadência nominal de cinco segundos.
-Não instala Prometheus nesta etapa. Registra CPU acumulada e RSS por PID/criação
-na árvore do instrumento e memória disponível do host. Processos muito curtos podem
-escapar à amostragem; esses valores não são contabilização integral do host e não
-devem ser somados aos recursos do nó, pois há sobreposição. Ausência/erro de coleta
-interrompe o aceite; não vira zero. Tempos funcionais continuam limites superiores
-observados, não horários exatos da confirmação de negócio.
+**Estado inicial.** Com os seis workloads parados e broker vazio, restaurar
+os três bancos do mesmo baseline privado, depois de conferir container/namespace,
+templates e hashes. Filas não vazias impedem a operação; não purgar. Aguardar
+SQL e broker reais por prazo limitado. Preparar o mesmo conjunto lógico de
+1.020 entidades, executar ANALYZE e estabilizar por 30 s, sem aquecimento de
+negócio. IDs internos, horários e caches físicos podem variar. Preservar snapshots
+privados finais; isso não comprova restauração de backup em outro ambiente.
 
-No diagnóstico, a versão 2 dos metadados HTTP preserva UUIDs válidos de
-correlação enviados/recebidos, separadamente, e códigos de problema permitidos
-(`SERVICE_UNAVAILABLE`, `DATABASE_UNAVAILABLE`, `INTERNAL_ERROR`). Examina no
-máximo 4 KiB de envelope `application/problem+json` de resposta de erro, exigindo
-status correspondente; formato inválido ou código desconhecido tem estado explícito,
-sem copiar valores arbitrários. Não exporta corpo, detalhe, tokens ou cabeçalhos
-completos. Não faz nova consulta/retry nem muda o veredito funcional. A duração
-HTTP termina antes dessa extração; a versão do instrumento distingue coletas futuras.
-Esses metadados não recuperam retroativamente a causa de falhas anteriores.
+**Controle e sinal.** KEDA 2.20.2, manifesto oficial core, hash e imagens amd64
+fixados em `config/keda-pilot.json`, com `IfNotPresent`. Namespace `keda`, alvo no
+namespace `fulfillflow` e RBAC oficial no cluster dedicado. Um único HPA governa
+o alvo. As três condições mantêm controlador, consulta e coleta: mínimo=máximo
+1 ou 2 nas fixas, mínimo 1 e máximo 2 na adaptativa. Manifests/scripts não podem
+repor `replicas` durante observação. Recuperação automática, GitOps e rollout de
+configuração não atuam simultaneamente sobre o alvo nessa comparação.
 
-Atribuir processamento pelos logs `core/process/DONE` da aplicação congelada,
-correlacionados ao `request_id` do aceite, com UID e reinícios dos pods. Exigir
-uma correspondência por aceite e inventário estável; lacuna não demonstra perda.
-Dois pods Ready não provam participação de ambos. Não alterar a aplicação para
-produzir essa atribuição. Consultas, recursos e logs têm limites de coleta e não
-substituem a verificação funcional por evento.
+O scaler consulta PostgreSQL: quantidade de `tracking.apply.v1` em `PENDING` ou
+`RETRY_WAIT` vencido, com pelo menos 5 s desde `created_at`; alvo de uma mensagem
+envelhecida por réplica. O orçamento de 5 s é escolha do protocolo dentro do prazo
+funcional de 60 s, não limiar ótimo. Backlog elegível sem esse filtro de idade é
+uma série distinta. Pode incluir trabalho em transação ainda não confirmada;
+não representa toda a cadeia nem apenas espera ociosa. Retry futuro, `BLOCKED`,
+concluídos e idade ficam separados. Escala não rearma `BLOCKED`.
 
-**Caracterização posterior ao piloto.** Antes de uma comparação formal, a
-condição fixa admite dois perfis limitados, com patamar de 30 s a 12 ou 16
-mensagens/s entre 15 s a 2/s na entrada e na saída (420 ou 540 eventos).
-O perfil histórico permanece inalterado. Exigir uma réplica, controle amostrado
-do host e observador com reutilização terminal; preservar recursos e prazo.
-A progressão entre perfis depende da revisão dos limites definidos previamente
-no RELEASE_PLAN. Não extrapolar capacidade máxima nem transportar essas taxas
-para KEDA automaticamente.
-
-Nos diagnósticos fixos a 12/s ou 16/s, permitir teto HTTP 16 em lugar de oito,
-sem mudar agenda, observador ou workload. Identificar o instrumento e a mudança
-no protocolo; oferta planejada igual não garante demanda efetiva igual.
-Essa exceção não altera os padrões das calibrações ou do piloto KEDA.
-
-A extensão de duração admite somente 45 s a 12/s com teto HTTP 16, mantendo
-15 s a 2/s antes/depois: 600 eventos. Identificar separadamente esse diagnóstico
-para observar persistência da pressão; não alterar os perfis anteriores ou
-o prazo funcional. Não constitui comparação formal nem aciona KEDA.
-
-**Diagnóstico de capacidade adicional.** Após conferir acúmulo e margem no
-perfil de 16/s, permitir duas réplicas fixas somente com 30 s a 16/s, teto HTTP
-16 e 15 s a 2/s antes/depois (540 eventos). Mesmos recursos por pod, imagem,
-prazo e observador; identificar `fixed_replicas=2` e pasta `fixed-2`.
-Não envolve HPA/ScaledObject sobre o alvo. Exigir atribuição por pod para
-julgar participação, recursos totais e redução de pendência; não presumir
-ganho nem atribuir efeitos à automação. Uma sucessora exploratória não
-substitui repetições e preparação equivalentes de comparação formal.
-
-**Controle e sinal.** KEDA é a opção preferencial e integra-se ao HPA; não criar
-outro HPA independente sobre o mesmo alvo. Na condição fixa, o controlador não
-pode disputar réplicas com o executor. Na adaptativa, manifests de rotina e scripts
-não devem repor `replicas` durante a observação. Restauração automática da v1.0.0,
-GitOps e mudanças de configuração não participam simultaneamente deste piloto.
-
-Definir a métrica pelo trabalho elegível que o worker pode processar. Fila RabbitMQ,
-inbox durável, trabalho em execução/lease e `BLOCKED` têm significados distintos;
-mais réplicas não rearmam bloqueios. Confrontar o sinal com registros por evento e
-estado persistido, sem somar cópias técnicas. Mínimo de uma réplica impede escala
-a zero, mas não torna suficiente uma métrica que omite pendências após ACK.
-
-KEDA pode consultar PostgreSQL ou uma métrica exportada. A escolha deve declarar
-consulta, estados, idade, unidades, limiar, cadência, custo e comportamento diante
-de dados ausentes/obsoletos. Acesso SQL operacional é somente leitura, com role
-restrita ao banco e dados necessários, timeout e conexões limitadas; não usar
-credenciais do worker nem contornar interfaces de negócio para escrever dados.
-Credenciais, RBAC e acessos de rede dos componentes auxiliares devem ser explícitos.
-Nenhum erro de consulta vira zero pendências. Documentar/testar o comportamento
-real do controlador em falha de métrica, sem presumir que sempre conserva réplicas.
-
-**Piloto KEDA delimitado.** KEDA 2.20.2, manifesto oficial core (sem webhook de
-admissão adicional), hash e imagens amd64 fixados em `config/keda-pilot.json`.
-Imagens por digest usam `IfNotPresent`: reaproveitar cache local sem exigir
-consulta ao registry em cada retomada; download inicial continua necessário.
-Instalação exclusiva em `fulfillflow-scale-01`; namespace `keda`, observação limitada
-a `fulfillflow`, RBAC oficial do controlador no cluster dedicado. PostgreSQL usa
-role própria somente leitura nas quatro colunas da inbox, timeout de 2 s e limite
-de duas conexões. Segredo referenciado por TriggerAuthentication, sem modificar
-credenciais da aplicação. Regra de rede permite PostgreSQL ao namespace KEDA;
-o CNI local não comprova enforcement de NetworkPolicies.
-
-Sinal: quantidade de `tracking.apply.v1` elegíveis (`PENDING`/`RETRY_WAIT` vencidos)
-com pelo menos cinco segundos desde `created_at`. Alvo de uma mensagem envelhecida
-por réplica, entre uma e duas réplicas. Cinco segundos é orçamento provisório da
-etapa inicial dentro do prazo funcional de 60 s; não é limiar ótimo inferido dos
-resultados nem mede exclusivamente espera ociosa. SQL retorna zero somente quando
-não há linhas elegíveis; erro continua erro. Sem fallback ou escala a zero.
-Polling KEDA 5 s, HPA conforme cadência efetiva registrada do cluster (padrão 15 s),
+Role própria somente leitura em quatro colunas da inbox, timeout SQL 2 s e limite
+de duas conexões. TriggerAuthentication referencia segredo próprio; não usar a
+credencial do worker. Erro de consulta permanece erro; sem fallback ou escala a
+zero. Polling KEDA 5 s; HPA conforme cadência efetiva registrada (padrão 15 s),
 estabilização de subida 15 s e descida 300 s. `cooldownPeriod` não governa 2→1.
-O perfil histórico permanece o da calibração 05. A sucessora opt-in
-`-CapacityProfile` usa 15 s a 2/s, 30 s a 16/s, 15 s a 2/s (540 eventos),
-HTTP 16, reutilização terminal, captura HTTP v2 e controle do host. Começa com
-uma réplica e usa a mesma política, sem alterar limiares ou recursos por pod.
-Identificar condição adaptativa e diferenças de coleta: status/métrica do
-controlador e logs dos pods são coletados durante a carga para preservar
-atribuição quando pods forem removidos. Esse custo adicional não existe na
-condição fixa e impede presumir equivalência integral da instrumentação.
-Não exigir aumento de réplicas ou interpretar `autoscaling_tested=true` como
-ciclo 1→2→1 demonstrado. Esta sucessora é piloto, não comparação formal.
+Regras de rede declaradas não comprovam enforcement sem testes de tráfego.
 
-**Extensão exploratória de duração.** Opt-in adicional `-SustainedProfile`
-exige `-CapacityProfile` e permite somente 15 s a 2/s, 60 s a 16/s e 15 s a
-2/s: 1.020 eventos em 90 s. O limite histórico de 600 continua nos demais
-perfis; a exceção exige identidade explícita `sustained_adaptive=true` e
-validação da sequência exata. Não altera política, recursos, concorrência,
-prazo por evento, coleta ou verificações funcionais. A duração maior também
-amplia volume, preparação e custo total de observação; não presumir que
-somente o controlador receberá mais pressão. Guardas por fase, prazo global de
-20 minutos e encerramento permanecem; não prolongar automaticamente se faltarem
-360 s para a observação posterior. Esta opção não autoriza outro perfil fixo.
+**Oferta e verificação.** `config/scale-comparison.json` fixa três blocos, três
+condições e seed `260927`; cada condição ocupa cada posição uma vez. Não alterar
+ordem, taxa, limiar ou recursos após observar resultados. Perfil: 15 s a 2/s,
+60 s a 16/s, 15 s a 2/s, total 1.020 eventos. Locust `HttpSession` executa uma
+agenda aberta limitada, teto HTTP 32 e tolerância de despacho 250 ms. Registrar
+planejado, tentativa de despacho, atraso, concorrência, oferta e resposta.
+`client_concurrency_limit` e `scheduler_lag` podem coexistir. Oferta omitida não
+é perda de trabalho aceito. Aceite desconhecido não autoriza reenvio.
 
-O protocolo separa preparação/falha da métrica da oferta funcional. Injeta
-`SELECT 1/0` somente na consulta do ScaledObject, sem alterar banco ou aplicação,
-registra falha da API de métricas/condições do controlador e restaura a consulta
-original. Não interpreta valores antigos do HPA como leitura válida. Após a carga,
-observa por até 360 s sem novos eventos. Ausência de escala com leituras saudáveis
-e ausência de critério nas amostras distingue-se de observação indisponível; não
-prova o comportamento entre amostras. Logs por pod são preservados durante a execução
-para acompanhar também pods removidos. Inventariar reinícios e lacunas de leitura.
+Observador concorrente 16, `reuse_terminal_reads=true`, sem reutilização entre
+eventos. Preservar HMAC, identidades, efeitos únicos, Tracking, Order esperado e
+Notifications `SIMULATED`. Prazo de 60 s começa no aceite durável observado;
+acompanhar cada aceite por até 120 s, inclusive próximo ao fim da carga. Distinguir
+confirmação no prazo, tardia, pendência conhecida, falha de negócio e inconclusão.
+Timeout não demonstra perda. O tempo inclui consultas e validações; não é duração
+pura do processamento. Estados de negócio e asserções permanecem os da aplicação.
 
-No encerramento, exportar configuração/status, remover somente o ScaledObject
-próprio e aguardar a exclusão do HPA antes de repor uma réplica e parar o nó.
-Não apagar CRDs, credenciais, volumes nem históricos. A calibração 05 permanece
-referência preparatória com hashes originais; o piloto não é repetição experimental.
+**Coleta e capacidade mantida.** SQL/Kubernetes/kubelet e inventário em execução
+independente da observação funcional, cadência nominal 5 s, com início/fim e atraso
+registrados. Logs `core/process/DONE`, por UID do pod e `request_id` do aceite,
+comprovam participação: exigir correspondência por aceite, reinícios e lacunas
+identificados. Ready não comprova processamento. Primeiro DONE é conclusão
+registrada, não instante inicial. UTC alinha fontes; não presumir relógios idênticos.
 
-**Qualificação da sucessora adaptativa (versão 2).** Separar realização
-da oferta, conclusão dos aceitos, prazo, atribuição e observação da política.
-Registrar fases do host e exigir ao menos 2 GiB livres, energia conectada e
-monitor recente antes da oferta e nos pontos de controle seguintes. Violação
-amostrada permanece impeditiva nessa tentativa; não continuar só porque a
-memória recuperou. Verificações são cooperativas entre operações limitadas,
-não aborto instantâneo. O encerramento preserva volumes e evidências parciais.
+A janela comum é [primeira oferta agendada, +450 s], mesmo que eventos terminem
+antes ou depois. Integrar em degraus pods existentes do worker, inclusive em
+encerramento. Running, Ready e réplicas desejadas são séries distintas. Exigir
+cobertura das bordas e intervalos de até 10 s; não prometer detectar pods que
+existam inteiramente entre amostras. Pod-tempo não é CPU, custo Azure ou capacidade
+de todo o cluster. Contadores do scaler não substituem evidência funcional.
 
-Oferta incompleta por itens não enviados pode permitir observação posterior
-se os aceitos têm conclusão conhecida, atribuição completa e host seguro;
-a tentativa continua reprovada pela fidelidade da carga. Aceite desconhecido,
-falha funcional/atribuição ou guarda do host impedem essa continuação.
-Conclusão tardia permanece explicitamente tardia; p95 acima de 30 s e idade
-acima de 5 s são achados que exigem revisão antes de nova campanha, não
-riscos do host que proíbem observar o controlador em segurança.
-Preservar amostras parciais em `post-load.jsonl` e o estado em
-`post-load-outcome.json`. Retorno a uma réplica por cleanup não comprova
-descida automática; descida ociosa não testa retirada durante processamento.
-Primeiro DONE é conclusão registrada, não instante de início; amostra Ready
-não identifica o instante exato da transição.
+Coletar CPU/RSS dos processos do instrumento, memória disponível e recursos dos
+workloads. Processos curtos podem escapar às amostras; host e nó se sobrepõem e
+não devem ter consumos somados. O procedimento é comum, mas mais pods podem exigir
+mais consultas. Prometheus não integra esta referência; séries temporais são
+exportadas pelo coletor existente. A ausência de coleta não vira valor zero.
 
-**Comparação prospectiva, protocolo 1.** `config/scale-comparison.json` fixa
-três condições: uma réplica, duas réplicas e adaptação entre uma e duas.
-Todas mantêm KEDA, a consulta e a coleta do controlador; nas fixas o ScaledObject
-tem mínimo igual ao máximo (1 ou 2). Assim a disponibilidade do controlador e a
-forma de coleta não se confundem com a capacidade adaptativa. Não representa um
-ambiente fixo sem KEDA nem permite atribuir custo zero ao controlador.
+Metadados HTTP v2 preservam UUIDs de correlação enviados/recebidos e códigos de
+problema permitidos (`SERVICE_UNAVAILABLE`, `DATABASE_UNAVAILABLE`, `INTERNAL_ERROR`).
+Examinar no máximo 4 KiB de envelope `application/problem+json`, com status
+correspondente. Não exportar corpo, detalhe, tokens ou headers completos; estado
+inválido/desconhecido fica explícito. Extração ocorre depois do relógio da duração
+HTTP e não acrescenta retry. Metadados novos não recuperam causas históricas.
 
-Cluster exclusivo `fulfillflow-scale-compare-01`, selecionado apenas por
-`FULFILLFLOW_SCALE_ENVIRONMENT=comparison-v1`. Credenciais, identidade e volumes
-próprios; nenhum banco ou volume dos pilotos ou da aplicação é reutilizado.
-O bootstrap registra uma referência dos três bancos, com processos da aplicação
-parados e broker vazio. Antes de cada tentativa, conferir UID do namespace,
-container, fonte, templates de runtime e hashes; conferir SQL/broker reais com
-espera de inicialização limitada, parar os seis workloads e restaurar os três bancos
-somente nesse cluster. Filas não vazias impedem restauração; não purgar.
-Preservar snapshots privados do estado final antes de desligar o nó.
+**Validade e encerramento.** Qualificação separada exige oferta integral e até
+28 vagas simultâneas, deixando margem no teto 32. Ela não integra a amostra e não
+exige todos os eventos no prazo. Oferta incompleta, aceite desconhecido, falha do
+instrumento, lacuna de logs, reinício do worker, cobertura insuficiente ou violação
+do host invalidam a execução para comparação. Resultados funcionais desfavoráveis
+permanecem nos dados: não repetir nem excluir por exceder p95 de 30 s ou prazo de
+60 s. Ganho, ausência de vantagem e piora são admissíveis.
 
-A preparação cria o mesmo conjunto lógico de 1.020 pedidos/remessas, com IDs
-externos determinísticos por posição. IDs internos e horários podem variar.
-Executar ANALYZE e 30 s comuns de estabilização, sem aquecimento de negócio.
-Restauração não elimina diferenças de cache do host; declarar essa limitação.
-O instrumento comum inclui inventário real do worker a cada 5 s e logs por pod;
-mais pods podem demandar mais leituras, mesmo usando o mesmo procedimento.
+Exigir energia conectada, ≥5 GiB disponíveis na entrada, ≥2 GiB durante a tentativa
+e nenhum container concorrente. Verificações são amostradas e cooperativas;
+não prometem aborto instantâneo. Orçamento de 20 minutos por tentativa, sem
+iniciar carga se faltarem 480 s para a janela; limites de início por bloco/sessão
+40/160 minutos. Falhas preservam resultados parciais e encerram a progressão.
+Exportar, remover o ScaledObject próprio, aguardar exclusão do HPA e só então
+repor uma réplica/parar o nó. Não excluir CRDs, credenciais, volumes ou históricos.
+Redução pelo cleanup não conta como ação automática da política.
 
-Perfil de 90 s: 15 s a 2/s, 60 s a 16/s, 15 s a 2/s. Teto HTTP comum de 32,
-observador 16, prazo funcional 60 s e observação de cada aceite por até 120 s.
-Uma qualificação separada com uma réplica verifica oferta integral, coleta,
-ambiente e até 28 vagas ocupadas no gerador; não exige sucesso funcional no
-prazo. O executor original exige a mesma revisão Git e hash do protocolo qualificado.
+**Continuação identificada.** O coordenador preserva a qualificação e a primeira
+tentativa da referência `6932632ecc07afbef844f6c7483cfc71d0b5799e`. Compara os arquivos
+originais de `scripts/`, `config/`, `k8s/`, `pyproject.toml` e `uv.lock`, exceto
+`k8s/README.md`; permite apenas os dois arquivos adicionais da continuação nessas
+áreas. Confere hashes, marcadores privados, ordem e identidade. Antes de cada
+posição restante, espera até 180 s por três leituras consecutivas de margem,
+a cada 5 s, sem reiniciar Docker/WSL ou liberar caches automaticamente.
 
-**Continuação autorizada da campanha interrompida.** Um coordenador separado
-preserva a qualificação e a primeira tentativa adaptativa da referência
-`6932632ecc07afbef844f6c7483cfc71d0b5799e`. Antes de continuar, compara contra essa
-referência todos os arquivos originais de `scripts/`, `config/`, `k8s/`,
-`pyproject.toml` e `uv.lock`, exceto a documentação `k8s/README.md`; somente
-os dois arquivos novos do coordenador são
-permitidos nessas áreas. Confere hashes dos pacotes, marcadores privados,
-protocolo, ordem e identidade. O SHA atual do coordenador e a referência medida
-ficam separados; não reescrever o marcador antigo para simular uma nova qualificação.
+Preservar prefixo válido; pasta parcial, início sem evidência, lock residual ou
+resultado inválido exigem revisão. Registrar sessões e pausas, sem apresentar o
+bloco interrompido como contínuo. Resultado lento não autoriza reposição. Ao
+completar nove posições, recusar nova execução. A reprodução de leitura em
+`docs/evidence/scaling/reproduce.py` é independente desse coordenador e não opera
+o cluster; não modifica dados ou o instrumento congelado.
 
-Antes de cada tentativa restante, aguardar no máximo 180 s por três leituras
-consecutivas, a cada 5 s, com pelo menos 5 GiB livres, energia conectada e nenhum
-container ativo. Não reiniciar Docker/WSL nem liberar caches automaticamente.
-A espera ocorre antes da preparação e fora da janela medida, mas integra o
-orçamento da sessão. Preservar a guarda de 2 GiB durante a tentativa.
-
-Continuar somente o prefixo consecutivo de resultados válidos; resultado tardio
-não autoriza repetição. Pasta parcial, registro de início sem evidência completa,
-resultado inválido ou lock residual bloqueiam a continuação para revisão.
-Uma espera encerrada antes de iniciar a tentativa pode ser retomada por comando
-explícito. Cada invocação registra nova sessão e pausas: o primeiro bloco está
-interrompido e não pode ser descrito como bloco temporal contínuo. Os limites de
-40 min para iniciar outra posição do bloco e 160 min para iniciar outra tentativa
-valem dentro de cada sessão; não apagam o intervalo entre sessões. A análise deve
-mostrar tentativas/sessões e a limitação temporal, sem declarar que cumpriu
-integralmente o desenho original de blocos contínuos.
-
-Janela de pod-tempo: [primeira oferta agendada, +450 s], independente da
-conclusão dos eventos; contém 90 s de carga e 360 s seguintes. Medida principal:
-pod-segundos **existentes**, incluindo os em encerramento; Running, Ready e
-terminating são séries auxiliares. Integração em degraus pelas amostras,
-com cobertura das duas bordas e intervalos de até 10 s; não promete observar
-pods que existam inteiramente entre amostras. HPA desejado continua separado.
-Não converter essa estimativa em custo financeiro ou consumo de CPU.
-
-Resultado tardio, pendente, falha de negócio ou observação inconclusiva
-permanece no resultado, sem substituição automática. Oferta incompleta,
-aceite desconhecido, falha do coletor/gerador, lacuna de logs, reinício do
-worker, falta de cobertura ou violação do host invalidam a execução para a
-comparação e encerram a progressão. Inconclusão funcional não demonstra
-perda; falha comprovada do instrumento continua separada. Não descartar uma
-condição por exceder p95 de 30 s ou por apresentar conclusões após 60 s.
-
-**Entrada e resultado.** Locust é o gerador preferencial. Distinguir oferta
-planejada/realizada, aceitação confirmada ou desconhecida, rejeição, conclusão e
-pendência; observar conclusão independentemente do ritmo de admissão. Fixar taxa,
-quantidade, distribuição de entidades/eventos e cadência de polling. Limitar também
-a concorrência do gerador, declarando oferta não realizada quando esse limite
-impedir a taxa prevista; não mascarar sua saturação. Preservar
-HMAC e identidades; aceite desconhecido não autoriza reenvio automático.
-
-Para eventos cujo resultado esperado é aplicação de transição, acompanhar
-Tracking e estado esperado de Order e Notifications `SIMULATED` separadamente;
-o conjunto de transições definido para concluir um pedido deve confirmar `FULFILLED`.
-Não exigir pedido concluído após uma transição intermediária nem confundir resultado
-terminal rejeitado com sucesso. Verificar efeitos únicos e IDs após aumento/redução,
-sem webhook repetido ou rearme de `BLOCKED`. Não enfraquecer probes, SIGTERM ou leases.
-
-O prazo funcional começa no aceite durável observado; registrar oferta e resposta
-202 para declarar o limite dessa observação. Duração local usa relógio monotônico;
-UTC e duração das consultas permitem alinhar séries sem presumir relógios idênticos.
-Separar conclusão no prazo, conclusão tardia, pendência confirmada e observação
-inconclusiva. Coortes devem ter a mesma oportunidade de observação, inclusive
-aceites próximos ao fim da carga. A proporção de conclusão no prazo usa aceites
-confirmados como denominador e identifica consultas inconclusivas; publicar também
-oferta, recusas e aceites desconhecidos, sem descartá-los silenciosamente.
-Prazo/observação posterior são finitos; timeout
-não comprova perda. Drain mede pendências após cessar a oferta; não equivale a fila vazia.
-
-**Coleta e interpretação.** Séries temporais são obrigatórias; Prometheus é a
-opção preferencial, independente da fonte consultada por KEDA. Registrar cadência,
-fonte, unidade e lacunas para demanda, backlog/idade por etapa, réplicas
-solicitadas/disponíveis, eventos de escala e CPU/memória. Guardar IDs dos pods e
-consumo do banco, broker e componentes auxiliares. Contadores do scaler não são
-a única evidência de conclusão. Métricas agregadas não recebem event IDs como labels;
-registros funcionais separados preservam identidade e resultado de cada evento.
-
-Fixar versão/configuração, exportar dados legíveis por máquina e registrar overhead.
-Comparações mantêm instrumentação equivalente. Falha na coleta tem classificação
-própria, não vira sucesso nem falha de negócio. Menos pod-tempo não demonstra menor
-custo Azure em nós fixos; escala observada não prova capacidade ou HA de produção.
-Ganhos, equivalência e piora são admissíveis, sem requisito percentual favorável.
-
-**Encerramento.** Definir antes do piloto limites, interrupção de oferta, coleta
-final e propriedade da escala. Exportar evidências e classificar pendências antes
-de suspender o controlador e parar os recursos dedicados; não deixar KEDA/HPA
-recriando réplicas durante a pausa. Verificar o estado efetivo, preservar volumes
-e não executar destruição como limpeza automática. Comandos só entram no guia
-Kubernetes após implementação e validação; critérios da pausa ficam no RELEASE_PLAN.
 
 ## 9. Limites e evolução
 
@@ -721,18 +553,17 @@ O aceite local não encerra as verificações específicas da nuvem. Nenhum dos 
 marcos, isoladamente, demonstra HA, SLA de produção, capacidade, estabilidade
 prolongada ou solução dos incidentes históricos da aplicação/ferramenta de medição.
 
-A v1.0.0 entrega a recuperação das seções 8.5–8.6 e sua avaliação delimitada.
-A seção 8.7 acrescenta o alvo do piloto de autoescalonamento, sem declarar capacidade
-validada. Comparação formal, cluster autoscaler, Argo CD, canary/blue-green, novos
-provedores de entrega e instrumentação ampla permanecem fora do próximo incremento.
-O piloto KEDA foi exercitado no Kind, sem caracterizar capacidade ou substituir
-a comparação formal. Implantação Azure permanece pendente. O
-[RELEASE_PLAN](RELEASE_PLAN.md) delimita implementação, pausa e decisão posterior;
-essas extensões não são requisitos para encerrar a avaliação da v1.0.0.
+A v1.0.0 entrega recuperação delimitada; a seção 8.7 acrescenta capacidade
+fixa/adaptativa, com comparação concluída no Kind. Os relatórios documentam
+resultados e limites; não há validação de capacidade máxima ou de produção.
+AKS permanece uma referência não implantada. Cluster autoscaler, GitOps,
+canary/blue-green, novos provedores de entrega e instrumentação adicional exigem
+uma decisão própria; não são requisitos de fechamento das avaliações existentes.
+O [RELEASE_PLAN](RELEASE_PLAN.md) registra a candidata e as opções de continuidade.
 
 ## 10. Ambiente local e avaliação em Kind
 
-Kind é o ambiente da avaliação operacional. Ambas as condições usam o mesmo
+Kind é o ambiente da avaliação operacional. As condições de cada avaliação usam o mesmo
 ambiente; não misturar tempos locais com resultados futuros de AKS. A aplicação congelada e a topologia
 de serviços não mudam. O overlay `k8s/overlays/kind-local`
 usa um único nó, local-path com Retain,
@@ -759,10 +590,11 @@ qualquer remoção. Versões e exceção temporária de cgroup ficam em
 - [Budgets Azure](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets)
 - [Controlador de NetworkPolicies no Kind 0.30.0](https://github.com/kubernetes-sigs/kind/blob/v0.30.0/images/kindnetd/cmd/kindnetd/main.go)
 
-As referências abaixo descrevem capacidades das ferramentas; suas versões de
-implantação serão selecionadas por compatibilidade e fixadas no incremento:
+As referências abaixo descrevem mecanismos e possibilidades; KEDA 2.20.2 e as
+dependências executadas estão fixados em config/ e uv.lock. Referência de uma
+ferramenta não comprova adoção ou execução:
 
-- [KEDA e HPA](https://keda.sh/docs/2.18/concepts/)
-- [KEDA: consulta PostgreSQL](https://keda.sh/docs/2.18/scalers/postgresql/)
+- [KEDA e HPA](https://keda.sh/docs/2.20/concepts/)
+- [KEDA: consulta PostgreSQL](https://keda.sh/docs/2.20/scalers/postgresql/)
 - [Prometheus: coleta e séries temporais](https://prometheus.io/docs/introduction/overview/)
 - [Locust: extensão e eventos](https://docs.locust.io/en/stable/extending-locust.html)

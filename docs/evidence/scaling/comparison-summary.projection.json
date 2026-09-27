@@ -1,0 +1,522 @@
+{
+  "complete": true,
+  "attempts_completed": 9,
+  "results": [
+    {
+      "attempt": "b1-p1-adaptive",
+      "session": "original-interrupted",
+      "path": "artifacts/scale-comparison-02/execute/b1-p1-adaptive",
+      "result": {
+        "execution_valid": true,
+        "invalid_reasons": [],
+        "counts": {
+          "completed_in_time": 666,
+          "completed_late": 354
+        },
+        "planned": 1020,
+        "accepted": 1020,
+        "confirmed_in_time": 666,
+        "confirmed_in_time_fraction": 0.6529411764705882,
+        "outcome_limit": "inconclusive is unknown, pending is last observed state, neither means lost",
+        "pod_time": {
+          "existing_pod_seconds": 750.047,
+          "running_pod_seconds": 750.047,
+          "ready_pod_seconds": 734.922,
+          "terminating_pod_seconds": 0.0,
+          "window_seconds": 450.0,
+          "max_gap_seconds": 5.233999999999924,
+          "method": "left-step estimate from sampled inventory; existing includes terminating; not exact lifecycle duration or monetary cost"
+        },
+        "confirmation_observed_seconds": {
+          "count": 1020,
+          "median": 54.405500000000075,
+          "p95": 70.65600000000018,
+          "max": 72.70299999999975
+        },
+        "admission_http_seconds": {
+          "count": 1020,
+          "median": 0.6880000000001019,
+          "p95": 1.2180000000000746,
+          "max": 2.155999999999949
+        },
+        "max_active_requests": 21,
+        "max_eligible": 150,
+        "max_oldest_eligible_seconds": 9.28242,
+        "observed_confirmation_drain_seconds": 60.46799999999985,
+        "drain_censored": false,
+        "http_observation": {
+          "requests": 6126,
+          "transport_errors": 0,
+          "non_200": 0,
+          "limit": "includes recovered failures; later functional success does not erase them"
+        },
+        "condition": "adaptive",
+        "protocol_sha256": "64141222163a7ec40fdf913cf99bdfb79da7c26dbfa0d0d673609f0d805076de",
+        "host_conditions_valid": true,
+        "min_host_available_gib": 2.995361328125,
+        "shutdown_confirmed": true
+      }
+    },
+    {
+      "attempt": "b1-p2-fixed-2",
+      "session": "2026-09-27T03-31-39.118571+00-00",
+      "path": "artifacts/scale-comparison-continuation-01/attempts/b1-p2-fixed-2",
+      "result": {
+        "execution_valid": true,
+        "invalid_reasons": [],
+        "counts": {
+          "completed_in_time": 1020
+        },
+        "planned": 1020,
+        "accepted": 1020,
+        "confirmed_in_time": 1020,
+        "confirmed_in_time_fraction": 1.0,
+        "outcome_limit": "inconclusive is unknown, pending is last observed state, neither means lost",
+        "pod_time": {
+          "existing_pod_seconds": 899.9999999999999,
+          "running_pod_seconds": 899.9999999999999,
+          "ready_pod_seconds": 899.9999999999999,
+          "terminating_pod_seconds": 0.0,
+          "window_seconds": 449.99999999999994,
+          "max_gap_seconds": 5.281999999999982,
+          "method": "left-step estimate from sampled inventory; existing includes terminating; not exact lifecycle duration or monetary cost"
+        },
+        "confirmation_observed_seconds": {
+          "count": 1020,
+          "median": 43.125,
+          "p95": 54.014999999999986,
+          "max": 55.625
+        },
+        "admission_http_seconds": {
+          "count": 1020,
+          "median": 0.5310000000000628,
+          "p95": 0.9059999999999491,
+          "max": 1.7029999999999745
+        },
+        "max_active_requests": 14,
+        "max_eligible": 13,
+        "max_oldest_eligible_seconds": 0.60577,
+        "observed_confirmation_drain_seconds": 42.54699999999997,
+        "drain_censored": false,
+        "http_observation": {
+          "requests": 6140,
+          "transport_errors": 0,
+          "non_200": 2,
+          "limit": "includes recovered failures; later functional success does not erase them"
+        },
+        "condition": "fixed-2",
+        "protocol_sha256": "64141222163a7ec40fdf913cf99bdfb79da7c26dbfa0d0d673609f0d805076de",
+        "host_conditions_valid": true,
+        "min_host_available_gib": 3.0876693725585938,
+        "shutdown_confirmed": true
+      }
+    },
+    {
+      "attempt": "b1-p3-fixed-1",
+      "session": "2026-09-27T03-31-39.118571+00-00",
+      "path": "artifacts/scale-comparison-continuation-01/attempts/b1-p3-fixed-1",
+      "result": {
+        "execution_valid": true,
+        "invalid_reasons": [],
+        "counts": {
+          "completed_in_time": 1020
+        },
+        "planned": 1020,
+        "accepted": 1020,
+        "confirmed_in_time": 1020,
+        "confirmed_in_time_fraction": 1.0,
+        "outcome_limit": "inconclusive is unknown, pending is last observed state, neither means lost",
+        "pod_time": {
+          "existing_pod_seconds": 450.0,
+          "running_pod_seconds": 450.0,
+          "ready_pod_seconds": 450.0,
+          "terminating_pod_seconds": 0.0,
+          "window_seconds": 450.0,
+          "max_gap_seconds": 5.2970000000000255,
+          "method": "left-step estimate from sampled inventory; existing includes terminating; not exact lifecycle duration or monetary cost"
+        },
+        "confirmation_observed_seconds": {
+          "count": 1020,
+          "median": 47.39850000000001,
+          "p95": 57.98400000000015,
+          "max": 59.233999999999924
+        },
+        "admission_http_seconds": {
+          "count": 1020,
+          "median": 0.5470000000000255,
+          "p95": 0.9529999999999745,
+          "max": 1.75
+        },
+        "max_active_requests": 17,
+        "max_eligible": 202,
+        "max_oldest_eligible_seconds": 13.90858,
+        "observed_confirmation_drain_seconds": 46.48400000000015,
+        "drain_censored": false,
+        "http_observation": {
+          "requests": 6125,
+          "transport_errors": 0,
+          "non_200": 0,
+          "limit": "includes recovered failures; later functional success does not erase them"
+        },
+        "condition": "fixed-1",
+        "protocol_sha256": "64141222163a7ec40fdf913cf99bdfb79da7c26dbfa0d0d673609f0d805076de",
+        "host_conditions_valid": true,
+        "min_host_available_gib": 4.341865539550781,
+        "shutdown_confirmed": true
+      }
+    },
+    {
+      "attempt": "b2-p1-fixed-1",
+      "session": "2026-09-27T03-31-39.118571+00-00",
+      "path": "artifacts/scale-comparison-continuation-01/attempts/b2-p1-fixed-1",
+      "result": {
+        "execution_valid": true,
+        "invalid_reasons": [],
+        "counts": {
+          "completed_in_time": 1020
+        },
+        "planned": 1020,
+        "accepted": 1020,
+        "confirmed_in_time": 1020,
+        "confirmed_in_time_fraction": 1.0,
+        "outcome_limit": "inconclusive is unknown, pending is last observed state, neither means lost",
+        "pod_time": {
+          "existing_pod_seconds": 450.0,
+          "running_pod_seconds": 450.0,
+          "ready_pod_seconds": 450.0,
+          "terminating_pod_seconds": 0.0,
+          "window_seconds": 450.0,
+          "max_gap_seconds": 5.1720000000000255,
+          "method": "left-step estimate from sampled inventory; existing includes terminating; not exact lifecycle duration or monetary cost"
+        },
+        "confirmation_observed_seconds": {
+          "count": 1020,
+          "median": 46.0619999999999,
+          "p95": 57.858999999999924,
+          "max": 58.96900000000005
+        },
+        "admission_http_seconds": {
+          "count": 1020,
+          "median": 0.5470000000000255,
+          "p95": 0.9210000000000491,
+          "max": 1.7029999999999745
+        },
+        "max_active_requests": 14,
+        "max_eligible": 180,
+        "max_oldest_eligible_seconds": 13.236506,
+        "observed_confirmation_drain_seconds": 46.672000000000025,
+        "drain_censored": false,
+        "http_observation": {
+          "requests": 6126,
+          "transport_errors": 0,
+          "non_200": 0,
+          "limit": "includes recovered failures; later functional success does not erase them"
+        },
+        "condition": "fixed-1",
+        "protocol_sha256": "64141222163a7ec40fdf913cf99bdfb79da7c26dbfa0d0d673609f0d805076de",
+        "host_conditions_valid": true,
+        "min_host_available_gib": 4.234794616699219,
+        "shutdown_confirmed": true
+      }
+    },
+    {
+      "attempt": "b2-p2-adaptive",
+      "session": "2026-09-27T03-31-39.118571+00-00",
+      "path": "artifacts/scale-comparison-continuation-01/attempts/b2-p2-adaptive",
+      "result": {
+        "execution_valid": true,
+        "invalid_reasons": [],
+        "counts": {
+          "completed_in_time": 1013,
+          "completed_late": 7
+        },
+        "planned": 1020,
+        "accepted": 1020,
+        "confirmed_in_time": 1013,
+        "confirmed_in_time_fraction": 0.9931372549019608,
+        "outcome_limit": "inconclusive is unknown, pending is last observed state, neither means lost",
+        "pod_time": {
+          "existing_pod_seconds": 750.1089999999999,
+          "running_pod_seconds": 750.1089999999999,
+          "ready_pod_seconds": 729.922,
+          "terminating_pod_seconds": 0.0,
+          "window_seconds": 450.0,
+          "max_gap_seconds": 5.2029999999999745,
+          "method": "left-step estimate from sampled inventory; existing includes terminating; not exact lifecycle duration or monetary cost"
+        },
+        "confirmation_observed_seconds": {
+          "count": 1020,
+          "median": 47.257499999999936,
+          "p95": 58.875,
+          "max": 60.797000000000025
+        },
+        "admission_http_seconds": {
+          "count": 1020,
+          "median": 0.5779999999999745,
+          "p95": 1.0160000000000764,
+          "max": 2.219000000000051
+        },
+        "max_active_requests": 17,
+        "max_eligible": 105,
+        "max_oldest_eligible_seconds": 6.853024,
+        "observed_confirmation_drain_seconds": 47.8119999999999,
+        "drain_censored": false,
+        "http_observation": {
+          "requests": 6126,
+          "transport_errors": 0,
+          "non_200": 0,
+          "limit": "includes recovered failures; later functional success does not erase them"
+        },
+        "condition": "adaptive",
+        "protocol_sha256": "64141222163a7ec40fdf913cf99bdfb79da7c26dbfa0d0d673609f0d805076de",
+        "host_conditions_valid": true,
+        "min_host_available_gib": 4.101188659667969,
+        "shutdown_confirmed": true
+      }
+    },
+    {
+      "attempt": "b2-p3-fixed-2",
+      "session": "2026-09-27T03-31-39.118571+00-00",
+      "path": "artifacts/scale-comparison-continuation-01/attempts/b2-p3-fixed-2",
+      "result": {
+        "execution_valid": true,
+        "invalid_reasons": [],
+        "counts": {
+          "completed_in_time": 1020
+        },
+        "planned": 1020,
+        "accepted": 1020,
+        "confirmed_in_time": 1020,
+        "confirmed_in_time_fraction": 1.0,
+        "outcome_limit": "inconclusive is unknown, pending is last observed state, neither means lost",
+        "pod_time": {
+          "existing_pod_seconds": 900.0,
+          "running_pod_seconds": 900.0,
+          "ready_pod_seconds": 900.0,
+          "terminating_pod_seconds": 0.0,
+          "window_seconds": 450.0,
+          "max_gap_seconds": 5.233999999999924,
+          "method": "left-step estimate from sampled inventory; existing includes terminating; not exact lifecycle duration or monetary cost"
+        },
+        "confirmation_observed_seconds": {
+          "count": 1020,
+          "median": 45.703500000000076,
+          "p95": 57.608999999999924,
+          "max": 59.1869999999999
+        },
+        "admission_http_seconds": {
+          "count": 1020,
+          "median": 0.5619999999998981,
+          "p95": 0.9839999999999236,
+          "max": 1.7970000000000255
+        },
+        "max_active_requests": 17,
+        "max_eligible": 20,
+        "max_oldest_eligible_seconds": 0.516943,
+        "observed_confirmation_drain_seconds": 46.358999999999924,
+        "drain_censored": false,
+        "http_observation": {
+          "requests": 6130,
+          "transport_errors": 0,
+          "non_200": 2,
+          "limit": "includes recovered failures; later functional success does not erase them"
+        },
+        "condition": "fixed-2",
+        "protocol_sha256": "64141222163a7ec40fdf913cf99bdfb79da7c26dbfa0d0d673609f0d805076de",
+        "host_conditions_valid": true,
+        "min_host_available_gib": 4.0117950439453125,
+        "shutdown_confirmed": true
+      }
+    },
+    {
+      "attempt": "b3-p1-fixed-2",
+      "session": "2026-09-27T03-31-39.118571+00-00",
+      "path": "artifacts/scale-comparison-continuation-01/attempts/b3-p1-fixed-2",
+      "result": {
+        "execution_valid": true,
+        "invalid_reasons": [],
+        "counts": {
+          "completed_in_time": 1020
+        },
+        "planned": 1020,
+        "accepted": 1020,
+        "confirmed_in_time": 1020,
+        "confirmed_in_time_fraction": 1.0,
+        "outcome_limit": "inconclusive is unknown, pending is last observed state, neither means lost",
+        "pod_time": {
+          "existing_pod_seconds": 900.0,
+          "running_pod_seconds": 900.0,
+          "ready_pod_seconds": 900.0,
+          "terminating_pod_seconds": 0.0,
+          "window_seconds": 450.0,
+          "max_gap_seconds": 5.32799999999952,
+          "method": "left-step estimate from sampled inventory; existing includes terminating; not exact lifecycle duration or monetary cost"
+        },
+        "confirmation_observed_seconds": {
+          "count": 1020,
+          "median": 45.53099999999995,
+          "p95": 57.0630000000001,
+          "max": 58.4369999999999
+        },
+        "admission_http_seconds": {
+          "count": 1020,
+          "median": 0.5470000000004802,
+          "p95": 0.9059999999999491,
+          "max": 1.5780000000004293
+        },
+        "max_active_requests": 15,
+        "max_eligible": 15,
+        "max_oldest_eligible_seconds": 0.421806,
+        "observed_confirmation_drain_seconds": 45.75,
+        "drain_censored": false,
+        "http_observation": {
+          "requests": 6125,
+          "transport_errors": 0,
+          "non_200": 0,
+          "limit": "includes recovered failures; later functional success does not erase them"
+        },
+        "condition": "fixed-2",
+        "protocol_sha256": "64141222163a7ec40fdf913cf99bdfb79da7c26dbfa0d0d673609f0d805076de",
+        "host_conditions_valid": true,
+        "min_host_available_gib": 4.366924285888672,
+        "shutdown_confirmed": true
+      }
+    },
+    {
+      "attempt": "b3-p2-fixed-1",
+      "session": "2026-09-27T03-31-39.118571+00-00",
+      "path": "artifacts/scale-comparison-continuation-01/attempts/b3-p2-fixed-1",
+      "result": {
+        "execution_valid": true,
+        "invalid_reasons": [],
+        "counts": {
+          "completed_in_time": 1020
+        },
+        "planned": 1020,
+        "accepted": 1020,
+        "confirmed_in_time": 1020,
+        "confirmed_in_time_fraction": 1.0,
+        "outcome_limit": "inconclusive is unknown, pending is last observed state, neither means lost",
+        "pod_time": {
+          "existing_pod_seconds": 450.0,
+          "running_pod_seconds": 450.0,
+          "ready_pod_seconds": 450.0,
+          "terminating_pod_seconds": 0.0,
+          "window_seconds": 450.0,
+          "max_gap_seconds": 5.359000000000378,
+          "method": "left-step estimate from sampled inventory; existing includes terminating; not exact lifecycle duration or monetary cost"
+        },
+        "confirmation_observed_seconds": {
+          "count": 1020,
+          "median": 45.828500000000076,
+          "p95": 57.0,
+          "max": 58.20299999999952
+        },
+        "admission_http_seconds": {
+          "count": 1020,
+          "median": 0.5309999999999491,
+          "p95": 0.9220000000004802,
+          "max": 1.6719999999995707
+        },
+        "max_active_requests": 18,
+        "max_eligible": 191,
+        "max_oldest_eligible_seconds": 13.318564,
+        "observed_confirmation_drain_seconds": 45.79699999999957,
+        "drain_censored": false,
+        "http_observation": {
+          "requests": 6127,
+          "transport_errors": 0,
+          "non_200": 0,
+          "limit": "includes recovered failures; later functional success does not erase them"
+        },
+        "condition": "fixed-1",
+        "protocol_sha256": "64141222163a7ec40fdf913cf99bdfb79da7c26dbfa0d0d673609f0d805076de",
+        "host_conditions_valid": true,
+        "min_host_available_gib": 4.430633544921875,
+        "shutdown_confirmed": true
+      }
+    },
+    {
+      "attempt": "b3-p3-adaptive",
+      "session": "2026-09-27T03-31-39.118571+00-00",
+      "path": "artifacts/scale-comparison-continuation-01/attempts/b3-p3-adaptive",
+      "result": {
+        "execution_valid": true,
+        "invalid_reasons": [],
+        "counts": {
+          "completed_in_time": 1020
+        },
+        "planned": 1020,
+        "accepted": 1020,
+        "confirmed_in_time": 1020,
+        "confirmed_in_time_fraction": 1.0,
+        "outcome_limit": "inconclusive is unknown, pending is last observed state, neither means lost",
+        "pod_time": {
+          "existing_pod_seconds": 749.9539999999997,
+          "running_pod_seconds": 749.9539999999997,
+          "ready_pod_seconds": 729.8909999999996,
+          "terminating_pod_seconds": 0.0,
+          "window_seconds": 450.0,
+          "max_gap_seconds": 5.280999999999949,
+          "method": "left-step estimate from sampled inventory; existing includes terminating; not exact lifecycle duration or monetary cost"
+        },
+        "confirmation_observed_seconds": {
+          "count": 1020,
+          "median": 46.60149999999976,
+          "p95": 57.79699999999957,
+          "max": 59.625
+        },
+        "admission_http_seconds": {
+          "count": 1020,
+          "median": 0.5630000000001019,
+          "p95": 1.2659999999996217,
+          "max": 2.5150000000003274
+        },
+        "max_active_requests": 23,
+        "max_eligible": 123,
+        "max_oldest_eligible_seconds": 6.950247,
+        "observed_confirmation_drain_seconds": 46.6880000000001,
+        "drain_censored": false,
+        "http_observation": {
+          "requests": 6132,
+          "transport_errors": 0,
+          "non_200": 1,
+          "limit": "includes recovered failures; later functional success does not erase them"
+        },
+        "condition": "adaptive",
+        "protocol_sha256": "64141222163a7ec40fdf913cf99bdfb79da7c26dbfa0d0d673609f0d805076de",
+        "host_conditions_valid": true,
+        "min_host_available_gib": 4.029582977294922,
+        "shutdown_confirmed": true
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "block": 1,
+      "sessions": [
+        "2026-09-27T03-31-39.118571+00-00",
+        "original-interrupted"
+      ],
+      "continuous": false,
+      "complete": true
+    },
+    {
+      "block": 2,
+      "sessions": [
+        "2026-09-27T03-31-39.118571+00-00"
+      ],
+      "continuous": true,
+      "complete": true
+    },
+    {
+      "block": 3,
+      "sessions": [
+        "2026-09-27T03-31-39.118571+00-00"
+      ],
+      "continuous": true,
+      "complete": true
+    }
+  ],
+  "limits": "Interrupted original block retained. Describe per-attempt/session outcomes; no claim of an uninterrupted blocked campaign, causal advantage, power or population inference."
+}

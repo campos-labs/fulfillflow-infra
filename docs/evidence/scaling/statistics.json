@@ -1,0 +1,40 @@
+{
+  "totals": {
+    "planned": 9180,
+    "accepted": 9180,
+    "confirmed_in_time": 8819,
+    "confirmed_late": 361,
+    "http_non_200": 5
+  },
+  "condition_medians": {
+    "fixed-1": {
+      "attempts": 3,
+      "confirmed_in_time_percent": 100.0,
+      "p95_observed_seconds": 57.858999999999924,
+      "existing_pod_seconds": 450.0,
+      "peak_eligible": 191,
+      "peak_age_seconds": 13.318564,
+      "observed_drain_seconds": 46.48400000000015
+    },
+    "fixed-2": {
+      "attempts": 3,
+      "confirmed_in_time_percent": 100.0,
+      "p95_observed_seconds": 57.0630000000001,
+      "existing_pod_seconds": 900.0,
+      "peak_eligible": 15,
+      "peak_age_seconds": 0.516943,
+      "observed_drain_seconds": 45.75
+    },
+    "adaptive": {
+      "attempts": 3,
+      "confirmed_in_time_percent": 99.31372549019608,
+      "p95_observed_seconds": 58.875,
+      "existing_pod_seconds": 750.047,
+      "peak_eligible": 123,
+      "peak_age_seconds": 6.950247,
+      "observed_drain_seconds": 47.8119999999999
+    }
+  },
+  "original_manifest_entries_verified": 18594,
+  "method": "Medians between attempts; no pooled event percentile; no significance claim."
+}

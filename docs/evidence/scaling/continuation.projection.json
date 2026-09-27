@@ -1,0 +1,27 @@
+{
+  "amendment": "bounded-memory-wait-and-explicit-sessions-v1",
+  "measurement_reference": "6932632ecc07afbef844f6c7483cfc71d0b5799e",
+  "qualified_runtime_files_verified": 67,
+  "protocol_sha256": "64141222163a7ec40fdf913cf99bdfb79da7c26dbfa0d0d673609f0d805076de",
+  "baseline_marker_sha256": "bbc2cb8d635581b7952e3e5d4881ccc182a65905e85de09e9035bf7e706c6ecd",
+  "qualification_marker_sha256": "af3eceb1fa4f18cefb19fc5fff161e824d0a349ea4c752fa81f662c6e43a63ca",
+  "source": "artifacts/scale-comparison-02/execute",
+  "source_result_sha256": "facf581a962e57487893873066c104327ac90362b5806aba790003708fe03907",
+  "coordinator_sha256": "2838f3ea52e2d5989c82df2d5d864603bb12dcdcb7b3c3ae4e8e32af11f969c3",
+  "launcher_sha256": "56aeea7ff488e56a238f15cad88bbc7448617cc10d9e4556e7412a74c240cf38",
+  "order": [
+    "b1-p1-adaptive",
+    "b1-p2-fixed-2",
+    "b1-p3-fixed-1",
+    "b2-p1-fixed-1",
+    "b2-p2-adaptive",
+    "b2-p3-fixed-2",
+    "b3-p1-fixed-2",
+    "b3-p2-fixed-1",
+    "b3-p3-adaptive"
+  ],
+  "memory_wait_seconds": 180,
+  "stable_samples": 3,
+  "block_1_continuous": false,
+  "interpretation": "Preserve all nine planned positions, including original late outcomes. Block 1 interrupted; do not represent this as the original uninterrupted blocked campaign. Session effects remain a limitation."
+}

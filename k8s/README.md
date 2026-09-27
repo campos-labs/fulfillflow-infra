@@ -12,10 +12,10 @@ Este guia descreve configuração e comandos. Começar pelo [Kind local](#caminh
 Resultados e fontes estão na [avaliação operacional](../docs/OPERATIONAL_EVALUATION.md);
 entregas, pausa e extensões, no [RELEASE_PLAN](../RELEASE_PLAN.md).
 
-**Extensão v1.1 em reavaliação:** calibração, piloto KEDA e diagnósticos
-usam cluster dedicado, sem reutilizar bancos/volumes históricos. Os comandos
-específicos estão abaixo; sua disponibilidade não autoriza nova carga durante a
-[pausa registrada](../RELEASE_PLAN.md#fechamento-do-diagnóstico-de-consulta-e-memória).
+**Capacidade fixa/adaptativa: nove tentativas concluídas.** Conferir o
+[relatório de capacidade](../docs/SCALING_EVALUATION.md) e a
+[reprodução offline](#comparação-de-capacidade-fixa-e-adaptativa). Os executores
+permanecem disponíveis, mas a campanha encerrada não autoriza nova carga.
 Não usar `resume`/`pause` da base ou reaplicar o runtime sobre um alvo controlado
 por KEDA/HPA: esses comandos restauram/escalam réplicas sem coordenar o controlador.
 
@@ -119,7 +119,7 @@ Na base e em `overlays/example`, requests igualam os limites funcionais: cada AP
 `2`/`2560Mi`, RabbitMQ `500m`/`512Mi`. Total persistente: 5,5 CPU/5376 MiB; cada Job
 adiciona `500m`/`384Mi` enquanto ativo. São valores provisórios para revisão, não
 capacidade de nós comprovada. Rollout usa `maxSurge: 0`, `maxUnavailable: 1`; aceita
-indisponibilidade com uma réplica e não promete HA. Não há HPA ou autoscaling.
+indisponibilidade com uma réplica e não promete HA. Na base v1.0.0 não há HPA; a avaliação de capacidade tem contrato e ambiente próprios.
 
 No alvo AKS, PVCs provisórios: PostgreSQL 32 GiB e RabbitMQ 16 GiB, Azure Disk CSI
 `StandardSSD_LRS`, binding `WaitForFirstConsumer`, reclaim `Retain`, retenção de
@@ -451,236 +451,101 @@ continuam pendentes. O aceite Kind não a substitui.
 
 
 <a id="calibracao-de-concorrencia"></a>
-## Calibração de concorrência — preparação da v1.1
+## Comparação de capacidade fixa e adaptativa
 
-`scripts/Invoke-ScaleCalibration.ps1` opera exclusivamente `fulfillflow-scale-01`,
-com kubeconfig e credenciais privados fora do repositório. Não usar os comandos
-de retomada do laboratório histórico. Requer Docker Linux, imagem local congelada,
-ferramentas verificadas e `uv sync --frozen --group autoscaling`.
-`Prepare` cria o ambiente uma única vez; `Calibrate` exige identidade preservada,
-checkout limpo e nenhuma outra carga Docker. Nunca reutilizar saída existente ou
-apagar lock sem investigar seu dono.
+**Campanha encerrada: nove tentativas preservadas, zero posições pendentes.**
+Consultar [resultados e evidências](../docs/SCALING_EVALUATION.md). Para conferir
+as tabelas sem Docker, credenciais ou cluster, usar o reprodutor publicado:
 
 ```powershell
-# $private: diretório protegido criado no bootstrap; não versionar seu conteúdo.
-./scripts/Invoke-ScaleCalibration.ps1 -Mode Calibrate -PrivateDirectory $private -OutputDirectory ./artifacts/scale-calibration-01
+python docs/evidence/scaling/reproduce.py
 ```
 
-Manter o equipamento ligado e sem suspensão. O comando prepara entidades sintéticas,
-exercita uma e duas réplicas fixas e para o nó ao terminar, preservando volumes.
-Encerramento forçado exige conferir o container antes de retomar. Saídas incluem
-identidades, admissões, observações por evento, séries, resumos e hashes.
-Aceite desconhecido não provoca reenvio. Tempos são limites superiores observados,
-sujeitos à duração e concorrência das consultas. Guardar o resultado e reavaliar
-antes de KEDA; não repetir com carga maior para obter diferença. Esta preparação
-não comprova autoscaling nem altera as campanhas encerradas da v1.0.0.
+Os executores de carga continuam versionados. Sua presença não autoriza repetir
+uma campanha encerrada; os comandos abaixo descrevem o procedimento disponível
+para uma nova execução delimitada, depois de revisar ambiente e protocolo.
 
-A sucessora `scale-calibration-05` mantém o perfil de entrada. `admission.jsonl`
-acrescenta `dispatch_attempt` (horário previsto/real, atraso, concorrência e motivos).
-`series.jsonl` é coletado independentemente da observação funcional e inclui duração
-e atraso do ciclo, recursos dos processos e memória do host. Erro aparece em
-`series.error.json` e impede aceite. `worker-attribution.json` vincula os aceites
-aos logs DONE por pod, sem exportar texto livre de logs. `summary.json` distingue
-conclusão funcional e completude da atribuição. `shutdown.json` confirma a parada.
-Amostragem de processos pode omitir subprocessos curtos; não somar consumos do host
-e do nó. Preservar todas as saídas, inclusive quando `complete=false`.
+### Pré-requisitos de uma nova execução
 
+PowerShell 7, Python 3.12, `uv sync --frozen --group autoscaling`, Docker Linux e
+ferramentas verificadas em `.tools/`. Kind/Kubernetes e imagens auxiliares são
+fixados em `config/`. O bootstrap exige a imagem local
+`fulfillflow-kind-runtime:source-9e3a135a00db`, ID
+`sha256:582a858debe2ff64d481e810b2d5ae5a1aba6a669516bca36a15eb12e77ec072` e fonte congelada.
+Reconstruir a mesma fonte não garante produzir o mesmo ID; uma referência diferente
+exige identificação e nova qualificação, sem contornar essa guarda. Os ZIPs não
+distribuem a imagem. Reprodução das medições em outro computador não foi validada.
 
-## Piloto mínimo KEDA
+Usar checkout limpo, host reservado e conectado à tomada, 5 GiB livres na entrada
+e 2 GiB durante a tentativa. Fazer downloads antes da janela; manter energia,
+rede e perfil estáveis. Não executar builds ou análise interativa durante a carga.
+Os launchers podem parar os dois nós históricos conhecidos, preservando volumes;
+outros containers ativos bloqueiam a entrada. Não encerram aplicativos do operador.
 
-`Invoke-KedaPilot.ps1` reutiliza o cluster exclusivo e o diretório privado existente.
-`Prepare` instala a versão fixada, verifica a consulta, injeta erro SQL apenas no
-scaler, restaura a consulta e remove seu ScaledObject/HPA antes de parar o nó.
-`Execute` repete essas verificações, aplica a mesma carga da calibração com política
-adaptativa e observa mais 360 s. Cada modo exige saída nova e checkout limpo.
-Não executar a calibração fixa enquanto existir controlador de escala.
+Cluster exclusivo `fulfillflow-scale-compare-01`; não reutilizar nomes, pastas ou
+dados de campanha existente. Diretório privado novo fora do Git contém kubeconfig,
+credenciais geradas, baseline dos três bancos e snapshots. Saída pública nova fica
+em `artifacts/`, ignorada pelo Git até revisão de distribuição. Não copiar credenciais
+históricas nem apagar arquivos/locks para repetir.
+
+### Preparar, qualificar e executar
+
+Na raiz do checkout, após definir dois caminhos novos:
 
 ```powershell
-./scripts/Invoke-KedaPilot.ps1 -Mode Prepare -PrivateDirectory $private -OutputDirectory ./artifacts/keda-preparation-01
-./scripts/Invoke-KedaPilot.ps1 -Mode Execute -PrivateDirectory $private -OutputDirectory ./artifacts/keda-pilot-01
+$private = Join-Path $env:LOCALAPPDATA 'FulfillFlowInfra/comparison-new'
+$output = Join-Path $PWD 'artifacts/comparison-new'
+.\scripts\Invoke-ScaleComparison.ps1 -Mode Prepare -PrivateDirectory $private -OutputDirectory $output
+# Somente após preparar e revisar a janela de medição:
+.\scripts\Invoke-ScaleComparison.ps1 -Mode Measure -PrivateDirectory $private -OutputDirectory $output
 ```
 
-A configuração é `config/keda-pilot.json`. Manifesto oficial core é baixado com hash
-conferido, sem instalar Helm ou webhook adicional. A instalação requer rede para
-GitHub/GHCR; não usa Azure. `keda-install.yaml`, `keda-identities.json`, `policy.json`, `metric-availability.json`,
-`metric-fault-probe.json`, séries e logs permitidos sustentam a conferência.
-A credencial própria do scaler fica em `keda-reader.json` no diretório privado;
-não anexar esse diretório. Aplicativos empacotados no Windows podem redirecionar
-AppData: usar o caminho físico acessível pelo terminal, preservando os mesmos arquivos.
-Ao terminar, conferir resumo, hashes e `shutdown.json`. Não apagar CRDs ou volumes.
-Falha de encerramento requer investigação antes de nova execução.
+`Prepare` cria o ambiente dedicado, restaura/verifica o baseline e para o nó.
+`Measure` faz uma qualificação e, se aprovada, até nove tentativas. `Qualify` e
+`Execute` separam essas etapas; `All` as reúne com a preparação. Não executar
+todos esses modos em sequência: etapas concluídas não se repetem. O protocolo
+permanece em [config/scale-comparison.json](../config/scale-comparison.json).
+Guardas, critérios e encerramento estão no [DESIGN](../DESIGN.md#87-capacidade-fixa-e-adaptativa-em-kind).
+Uma saída `complete=true` não é autorização para outra carga.
 
-Referências técnicas: [instalação](https://keda.sh/docs/2.20/deploy/),
-[scaler PostgreSQL](https://keda.sh/docs/2.20/scalers/postgresql/) e
-[ScaledObject/HPA](https://keda.sh/docs/2.20/reference/scaledobject-spec/).
+### Conferir a campanha histórica
 
-### Diagnóstico retrospectivo do piloto
-
-`uv run --frozen python scripts/review_scale_pilot.py --input artifacts/keda-pilot-04/adaptive --output artifacts/scale-diagnostic-01`
-
-Lê somente evidências locais já preservadas, conta respostas GET, agrupa CPU por
-UID/timestamp da fonte e calcula intervalos do patamar. Exige destino novo e
-separado; não inicia Docker nem Kubernetes. Se o destino já existir, use outro
-identificador para reprodução. O resultado inclui limites e hashes das entradas.
-
-### Coleta focal de throttling e consultas
-
-`Invoke-ScaleDiagnostic.ps1` executa uma condição fixa, por padrão de 300 eventos.
-Usa a identidade e as guardas da calibração; exige Docker disponível, checkout
-limpo, destino novo e nenhum outro contêiner em execução. Recusa controlador
-ativo sobre o worker e contadores de throttling ausentes antes de oferecer carga.
+O coordenador de continuação é específico das fontes e marcadores originais:
 
 ```powershell
-$scalePrivate = Join-Path $env:LOCALAPPDATA 'Packages\OpenAI.Codex_2p2nqsd0c76g0\LocalCache\Local\FulfillFlowInfra\scale-01'
-.\scripts\Invoke-ScaleDiagnostic.ps1 -PrivateDirectory $scalePrivate -OutputDirectory '.\artifacts\scale-instrumentation-01'
+.\scripts\Invoke-ScaleContinuation.ps1 -Mode Check
 ```
 
-`fixed-1/series.jsonl` acrescenta contadores cAdvisor e timestamps da fonte;
-`fixed-1/event-*/http-timings.json` contém tempos do transporte, status ou tipo
-de erro, sem corpo completo, headers completos ou identificadores de URL.
-Na versão 2, inclui IDs UUID de correlação e códigos de problema permitidos;
-campos ausentes nas coletas anteriores não significam ausência de erro. Tempos são exportados ao
-encerramento; encerramento abrupto pode perder o buffer, sem autorizar inferir
-zero consultas. Aplicam-se as ressalvas e a pausa do RELEASE_PLAN.
+`Check` não opera Docker nem gera carga, mas exige checkout limpo, diretório privado
+e fontes locais originais. Deve retornar `attempts_preserved=9` e `remaining=0`.
+`Execute` recusa `CAMPAIGN_ALREADY_COMPLETE`; não usá-lo para conferir o resultado.
+Para outro computador, a alternativa disponível é o reprodutor offline dos ZIPs.
+Não trocar marcadores ou copiar a qualificação para simular outro ambiente.
 
-Revisão sem nova carga (saída nova, fora do pacote original):
+### Ferramentas preparatórias preservadas
 
-```powershell
-uv run --frozen python scripts/review_scale_diagnostic.py --input artifacts/scale-instrumentation-01 --output artifacts/scale-instrumentation-01-review.json
-```
+| Ferramenta versionada | Finalidade e limite |
+| --- | --- |
+| `Invoke-ScaleCalibration.ps1` | `Check`/`Prepare`/`Calibrate`, cluster piloto `fulfillflow-scale-01`, identidade privada e destino exclusivos |
+| `Invoke-ScaleDiagnostic.ps1` | Condições fixas e diagnóstico HTTP/throttling; aceita somente perfis delimitados pelo contrato histórico |
+| `Invoke-KedaPilot.ps1` | Piloto integrado, falha da métrica sem carga e perfis identificados; não substitui o protocolo formal |
+| `review_scale_pilot.py` / `review_scale_diagnostic.py` | Leitura offline de saídas originais, sempre em destino novo |
 
-Confere o manifesto de hashes, deduplica timestamps, identifica resets e registra
-janelas por cgroup. Percentuais de períodos com throttling não medem perda de CPU
-ou indisponibilidade. Resultados locais e decisão estão no RELEASE_PLAN.
+Esses programas e testes permanecem no repositório, sem dependência dos launchers
+temporários `artifacts/*.local.ps1`. Opções e protocolos anteriores estão na
+[referência preservada](https://github.com/campos-labs/fulfillflow-infra/blob/58f4483e0fdb2e5273b9b533d9173de494818a3c/k8s/README.md#calibração-de-concorrência--preparação-da-v11).
+Pilotos não entram nos denominadores da comparação. Configuração privada continua
+local e não deve ser anexada a issues, commits ou pacotes públicos.
 
-Para a avaliação optativa de reutilização das duas respostas terminais:
+### Encerramento e evidências
 
-```powershell
-.\scripts\Invoke-ScaleDiagnostic.ps1 -PrivateDirectory $scalePrivate -OutputDirectory '.\artifacts\scale-instrumentation-reuse-01' -ReuseTerminalReads
-```
+Esperar `JANELA ENCERRADA` e conferir resultado, host e `shutdown.json`. Ausência de
+confirmação exige reconciliar o estado antes de retomar; não matar o processo ou
+excluir o cluster como limpeza automática. Coletar evidências antes de remover o
+controlador, repor réplicas e parar o nó. Preservar volumes, resultados parciais e
+motivos de falha. As guardas não são relaxadas para favorecer uma condição.
 
-Modo exclusivo do diagnóstico. Preserva todas as asserções e identifica a
-mudança de instrumento no protocolo; não utiliza cache entre observações.
-
-### Janela reservada para medições
-
-Concluir downloads e conferência de dependências antes de reservar o host.
-Durante a preparação das entidades, oferta, drenagem e exportação, manter
-alimentação/perfil estáveis e evitar outros aplicativos, builds ou clusters.
-Execução direta pelo PowerShell independe da continuidade do chat. O diagnóstico
-fixo usa o ambiente local já preparado; disponibilidade offline exige imagens,
-Python, bibliotecas e executáveis presentes. Não fazer alterações de rede no meio
-da coleta. Liberar a janela após conferir `summary.json` e `shutdown.json`.
-Os critérios de interferência e os limites dos diagnósticos ficam no RELEASE_PLAN.
-
-Referência limpa preparada para execução manual, após reservar o host:
-
-```powershell
-.\scripts\Invoke-ScaleDiagnostic.ps1 -PrivateDirectory $scalePrivate -OutputDirectory '.\artifacts\scale-clean-reference-01' -ReuseTerminalReads -ControlledHost
-```
-
-`ControlledHost` exige o modo de reutilização e alimentação pela tomada.
-Os registros `host-conditions.jsonl`/`host-review.json` qualificam separadamente as
-condições observadas, sem comprovar exclusividade do host. Mudança detectada invalida
-a qualificação temporal, mas não aborta imediatamente a oferta nem apaga efeitos.
-Aguarde `JANELA ENCERRADA` e confira o resumo; um aviso de encerramento não confirmado
-exige verificar o Docker. O script não fecha programas ou altera energia/rede.
-
-Na inicialização, a pré-verificação aguarda os contadores de throttling por
-até 90 s, com consultas limitadas a 10 s. O diário `throttling-startup.jsonl`
-preserva ausências e disponibilidade; erro persistente termina antes da oferta.
-Essa espera não se aplica às amostras durante a carga. A tentativa `01` foi
-preservada e `scale-clean-reference-02` concluiu a referência controlada. Não
-reutilizar essas pastas; a próxima carga depende do protocolo de caracterização
-registrado no RELEASE_PLAN.
-
-Caracterização fixa delimitada: o mesmo launcher aceita `-PeakRate 12` ou
-`-PeakRate 16`, obrigatoriamente com `-ControlledHost -ReuseTerminalReads`.
-Usar pasta exclusiva por execução e respeitar o gate entre taxas no RELEASE_PLAN;
-não executar os dois comandos em paralelo ou em laço incondicional.
-
-A caracterização `scale-capacity-12-01` atingiu o limite de concorrência do
-gerador (22 ofertas não realizadas; 398/398 aceites concluídos). O gate impediu
-a execução de 16/s. Não repetir nem aumentar a taxa automaticamente; preservar
-os registros e definir um protocolo sucessor antes de mudar o instrumento.
-
-Diagnóstico sucessor de admissão: acrescentar `-HttpConcurrency 16` somente com
-`-PeakRate 12` ou `-PeakRate 16`, sempre com `-ControlledHost -ReuseTerminalReads`,
-em pasta nova. Os demais
-parâmetros permanecem iguais; consultar a justificativa e os limites no RELEASE_PLAN.
-
-A opção `-PlateauSeconds 45` exige `-PeakRate 12 -HttpConcurrency 16`,
-`-ControlledHost -ReuseTerminalReads` e mantém o teto de 600 eventos; o padrão
-continua em 30 s. A sucessora manual recuperou margem e concluiu sem erro HTTP;
-o diagnóstico a 16/s por 30 s, teto HTTP 16 e 540 eventos também concluiu.
-O 503 anterior permanece sem causa determinada. `complete=true` não substitui as guardas
-de progressão. Não reutilizar destinos nem executar outra carga antes de reavaliar
-os limites registrados no RELEASE_PLAN.
-
-O diagnóstico de capacidade adicional aceita `-FixedReplicas 2` somente com
-`-PeakRate 16 -HttpConcurrency 16 -PlateauSeconds 30`, controle do host e
-reutilização terminal. Usa pasta nova `fixed-2` dentro da saída da tentativa;
-o revisor identifica a condição pelo protocolo. O padrão continua uma réplica.
-Essa condição aumenta recursos totais dos workers, sem autoescalonamento;
-seguir objetivo e guardas no RELEASE_PLAN antes de qualquer execução.
-
-Piloto adaptativo sucessor: `Invoke-KedaPilot.ps1 -Mode Execute -CapacityProfile`
-(com `-PrivateDirectory` e `-OutputDirectory` exclusivos) seleciona o perfil
-limitado de 540 eventos, uma réplica inicial, HTTP 16, captura v2, reutilização
-terminal e controle do host. O padrão histórico permanece 300 eventos. Usar o
-launcher local preparado no RELEASE_PLAN para conferir 5 GiB livres e isolar
-a janela. Aguardar também os 360 s de observação após a carga e o encerramento.
-O teste não exige escala: avaliar sinal, disponibilidade da métrica, decisões e
-participação por pod. Parar para revisão, mesmo com `complete=true`.
-
-A sucessora adaptativa com `qualification_version=2` aplica a guarda de 2 GiB
-por fase antes da oferta e nos pontos de controle seguintes; violação anterior
-amostrada impede continuação. `host-phases.jsonl` localiza o bloqueio.
-O launcher `Invoke-KedaCapacity02.local.ps1` identifica uma tentativa, sem retry.
-Oferta incompleta pode preservar observação posterior somente com host seguro,
-aceitos concluídos e atribuição íntegra; não transforma a tentativa em aprovada.
-Conferir `post-load-outcome.json` e registros incrementais mesmo em interrupção.
-
-### Comparação de capacidade fixa e adaptativa
-
-O procedimento novo usa `fulfillflow-scale-compare-01`, separado dos clusters
-históricos. Protocolo e critérios estão no
-[RELEASE_PLAN](../RELEASE_PLAN.md#comparação-prospectiva-autorizada).
-Com Docker aberto, checkout limpo e notebook reservado na tomada:
-
-```powershell
-& '<caminho-do-pwsh.exe>' -NoProfile -File '.\scripts\Invoke-ScaleComparison.ps1' -Mode All
-```
-
-O launcher resolve a pasta privada a partir do ambiente existente, cria outra
-exclusiva, para somente os nós históricos conhecidos e recusa outros containers
-ativos. `All` prepara, qualifica e prossegue para nove tentativas apenas se o
-critério do gerador for atendido. `Measure` executa qualificação e campanha após a preparação;
-`Prepare`, `Qualify` e `Execute` separam as
-etapas. Os diretórios de saída não podem existir previamente; não apagar ou
-sobrescrever evidência para repetir. Segredos e dumps ficam na pasta privada;
-os resultados ficam em `artifacts/scale-comparison-01`, ainda locais.
-Em interrupção, devolver o resultado para revisão sem repetir o comando.
-
-Para o ambiente local já qualificado e interrompido, **não repetir `All`,
-`Measure` ou `Execute` do launcher original**. Usar a continuação identificada:
-
-```powershell
-& '<caminho-do-pwsh.exe>' -NoProfile -File '.\scripts\Invoke-ScaleContinuation.ps1' -Mode Check
-& '<caminho-do-pwsh.exe>' -NoProfile -File '.\scripts\Invoke-ScaleContinuation.ps1' -Mode Execute
-```
-
-`Check` não opera Docker nem gera carga. `Execute` para apenas os nós históricos
-conhecidos, recusa outros containers e aguarda até 180 s por margem antes de
-cada tentativa. Manter notebook na tomada e reservado. A pasta padrão é
-`artifacts/scale-comparison-continuation-01`; a origem é
-`artifacts/scale-comparison-02/execute`. Exige também a qualificação e a pasta
-privada originais. Depois de interrupção, revisar os registros antes de repetir
-`Execute`: prefixo válido é preservado, tentativa parcial bloqueia retomada.
-O primeiro bloco é explicitamente interrompido; consultar a
-[emenda e seus limites](../RELEASE_PLAN.md#continuação-com-espera-limitada).
-
-Estado da campanha preservada: **nove tentativas concluídas**. `Check` deve
-retornar `attempts_preserved=9` e `remaining=0`; não executar outra carga.
-`Execute` recusa `CAMPAIGN_ALREADY_COMPLETE`. Ver o
-[fechamento e a pausa](../RELEASE_PLAN.md#resultado-da-comparação-com-continuação).
+O pacote publicado contém as nove tentativas, inclusive a primeira originalmente
+fora da continuação. Credenciais e dumps permanecem privados; leitura dos pacotes
+não equivale a restauração do ambiente. Nova campanha, alteração de aplicação ou
+implantação Azure depende da [decisão de continuidade](../RELEASE_PLAN.md#4-continuidade-condicionada).

@@ -46,6 +46,15 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           git diff --check
           exit $LASTEXITCODE
+      - name: Verify published scaling evidence offline
+        shell: pwsh
+        run: |
+          uv run --frozen ruff check docs/evidence/scaling/reproduce.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          uv run --frozen ruff format --check docs/evidence/scaling/reproduce.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          uv run --frozen python docs/evidence/scaling/reproduce.py
+          exit $LASTEXITCODE
       - name: Render, schema validation and Terraform mock plans
         shell: pwsh
         run: |
