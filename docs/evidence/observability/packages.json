@@ -1,0 +1,409 @@
+{
+  "schema_version": 1,
+  "purpose": "Offline inspection, not runtime reproduction",
+  "archives": [
+    {
+      "path": "archives/correlation.zip",
+      "sha256": "427811504f2ca63b51bf12da0c60052cf79bb3636b08aabc8efc40db1347be9d",
+      "bytes": 86690,
+      "files": [
+        {
+          "path": "INDEX.md",
+          "bytes": 597,
+          "sha256": "95fdaa810f0ceda1a1df122c539b800986c0167a56850377cbcfa13fd1b50c67",
+          "representation": "generated package index"
+        },
+        {
+          "path": "discovery-01.json",
+          "bytes": 19810,
+          "sha256": "8eabe55f32a0ca0d458d7bef72f6c60e6f3e1a605888a4a540c646998c274b40",
+          "representation": "derived metadata; UTF-8/LF"
+        },
+        {
+          "path": "healthy-01-review.json",
+          "bytes": 3469,
+          "sha256": "2674e0dbffc4e9d93ebcde504b7785fff2da9c929b590f6023c106910c6fcde7",
+          "representation": "derived metadata; UTF-8/LF"
+        },
+        {
+          "path": "manifest.json",
+          "bytes": 7030,
+          "sha256": "396bf2aa2455dcee2307c1ced1886c407fdaa0031cb78bab23fa116e38e4d2b8",
+          "representation": "derived metadata; UTF-8/LF"
+        },
+        {
+          "path": "pending-02-review.json",
+          "bytes": 3434,
+          "sha256": "424f200787630c5fc7a635c53b3652f293aa245b4f1a0053d203035fdac0b396",
+          "representation": "derived metadata; UTF-8/LF"
+        },
+        {
+          "path": "records/healthy-01/event/observations.jsonl",
+          "bytes": 8928,
+          "sha256": "ebb312f0031a77ca25c1f14ea2ff2ddd35acf4bb46ee9013cdfe5ba282043389",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/healthy-01/functional.json",
+          "bytes": 744,
+          "sha256": "ce817009a6be9891ea0c461a8d5e4080ada6ee1c0670054997dbf4a7e6d3a855",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/healthy-01/http-timings.json",
+          "bytes": 5155,
+          "sha256": "ed92670fc5511989d110f1de8a091dc047ad7c64fff90aa6d9720052628ba9c2",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/healthy-01/protocol.json",
+          "bytes": 594,
+          "sha256": "c3c899f696a52feabe55c986ffb5578706a9d96a5a8cc37f08f47c804457f8ad",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/healthy-01/shutdown.json",
+          "bytes": 61,
+          "sha256": "117a1a4164bc1cce6941df853d2f8b0a5bf971e35b0a1947d92535dbc388eb79",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/healthy-01/worker-records.json",
+          "bytes": 5264,
+          "sha256": "1bbb0e6bdee8d76850d3ee35c92d5442f65f7466d6855129bf5a1c6d5200b31d",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/pending-02/event/observations.jsonl",
+          "bytes": 10384,
+          "sha256": "dd143ad260c427f8901f47c3feda6dbeab76a0acaaea8c9704bd589314458016",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/pending-02/functional.json",
+          "bytes": 744,
+          "sha256": "1e417222760783c85de5c33c8626d6c8f9eeb783dcf6bc04caa272a27e3d1395",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/pending-02/http-timings.json",
+          "bytes": 5952,
+          "sha256": "b2ce78c33e4258c420415dfc00258b3f59c9178d040627cfb16ccd9b49d88a25",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/pending-02/intervention.jsonl",
+          "bytes": 345,
+          "sha256": "177ee01c7e5a591cf5c7056f053ec80a4d20a3e07fb60e3580d2cc1f010f79b1",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/pending-02/protocol.json",
+          "bytes": 692,
+          "sha256": "698414e65fdef05b8b511a17b506b399ed3aa6c0ef7bbd3cd899ef4a4aafa8f5",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/pending-02/restoration.json",
+          "bytes": 59,
+          "sha256": "fb1e539b655315c76541569e503449d7e60226b13ccd7a3827a7c32bec3b9767",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/pending-02/shutdown.json",
+          "bytes": 61,
+          "sha256": "117a1a4164bc1cce6941df853d2f8b0a5bf971e35b0a1947d92535dbc388eb79",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/pending-02/worker-records.json",
+          "bytes": 5487,
+          "sha256": "45b0f7143099762256c3ab43cffd1154cd156746e25cd660ac8560aff8767ac8",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/pending-02/worker-transition.json",
+          "bytes": 1000,
+          "sha256": "eefc9b3b791eca5200e7ad60704e4ec98685d2850805ce0243f88f2465517eb0",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/preparation-failure-01/api-log-review.json",
+          "bytes": 1480,
+          "sha256": "eea1ad4b27ccc4f690ba9fe38c83701273745adfc677f50e25ac7a52861e8b8b",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/preparation-failure-01/functional.json",
+          "bytes": 530,
+          "sha256": "2d560235ed29df71da58f960c36931bfea507d3a02570edc78e0ed1c3eb37d6e",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/preparation-failure-01/http-timings.json",
+          "bytes": 555,
+          "sha256": "3a8d75fa78550a676600df4f131e3292a1fb9d5e5fe55bf3b8c22b0207dc1c5a",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/preparation-failure-01/protocol.json",
+          "bytes": 618,
+          "sha256": "0d639ed82c9074d16dc805a429645330ab92a0c963116f105a63fa5545f9b989",
+          "representation": "original selected capture"
+        },
+        {
+          "path": "records/preparation-failure-01/shutdown.json",
+          "bytes": 61,
+          "sha256": "117a1a4164bc1cce6941df853d2f8b0a5bf971e35b0a1947d92535dbc388eb79",
+          "representation": "original selected capture"
+        }
+      ]
+    },
+    {
+      "path": "archives/http.zip",
+      "sha256": "0bab80e8c195abce5482463cff2502c5694dcf660a1289a2b6bf33cdbfb5053b",
+      "bytes": 52023,
+      "files": [
+        {
+          "path": "INDEX.md",
+          "bytes": 601,
+          "sha256": "f6b1590d3944d54c8649b291d806fdab78babeca4daef664974a5cad35fe9e2f",
+          "representation": "generated package index"
+        },
+        {
+          "path": "http-05/functional.json",
+          "bytes": 839,
+          "sha256": "64f35903a4ded350b03df79e42d33330b835b13ebfc7171e6639f66d0a541d5c",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-05/manifest.json",
+          "bytes": 1487,
+          "sha256": "121f2d4c1822431628bdb7df1a41b71177594423b8c57b94202279536ffc2e09",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-05/peer-health.json",
+          "bytes": 547,
+          "sha256": "d1e2dbb6085d1f013adddf202a7e570b503f03e0f08dc9361c451e482fd509de",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-05/preservation.json",
+          "bytes": 160,
+          "sha256": "ceb65631bbc929b1cf49643c36acb7aa9236798bda66d466d0c24615a272a289",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-05/protocol.json",
+          "bytes": 2138,
+          "sha256": "7173984d11a7ab088b0921c1cb00517e4bbb9d08196643e8b8dd8b474b0a315c",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-05/resources.json",
+          "bytes": 101,
+          "sha256": "418c1983366ab87aefe6178deb5d0810b1d5b8fd5d9acf163978b84f3fa1c685",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-05/review.json",
+          "bytes": 501,
+          "sha256": "555f5a6b6494d3621b665c1362a9e29ff10ff88ad04ba6251d585783e60fbda8",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-05/summary.json",
+          "bytes": 154,
+          "sha256": "aea530d3817f972583f8a4fa0d62b0b48e934f5cf6383eee3e24eb3c66699e9a",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-05/trace-records.json",
+          "bytes": 2881,
+          "sha256": "fb55631334c3050f80823298486b29f23cc6223c35075a8a7dd9aae5c9a15c72",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-errors/02/functional.json",
+          "bytes": 303,
+          "sha256": "9c1d11fa9fc2284217f41a1a3b220728dd73fbe56fdf2607e7b25903e9fbdd79",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-errors/02/protocol.json",
+          "bytes": 2027,
+          "sha256": "56ff8e5fcc918d158e557f497e8f7e15d8913e1aba646f1fa4cd3176067c47bf",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-errors/02/summary.json",
+          "bytes": 180,
+          "sha256": "b19170c072a0e02cb2c1938229a96ead3b1598484eb9b0fc7a0535661e9d4525",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-errors/02/trace-records.json",
+          "bytes": 2978,
+          "sha256": "13701f8100cf961468d04fb5160b373ce4fef7e9ccd2fed3e661cd3ae5424347",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-errors/03/functional.json",
+          "bytes": 303,
+          "sha256": "b8bfcb14848e270af09ff755e6412ae649ef8fc4da759334d7314f67728e3f46",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-errors/03/protocol.json",
+          "bytes": 2027,
+          "sha256": "2317692cf523b7306043994c613982e4b056e24c7fff673240ac7ea9e14937c7",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-errors/03/summary.json",
+          "bytes": 180,
+          "sha256": "b19170c072a0e02cb2c1938229a96ead3b1598484eb9b0fc7a0535661e9d4525",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-errors/03/trace-records.json",
+          "bytes": 2013,
+          "sha256": "7215f4844687f1b603945632154b770a9be67f988b4f79a7fe31dadde8eb4fc3",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-errors/manifest.json",
+          "bytes": 1748,
+          "sha256": "f8765e14f7592444089a968170f30585a3575d00092acb2c914acc453936a054",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/after/functional.json",
+          "bytes": 839,
+          "sha256": "36141ff6fc1d1e728a476b13d57919a7bead5a26e0553619dca78fc44438bec4",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/after/review.json",
+          "bytes": 499,
+          "sha256": "7c4db4741e05ef5e1ca609cf4d7e71cd1726aaf7b22c03a5ff33d5566258116b",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/after/trace-records.json",
+          "bytes": 7631,
+          "sha256": "0a6ff15a2c94eb2e756d39c812aa8f1193a761aeaa90b617f3e13fe825773698",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/before/functional.json",
+          "bytes": 838,
+          "sha256": "d4ad173ce7925c967e7fdf7db6c1b5a86c1d716da90d65fc7a55ad481d8e185c",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/before/review.json",
+          "bytes": 500,
+          "sha256": "7ae53a867c98f57e990c70de02c8a41a7e908543f26df283fdc46fd8fd10199f",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/before/trace-records.json",
+          "bytes": 2881,
+          "sha256": "c499186df3f3803bde0962a3ae171a87c1c17cfb5d0722c4362c6756b4c56bb3",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/fault/functional.json",
+          "bytes": 332,
+          "sha256": "ea7f121c6a120327146ae3eef3b81a3f50ee9fb4b81c1a2800694f21db264257",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/fault/review.json",
+          "bytes": 291,
+          "sha256": "2ad22710b0454d46138512660c130400404bc198e2e2ad7ad639ed2e3c7dff71",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/fault/trace-records.json",
+          "bytes": 4822,
+          "sha256": "7a24b8d61db545c13d94d7f45dc34b4623200f58b95e29e98d1efe53f158b850",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/injection.json",
+          "bytes": 448,
+          "sha256": "dd563124b6af6d556311aba5ce97f87d91140fe9cdc7992d3766b6301794485a",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/manifest.json",
+          "bytes": 3094,
+          "sha256": "4d8306960fc27520bed24fce478f4d25f069436f3e74f6e10c3a60b7c7c067ae",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/preservation.json",
+          "bytes": 160,
+          "sha256": "ceb65631bbc929b1cf49643c36acb7aa9236798bda66d466d0c24615a272a289",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/protocol.json",
+          "bytes": 2319,
+          "sha256": "54c35a3b5dd1a711dcb10c72968f05652b682d4cb49b2b3cff46e4409183467f",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/resources.json",
+          "bytes": 101,
+          "sha256": "418c1983366ab87aefe6178deb5d0810b1d5b8fd5d9acf163978b84f3fa1c685",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/restoration.json",
+          "bytes": 148,
+          "sha256": "25b32dd6f913fa505ae74fc447edc10e24423d81ef9be2863406f071654db06c",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/restored-endpoints.json",
+          "bytes": 72,
+          "sha256": "8de401d8964ba60bd9e47cf483b607c758386cddecc1a474cc6ff9424475cc2e",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/restored-pod.json",
+          "bytes": 114,
+          "sha256": "18b043e93018307ce4fd18e072dca738f2d1028bb2b019adc6445a6c3f3b634d",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/review.json",
+          "bytes": 552,
+          "sha256": "05cd9c8458aae60374b38c71d27d6bf5330722f17b225b6edbafa9e849ad2eaa",
+          "representation": "published capture or selection manifest; exact bytes"
+        },
+        {
+          "path": "http-fault-03/summary.json",
+          "bytes": 154,
+          "sha256": "aea530d3817f972583f8a4fa0d62b0b48e934f5cf6383eee3e24eb3c66699e9a",
+          "representation": "published capture or selection manifest; exact bytes"
+        }
+      ]
+    }
+  ],
+  "figures": [
+    {
+      "path": "docs/assets/observability/coverage.svg",
+      "sha256": "eb3dfacd8385e70171123a9716acc7cf1c1f5ce6b4cdc53d76d7f0d08a569e24"
+    },
+    {
+      "path": "docs/assets/observability/http-sequence.svg",
+      "sha256": "d53d681be37189f1ae66b0708eb0ecefa27a24059fcd897d3026b1da162dbc55"
+    }
+  ],
+  "load_executed": false
+}

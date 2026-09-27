@@ -29,3 +29,7 @@ docs/evidence/observability/http-05/** -text whitespace=blank-at-eol,blank-at-eo
 docs/evidence/observability/http-errors/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 
 docs/evidence/observability/http-fault-03/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Reproducible offline bundles and diagrams.
+docs/evidence/observability/archives/*.zip binary
+docs/assets/observability/*.svg text eol=lf

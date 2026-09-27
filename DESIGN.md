@@ -548,6 +548,9 @@ o cluster; não modifica dados ou o instrumento congelado.
 
 ### 8.8. Exploração de observabilidade
 
+Resultados executados e evidências: [avaliação de observabilidade](docs/OBSERVABILITY_EVALUATION.md).
+Esta seção preserva os contratos, sem duplicar a análise.
+
 A extensão v1.2 investiga onde o intervalo entre aceite, conclusão por etapa e
 confirmação pelo observador pode ser explicado com evidência correlacionada. Primeiro
 examinar contratos, logs e registros existentes. OpenTelemetry é a opção preferencial

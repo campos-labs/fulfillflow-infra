@@ -552,6 +552,16 @@ implantação Azure depende da [decisão de continuidade](../RELEASE_PLAN.md#4-c
 
 ### Diagnóstico HTTP com tracing
 
+Método e resultados encerrados: [avaliação de observabilidade](../docs/OBSERVABILITY_EVALUATION.md).
+Para conferir evidências e figuras, usar o reprodutor offline indicado no relatório.
+Os comandos abaixo documentam a operação; não é necessário repetir ensaios para ler os resultados.
+
+Preparação do host: com todos os containers parados, permite-se liberação pontual
+registrada de cache Linux (`sync` + `drop_caches`), espera limitada e nova medição.
+Reiniciar Docker/WSL somente para recuperação operacional necessária, com workloads
+parados; não é rotina de memória. Não limpar cache nem reiniciar durante a medição.
+Manter as guardas de memória; nenhuma preparação garante margem sem nova conferência.
+
 A fatia usa [imagem identificada](../config/http-observability.json), já construída
 localmente, e o ambiente privado `observability-01`. Não é bootstrap genérico para
 outro computador. A aplicação instrumentada está em branch própria e não substitui
