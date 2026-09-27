@@ -2,12 +2,13 @@
 
 import base64
 import copy
+import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from scripts.http_trace_contract import ci_verdict, clone_api, verify_trace
-from scripts.http_trace_pilot import Runner, validate_host
+from scripts.http_trace_pilot import Runner, sink, validate_host
 from scripts.http_trace_receiver import project
 
 
@@ -88,6 +89,42 @@ def chain():
 
 
 class TraceContracts(unittest.TestCase):
+    def test_receiver_meets_restricted_pod_security(self):
+        spec = sink("image")["spec"]["template"]["spec"]
+        self.assertEqual(spec["securityContext"]["seccompProfile"], {"type": "RuntimeDefault"})
+        self.assertTrue(spec["securityContext"]["runAsNonRoot"])
+        security = spec["containers"][0]["securityContext"]
+        self.assertFalse(security["allowPrivilegeEscalation"])
+        self.assertEqual(security["capabilities"]["drop"], ["ALL"])
+
+    def test_command_failure_preserves_stage_without_raw_diagnostics(self):
+        process = Mock()
+        process.communicate.return_value = ("private stdout", "timed out waiting; secret stderr")
+        process.returncode = 1
+        process.poll.return_value = 1
+        with tempfile.TemporaryDirectory() as directory:
+            runner = Runner(Path(directory), Path(directory))
+            runner.stage = "rollout_httpdiag-sink"
+            with (
+                patch.object(runner, "check"),
+                patch("scripts.http_trace_pilot.env.executable", return_value="kubectl"),
+                patch("scripts.http_trace_pilot.subprocess.Popen", return_value=process),
+            ):
+                with self.assertRaisesRegex(RuntimeError, "COMMAND_FAILED_KUBECTL"):
+                    runner.command(["kubectl", "rollout", "status"])
+        self.assertEqual(
+            runner.command_failures,
+            [
+                {
+                    "stage": "rollout_httpdiag-sink",
+                    "tool": "kubectl",
+                    "returncode": 1,
+                    "reason": "ROLLOUT_DEADLINE",
+                }
+            ],
+        )
+        self.assertFalse(runner.query_started)
+
     def test_ci_waits_and_rejects_failure_or_a_different_reference(self):
         self.assertFalse(ci_verdict({"status": "in_progress", "headSha": "expected"}, "expected"))
         self.assertTrue(

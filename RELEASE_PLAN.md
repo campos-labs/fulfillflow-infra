@@ -8,9 +8,10 @@ integrados estão concluídos: fluxo saudável e trabalho publicado aguardando c
 O [índice técnico e registros publicados](docs/evidence/observability/README.md)
 permitem conferir cobertura e limites sem depender dos artefatos locais selecionados.
 Nó parado. A próxima fatia HTTP está implementada em referência isolada com SDK
-OpenTelemetry, imagem local e executor preparados; a consulta no Kind ainda não
-foi executada. Sem nova campanha, merge ou release v1.2. As avaliações históricas
-não são reabertas.
+OpenTelemetry e imagem local. A preparação `observability-http-01` foi interrompida
+antes da consulta por rejeição do pod receptor; a correção de seccomp foi validada
+por admissão no servidor em dry-run. A consulta no Kind ainda não foi executada.
+Sem nova campanha, merge ou release v1.2. As avaliações históricas não são reabertas.
 
 **Comparação de capacidade fixa e adaptativa concluída e consolidada na
 v1.1.0-rc.1.** O fechamento integra `feature/v1.1-autoscaling-kind` à `main`.
@@ -81,7 +82,7 @@ carga adicional para confirmá-los. A coleta atual não mede overhead causal ou
 tracing distribuído, nem resolve os 503 históricos. Scripts permanecem versionados;
 claims e diretórios existentes não devem ser apagados para forçar novo ensaio.
 
-### Fatia em preparação: uma chamada HTTP interna
+### Fatia HTTP: preparação corrigida, consulta pendente
 
 **Pergunta:** qual trecho de uma chamada conseguimos localizar que antes aparecia
 somente como duração total ou `SERVICE_UNAVAILABLE`? Primeiro, um GET saudável
@@ -140,8 +141,28 @@ e a preservação da amostra que a violou. A CI da aplicação cobre PostgreSQL 
 RabbitMQ reais. O launcher aguarda até 20 minutos pela CI aprovada do SHA fixado
 antes de iniciar o Kind; falha, referência divergente ou prazo encerrado impedem
 a execução. A espera remota é separada do teto de 600 s de preparação/captura local.
-As leituras locais de margem ficaram abaixo de 5 GiB: não iniciou o Kind. Preferir o launcher
-com as janelas fechadas; reinicialização não é requisito presumido.
+A CI completa da referência `045e1ca` foi aprovada antes da tentativa local.
+
+**Preparação interrompida e corrigida:** `observability-http-01` entrou com 5,63 GiB
+livres e registrou mínimo de 3,60 GiB, acima da guarda durante a execução. O receptor
+não criou pod: os eventos `FailedCreate` identificaram rejeição por Pod Security
+`restricted:v1.34`, pela ausência de `seccompProfile`. O rollout terminou sem iniciar
+a consulta. As APIs históricas permaneceram intactas, e o nó foi parado.
+
+O manifesto agora declara `RuntimeDefault`, preservando a política restrita. Um
+dry-run de Pod na API real rejeitou o manifesto anterior e aceitou o corrigido;
+essa verificação não executou a consulta nem comprova captura de traces. Dois testes
+de regressão cobrem o contexto de segurança e o registro sanitizado da etapa de falha.
+O executor passa a registrar `last_stage`, `query_started` e falhas de comandos sem
+stderr bruto. Os 314 testes de infraestrutura, lint e formatação passaram após
+a correção. Os oito recursos descartáveis da tentativa, identificados pelo run ID
+e com deployments em zero réplicas, foram removidos após a conferência; bancos,
+volumes, deployments históricos e evidências da tentativa foram preservados.
+
+A sucessora usa saída exclusiva `artifacts/observability-http-02` com o mesmo runtime,
+consulta e guardas. Preferir o launcher com as janelas fechadas; reinicialização não
+é requisito presumido. O diagnóstico/limpeza está registrado localmente em
+`artifacts/observability-http-01-recovery.json`; não é um resultado funcional novo.
 
 **Aceite da fatia:** identificar a mesma chamada nas fronteiras instrumentadas,
 confrontar resposta pública, relatar marcos ausentes e saúde da exportação. Medir

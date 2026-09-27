@@ -45,6 +45,9 @@ class Runner:
         self.deadline = time.monotonic() + 600
         self.samples = []
         self.run_id = uuid4().hex
+        self.stage = "preparation"
+        self.query_started = False
+        self.command_failures = []
 
     def check(self):
         sample = host_snapshot(2)
@@ -68,7 +71,7 @@ class Runner:
             initial = True
             while True:
                 try:
-                    stdout, _ = process.communicate(data if initial else None, timeout=2)
+                    stdout, stderr = process.communicate(data if initial else None, timeout=2)
                     break
                 except subprocess.TimeoutExpired:
                     initial = False
@@ -76,6 +79,17 @@ class Runner:
                     if time.monotonic() - started > timeout:
                         raise RuntimeError("COMMAND_DEADLINE")
             self.check()
+            if process.returncode:
+                self.command_failures.append(
+                    {
+                        "stage": self.stage,
+                        "tool": Path(str(args[0])).stem,
+                        "returncode": process.returncode,
+                        "reason": "ROLLOUT_DEADLINE"
+                        if "timed out waiting" in stderr
+                        else "COMMAND_REJECTED",
+                    }
+                )
             if process.returncode and not allow_failure:
                 raise RuntimeError("COMMAND_FAILED_" + Path(str(args[0])).stem.upper())
             return stdout
@@ -136,7 +150,12 @@ def sink(image):
                 "metadata": {"labels": labels},
                 "spec": {
                     "automountServiceAccountToken": False,
-                    "securityContext": {"runAsNonRoot": True, "runAsUser": 10001, "fsGroup": 10001},
+                    "securityContext": {
+                        "runAsNonRoot": True,
+                        "runAsUser": 10001,
+                        "fsGroup": 10001,
+                        "seccompProfile": {"type": "RuntimeDefault"},
+                    },
                     "containers": [
                         {
                             "name": "sink",
@@ -278,6 +297,7 @@ def execute(private, output):
     originals = {}
     try:
         print("HTTP tracing: starting dedicated node, historical deployments unchanged", flush=True)
+        runner.stage = "kubernetes_startup"
         runner.command(["docker", "start", identity["container_id"]])
         for _ in range(30):
             try:
@@ -306,10 +326,12 @@ def execute(private, output):
             )
         )["items"]:
             raise RuntimeError("DIAGNOSTIC_RESOURCES_ALREADY_EXIST")
+        runner.stage = "image_load"
         _, kind = env.tools()
         runner.command(
             [kind, "load", "docker-image", config["image"], "--name", CLUSTER], timeout=180
         )
+        runner.stage = "create_diagnostic_resources"
         runner.create(
             {
                 "apiVersion": "v1",
@@ -332,6 +354,7 @@ def execute(private, output):
             created.append("httpdiag-" + role)
             runner.create(service("httpdiag-" + role, 8000))
         for name in created:
+            runner.stage = "rollout_" + name
             runner.kube(["rollout", "status", "deployment/" + name, "--timeout=120s"], timeout=130)
         runner.check()
         pods = json.loads(runner.kube(["get", "pods", "-l", LABEL + "=true", "-o", "json"]))[
@@ -357,6 +380,8 @@ def execute(private, output):
         )
         print("HTTP tracing: one GET, no webhook, then bounded export collection", flush=True)
         # Keep failed observer output too; it contains only the observer's allowlisted result.
+        runner.stage = "functional_query"
+        runner.query_started = True
         result = runner.kube(
             [
                 "exec",
@@ -374,6 +399,7 @@ def execute(private, output):
         write(output / "functional.json", functional)
         if not functional.get("trace_id"):
             raise RuntimeError("OBSERVER_TRACE_NOT_CREATED")
+        runner.stage = "trace_collection"
         snapshot = None
         for _ in range(10):
             snapshot = json.loads(
@@ -531,6 +557,7 @@ def execute(private, output):
         if not stopped:
             complete, error = False, error or "SHUTDOWN_UNCONFIRMED"
         write(output / "host.json", runner.samples)
+        write(output / "command-failures.json", runner.command_failures)
         write(
             output / "summary.json",
             {
@@ -538,6 +565,8 @@ def execute(private, output):
                 "error": error,
                 "container_stopped": stopped,
                 "business_writes": 0,
+                "last_stage": runner.stage,
+                "query_started": runner.query_started,
             },
         )
     print(

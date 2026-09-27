@@ -576,7 +576,9 @@ containers ativos impedem a entrada. Não é necessário reiniciar por padrão.
 A janela faz um GET de evento já existente, com quatro spans esperados. Preserva
 `protocol.json`, `functional.json`, `trace-records.json`, `review.json`, inventário,
 margem do host e `summary.json`. Métricas de pods podem estar indisponíveis durante
-startup; essa lacuna fica registrada. O receptor limitado aceita somente atributos
+startup; essa lacuna fica registrada. O resumo distingue `last_stage` e `query_started`;
+`command-failures.json` conserva etapa, ferramenta, código e categoria sem stderr bruto.
+O receptor limitado aceita somente atributos
 permitidos, sem URL/query, corpos, credenciais, SQL ou texto de exceções.
 
 No fim, os clones recebem zero réplicas e o nó é parado; conferir
