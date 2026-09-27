@@ -19,8 +19,9 @@ conferir os resultados. AKS/ACR permanecem referências opcionais não implantad
 A branch `feature/v1.2-observability` consolidou dois casos diagnósticos usando
 correlação existente, sem tracing. O [índice técnico e evidências](docs/evidence/observability/README.md)
 reúne cobertura, limites, registros examináveis e conferência offline. O
-[plano](RELEASE_PLAN.md#4-exploração-de-observabilidade) delimita uma possível fatia
-HTTP interna; os casos concluídos não exigem nova execução.
+[plano](RELEASE_PLAN.md#4-exploração-de-observabilidade) registra a preparação de uma fatia
+HTTP interna com SDK em referência isolada. O [guia](k8s/README.md#diagnóstico-http-com-tracing)
+orienta a consulta única; os casos concluídos não exigem nova execução.
 
 
 ## Comece por aqui
@@ -35,7 +36,7 @@ HTTP interna; os casos concluídos não exigem nova execução.
 
 ## Aplicação e limites operacionais
 
-A referência é [FulfillFlow v1.3.0-rc.1](https://github.com/campos-labs/fulfillflow/tree/9e3a135a00db218643633c7165d3106f0c8285e1),
+Nas avaliações encerradas, a referência é [FulfillFlow v1.3.0-rc.1](https://github.com/campos-labs/fulfillflow/tree/9e3a135a00db218643633c7165d3106f0c8285e1),
 SHA `9e3a135a00db218643633c7165d3106f0c8285e1`. Core, Tracking e Notifications têm
 API e worker próprios, com três bancos/roles PostgreSQL e RabbitMQ. Notifications
 registra entrega simulada. Este repositório consome seus contratos, sem copiar

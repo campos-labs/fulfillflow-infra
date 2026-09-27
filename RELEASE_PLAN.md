@@ -7,8 +7,10 @@ a partir de `v1.1.0-rc.1` (`92089b8`). Descoberta offline e dois casos diagnóst
 integrados estão concluídos: fluxo saudável e trabalho publicado aguardando consumo.
 O [índice técnico e registros publicados](docs/evidence/observability/README.md)
 permitem conferir cobertura e limites sem depender dos artefatos locais selecionados.
-Nó parado; sem OpenTelemetry instalado, nova carga agendada, merge ou release v1.2.
-A próxima fatia está delimitada abaixo; as avaliações históricas não são reabertas.
+Nó parado. A próxima fatia HTTP está implementada em referência isolada com SDK
+OpenTelemetry, imagem local e executor preparados; a consulta no Kind ainda não
+foi executada. Sem nova campanha, merge ou release v1.2. As avaliações históricas
+não são reabertas.
 
 **Comparação de capacidade fixa e adaptativa concluída e consolidada na
 v1.1.0-rc.1.** O fechamento integra `feature/v1.1-autoscaling-kind` à `main`.
@@ -79,7 +81,7 @@ carga adicional para confirmá-los. A coleta atual não mede overhead causal ou
 tracing distribuído, nem resolve os 503 históricos. Scripts permanecem versionados;
 claims e diretórios existentes não devem ser apagados para forçar novo ensaio.
 
-### Próxima fatia: uma chamada HTTP interna
+### Fatia em preparação: uma chamada HTTP interna
 
 **Pergunta:** qual trecho de uma chamada conseguimos localizar que antes aparecia
 somente como duração total ou `SERVICE_UNAVAILABLE`? Primeiro, um GET saudável
@@ -102,20 +104,41 @@ separadamente, sem expor resposta ou exceção bruta.
 | Tracking servidor | Entrada/saída da mesma chamada | Ausência de span não prova ausência de execução; conferir captura/exportação |
 | Estado público | GET e conteúdo esperado | Telemetria não substitui resultado funcional |
 
-A documentação de [HTTPX](https://opentelemetry-python-contrib.readthedocs.io/en/latest/instrumentation/httpx/httpx.html)
-e [FastAPI](https://opentelemetry-python-contrib.readthedocs.io/en/latest/instrumentation/fastapi/fastapi.html)
-oferece pontos de instrumentação e hooks. É uma proposta, não compatibilidade testada:
-a implementação deve fixar versões/lock, definir atributos permitidos e testar
-remoção de query strings, headers secretos, corpos e mensagens de exceção antes
-de exportar. Não copiar todos os atributos padrão indiscriminadamente.
+**Implementação:** spans explícitos com SDK/OTLP HTTP 1.45.0 na aplicação
+[`a5906bf`](https://github.com/campos-labs/fulfillflow/tree/a5906bfdfd3e9d51d30895b3de8822d0c2139a92),
+branch isolada `codex/v1.3-http-observability`, derivada da v1.3 congelada.
+O commit de testes `274a819` acrescenta cobertura das rotas/lifecycles reais sem
+alterar esse runtime. Flag desligada por padrão; apenas duas rotas GET têm spans.
+O span cliente inclui transporte e validação, com marcos `response_received` e
+`response_validated`. Não há autoinstrumentação genérica, SQL, AMQP ou workers.
+O [contrato e identidade da imagem](config/http-observability.json) fixa source,
+lock, SDK e digest; tags históricas permanecem intactas.
 
-**Preparação mínima:** definir uma referência instrumentada própria da aplicação
-v1.3, com checkout isolado do trabalho em paralelo, feature flag desabilitada por
-padrão e imagem identificada. Não sobrepor tags/imagens históricas ou injetar patches
-ocultos pela infraestrutura. Começar com SDK/instrumentação HTTP necessária e um
-único destino local; não instalar Operator, Prometheus, Grafana ou Azure Monitor
-como pré-requisito. A identidade e o orçamento dessa nova execução devem estar
-registrados antes do início; esta consolidação não instala nem executa o runtime novo.
+**Protocolo previamente fixado:** `Invoke-HttpTracePilot.ps1`, saída exclusiva
+`observability-http-01`, uma consulta do observador ao evento já persistido no
+caso saudável. Nenhum novo webhook ou evento de negócio. Criar Core/Tracking
+instrumentados com nomes/seletores próprios no ambiente de observabilidade;
+não atualizar os deployments históricos ou migrar o banco. Compartilhar somente
+os bancos proprietários existentes para essa leitura. Um receptor OTLP local
+limitado recebe até 128 spans e rejeita atributos/eventos fora da allowlist.
+Não é um Collector de produção nem uma plataforma de observabilidade.
+
+Janela até 600 s, incluindo startup e coleta; 5 GiB de entrada e 2 GiB durante
+os comandos. Capturar resposta pública validada, quatro spans com parentela,
+aceites/rejeições do receptor, inventário, memória e métricas de pods quando
+presentes. A disponibilidade das métricas é registrada; não inferir overhead
+causal. Ao encerrar, solicitar zero réplicas dos clones, conferir os specs
+históricos e parar o nó, preservando volumes e resultados. Recursos do diagnóstico
+permanecem identificados, impedindo repetição automática.
+
+**Verificação preparatória:** 923 testes unitários da aplicação passaram, mais
+68 casos focados incluindo os dez testes PowerShell que exigiam caminho explícito;
+Mypy e os 12 contratos de importação passaram. Transporte OTLP real até o receptor
+local passou; imagem construída e imports testados em container sem rede/volumes.
+Os 309 testes de infraestrutura passaram. A CI da aplicação cobre PostgreSQL e
+RabbitMQ reais; o resultado deve ser conferido no SHA de testes antes da execução.
+As leituras locais de margem ficaram abaixo de 5 GiB: não iniciou o Kind. Preferir o launcher
+com as janelas fechadas; reinicialização não é requisito presumido.
 
 **Aceite da fatia:** identificar a mesma chamada nas fronteiras instrumentadas,
 confrontar resposta pública, relatar marcos ausentes e saúde da exportação. Medir

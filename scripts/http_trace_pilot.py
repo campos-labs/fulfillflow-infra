@@ -1,0 +1,519 @@
+"""One read-only HTTP diagnostic in cloned APIs; no business writes or historical rollout."""
+
+import argparse
+import hashlib
+import json
+import subprocess
+import sys
+import time
+from pathlib import Path
+from uuid import uuid4
+
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from scripts import scale_environment as env
+from scripts.http_trace_contract import LABEL, clone_api, verify_trace
+from scripts.observability_pilot import guard
+from scripts.scale_contract import CLUSTER, utc, write
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class Runner:
+    def __init__(self, private, output):
+        self.private, self.output = private, output
+        self.deadline = time.monotonic() + 600
+        self.samples = []
+        self.run_id = uuid4().hex
+
+    def check(self):
+        self.samples.append(guard(2))
+        if time.monotonic() >= self.deadline:
+            raise RuntimeError("DIAGNOSTIC_DEADLINE")
+
+    def command(self, args, *, data=None, timeout=90, allow_failure=False):
+        self.check()
+        process = subprocess.Popen(
+            [env.executable(args[0]), *map(str, args[1:])],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            encoding="utf-8",
+        )
+        started = time.monotonic()
+        try:
+            initial = True
+            while True:
+                try:
+                    stdout, _ = process.communicate(data if initial else None, timeout=2)
+                    break
+                except subprocess.TimeoutExpired:
+                    initial = False
+                    self.check()
+                    if time.monotonic() - started > timeout:
+                        raise RuntimeError("COMMAND_DEADLINE")
+            self.check()
+            if process.returncode and not allow_failure:
+                raise RuntimeError("COMMAND_FAILED_" + Path(str(args[0])).stem.upper())
+            return stdout
+        finally:
+            if process.poll() is None:
+                process.kill()
+                process.communicate(timeout=10)
+
+    def kube(self, args, data=None, timeout=90, allow_failure=False):
+        tool, _ = env.tools()
+        return self.command(
+            [
+                tool,
+                "--kubeconfig",
+                self.private / "kubeconfig",
+                "--context",
+                "kind-" + CLUSTER,
+                "-n",
+                "fulfillflow",
+                *args,
+            ],
+            data=data,
+            timeout=timeout,
+            allow_failure=allow_failure,
+        )
+
+    def create(self, resource):
+        resource["metadata"].setdefault("labels", {})["fulfillflow.io/http-run"] = self.run_id
+        if resource["kind"] == "Deployment":
+            resource["spec"]["template"]["metadata"].setdefault("labels", {})[
+                "fulfillflow.io/http-run"
+            ] = self.run_id
+        return self.kube(["create", "-f", "-"], json.dumps(resource))
+
+
+def service(name, port):
+    return {
+        "apiVersion": "v1",
+        "kind": "Service",
+        "metadata": {"name": name, "labels": {LABEL: "true"}},
+        "spec": {
+            "selector": {"app.kubernetes.io/name": name},
+            "ports": [{"port": port, "targetPort": port}],
+        },
+    }
+
+
+def sink(image):
+    labels = {"app.kubernetes.io/name": "httpdiag-sink", LABEL: "true"}
+    return {
+        "apiVersion": "apps/v1",
+        "kind": "Deployment",
+        "metadata": {"name": "httpdiag-sink", "labels": {LABEL: "true"}},
+        "spec": {
+            "replicas": 1,
+            "selector": {"matchLabels": labels},
+            "template": {
+                "metadata": {"labels": labels},
+                "spec": {
+                    "automountServiceAccountToken": False,
+                    "securityContext": {"runAsNonRoot": True, "runAsUser": 10001, "fsGroup": 10001},
+                    "containers": [
+                        {
+                            "name": "sink",
+                            "image": image,
+                            "imagePullPolicy": "Never",
+                            "command": ["python", "/diag/http_trace_receiver.py"],
+                            "resources": {
+                                "requests": {"cpu": "50m", "memory": "96Mi"},
+                                "limits": {"cpu": "500m", "memory": "192Mi"},
+                            },
+                            "securityContext": {
+                                "allowPrivilegeEscalation": False,
+                                "readOnlyRootFilesystem": True,
+                                "capabilities": {"drop": ["ALL"]},
+                            },
+                            "readinessProbe": {
+                                "httpGet": {"path": "/snapshot", "port": 4318},
+                                "periodSeconds": 2,
+                            },
+                            "volumeMounts": [
+                                {"name": "scripts", "mountPath": "/diag", "readOnly": True}
+                            ],
+                        }
+                    ],
+                    "volumes": [{"name": "scripts", "configMap": {"name": "httpdiag-scripts"}}],
+                },
+            },
+        },
+    }
+
+
+def network():
+    peer = {"podSelector": {"matchLabels": {LABEL: "true"}}}
+    ports = [{"protocol": "TCP", "port": p} for p in (8000, 4318)]
+    return {
+        "apiVersion": "networking.k8s.io/v1",
+        "kind": "NetworkPolicy",
+        "metadata": {"name": "httpdiag-peers", "labels": {LABEL: "true"}},
+        "spec": {
+            "podSelector": {"matchLabels": {LABEL: "true"}},
+            "policyTypes": ["Ingress", "Egress"],
+            "ingress": [{"from": [peer], "ports": ports}],
+            "egress": [{"to": [peer], "ports": ports}],
+        },
+    }
+
+
+def execute(private, output):
+    if CLUSTER != "fulfillflow-observe-01":
+        raise RuntimeError("WRONG_ENVIRONMENT")
+    entry = guard(5)
+    if env.command(["docker", "ps", "-q"]).strip():
+        raise RuntimeError("CONCURRENT_CONTAINERS")
+    identity = json.loads((private / "identity.json").read_bytes())
+    if identity.get("source") != "9e3a135a00db218643633c7165d3106f0c8285e1":
+        raise RuntimeError("HISTORICAL_REFERENCE")
+    node = json.loads(env.command(["docker", "inspect", identity["container_id"]]))[0]
+    if node["Config"]["Labels"].get("io.x-k8s.kind.cluster") != CLUSTER or node["State"]["Running"]:
+        raise RuntimeError("NODE_IDENTITY")
+    config = json.loads((ROOT / "config/http-observability.json").read_bytes())
+    image = json.loads(env.command(["docker", "image", "inspect", config["image"]]))[0]
+    if (
+        image["Id"] != config["image_id"]
+        or image["Config"].get("Labels", {}).get("org.opencontainers.image.revision")
+        != config["application_sha"]
+    ):
+        raise RuntimeError("DIAGNOSTIC_IMAGE_IDENTITY")
+    output.mkdir(parents=True, exist_ok=False)
+    runner = Runner(private, output)
+    evidence = json.loads(
+        (ROOT / "docs/evidence/observability/records/healthy-01/functional.json").read_bytes()
+    )
+    write(
+        output / "protocol.json",
+        {
+            "utc": utc(),
+            "run_id": runner.run_id,
+            "entry": entry,
+            "runtime": config,
+            "infrastructure_sha": env.command(["git", "-C", ROOT, "rev-parse", "HEAD"]).strip(),
+            "namespace_uid": identity["namespace_uid"],
+            "query_count": 1,
+            "business_writes": 0,
+            "deadline_seconds": 600,
+            "event_id": evidence["event_id"],
+            "scripts": {
+                name: hashlib.sha256((ROOT / "scripts" / name).read_bytes()).hexdigest()
+                for name in (
+                    "http_trace_pilot.py",
+                    "http_trace_contract.py",
+                    "http_trace_receiver.py",
+                    "http_trace_observer.py",
+                )
+            },
+        },
+    )
+    complete, error, stopped = False, None, False
+    created = []
+    originals = {}
+    try:
+        print("HTTP tracing: starting dedicated node, historical deployments unchanged", flush=True)
+        runner.command(["docker", "start", identity["container_id"]])
+        for _ in range(30):
+            try:
+                ns = json.loads(
+                    runner.kube(["get", "namespace", "fulfillflow", "-o", "json"], timeout=10)
+                )
+                break
+            except RuntimeError as failure:
+                if str(failure) not in ("COMMAND_FAILED_KUBECTL", "COMMAND_DEADLINE"):
+                    raise
+                time.sleep(2)
+        else:
+            raise RuntimeError("KUBERNETES_STARTUP")
+        if ns["metadata"]["uid"] != identity["namespace_uid"]:
+            raise RuntimeError("NAMESPACE_IDENTITY")
+        if json.loads(
+            runner.kube(
+                [
+                    "get",
+                    "deployment,service,configmap,networkpolicy",
+                    "-l",
+                    LABEL + "=true",
+                    "-o",
+                    "json",
+                ]
+            )
+        )["items"]:
+            raise RuntimeError("DIAGNOSTIC_RESOURCES_ALREADY_EXIST")
+        _, kind = env.tools()
+        runner.command(
+            [kind, "load", "docker-image", config["image"], "--name", CLUSTER], timeout=180
+        )
+        runner.create(
+            {
+                "apiVersion": "v1",
+                "kind": "ConfigMap",
+                "metadata": {"name": "httpdiag-scripts", "labels": {LABEL: "true"}},
+                "data": {
+                    name: (ROOT / "scripts" / name).read_text(encoding="utf-8")
+                    for name in ("http_trace_receiver.py", "http_trace_observer.py")
+                },
+            }
+        )
+        runner.create(network())
+        runner.create(sink(config["image"]))
+        created.append("httpdiag-sink")
+        runner.create(service("httpdiag-sink", 4318))
+        for role in ("tracking", "core"):
+            source = json.loads(runner.kube(["get", "deployment", role, "-o", "json"]))
+            originals[role] = source["spec"]
+            runner.create(clone_api(source, role, config["image"]))
+            created.append("httpdiag-" + role)
+            runner.create(service("httpdiag-" + role, 8000))
+        for name in created:
+            runner.kube(["rollout", "status", "deployment/" + name, "--timeout=120s"], timeout=130)
+        runner.check()
+        pods = json.loads(runner.kube(["get", "pods", "-l", LABEL + "=true", "-o", "json"]))[
+            "items"
+        ]
+        write(
+            output / "runtime.json",
+            [
+                {
+                    "name": p["metadata"]["name"],
+                    "uid": p["metadata"]["uid"],
+                    "containers": [
+                        {
+                            "image_id": c.get("imageID"),
+                            "ready": c.get("ready"),
+                            "restarts": c.get("restartCount"),
+                        }
+                        for c in p["status"].get("containerStatuses", [])
+                    ],
+                }
+                for p in pods
+            ],
+        )
+        print("HTTP tracing: one GET, no webhook, then bounded export collection", flush=True)
+        # Keep failed observer output too; it contains only the observer's allowlisted result.
+        result = runner.kube(
+            [
+                "exec",
+                "deployment/httpdiag-sink",
+                "--",
+                "python",
+                "/diag/http_trace_observer.py",
+                evidence["event_id"],
+                evidence["checkpoint"]["inbox_event_id"],
+            ],
+            timeout=30,
+            allow_failure=True,
+        )
+        functional = json.loads(result)
+        write(output / "functional.json", functional)
+        if not functional.get("trace_id"):
+            raise RuntimeError("OBSERVER_TRACE_NOT_CREATED")
+        snapshot = None
+        for _ in range(10):
+            snapshot = json.loads(
+                runner.kube(
+                    [
+                        "exec",
+                        "deployment/httpdiag-sink",
+                        "--",
+                        "python",
+                        "-c",
+                        "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:4318/snapshot', timeout=2).read().decode())",
+                    ],
+                    timeout=10,
+                )
+            )
+            if (
+                len([r for r in snapshot["records"] if r["trace_id"] == functional["trace_id"]])
+                >= 4
+            ):
+                break
+            time.sleep(1)
+        write(output / "trace-records.json", snapshot)
+        review = verify_trace(snapshot, functional)
+        write(output / "review.json", review)
+        try:
+            metrics = json.loads(
+                runner.kube(
+                    ["get", "--raw", "/apis/metrics.k8s.io/v1beta1/namespaces/fulfillflow/pods"],
+                    timeout=10,
+                )
+            )
+            names = {p["metadata"]["name"] for p in pods}
+            usage = [
+                {
+                    "name": p["metadata"]["name"],
+                    "timestamp": p.get("timestamp"),
+                    "window": p.get("window"),
+                    "containers": [
+                        {"name": c["name"], "usage": c.get("usage")}
+                        for c in p.get("containers", [])
+                    ],
+                }
+                for p in metrics["items"]
+                if p["metadata"]["name"] in names
+            ]
+            write(
+                output / "resources.json",
+                {
+                    "available": len(usage) == len(names),
+                    "pods": usage,
+                    "causal_overhead_measured": False,
+                },
+            )
+        except RuntimeError as failure:
+            if str(failure) != "COMMAND_FAILED_KUBECTL":
+                raise
+            write(
+                output / "resources.json",
+                {
+                    "available": False,
+                    "reason": "METRICS_API_UNAVAILABLE",
+                    "causal_overhead_measured": False,
+                },
+            )
+        complete = True
+    except Exception as failure:
+        error = (
+            str(failure)
+            if isinstance(failure, (RuntimeError, ValueError))
+            else type(failure).__name__
+        )
+    finally:
+        if error and created:
+            try:
+                statuses = json.loads(
+                    env.kubectl(
+                        private, ["get", "pods", "-l", LABEL + "=true", "-o", "json"], timeout=15
+                    )
+                )["items"]
+                write(
+                    output / "failure-pods.json",
+                    [
+                        {
+                            "name": p["metadata"]["name"],
+                            "phase": p.get("status", {}).get("phase"),
+                            "containers": [
+                                {
+                                    "ready": c.get("ready"),
+                                    "restart_count": c.get("restartCount"),
+                                    "states": {
+                                        k: {
+                                            key: value
+                                            for key, value in v.items()
+                                            if key
+                                            in ("reason", "exitCode", "startedAt", "finishedAt")
+                                        }
+                                        for k, v in c.get("state", {}).items()
+                                    },
+                                }
+                                for c in p.get("status", {}).get("containerStatuses", [])
+                            ],
+                        }
+                        for p in statuses
+                    ],
+                )
+            except Exception:
+                write(output / "failure-pods.json", {"available": False})
+        # Cleanup bypasses measurement guards but targets only resources created in this run.
+        try:
+            owned = json.loads(
+                env.kubectl(
+                    private,
+                    [
+                        "get",
+                        "deployments",
+                        "-l",
+                        "fulfillflow.io/http-run=" + runner.run_id,
+                        "-o",
+                        "json",
+                    ],
+                    timeout=20,
+                )
+            )["items"]
+            for deployment in owned:
+                name = deployment["metadata"]["name"]
+                if name not in ("httpdiag-core", "httpdiag-tracking", "httpdiag-sink"):
+                    raise RuntimeError("CLEANUP_RESOURCE_IDENTITY")
+                env.kubectl(private, ["scale", "deployment/" + name, "--replicas=0"], timeout=20)
+            unchanged = all(
+                json.loads(
+                    env.kubectl(private, ["get", "deployment", name, "-o", "json"], timeout=20)
+                )["spec"]
+                == spec
+                for name, spec in originals.items()
+            )
+            write(
+                output / "preservation.json",
+                {
+                    "historical_deployment_specs_unchanged": unchanged,
+                    "historical_deployments_checked": sorted(originals),
+                    "diagnostic_replicas_requested": 0,
+                },
+            )
+            if not unchanged:
+                complete, error = False, "HISTORICAL_SPEC_CHANGED"
+        except Exception:
+            complete, error = False, error or "RESOURCE_CLEANUP_UNCONFIRMED"
+        try:
+            env.command(["docker", "stop", "--timeout", "30", identity["container_id"]], timeout=60)
+            stopped = not json.loads(env.command(["docker", "inspect", identity["container_id"]]))[
+                0
+            ]["State"]["Running"]
+        except Exception:
+            pass
+        if not stopped:
+            complete, error = False, error or "SHUTDOWN_UNCONFIRMED"
+        write(output / "host.json", runner.samples)
+        write(
+            output / "summary.json",
+            {
+                "complete": complete,
+                "error": error,
+                "container_stopped": stopped,
+                "business_writes": 0,
+            },
+        )
+    print(
+        json.dumps(
+            {
+                "complete": complete,
+                "error": error,
+                "container_stopped": stopped,
+                "output": str(output),
+            }
+        )
+    )
+    return 0 if complete else 1
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--private", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    lock = ROOT / "artifacts/observability-pilot.lock"
+    owned = False
+    try:
+        with lock.open("x"):
+            owned = True
+        raise SystemExit(execute(args.private.resolve(), args.output.resolve()))
+    except Exception as error:
+        print(
+            json.dumps(
+                {
+                    "complete": False,
+                    "error": str(error)
+                    if isinstance(error, RuntimeError)
+                    else type(error).__name__,
+                }
+            )
+        )
+        raise SystemExit(1) from None
+    finally:
+        if owned:
+            lock.unlink()

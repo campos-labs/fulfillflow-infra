@@ -549,3 +549,38 @@ O pacote publicado contém as nove tentativas, inclusive a primeira originalment
 fora da continuação. Credenciais e dumps permanecem privados; leitura dos pacotes
 não equivale a restauração do ambiente. Nova campanha, alteração de aplicação ou
 implantação Azure depende da [decisão de continuidade](../RELEASE_PLAN.md#4-continuidade-condicionada).
+
+### Diagnóstico HTTP com tracing
+
+A fatia usa [imagem identificada](../config/http-observability.json), já construída
+localmente, e o ambiente privado `observability-01`. Não é bootstrap genérico para
+outro computador. A aplicação instrumentada está em branch própria e não substitui
+a v1.3 congelada. Antes da janela, conferir a CI e a imagem; o executor recusa um
+digest diferente. Build equivalente não é presumido idêntico ao digest registrado.
+
+Na raiz do repositório, em PowerShell 7:
+
+```powershell
+.\scripts\Invoke-HttpTracePilot.ps1
+```
+
+O launcher localiza a configuração privada nos locais normal ou virtualizado do
+Windows; em caso de ausência/ambiguidade, passar `-PrivateDirectory`. A saída padrão
+é `artifacts/observability-http-01`; não sobrescrever para repetir. Há 45 s para fechar
+navegadores, IDEs e assistentes. Manter Docker e tomada; nenhuma transferência externa
+é necessária depois da preparação. A entrada exige 5 GiB livres e a execução mantém
+a guarda de 2 GiB. O histórico Kind pode ser parado, preservando volumes; outros
+containers ativos impedem a entrada. Não é necessário reiniciar por padrão.
+
+A janela faz um GET de evento já existente, com quatro spans esperados. Preserva
+`protocol.json`, `functional.json`, `trace-records.json`, `review.json`, inventário,
+margem do host e `summary.json`. Métricas de pods podem estar indisponíveis durante
+startup; essa lacuna fica registrada. O receptor limitado aceita somente atributos
+permitidos, sem URL/query, corpos, credenciais, SQL ou texto de exceções.
+
+No fim, os clones recebem zero réplicas e o nó é parado; conferir
+`summary.container_stopped` e `preservation.historical_deployment_specs_unchanged`.
+Uma falha de captura não significa falha de processamento. Os recursos criados
+mantêm identidade própria e bloqueiam nova execução automática; não remover claims,
+recursos ou evidências apenas para obter sucesso. A próxima decisão depende da
+informação efetivamente acrescentada pelo diagnóstico, sem repetir cargas anteriores.

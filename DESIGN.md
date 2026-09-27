@@ -597,6 +597,22 @@ Prometheus, dashboards e backends gerenciados só entram por lacuna identificada
 Uma execução funcional pequena pode demonstrar cobertura; não quantifica overhead
 ou superioridade diagnóstica sem condições comparáveis e critérios prévios.
 
+A fatia HTTP autorizada usa APIs Core/Tracking clonadas com nomes e seletores
+exclusivos, mantendo os deployments históricos intactos. A nova imagem aplica
+SDK opt-in somente aos GETs de listagem de carrier-events; não modifica schema,
+autenticação, retry, timeout ou dados. O observador consulta um evento conhecido
+no banco do ambiente de observabilidade; não utiliza bancos da campanha de escala.
+Quatro spans esperados: observador cliente, Core servidor, operação cliente interna
+(com validação) e Tracking servidor. Tratar eventos de resposta recebida/validada
+como marcos da operação HTTP, sem atribuir-lhes commit ou processamento assíncrono.
+
+O receptor diagnóstico OTLP é local, limitado e rejeita atributos fora da allowlist.
+A confirmação funcional utiliza o JSON público e a identidade persistida, sem
+consultar spans. Identificar cobertura ausente, rejeições da coleta e métricas
+indisponíveis separadamente. O fim do diagnóstico preserva volumes e configurações
+históricas; zero réplicas dos clones e nó parado encerram a janela. Credenciais e
+bodies HTTP não integram a evidência, e nenhuma imagem histórica é sobrescrita.
+
 ## 9. Limites e evolução
 
 O aceite deve identificar o ambiente efetivamente exercitado: Kind ou AKS.
