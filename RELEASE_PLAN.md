@@ -305,6 +305,45 @@ dos workers continuam capturados. O limite é 15 minutos mais encerramento, com 
 mesmas guardas de memória. Essa preparação não comprova antecipadamente a admissão
 nem muda a classificação do 503 anterior. Não alterar a aplicação ou instalar tracing.
 
+### Resultado da janela saudável e pausa
+
+`observability-healthy-01` terminou com sucesso na referência de infraestrutura
+`7829064`, sem alterar a aplicação. O GET prospectivo passou; um único webhook
+recebeu 202, Tracking/Order concluíram e Notifications atingiu `SIMULATED`, com um
+único efeito de cada tipo observado. Houve 13 requisições HTTP (nove GETs), sem erro.
+O nó terminou parado e os volumes foram preservados. Não houve reenvio do evento anterior.
+
+O [resumo conferido](docs/evidence/observability/healthy-01-review.json) preserva
+hashes e localização dos originais locais. Os nove registros dos três workers
+mantiveram o request ID da admissão, a correlação com a inbox e o evento de negócio.
+Três message IDs ligam publicação, recebimento persistido e processamento: comando
+Tracking → Core, resultado Core → Tracking e notificação Core → Notifications.
+As consultas do observador possuem seus próprios request IDs; a ligação ao trabalho
+é feita pelos IDs públicos do evento, não pela igualdade de todos os request IDs.
+
+O intervalo monotônico do aceite observado até a confirmação de Notifications foi
+2,235 s. Para o mesmo evento, `completed_at` do Tracking antecedeu sua observação
+pública em aproximadamente 0,918 s; `simulated_at` antecedeu a observação de
+Notifications em 1,036 s. Estes últimos são diferenças UTC entre processos, com
+incerteza de relógio não medida. Os campos persistidos e logs posteriores à operação
+não identificam o instante exato do commit. Não somar etapas sobrepostas nem tratar
+essas diferenças como custo isolado de polling ou latência pura de processamento.
+
+**Aprendizado:** os sinais existentes já localizam etapas e distinguem resultado
+registrado de confirmação posterior no fluxo saudável. Isso justifica manter a
+correlação por IDs como base antes de acrescentar tracing. Um evento não mede
+sobrecarga, cobertura geral ou ganho diagnóstico comparativo; a execução não testa
+retomada após interrupção e não explica os 503 ou atrasos históricos. O mínimo de
+memória e o RSS do executor constam do resumo, sem atribuição causal à coleta.
+
+**Pausa atingida:** a única tentativa desta nova janela foi consumida. O próximo
+passo recomendado é um cenário pequeno de Notifications temporariamente parado,
+com resultado esperado definido antes, para verificar se os mesmos sinais localizam
+a pendência e confirmam sua conclusão posterior sem reenvio. Isso exige delimitar
+nova janela; não autoriza carga adicional automaticamente. Se a lacuna restante for
+HTTP interno ou duração de transações, avaliar instrumentação mínima com referência
+própria da aplicação. Não instalar uma plataforma completa por padrão.
+
 ### Continuidade após a exploração
 
 Prometheus e verificações de segurança permanecem possibilidades por lacuna

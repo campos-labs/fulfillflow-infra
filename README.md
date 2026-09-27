@@ -19,9 +19,10 @@ conferir os resultados. AKS/ACR permanecem referências opcionais não implantad
 A branch `feature/v1.2-observability` inicia uma exploração delimitada de correlação
 e diagnóstico. Seu [plano e critérios de continuidade](RELEASE_PLAN.md#4-exploração-de-observabilidade)
 são separados das avaliações encerradas. A correlação offline dos registros já é
-reproduzível; a primeira janela integrada terminou com uma falha de admissão e
-consulta posterior sem registro do evento. A exploração está em pausa; ainda não há
-fluxo saudável completo ou tracing integrado validado.
+reproduzível; uma nova janela confirmou um evento saudável e a correlação de nove
+registros entre os três workers. O [resumo da verificação](docs/evidence/observability/healthy-01-review.json)
+preserva fontes e limites. A janela está encerrada para reavaliação; tracing ainda
+não foi instalado. A falha de admissão anterior permanece sem causa determinada.
 
 ## Comece por aqui
 
