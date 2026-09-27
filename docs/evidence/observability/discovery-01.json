@@ -1,0 +1,552 @@
+{
+  "schema_version": 1,
+  "complete": true,
+  "load_executed": false,
+  "tracing_tested": false,
+  "selection": "prepared[0] in each attempt, regardless of outcome; illustrative, not representative",
+  "selected_events": 9,
+  "source_manifest_sha256": "3723d205bbd4ec0fb8a29672280adbc608e4ca1808450b51c6fcd58cbe7f0443",
+  "script_sha256": "2083bdf7cb6a4777c6278870c0fdf73da2bdb61d1a4f09fc8dbe34a4b61b42a8",
+  "application_reference": "9e3a135a00db218643633c7165d3106f0c8285e1",
+  "measurement_reference": "6932632ecc07afbef844f6c7483cfc71d0b5799e",
+  "coverage_selected_events": {
+    "acceptance_linked_to_journal": 9,
+    "core_done_linked_to_business_event": 9,
+    "tracking_confirmation_observed": 9,
+    "business_confirmation_observed": 9,
+    "notifications_confirmation_observed": 9,
+    "observer_http_intervals": 9
+  },
+  "limits": [
+    "Observed marks are query confirmations, not persisted completion timestamps.",
+    "Monotonic values retain their original load-generator or observer clock domain.",
+    "Worker UTC timestamps are not subtracted from observer clocks.",
+    "No spans are synthesized; identifier correlation is not propagated tracing.",
+    "Missing telemetry does not prove absence of processing.",
+    "This selection illustrates join feasibility, not the distribution of delays."
+  ],
+  "events": [
+    {
+      "attempt": "b1-p1-adaptive",
+      "source_archive": "archives/block-01.zip",
+      "source_prefix": "b1-p1-adaptive/measurement/",
+      "external_event_id": "infra-smoke-f3bd558e-556c-5962-abea-bd7d0c9d6d07",
+      "business_event_id": "fb62abd5-e99d-5f65-8399-34734584a3cc",
+      "admission_request_id": "ab76d979-be53-4ad6-a968-8b0afa18f14b",
+      "original_classification": "completed_in_time",
+      "coverage": {
+        "acceptance_linked_to_journal": true,
+        "core_done_linked_to_business_event": true,
+        "tracking_confirmation_observed": true,
+        "business_confirmation_observed": true,
+        "notifications_confirmation_observed": true,
+        "observer_http_intervals": true
+      },
+      "acceptance": {
+        "utc": "2026-09-27T02:47:54.442441+00:00",
+        "monotonic": 1900.562
+      },
+      "core_process_record": {
+        "timestamp": "2026-09-27T02:47:54.709580+00:00",
+        "duration_ms": 33.531,
+        "message_id": "4f8103b1-dfa4-4a88-84b1-0ea263d9d68d",
+        "outcome": "DONE"
+      },
+      "observed_marks": [
+        {
+          "phase": "tracking_completed",
+          "observed_at": "2026-09-27T02:47:58.489636+00:00"
+        },
+        {
+          "phase": "business_completed",
+          "observed_at": "2026-09-27T02:47:58.623066+00:00"
+        },
+        {
+          "phase": "notifications_simulated",
+          "observed_at": "2026-09-27T02:47:58.741746+00:00"
+        }
+      ],
+      "observer_http": {
+        "get_count": 6,
+        "non_200": 0,
+        "transport_errors_or_unknown": 0,
+        "first_get_monotonic": 1904.562,
+        "last_get_end_monotonic": 1905.125,
+        "queries_sharing_admission_request_id": 0,
+        "request_response_id_matches": 6
+      },
+      "completed_observer_monotonic": 1905.125,
+      "unavailable_in_selected_sources": [
+        "durable_trace_context",
+        "tracking_commit_time",
+        "notifications_commit_time",
+        "publication_to_durable_receipt_interval",
+        "telemetry_export_health"
+      ]
+    },
+    {
+      "attempt": "b1-p2-fixed-2",
+      "source_archive": "archives/block-01.zip",
+      "source_prefix": "b1-p2-fixed-2/measurement/",
+      "external_event_id": "infra-smoke-f3bd558e-556c-5962-abea-bd7d0c9d6d07",
+      "business_event_id": "72cac745-6ab1-5120-90d0-b63453618e06",
+      "admission_request_id": "ff0a4d2d-2313-480b-bc00-8bff735d0f03",
+      "original_classification": "completed_in_time",
+      "coverage": {
+        "acceptance_linked_to_journal": true,
+        "core_done_linked_to_business_event": true,
+        "tracking_confirmation_observed": true,
+        "business_confirmation_observed": true,
+        "notifications_confirmation_observed": true,
+        "observer_http_intervals": true
+      },
+      "acceptance": {
+        "utc": "2026-09-27T03:35:33.216591+00:00",
+        "monotonic": 482.343
+      },
+      "core_process_record": {
+        "timestamp": "2026-09-27T03:35:33.621473+00:00",
+        "duration_ms": 34.89,
+        "message_id": "af910b8b-5d3b-4462-ae09-508a94ba6d24",
+        "outcome": "DONE"
+      },
+      "observed_marks": [
+        {
+          "phase": "tracking_completed",
+          "observed_at": "2026-09-27T03:35:36.850985+00:00"
+        },
+        {
+          "phase": "business_completed",
+          "observed_at": "2026-09-27T03:35:36.987302+00:00"
+        },
+        {
+          "phase": "notifications_simulated",
+          "observed_at": "2026-09-27T03:35:37.020647+00:00"
+        }
+      ],
+      "observer_http": {
+        "get_count": 6,
+        "non_200": 0,
+        "transport_errors_or_unknown": 0,
+        "first_get_monotonic": 485.906,
+        "last_get_end_monotonic": 486.375,
+        "queries_sharing_admission_request_id": 0,
+        "request_response_id_matches": 6
+      },
+      "completed_observer_monotonic": 486.375,
+      "unavailable_in_selected_sources": [
+        "durable_trace_context",
+        "tracking_commit_time",
+        "notifications_commit_time",
+        "publication_to_durable_receipt_interval",
+        "telemetry_export_health"
+      ]
+    },
+    {
+      "attempt": "b1-p3-fixed-1",
+      "source_archive": "archives/block-01.zip",
+      "source_prefix": "b1-p3-fixed-1/measurement/",
+      "external_event_id": "infra-smoke-f3bd558e-556c-5962-abea-bd7d0c9d6d07",
+      "business_event_id": "379444fa-f52f-5410-a928-c4cf38819dc0",
+      "admission_request_id": "61046b49-27f3-4c1a-b57b-ed176e39f8bf",
+      "original_classification": "completed_in_time",
+      "coverage": {
+        "acceptance_linked_to_journal": true,
+        "core_done_linked_to_business_event": true,
+        "tracking_confirmation_observed": true,
+        "business_confirmation_observed": true,
+        "notifications_confirmation_observed": true,
+        "observer_http_intervals": true
+      },
+      "acceptance": {
+        "utc": "2026-09-27T03:47:56.996898+00:00",
+        "monotonic": 1226.125
+      },
+      "core_process_record": {
+        "timestamp": "2026-09-27T03:47:57.658459+00:00",
+        "duration_ms": 35.637,
+        "message_id": "47e357b1-a90d-4280-95a5-73b17591a290",
+        "outcome": "DONE"
+      },
+      "observed_marks": [
+        {
+          "phase": "tracking_completed",
+          "observed_at": "2026-09-27T03:48:01.297991+00:00"
+        },
+        {
+          "phase": "business_completed",
+          "observed_at": "2026-09-27T03:48:01.439260+00:00"
+        },
+        {
+          "phase": "notifications_simulated",
+          "observed_at": "2026-09-27T03:48:01.666808+00:00"
+        }
+      ],
+      "observer_http": {
+        "get_count": 6,
+        "non_200": 0,
+        "transport_errors_or_unknown": 0,
+        "first_get_monotonic": 1230.359,
+        "last_get_end_monotonic": 1230.984,
+        "queries_sharing_admission_request_id": 0,
+        "request_response_id_matches": 6
+      },
+      "completed_observer_monotonic": 1231.0,
+      "unavailable_in_selected_sources": [
+        "durable_trace_context",
+        "tracking_commit_time",
+        "notifications_commit_time",
+        "publication_to_durable_receipt_interval",
+        "telemetry_export_health"
+      ]
+    },
+    {
+      "attempt": "b2-p1-fixed-1",
+      "source_archive": "archives/block-02.zip",
+      "source_prefix": "b2-p1-fixed-1/measurement/",
+      "external_event_id": "infra-smoke-f3bd558e-556c-5962-abea-bd7d0c9d6d07",
+      "business_event_id": "0b328c48-0e0d-5c2b-a110-4b06c116f5eb",
+      "admission_request_id": "621707c3-1f91-48f1-8e43-81b37f6720c4",
+      "original_classification": "completed_in_time",
+      "coverage": {
+        "acceptance_linked_to_journal": true,
+        "core_done_linked_to_business_event": true,
+        "tracking_confirmation_observed": true,
+        "business_confirmation_observed": true,
+        "notifications_confirmation_observed": true,
+        "observer_http_intervals": true
+      },
+      "acceptance": {
+        "utc": "2026-09-27T04:00:21.246514+00:00",
+        "monotonic": 1970.375
+      },
+      "core_process_record": {
+        "timestamp": "2026-09-27T04:00:22.066096+00:00",
+        "duration_ms": 30.637,
+        "message_id": "2c8b0fad-1254-44c0-a273-27951db590cd",
+        "outcome": "DONE"
+      },
+      "observed_marks": [
+        {
+          "phase": "tracking_completed",
+          "observed_at": "2026-09-27T04:00:25.561905+00:00"
+        },
+        {
+          "phase": "business_completed",
+          "observed_at": "2026-09-27T04:00:25.703421+00:00"
+        },
+        {
+          "phase": "notifications_simulated",
+          "observed_at": "2026-09-27T04:00:25.891651+00:00"
+        }
+      ],
+      "observer_http": {
+        "get_count": 6,
+        "non_200": 0,
+        "transport_errors_or_unknown": 0,
+        "first_get_monotonic": 1974.625,
+        "last_get_end_monotonic": 1975.234,
+        "queries_sharing_admission_request_id": 0,
+        "request_response_id_matches": 6
+      },
+      "completed_observer_monotonic": 1975.234,
+      "unavailable_in_selected_sources": [
+        "durable_trace_context",
+        "tracking_commit_time",
+        "notifications_commit_time",
+        "publication_to_durable_receipt_interval",
+        "telemetry_export_health"
+      ]
+    },
+    {
+      "attempt": "b2-p2-adaptive",
+      "source_archive": "archives/block-02.zip",
+      "source_prefix": "b2-p2-adaptive/measurement/",
+      "external_event_id": "infra-smoke-f3bd558e-556c-5962-abea-bd7d0c9d6d07",
+      "business_event_id": "0ccadda3-261d-5ed8-9fb5-aa2e27a77f40",
+      "admission_request_id": "4a9c2bfa-1d11-4e1a-9161-8588c4c70fea",
+      "original_classification": "completed_in_time",
+      "coverage": {
+        "acceptance_linked_to_journal": true,
+        "core_done_linked_to_business_event": true,
+        "tracking_confirmation_observed": true,
+        "business_confirmation_observed": true,
+        "notifications_confirmation_observed": true,
+        "observer_http_intervals": true
+      },
+      "acceptance": {
+        "utc": "2026-09-27T04:12:45.385307+00:00",
+        "monotonic": 2714.515
+      },
+      "core_process_record": {
+        "timestamp": "2026-09-27T04:12:45.950472+00:00",
+        "duration_ms": 30.087,
+        "message_id": "e6349520-184d-4c87-9e70-55be99f67910",
+        "outcome": "DONE"
+      },
+      "observed_marks": [
+        {
+          "phase": "tracking_completed",
+          "observed_at": "2026-09-27T04:12:49.629548+00:00"
+        },
+        {
+          "phase": "business_completed",
+          "observed_at": "2026-09-27T04:12:49.772916+00:00"
+        },
+        {
+          "phase": "notifications_simulated",
+          "observed_at": "2026-09-27T04:12:49.946790+00:00"
+        }
+      ],
+      "observer_http": {
+        "get_count": 6,
+        "non_200": 0,
+        "transport_errors_or_unknown": 0,
+        "first_get_monotonic": 2718.687,
+        "last_get_end_monotonic": 2719.265,
+        "queries_sharing_admission_request_id": 0,
+        "request_response_id_matches": 6
+      },
+      "completed_observer_monotonic": 2719.265,
+      "unavailable_in_selected_sources": [
+        "durable_trace_context",
+        "tracking_commit_time",
+        "notifications_commit_time",
+        "publication_to_durable_receipt_interval",
+        "telemetry_export_health"
+      ]
+    },
+    {
+      "attempt": "b2-p3-fixed-2",
+      "source_archive": "archives/block-02.zip",
+      "source_prefix": "b2-p3-fixed-2/measurement/",
+      "external_event_id": "infra-smoke-f3bd558e-556c-5962-abea-bd7d0c9d6d07",
+      "business_event_id": "187565df-2377-5b4f-9623-36c16bbd6cf7",
+      "admission_request_id": "46ff4e52-39d8-4a28-8338-6e93e6cbd22d",
+      "original_classification": "completed_in_time",
+      "coverage": {
+        "acceptance_linked_to_journal": true,
+        "core_done_linked_to_business_event": true,
+        "tracking_confirmation_observed": true,
+        "business_confirmation_observed": true,
+        "notifications_confirmation_observed": true,
+        "observer_http_intervals": true
+      },
+      "acceptance": {
+        "utc": "2026-09-27T04:25:24.263164+00:00",
+        "monotonic": 3473.39
+      },
+      "core_process_record": {
+        "timestamp": "2026-09-27T04:25:24.713100+00:00",
+        "duration_ms": 31.739,
+        "message_id": "e73205b2-4ed3-47d4-812f-18bf6f8b736c",
+        "outcome": "DONE"
+      },
+      "observed_marks": [
+        {
+          "phase": "tracking_completed",
+          "observed_at": "2026-09-27T04:25:28.473103+00:00"
+        },
+        {
+          "phase": "business_completed",
+          "observed_at": "2026-09-27T04:25:28.541865+00:00"
+        },
+        {
+          "phase": "notifications_simulated",
+          "observed_at": "2026-09-27T04:25:28.703101+00:00"
+        }
+      ],
+      "observer_http": {
+        "get_count": 6,
+        "non_200": 0,
+        "transport_errors_or_unknown": 0,
+        "first_get_monotonic": 3477.546,
+        "last_get_end_monotonic": 3478.0,
+        "queries_sharing_admission_request_id": 0,
+        "request_response_id_matches": 6
+      },
+      "completed_observer_monotonic": 3478.0,
+      "unavailable_in_selected_sources": [
+        "durable_trace_context",
+        "tracking_commit_time",
+        "notifications_commit_time",
+        "publication_to_durable_receipt_interval",
+        "telemetry_export_health"
+      ]
+    },
+    {
+      "attempt": "b3-p1-fixed-2",
+      "source_archive": "archives/block-03.zip",
+      "source_prefix": "b3-p1-fixed-2/measurement/",
+      "external_event_id": "infra-smoke-f3bd558e-556c-5962-abea-bd7d0c9d6d07",
+      "business_event_id": "7d5063ed-cd67-5271-8c12-9e9b2798f8f5",
+      "admission_request_id": "5c5b8dd7-2300-4d76-bb31-96e2bf001db1",
+      "original_classification": "completed_in_time",
+      "coverage": {
+        "acceptance_linked_to_journal": true,
+        "core_done_linked_to_business_event": true,
+        "tracking_confirmation_observed": true,
+        "business_confirmation_observed": true,
+        "notifications_confirmation_observed": true,
+        "observer_http_intervals": true
+      },
+      "acceptance": {
+        "utc": "2026-09-27T04:38:05.391457+00:00",
+        "monotonic": 4234.515
+      },
+      "core_process_record": {
+        "timestamp": "2026-09-27T04:38:05.802958+00:00",
+        "duration_ms": 32.279,
+        "message_id": "aa4b0c16-aea6-4bdc-8311-9a6e6e5956ec",
+        "outcome": "DONE"
+      },
+      "observed_marks": [
+        {
+          "phase": "tracking_completed",
+          "observed_at": "2026-09-27T04:38:09.645832+00:00"
+        },
+        {
+          "phase": "business_completed",
+          "observed_at": "2026-09-27T04:38:09.716474+00:00"
+        },
+        {
+          "phase": "notifications_simulated",
+          "observed_at": "2026-09-27T04:38:09.857836+00:00"
+        }
+      ],
+      "observer_http": {
+        "get_count": 6,
+        "non_200": 0,
+        "transport_errors_or_unknown": 0,
+        "first_get_monotonic": 4238.703,
+        "last_get_end_monotonic": 4239.187,
+        "queries_sharing_admission_request_id": 0,
+        "request_response_id_matches": 6
+      },
+      "completed_observer_monotonic": 4239.187,
+      "unavailable_in_selected_sources": [
+        "durable_trace_context",
+        "tracking_commit_time",
+        "notifications_commit_time",
+        "publication_to_durable_receipt_interval",
+        "telemetry_export_health"
+      ]
+    },
+    {
+      "attempt": "b3-p2-fixed-1",
+      "source_archive": "archives/block-03.zip",
+      "source_prefix": "b3-p2-fixed-1/measurement/",
+      "external_event_id": "infra-smoke-f3bd558e-556c-5962-abea-bd7d0c9d6d07",
+      "business_event_id": "6383c764-03fe-5725-af13-2c916dff905a",
+      "admission_request_id": "3f589f28-9fd7-462d-bb21-461704d9830b",
+      "original_classification": "completed_in_time",
+      "coverage": {
+        "acceptance_linked_to_journal": true,
+        "core_done_linked_to_business_event": true,
+        "tracking_confirmation_observed": true,
+        "business_confirmation_observed": true,
+        "notifications_confirmation_observed": true,
+        "observer_http_intervals": true
+      },
+      "acceptance": {
+        "utc": "2026-09-27T04:50:26.273159+00:00",
+        "monotonic": 4975.39
+      },
+      "core_process_record": {
+        "timestamp": "2026-09-27T04:50:26.891704+00:00",
+        "duration_ms": 36.562,
+        "message_id": "06ebc2f7-b0c7-460f-9992-1e3c12afc7d4",
+        "outcome": "DONE"
+      },
+      "observed_marks": [
+        {
+          "phase": "tracking_completed",
+          "observed_at": "2026-09-27T04:50:30.482279+00:00"
+        },
+        {
+          "phase": "business_completed",
+          "observed_at": "2026-09-27T04:50:30.616648+00:00"
+        },
+        {
+          "phase": "notifications_simulated",
+          "observed_at": "2026-09-27T04:50:30.821586+00:00"
+        }
+      ],
+      "observer_http": {
+        "get_count": 6,
+        "non_200": 0,
+        "transport_errors_or_unknown": 0,
+        "first_get_monotonic": 4979.546,
+        "last_get_end_monotonic": 4980.218,
+        "queries_sharing_admission_request_id": 0,
+        "request_response_id_matches": 6
+      },
+      "completed_observer_monotonic": 4980.234,
+      "unavailable_in_selected_sources": [
+        "durable_trace_context",
+        "tracking_commit_time",
+        "notifications_commit_time",
+        "publication_to_durable_receipt_interval",
+        "telemetry_export_health"
+      ]
+    },
+    {
+      "attempt": "b3-p3-adaptive",
+      "source_archive": "archives/block-03.zip",
+      "source_prefix": "b3-p3-adaptive/measurement/",
+      "external_event_id": "infra-smoke-f3bd558e-556c-5962-abea-bd7d0c9d6d07",
+      "business_event_id": "2cbe46b0-2212-5b61-9175-3f7194ff4e8b",
+      "admission_request_id": "bdfb8d69-8c94-4f6d-8c57-b65982c8eded",
+      "original_classification": "completed_in_time",
+      "coverage": {
+        "acceptance_linked_to_journal": true,
+        "core_done_linked_to_business_event": true,
+        "tracking_confirmation_observed": true,
+        "business_confirmation_observed": true,
+        "notifications_confirmation_observed": true,
+        "observer_http_intervals": true
+      },
+      "acceptance": {
+        "utc": "2026-09-27T05:02:47.694228+00:00",
+        "monotonic": 5716.812
+      },
+      "core_process_record": {
+        "timestamp": "2026-09-27T05:02:48.246187+00:00",
+        "duration_ms": 34.219,
+        "message_id": "198baada-7c03-44b6-b042-10e88b00496b",
+        "outcome": "DONE"
+      },
+      "observed_marks": [
+        {
+          "phase": "tracking_completed",
+          "observed_at": "2026-09-27T05:02:50.973355+00:00"
+        },
+        {
+          "phase": "business_completed",
+          "observed_at": "2026-09-27T05:02:51.069934+00:00"
+        },
+        {
+          "phase": "notifications_simulated",
+          "observed_at": "2026-09-27T05:02:51.110467+00:00"
+        }
+      ],
+      "observer_http": {
+        "get_count": 6,
+        "non_200": 0,
+        "transport_errors_or_unknown": 0,
+        "first_get_monotonic": 5720.046,
+        "last_get_end_monotonic": 5720.406,
+        "queries_sharing_admission_request_id": 0,
+        "request_response_id_matches": 6
+      },
+      "completed_observer_monotonic": 5720.421,
+      "unavailable_in_selected_sources": [
+        "durable_trace_context",
+        "tracking_commit_time",
+        "notifications_commit_time",
+        "publication_to_durable_receipt_interval",
+        "telemetry_export_health"
+      ]
+    }
+  ]
+}

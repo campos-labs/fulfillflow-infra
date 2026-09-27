@@ -558,6 +558,18 @@ Uma releitura de registros antigos tem identidade própria e alcance diagnóstic
 não cria novos fatos medidos nem determina causas não preservadas. Identificar
 separadamente correlação por IDs, tracing propagado e inferência temporal.
 
+Verificar a ligação de identidades através de outbox, publicação, inbox e trabalho
+persistido retomado; ID de negócio, mensagem, requisição e trace têm papéis distintos.
+Correlação por ID não exige inventar spans históricos. Propagação durável que exija
+mudar payload assinado, esquema, idempotência ou retries depende de decisão específica.
+
+Conferir cobertura dos marcos por evento conhecido e saúde do caminho de telemetria,
+incluindo falhas, retries, filas e descartes quando esses sinais existirem. Ausência
+de trace não comprova ausência de processamento; erro de exportação não comprova
+perda definitiva. Confrontar a telemetria com verificações funcionais independentes.
+Usar atributos permitidos explicitamente; autoinstrumentação também exige revisão
+de conteúdo antes da captura/exportação.
+
 Declarar a semântica de cada marco: recebimento, decisão de negócio, commit,
 publicação, recepção durável, processamento local e confirmação pelo observador.
 Um campo timestamp ou um log DONE não prova todos esses marcos. Durações monotônicas

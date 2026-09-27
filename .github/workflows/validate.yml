@@ -55,6 +55,13 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           uv run --frozen python docs/evidence/scaling/reproduce.py
           exit $LASTEXITCODE
+      - name: Reproduce observability discovery without cluster access
+        shell: pwsh
+        run: |
+          uv run --frozen python scripts/observability_discovery.py --output artifacts/observability-discovery.json
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          uv run --frozen python -c "import json; from pathlib import Path; actual=json.loads(Path('artifacts/observability-discovery.json').read_bytes()); expected=json.loads(Path('docs/evidence/observability/discovery-01.json').read_bytes()); assert actual == expected, 'Observability discovery differs from published summary'"
+          exit $LASTEXITCODE
       - name: Render, schema validation and Terraform mock plans
         shell: pwsh
         run: |

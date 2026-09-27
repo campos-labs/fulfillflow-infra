@@ -5,7 +5,8 @@
 **Incremento ativo: descoberta de observabilidade**, na branch
 `feature/v1.2-observability`, a partir de `v1.1.0-rc.1` (`92089b8`). Contratos em
 [DESIGN §8.8](DESIGN.md#88-exploração-de-observabilidade). A exploração não reabre
-as campanhas concluídas nem promete uma nova campanha ou release.
+as campanhas concluídas nem promete uma nova campanha ou release. A correlação
+offline foi implementada; a prova integrada aguarda margem de memória do host.
 
 
 **Comparação de capacidade fixa e adaptativa concluída e consolidada na
@@ -108,6 +109,13 @@ da coleta. Não repetir tudo como confirmação nem reclassificar pilotos depois
 Entregar uma matriz curta **questão → sinal atual → lacuna → mecanismo mínimo →
 evidência → limite**, procedimento executável quando houver ensaio e uma decisão:
 
+Declarar o denominador da cobertura: eventos conhecidos e marcos esperados, incluindo
+identidades que atravessam persistência e publicação posterior. Separar ausência de
+marco, conflito de identidade, erro de coleta e resultado funcional. Se houver
+exportação, registrar sua saúde e eventuais descartes/retries. O próprio trace não
+substitui a confirmação funcional independente. Uma perturbação real, como parar
+Notifications, permanece candidata posterior; não integra o primeiro ensaio saudável.
+
 - **Aprofundar:** existe informação nova sobre uma fronteira relevante, com
   correlação verificável e custo compatível; propor comparação própria somente
   se isso responder a uma questão adicional concreta.
@@ -129,7 +137,7 @@ já emite IDs, serviço, etapa, resultado, UTC e duração. Isso justifica come�
 por cobertura dos registros antes de acrescentar um backend. Não foi executado
 novo ensaio integrado ou validado tracing nesta branch.
 
-A inspeção estrutural dos nove pacotes encontrou diário de admissão, registros
+A inspeção estrutural das nove tentativas nos três pacotes encontrou diário de admissão, registros
 correlacionados do Core worker, tempos HTTP do observador e amostras de recursos
 do instrumento. Não houve recálculo dos resultados nem nova auditoria dos dados
 brutos. A cobertura inicial orienta a próxima implementação:
@@ -142,8 +150,8 @@ brutos. A cobertura inicial orienta a próxima implementação:
 | Confirmação funcional | `events.json` e `observations.jsonl` | Registro observado não equivale ao instante do commit |
 | Custo do instrumento | `series.jsonl`, CPU/RSS e memória | Amostragem não prova overhead causal nem captura todos os processos breves |
 
-Primeiro correlacionar essas fronteiras sem nova carga. Se faltar um marco
-essencial, definir sua captura prospectiva e o custo antes de habilitar tracing.
+A correlação offline abaixo cobre essas fronteiras. A captura prospectiva deve
+preencher as lacunas identificadas antes de justificar instrumentação adicional.
 
 Os timestamps também exigem leitura do contrato: no resultado aplicado,
 [`tracking/message_handler.py`](https://github.com/campos-labs/fulfillflow/blob/9e3a135a00db218643633c7165d3106f0c8285e1/src/fulfillflow/tracking/message_handler.py)
@@ -152,6 +160,53 @@ Esses instantes não são automaticamente o horário do commit ou da confirmaç�
 A [propagação de contexto do OpenTelemetry](https://opentelemetry.io/docs/concepts/context-propagation/)
 orienta a correlação entre fronteiras; IDs existentes não são prova de spans
 propagados. Mudanças de instrumentação precisam ser avaliadas como nova referência.
+
+### Correlação implementada e próxima verificação
+
+O [extrator offline](scripts/observability_discovery.py) verifica hashes dos ZIPs e
+relaciona o primeiro evento preparado de cada tentativa, independentemente do
+resultado. O [resumo reproduzível](docs/evidence/observability/discovery-01.json)
+preserva fontes, referências, hash do extrator, IDs, relógios originais e lacunas.
+A seleção é ilustrativa: não estima a distribuição de atrasos nem substitui a
+análise das nove tentativas completas.
+
+Nos nove eventos selecionados, foi possível ligar admissão, registro `DONE` do
+Core, confirmações de Tracking/negócio/Notifications e intervalos HTTP. As 54
+consultas GET têm IDs diferentes do aceite; a ligação exige também a identidade
+do evento e sua pasta de observação. Isso demonstra correlação dos registros
+selecionados, não propagação de trace. Não foram isolados os instantes de commit
+de Tracking/Notifications nem a espera completa entre publicação e recepção durável.
+
+| Questão | Achado e próximo mecanismo mínimo | Limite |
+| --- | --- | --- |
+| Relacionar aplicação e observador | IDs existentes permitem a ligação; extrator rejeita identidades conflitantes | Nove exemplos selecionados, sem inferência de latência ou cobertura global |
+| Localizar etapas além do Core | Capturar prospectivamente logs já emitidos pelos três workers, junto dos registros do observador | Os pacotes anteriores preservam atribuição Core, não todos os logs de etapas |
+| Separar persistência e confirmação | Declarar semântica dos logs e conferir estado funcional independentemente | Log após commit não fornece o instante exato do commit |
+
+Na referência congelada,
+[`messaging/worker.py`](https://github.com/campos-labs/fulfillflow/blob/9e3a135a00db218643633c7165d3106f0c8285e1/src/fulfillflow/messaging/worker.py)
+emite o resultado de processamento após sair da transação. Em
+[`messaging/amqp.py`](https://github.com/campos-labs/fulfillflow/blob/9e3a135a00db218643633c7165d3106f0c8285e1/src/fulfillflow/messaging/amqp.py),
+a recepção é registrada após persistência e ACK; a publicação, após confirmação
+do broker e registro local. Esses sinais justificam testar a captura existente
+antes de acrescentar SDK/backend. Não são spans nem medições exatas de cada espera.
+
+Para reproduzir somente a leitura, em um destino novo, sem Docker ou Azure:
+
+```powershell
+uv run --frozen python scripts/observability_discovery.py --output artifacts/observability-reading-01.json
+```
+
+O extrator não sobrescreve resultados. Testes cobrem conflitos de identidade,
+marcos ausentes, erro HTTP recuperado, falha de transporte, intervalos inválidos,
+integridade dos pacotes e preservação da classificação funcional original.
+
+**Pausa da prova integrada:** a checagem de entrada desta etapa encontrou 2,11 GiB
+livres, notebook na tomada e nenhum container ativo. A guarda de 5 GiB não foi
+atendida; nenhum cluster ou evento novo foi iniciado. Não há ainda executor
+integrado de observabilidade. Retomar sua preparação e o pequeno fluxo saudável
+em ambiente próprio quando houver margem, sem alterar aplicação, carga histórica
+ou guardas. OpenTelemetry continua candidato se restar uma lacuna de tracing.
 
 ### Continuidade após a exploração
 
