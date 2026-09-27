@@ -10,7 +10,7 @@ permitem conferir cobertura e limites sem depender dos artefatos locais selecion
 Nó parado. **Fatia HTTP saudável concluída** em `observability-http-05`: uma consulta
 200, nove conferências funcionais aprovadas e quatro spans ligados corretamente.
 [Registros e limites](docs/evidence/observability/README.md#fatia-http-com-opentelemetry)
-estão publicados. Preparada e testada, aguardando margem de memória: uma sequência
+estão publicados. Correção do executor após início da tentativa controlada: uma sequência
 controlada saudável → falha de
 transporte Core → Tracking → restauração, com três GETs sobre o mesmo evento.
 Sem nova carga, AKS, merge ou release v1.2; as tentativas anteriores ficam intactas.
@@ -270,17 +270,26 @@ Ao terminar esta única sequência, consolidar o valor acrescentado e pausar ant
 outra fronteira de instrumentação. Métricas indisponíveis limitam a avaliação de custo;
 não bloqueiam por si só o diagnóstico funcional.
 
-Preparação local da sequência: protocolo `bb98e9a`, 323 testes aprovados, Ruff e
-validação estática aprovados. Os oito recursos descartáveis da tentativa 05 foram
-retirados após verificar identidade/run ID e zero réplicas; volumes e specs históricos
-preservados. A entrada ficou bloqueada **antes das consultas e da injeção**: depois de
-iniciar/parar o nó para preparação, o host apresentou 3,48 GiB livres. Uma liberação
-de cache com todos os containers parados e seis amostras em 50 segundos terminou em
-3,88 GiB (máximo 3,89), abaixo da guarda de 5 GiB. Nenhum resultado experimental novo.
-Registro local: `artifacts/observability-http-fault-01-host-preparation.json`; nenhum
-container permaneceu ativo. Próxima execução pelo launcher, com assistentes/IDE/browser
-fechados, em saída exclusiva `artifacts/observability-http-fault-01`. Não reiniciar por
-padrão nem reduzir guardas. A falha de consulta permanece não executada.
+A tentativa `observability-http-fault-01` iniciou após a CI e as guardas. A fase
+`before` confirmou HTTP 200, nove conferências funcionais e quatro spans. Houve
+`TypeError` antes da consulta de falha; `restoration.json` confirma o spec original
+restaurado e `preservation.json` confirma deployments históricos preservados, com
+clones em zero e nó parado. Não há evidência da consulta sob interrupção nesta tentativa.
+
+Foi reproduzido offline um defeito na leitura de EndpointSlice com `endpoints: null`:
+o executor tentava percorrer `None`. O payload de endpoints não foi preservado na
+01; portanto, a reprodução identifica um caminho compatível, sem afirmar prova da
+resposta exata recebida. A sucessora trata a coleção vazia, mantém as guardas e
+registra localização de exceção (arquivo/função/linha, sem mensagem ou variáveis).
+Testes cobrem endpoints nulos/vazios e retomada com endpoint pronto. Saída sucessora:
+`artifacts/observability-http-fault-02`; preservar a 01 sem reclassificação retrospectiva.
+A correção passou em 325 testes, lint e formatação. Uma tentativa de liberar cache
+com containers parados recuperou a margem local somente até 3,30 GiB; não houve
+nova execução integrada nem reconciliação dos recursos. O launcher local
+`artifacts/Invoke-HttpFault02.local.ps1` reúne a reconciliação por run ID da 01,
+verificação de memória e execução única da 02, preservando volumes e resultados.
+Sua sintaxe foi validada; a execução permanece pendente com o notebook reservado.
+
 
 ### Guardas para qualquer nova execução
 

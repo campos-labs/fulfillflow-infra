@@ -9,7 +9,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from scripts.http_trace_contract import LABEL
-from scripts.http_trace_fault import run_sequence, verify_fault
+from scripts.http_trace_fault import await_endpoints, run_sequence, verify_fault
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -52,6 +52,37 @@ def fault_records():
 
 
 class ControlledFailure(unittest.TestCase):
+    def test_empty_endpoint_slice_can_be_null_empty_or_absent(self):
+        for item in ({"endpoints": None}, {"endpoints": []}, {}):
+            with self.subTest(item=item):
+                runner = SimpleNamespace(kube=lambda args: json.dumps({"items": [item]}))
+                self.assertEqual(await_endpoints(runner, False)["ready_endpoints"], 0)
+
+    def test_null_slice_does_not_hide_ready_endpoint_or_approve_recovery(self):
+        runner = SimpleNamespace(
+            kube=unittest.mock.Mock(
+                side_effect=[
+                    json.dumps({"items": [{"endpoints": None}]}),
+                    json.dumps(
+                        {
+                            "items": [
+                                {"endpoints": None},
+                                {
+                                    "endpoints": [
+                                        {"conditions": {"ready": True}},
+                                        {"conditions": {"ready": False}},
+                                    ]
+                                },
+                            ]
+                        }
+                    ),
+                ]
+            )
+        )
+        with patch("scripts.http_trace_fault.time.sleep"):
+            self.assertEqual(await_endpoints(runner, True)["ready_endpoints"], 1)
+        self.assertEqual(runner.kube.call_count, 2)
+
     def test_expected_failure_is_diagnostic_success_not_functional_success(self):
         snapshot, result = fault_records()
         self.assertTrue(verify_fault(snapshot, result, {"confirmed": True})["complete"])

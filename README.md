@@ -23,7 +23,7 @@ reúne cobertura, limites, registros examináveis e conferência offline. O
 HTTP concluída com SDK em referência isolada: consulta funcional e quatro spans
 correlacionados, sem medição de overhead. O [guia](k8s/README.md#diagnóstico-http-com-tracing)
 orienta a consulta saudável e a sequência controlada de falha/restauração preparada.
-Esta última ainda aguarda execução com margem de memória; os casos concluídos não
+Esta última teve falha do executor após a consulta inicial; a correção aguarda sucessora. Os casos concluídos não
 exigem repetição.
 
 

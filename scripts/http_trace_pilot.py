@@ -552,6 +552,18 @@ def execute(private, output, scenario="healthy"):
             )
         complete = True
     except Exception as failure:
+        frames = []
+        tb = failure.__traceback__
+        while tb is not None:
+            frames.append(
+                {
+                    "file": Path(tb.tb_frame.f_code.co_filename).name,
+                    "function": tb.tb_frame.f_code.co_name,
+                    "line": tb.tb_lineno,
+                }
+            )
+            tb = tb.tb_next
+        write(output / "failure-location.json", {"type": type(failure).__name__, "frames": frames})
         error = (
             str(failure)
             if isinstance(failure, (RuntimeError, ValueError))

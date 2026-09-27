@@ -78,6 +78,7 @@ def selector_patch(uid, previous, following):
 
 
 def await_endpoints(runner, available):
+    runner.stage = "restored_endpoints" if available else "fault_endpoints"
     for _ in range(15):
         slices = json.loads(
             runner.kube(
@@ -87,7 +88,7 @@ def await_endpoints(runner, available):
         count = sum(
             e.get("conditions", {}).get("ready") is not False
             for s in slices
-            for e in s.get("endpoints", [])
+            for e in (s.get("endpoints") or [])
         )
         if bool(count) == available:
             return {"utc": utc(), "ready_endpoints": count}
@@ -139,6 +140,7 @@ def run_sequence(runner, evidence, capture):
         "confirmed": False,
     }
     try:
+        runner.stage = "fault_injection"
         # Finally also runs if a command fails after the API accepted the patch.
         runner.kube(
             [
