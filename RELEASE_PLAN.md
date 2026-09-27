@@ -6,7 +6,8 @@
 `feature/v1.2-observability`, a partir de `v1.1.0-rc.1` (`92089b8`). Contratos em
 [DESIGN §8.8](DESIGN.md#88-exploração-de-observabilidade). A exploração não reabre
 as campanhas concluídas nem promete uma nova campanha ou release. A correlação
-offline foi implementada; a prova integrada aguarda margem de memória do host.
+offline foi implementada; a prova integrada está preparada para execução manual
+com o notebook reservado e nova conferência de margem.
 
 
 **Comparação de capacidade fixa e adaptativa concluída e consolidada na
@@ -201,12 +202,38 @@ O extrator não sobrescreve resultados. Testes cobrem conflitos de identidade,
 marcos ausentes, erro HTTP recuperado, falha de transporte, intervalos inválidos,
 integridade dos pacotes e preservação da classificação funcional original.
 
-**Pausa da prova integrada:** a checagem de entrada desta etapa encontrou 2,11 GiB
-livres, notebook na tomada e nenhum container ativo. A guarda de 5 GiB não foi
-atendida; nenhum cluster ou evento novo foi iniciado. Não há ainda executor
-integrado de observabilidade. Retomar sua preparação e o pequeno fluxo saudável
-em ambiente próprio quando houver margem, sem alterar aplicação, carga histórica
-ou guardas. OpenTelemetry continua candidato se restar uma lacuna de tracing.
+**Preparação integrada disponível, ainda não executada.** A primeira checagem
+com aplicativos abertos encontrou 2,11 GiB livres e recusou o início. Após reinício,
+parada do nó histórico e fechamento dos aplicativos, o diagnóstico manual sem carga
+registrou mínimo de 5,55 GiB em 60 segundos. Isso atende à entrada naquele momento;
+não comprova margem durante um ensaio nem efeito causal de desligar a rede.
+
+O executor `scripts/Invoke-ObservabilityPilot.ps1` dá 45 segundos para fechar os
+aplicativos, confere novamente as guardas e cria `fulfillflow-observe-01`, com dados
+próprios. Reutiliza o bootstrap e a imagem congelada, com uma réplica por processo;
+a nova identidade não altera os nomes anteriores. O fluxo envia um evento único,
+sem duplicata intencional, falha injetada, KEDA ou tracing. Registra confirmação
+funcional, consultas e projeções permitidas dos logs dos três workers; preserva
+UIDs e contagens de reinícios para detectar mudança durante a observação.
+
+A entrada exige 5 GiB; o supervisor verifica 2 GiB e tomada durante preparação e
+fluxo, a cada dois segundos. Os limites de bootstrap/fluxo são 45/15 minutos, com
+encerramento posterior; o total fica dentro do teto inicial de 90 minutos. Destino
+ou cluster existente é recusado. Não há repetição automática. O nó novo é parado
+no encerramento e os volumes são preservados. O flag `complete` indica término
+do procedimento; a cobertura e o valor diagnóstico exigem análise dos registros,
+mesmo se o evento foi confirmado. Ausência de registro não prova falta de trabalho.
+
+```powershell
+& ./scripts/Invoke-ObservabilityPilot.ps1
+```
+
+Manter Docker, tomada e internet durante a preparação, pois alguma imagem pode
+precisar ser baixada. O resultado fica em `artifacts/observability-pilot-01`;
+credenciais/kubeconfig ficam fora do Git, em
+`$env:LOCALAPPDATA/FulfillFlowInfra/observability-01`. Falhas devem ser examinadas
+antes de outra tentativa; não apagar a pasta ou o lock para forçar repetição.
+OpenTelemetry permanece candidato se os logs deixarem uma lacuna de tracing.
 
 ### Continuidade após a exploração
 
