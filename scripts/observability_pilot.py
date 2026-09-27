@@ -230,7 +230,85 @@ def check_forwarding(verifier):
     verifier.phase = "prepare"
 
 
-def flow(private, output):
+def pending_window_identity(private, source):
+    if (private / "pending-window-01.claim").exists():
+        raise RuntimeError("WINDOW_ALREADY_CLAIMED")
+    summary = json.loads((source / "summary.json").read_bytes())
+    functional = json.loads((source / "functional.json").read_bytes())
+    if (
+        not summary.get("complete")
+        or not summary.get("container_stopped")
+        or not functional.get("success")
+    ):
+        raise RuntimeError("HEALTHY_REFERENCE_REQUIRED")
+    identity = json.loads((private / "identity.json").read_bytes())
+    if identity.get("source") != SOURCE or identity.get("image_id") != env.IMAGE_ID:
+        raise RuntimeError("APPLICATION_IDENTITY")
+    node = json.loads(env.command(["docker", "inspect", CLUSTER + "-control-plane"]))[0]
+    if (
+        node["Id"] != identity["container_id"]
+        or node["State"]["Running"]
+        or node["Config"]["Labels"].get("io.x-k8s.kind.cluster") != CLUSTER
+    ):
+        raise RuntimeError("NODE_IDENTITY")
+    if env.command(["docker", "ps", "-q"]).strip():
+        raise RuntimeError("CONCURRENT_CONTAINERS")
+    return {
+        "source": SOURCE,
+        "namespace_uid": identity["namespace_uid"],
+        "healthy_event_id": functional["event_id"],
+    }
+
+
+def set_notifications(private, output, replicas):
+    if replicas not in (0, 1) or CLUSTER != EXPECTED_CLUSTER:
+        raise RuntimeError("INTERVENTION_SCOPE")
+    env.kubectl(
+        private, ["scale", "deployment/notifications-worker", "--replicas=" + str(replicas)]
+    )
+    with (output / "intervention.jsonl").open("a", encoding="utf-8") as stream:
+        stream.write(json.dumps({"utc": utc(), "requested_replicas": replicas}) + "\n")
+    if replicas == 1:
+        env.kubectl(
+            private,
+            ["rollout", "status", "deployment/notifications-worker", "--timeout=120s"],
+            timeout=130,
+        )
+        return
+    deadline = time.monotonic() + 90
+    while time.monotonic() < deadline:
+        pods = json.loads(
+            env.kubectl(
+                private,
+                ["get", "pods", "-l", "app.kubernetes.io/name=notifications-worker", "-o", "json"],
+            )
+        )["items"]
+        if not pods:
+            with (output / "intervention.jsonl").open("a", encoding="utf-8") as stream:
+                stream.write(json.dumps({"utc": utc(), "observed_pods": 0}) + "\n")
+            return
+        time.sleep(2)
+    raise RuntimeError("NOTIFICATIONS_STOP_UNCONFIRMED")
+
+
+def observe_pending(verifier, event):
+    from scripts.a_complements import pending_record
+
+    verifier.phase = "notifications_pending_observation"
+    while True:
+        record = verifier.get(f"/api/v1/notification-status/{event}")
+        if pending_record(record, event):
+            verifier.evidence.emit(
+                "pending_confirmed",
+                tracking_event_id=event,
+                publication="SENT",
+                processing="NOT_RECEIVED",
+            )
+            return
+        verifier.pause()
+
+
+def flow(private, output, pending=False):
     identity = json.loads((private / "identity.json").read_bytes())
     node = json.loads(env.command(["docker", "inspect", CLUSTER + "-control-plane"]))[0]
     if (
@@ -269,6 +347,7 @@ def flow(private, output):
     transport = TimedTransport(HttpTransport())
     error = None
     result = {}
+    intervention = False
     try:
         with tunnel(runtime) as (url, _):
             until = time.monotonic() + 30
@@ -290,11 +369,18 @@ def flow(private, output):
             try:
                 evidence.emit("started", event_id=verifier.event_id, unique_events=1)
                 check_forwarding(verifier)
+                if pending:
+                    intervention = True
+                    set_notifications(private, output, 0)
                 order, shipment, code = verifier.prepare()
                 raw, headers = verifier.webhook(code)
                 inbox, location = verifier.admit(raw, headers)
                 event = verifier.tracking(inbox, location, shipment)
                 verifier.final_business(order, shipment)
+                if pending:
+                    observe_pending(verifier, event)
+                    set_notifications(private, output, 1)
+                    verifier.evidence.emit("worker_restored", tracking_event_id=event)
                 notification = verifier.notifications(event)
                 verifier.effects(shipment, inbox, event, notification)
             except Failure as failure:
@@ -309,8 +395,18 @@ def flow(private, output):
                 write(output / "functional.json", result)
     finally:
         write(output / "http-timings.json", transport.records)
+        expected = before
+        if intervention:
+            # Also runs on admission/query failure; the parent repeats restoration if killed.
+            set_notifications(private, output, 1)
+            expected = wait_workers(private, output / "worker-restored.jsonl")
+            if any(
+                expected[name] != before[name] for name in WORKERS if name != "notifications-worker"
+            ):
+                raise RuntimeError("UNEXPECTED_WORKER_CHANGE")
+            write(output / "worker-transition.json", {"before": before, "after": expected})
         capture = {}
-        for name, pod in before.items():
+        for name, pod in expected.items():
             text = env.kubectl(
                 private,
                 ["logs", pod["name"], "--since-time=" + started, "--limit-bytes=2000000"],
@@ -321,7 +417,7 @@ def flow(private, output):
             capture[name] = {"pod": pod, **project_logs(text)}
             write(output / (name + "-records.json"), capture[name])
         write(output / "worker-records.json", capture)
-        if pod_identities(private) != before:
+        if pod_identities(private) != expected:
             raise RuntimeError("WORKER_IDENTITY_CHANGED")
     write(
         output / "flow-summary.json",
@@ -388,18 +484,25 @@ def stage(name, private, output):
             terminate_child(child)
 
 
-def execute(private, output, resume_from=None, new_window_from=None):
+def execute(private, output, resume_from=None, new_window_from=None, pending_from=None):
     if CLUSTER != EXPECTED_CLUSTER:
         raise RuntimeError("OBSERVABILITY_ENVIRONMENT_REQUIRED")
     if (
-        (private.exists() and resume_from is None and new_window_from is None)
+        (
+            private.exists()
+            and resume_from is None
+            and new_window_from is None
+            and pending_from is None
+        )
         or output.exists()
         or private.is_relative_to(env.ROOT)
     ):
         raise RuntimeError("EXCLUSIVE_PATHS_REQUIRED")
     host = guard(5)
     facts = (
-        new_window_identity(private, new_window_from)
+        pending_window_identity(private, pending_from)
+        if pending_from
+        else new_window_identity(private, new_window_from)
         if new_window_from
         else resume_identity(private, resume_from)
         if resume_from
@@ -415,7 +518,10 @@ def execute(private, output, resume_from=None, new_window_from=None):
             "unique_events": 1,
             "resumed_from": resume_from.name if resume_from else None,
             "new_window_after": new_window_from.name if new_window_from else None,
-            "mode": "healthy-existing-worker-logs",
+            "mode": "pending-existing-worker-logs"
+            if pending_from
+            else "healthy-existing-worker-logs",
+            "pending_after": pending_from.name if pending_from else None,
             "autoscaling": False,
             "tracing": False,
         },
@@ -424,10 +530,12 @@ def execute(private, output, resume_from=None, new_window_from=None):
         write(private / "observability-resume.claim", {"output": output.name, "utc": utc()})
     if new_window_from:
         write(private / "healthy-window-02.claim", {"output": output.name, "utc": utc()})
+    if pending_from:
+        write(private / "pending-window-01.claim", {"output": output.name, "utc": utc()})
     complete, error = False, None
     stopped = False
     try:
-        if resume_from is None and new_window_from is None:
+        if resume_from is None and new_window_from is None and pending_from is None:
             print("Observability: fresh environment (historical volumes preserved)", flush=True)
             stage("bootstrap", private, output)
         else:
@@ -436,8 +544,12 @@ def execute(private, output, resume_from=None, new_window_from=None):
                 flush=True,
             )
         guard(2)
-        print("Observability: one healthy event and three worker logs", flush=True)
-        stage("flow", private, output)
+        print(
+            "Observability: one event, "
+            + ("Notifications pause and restore" if pending_from else "healthy worker logs"),
+            flush=True,
+        )
+        stage("pending" if pending_from else "flow", private, output)
         complete = True
     except Exception as failure:
         error = str(failure) if isinstance(failure, RuntimeError) else type(failure).__name__
@@ -447,6 +559,20 @@ def execute(private, output, resume_from=None, new_window_from=None):
             nodes = json.loads(env.command(["docker", "inspect", CLUSTER + "-control-plane"]))
             if nodes[0]["Config"]["Labels"].get("io.x-k8s.kind.cluster") != CLUSTER:
                 raise RuntimeError("CLEANUP_IDENTITY")
+            if pending_from and nodes[0]["State"]["Running"]:
+                try:
+                    set_notifications(private, output, 1)
+                    write(
+                        output / "restoration.json",
+                        {"replicas_requested": 1, "rollout_confirmed": True},
+                    )
+                except Exception:
+                    complete = False
+                    error = error or "RESTORATION_UNCONFIRMED"
+                    write(
+                        output / "restoration.json",
+                        {"replicas_requested": 1, "rollout_confirmed": False},
+                    )
             env.command(["docker", "stop", "--timeout", "30", nodes[0]["Id"]], timeout=60)
             stopped = not json.loads(env.command(["docker", "inspect", nodes[0]["Id"]]))[0][
                 "State"
@@ -481,9 +607,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--private", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--stage", choices=("bootstrap", "flow", "inspect"))
-    parser.add_argument("--resume-from", type=Path)
-    parser.add_argument("--new-window-from", type=Path)
+    parser.add_argument("--stage", choices=("bootstrap", "flow", "inspect", "pending"))
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--resume-from", type=Path)
+    mode.add_argument("--new-window-from", type=Path)
+    mode.add_argument("--pending-from", type=Path)
     args = parser.parse_args()
     private, output = args.private.resolve(), args.output.resolve()
     try:
@@ -491,8 +619,8 @@ def main():
             raise RuntimeError("OBSERVABILITY_ENVIRONMENT_REQUIRED")
         if args.stage == "bootstrap":
             env.bootstrap(private, output / "bootstrap")
-        elif args.stage == "flow":
-            flow(private, output)
+        elif args.stage in ("flow", "pending"):
+            flow(private, output, pending=args.stage == "pending")
         elif args.stage == "inspect":
             from scripts.observability_inspect import inspect_event
 
@@ -508,6 +636,7 @@ def main():
                     output,
                     args.resume_from.resolve() if args.resume_from else None,
                     args.new_window_from.resolve() if args.new_window_from else None,
+                    args.pending_from.resolve() if args.pending_from else None,
                 )
             finally:
                 lock.unlink()

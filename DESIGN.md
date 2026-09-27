@@ -577,7 +577,11 @@ são locais ao processo; alinhamento UTC entre processos tem incerteza e não au
 subtrair relógios sem explicitar limites. Intervalos sobrepostos não são somados.
 
 Novos ensaios usam destino próprio, dados sintéticos, uma réplica por processo,
-volume pequeno e encerramento definido. Não reutilizar bancos da campanha nem
+volume pequeno e encerramento definido. No cenário de pendência autorizado, somente
+Notifications worker passa temporariamente de uma para zero réplicas antes da oferta
+e retorna a uma após confirmar `SENT/NOT_RECEIVED`. É intervenção manual delimitada,
+sem política de autoescalonamento ou restauração de template. Preservar identidade
+do evento e do pod substituído, sem reenviar webhook. Não reutilizar bancos da campanha nem
 acionar restauração/autoescalonamento para testar observabilidade. Credenciais,
 payloads, assinaturas, parâmetros SQL e atributos de alta cardinalidade precisam
 de tratamento explícito antes de exportação; nenhum destino público é implícito.

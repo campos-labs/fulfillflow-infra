@@ -344,6 +344,24 @@ nova janela; não autoriza carga adicional automaticamente. Se a lacuna restante
 HTTP interno ou duração de transações, avaliar instrumentação mínima com referência
 própria da aplicação. Não instalar uma plataforma completa por padrão.
 
+### Janela de pendência autorizada
+
+Uma tentativa nova em `observability-pending-01`, até 15 minutos mais encerramento,
+com as mesmas guardas 5/2 GiB. Requer referência saudável e nó dedicado parado.
+Após GET prospectivo, retirar somente Notifications worker e confirmar ausência de
+pods antes de oferecer um evento novo. Espera-se Tracking/Order concluídos e
+Notifications `SENT/NOT_RECEIVED`; preservar essa consulta antes de devolver uma
+réplica. Confirmar `SIMULATED` e efeitos do mesmo evento sem novo webhook.
+
+Capturar logs dos três workers e identidades antes/depois; a substituição do pod de
+Notifications é esperada, mudanças nos demais não. Em falha, tentar restabelecer
+uma réplica antes de parar o nó e preservar todos os registros. A supervisão tem
+limite próprio e não reenvia eventos. Estado público confirma o resultado
+independentemente dos logs; ausência de log sozinha não comprova ausência de consumo.
+A verificação trata trabalho aguardando consumo, não processamento interrompido.
+Não altera aplicação, limiar, recursos por pod ou stack; não mede ganho de desempenho.
+Ao encerrar, avaliar cobertura diagnóstica e lacunas antes de nova execução.
+
 ### Continuidade após a exploração
 
 Prometheus e verificações de segurança permanecem possibilidades por lacuna

@@ -121,9 +121,9 @@ class PilotTests(unittest.TestCase):
             self.assertFalse(any("rm" in c or "delete" in c for c in commands))
 
     def test_flow_offers_once_and_preserves_unexpected_failure(self):
-        for fail in (False, True):
+        for fail, pending in ((False, False), (True, False), (False, True), (True, True)):
             with (
-                self.subTest(fail=fail),
+                self.subTest(fail=fail, pending=pending),
                 tempfile.TemporaryDirectory() as directory,
                 ExitStack() as stack,
             ):
@@ -191,12 +191,20 @@ class PilotTests(unittest.TestCase):
                     "error": error,
                 }
                 stack.enter_context(patch.object(pilot, "ObservedVerifier", return_value=verifier))
+                set_worker = stack.enter_context(patch.object(pilot, "set_notifications"))
+                pending_check = stack.enter_context(patch.object(pilot, "observe_pending"))
                 if fail:
                     verifier.final_business.side_effect = RuntimeError("test failure")
                     with self.assertRaisesRegex(RuntimeError, "test failure"):
-                        pilot.flow(private, output)
+                        pilot.flow(private, output, pending=pending)
                 else:
-                    pilot.flow(private, output)
+                    pilot.flow(private, output, pending=pending)
+                if pending:
+                    self.assertEqual(set_worker.call_args_list[0].args[2], 0)
+                    self.assertEqual(set_worker.call_args_list[-1].args[2], 1)
+                    self.assertEqual(pending_check.call_count, 0 if fail else 1)
+                else:
+                    set_worker.assert_not_called()
                 verifier.admit.assert_called_once()
                 verifier.run.assert_not_called()
                 result = json.loads((output / "functional.json").read_bytes())
@@ -259,6 +267,56 @@ class PilotTests(unittest.TestCase):
         verifier.get.return_value = {"items": [], "total": 1}
         with self.assertRaises(pilot.Failure):
             pilot.check_forwarding(verifier)
+
+    def test_pending_requires_publication_and_rejects_already_consumed_work(self):
+        verifier = Mock()
+        record = {
+            "tracking_event_id": "event",
+            "required": True,
+            "publication": "PENDING",
+            "processing": "NOT_RECEIVED",
+            "status": None,
+            "notification_id": None,
+        }
+        verifier.get.side_effect = [record, {**record, "publication": "SENT"}]
+        pilot.observe_pending(verifier, "event")
+        verifier.pause.assert_called_once()
+        verifier.admit.assert_not_called()
+        verifier.evidence.emit.assert_called_once_with(
+            "pending_confirmed",
+            tracking_event_id="event",
+            publication="SENT",
+            processing="NOT_RECEIVED",
+        )
+        verifier.get.side_effect = None
+        verifier.get.return_value = {**record, "processing": "DONE"}
+        with self.assertRaises(pilot.Failure):
+            pilot.observe_pending(verifier, "event")
+
+    def test_pending_window_claim_prevents_another_output(self):
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            patch.object(pilot.env, "command") as command,
+        ):
+            private = Path(directory)
+            (private / "pending-window-01.claim").write_text("claimed")
+            with self.assertRaisesRegex(RuntimeError, "WINDOW_ALREADY_CLAIMED"):
+                pilot.pending_window_identity(private, private / "missing")
+            command.assert_not_called()
+
+    def test_stop_waits_for_pod_absence_before_returning(self):
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            patch.object(pilot, "CLUSTER", pilot.EXPECTED_CLUSTER),
+            patch.object(pilot.env, "kubectl", side_effect=["", '{"items": []}']) as kubectl,
+        ):
+            pilot.set_notifications(Path(directory), Path(directory), 0)
+            self.assertIn("--replicas=0", kubectl.call_args_list[0].args[1])
+            records = [
+                json.loads(line)
+                for line in (Path(directory) / "intervention.jsonl").read_text().splitlines()
+            ]
+            self.assertEqual(records[-1]["observed_pods"], 0)
 
     def test_memory_failure_terminates_owned_child(self):
         child = Mock()
