@@ -10,10 +10,11 @@ permitem conferir cobertura e limites sem depender dos artefatos locais selecion
 Nó parado. **Fatia HTTP saudável concluída** em `observability-http-05`: uma consulta
 200, nove conferências funcionais aprovadas e quatro spans ligados corretamente.
 [Registros e limites](docs/evidence/observability/README.md#fatia-http-com-opentelemetry)
-estão publicados. Correção do executor após início da tentativa controlada: uma sequência
-controlada saudável → falha de
-transporte Core → Tracking → restauração, com três GETs sobre o mesmo evento.
-Sem nova carga, AKS, merge ou release v1.2; as tentativas anteriores ficam intactas.
+estão publicados. **Pausa após a tentativa controlada 02:** a consulta durante a
+alteração do Service respondeu 200 e chegou ao Tracking. A falha pretendida não foi
+produzida, apesar de zero endpoints prontos registrados. Rever o mecanismo de
+interrupção antes de outra execução; nenhuma nova carga, AKS, merge ou release.
+
 
 **Comparação de capacidade fixa e adaptativa concluída e consolidada na
 v1.1.0-rc.1.** O fechamento integra `feature/v1.1-autoscaling-kind` à `main`.
@@ -288,8 +289,33 @@ com containers parados recuperou a margem local somente até 3,30 GiB; não houv
 nova execução integrada nem reconciliação dos recursos. O launcher local
 `artifacts/Invoke-HttpFault02.local.ps1` reúne a reconciliação por run ID da 01,
 verificação de memória e execução única da 02, preservando volumes e resultados.
-Sua sintaxe foi validada; a execução permanece pendente com o notebook reservado.
+Sua sintaxe foi validada; a execução foi realizada posteriormente, conforme o resultado abaixo.
 
+
+**Resultado da sucessora 02:** a preparação recuperou 6,36 GiB antes do launcher.
+A execução confirmou duas consultas 200, com as nove verificações funcionais e quatro
+spans válidos em cada trace. Na segunda, o seletor já estava alterado e a amostra de
+EndpointSlice tinha zero endpoints prontos; mesmo assim houve span servidor Tracking
+e resposta remota 200. O verificador rejeitou corretamente com
+`EXPECTED_QUERY_FAILURE_MISSING`. Não houve consulta posterior à restauração, pois a
+sequência foi interrompida; o spec do Service foi restaurado, os deployments históricos
+preservados, clones zerados e nó parado. Nenhuma escrita de negócio.
+
+O campo `injection.confirmed` da 02 comprova somente a alteração de configuração e a
+amostra de endpoints, **não indisponibilidade efetiva do caminho HTTP**. Pool persistente
+do cliente Core e convergência de encaminhamento são hipóteses, não causas isoladas.
+As duas respostas/traces foram conferidas offline pelo contrato saudável, sem alterar
+o julgamento original. Fontes locais: `artifacts/observability-http-fault-02/` e
+`artifacts/observability-http-fault-02-offline-review.json`; esta seleção ainda não foi
+publicada como pacote de evidências.
+
+Próxima decisão recomendada: substituir a alteração de seletor por parada temporária
+somente da API Tracking clonada, confirmar término do pod antes da consulta e restaurar
+uma réplica antes da conferência final. Isso altera o mecanismo de injeção e deve ser
+fixado prospectivamente no contrato/executor; ainda não foi implementado nem executado.
+Manter Core, receptor OTLP, workers e APIs históricos intactos. Não alterar pooling,
+latência, retries ou aplicação apenas para fabricar a resposta esperada. Encerrar aqui
+as repetições do mecanismo atual; não ampliar o estudo para investigar rede Kubernetes.
 
 ### Guardas para qualquer nova execução
 
