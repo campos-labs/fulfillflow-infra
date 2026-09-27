@@ -202,7 +202,7 @@ O extrator não sobrescreve resultados. Testes cobrem conflitos de identidade,
 marcos ausentes, erro HTTP recuperado, falha de transporte, intervalos inválidos,
 integridade dos pacotes e preservação da classificação funcional original.
 
-**Preparação integrada disponível, ainda não executada.** A primeira checagem
+**Primeira preparação integrada executada; fluxo interrompido antes do envio.** A primeira checagem
 com aplicativos abertos encontrou 2,11 GiB livres e recusou o início. Após reinício,
 parada do nó histórico e fechamento dos aplicativos, o diagnóstico manual sem carga
 registrou mínimo de 5,55 GiB em 60 segundos. Isso atende à entrada naquele momento;
@@ -234,6 +234,25 @@ credenciais/kubeconfig ficam fora do Git, em
 `$env:LOCALAPPDATA/FulfillFlowInfra/observability-01`. Falhas devem ser examinadas
 antes de outra tentativa; não apagar a pasta ou o lock para forçar repetição.
 OpenTelemetry permanece candidato se os logs deixarem uma lacuna de tracing.
+
+A tentativa `observability-pilot-01` concluiu o bootstrap, mas o fluxo parou com
+`WORKER_NOT_STABLE` antes de criar o observador ou enviar o webhook. O menor valor
+amostrado foi 2,96 GiB no bootstrap e 3,53 GiB na fase de fluxo, acima da guarda
+operacional; o nó foi parado. O registro inicial não preservou qual worker falhou
+na prontidão, portanto não determina a causa da indisponibilidade.
+
+A correção aguarda no máximo 120 segundos por três leituras prontas e estáveis dos
+workers e preserva seus estados de inicialização. Isso trata uma condição transitória
+possível sem presumir que ela foi a causa histórica. `-Resume` aceita exclusivamente
+a tentativa anterior à oferta da referência `e1a4624`, conferindo a ausência de
+arquivos do evento, identidade do bootstrap e nó parado. Reutiliza o ambiente próprio
+e cria `observability-pilot-02`; não refaz bootstrap nem sobrescreve a primeira pasta.
+Qualquer início possível de evento impede essa continuação. A nova execução ainda
+precisa conferir as guardas, sem baixar limites para executá-la com o editor aberto.
+
+```powershell
+& ./scripts/Invoke-ObservabilityPilot.ps1 -Resume
+```
 
 ### Continuidade após a exploração
 

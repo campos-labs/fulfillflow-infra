@@ -1,13 +1,14 @@
 [CmdletBinding()]
-param()
+param([switch]$Resume)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $private = Join-Path $env:LOCALAPPDATA 'FulfillFlowInfra\observability-01'
-$output = Join-Path $root 'artifacts\observability-pilot-01'
+$source = Join-Path $root 'artifacts\observability-pilot-01'
+$output = if ($Resume) { Join-Path $root 'artifacts\observability-pilot-02' } else { $source }
 $python = Join-Path $root '.venv\Scripts\python.exe'
 $docker = Join-Path $env:ProgramFiles 'Docker\Docker\resources\bin\docker.exe'
 if (-not (Test-Path -LiteralPath $python)) { throw 'Python do repositorio indisponivel.' }
-if ((Test-Path -LiteralPath $private) -or (Test-Path -LiteralPath $output)) {
+if (((Test-Path -LiteralPath $private) -and -not $Resume) -or (Test-Path -LiteralPath $output)) {
     throw 'Destino ja existe. Preserve os arquivos e envie para revisao; nao repetir automaticamente.'
 }
 Write-Host 'PREPARACAO: feche Codex, navegadores e IDEs. Mantenha Docker, internet e tomada. Inicio em 45 segundos.'
@@ -21,11 +22,12 @@ if ($historical -in $running) {
     if ($LASTEXITCODE -ne 0) { throw 'Parada do no historico nao confirmada.' }
 }
 Write-Host 'JANELA CRITICA: ambiente novo, um evento saudavel, sem escala e sem retries. Volumes preservados.'
+$extra = if ($Resume) { @('--resume-from', $source) } else { @() }
 $oldMode = $env:FULFILLFLOW_SCALE_ENVIRONMENT
 $env:FULFILLFLOW_SCALE_ENVIRONMENT = 'observability-v1'
 Push-Location $root
 try {
-    & $python (Join-Path $PSScriptRoot 'observability_pilot.py') --private $private --output $output
+    & $python (Join-Path $PSScriptRoot 'observability_pilot.py') --private $private --output $output @extra
     $result = $LASTEXITCODE
 } finally {
     Pop-Location

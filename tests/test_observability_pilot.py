@@ -202,6 +202,52 @@ class PilotTests(unittest.TestCase):
                 self.assertEqual(result["success"], not fail)
                 self.assertTrue((output / "worker-records.json").is_file())
 
+    def test_startup_wait_requires_three_equal_ready_observations(self):
+        identity = {"core-worker": {"uid": "one", "restart_count": 1}}
+        with patch.object(
+            pilot,
+            "pod_identities",
+            side_effect=[RuntimeError("WORKER_NOT_STABLE"), identity, identity, identity],
+        ) as read:
+            sleep = Mock()
+            self.assertEqual(pilot.wait_workers(None, None, samples=4, sleep=sleep), identity)
+            self.assertEqual(read.call_count, 4)
+            self.assertEqual(sleep.call_count, 3)
+
+    def test_startup_wait_is_bounded_and_does_not_hide_command_errors(self):
+        with patch.object(pilot, "pod_identities", side_effect=RuntimeError("WORKER_NOT_STABLE")):
+            with self.assertRaisesRegex(RuntimeError, "WORKER_STARTUP_TIMEOUT"):
+                pilot.wait_workers(None, None, samples=3, sleep=Mock())
+        with patch.object(pilot, "pod_identities", side_effect=RuntimeError("COMMAND_FAILED")):
+            with self.assertRaisesRegex(RuntimeError, "COMMAND_FAILED"):
+                pilot.wait_workers(None, None, sleep=Mock())
+
+    def test_resume_rejects_any_possible_offer_before_docker_access(self):
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            patch.object(pilot.env, "command") as command,
+        ):
+            source = Path(directory)
+            (source / "protocol.json").write_text(
+                json.dumps({"infrastructure_sha": "e1a46246012acbb858c049e60b7048c4b67524b3"})
+            )
+            (source / "flow-error.json").write_text(json.dumps({"error": "WORKER_NOT_STABLE"}))
+            (source / "event").mkdir()
+            with self.assertRaisesRegex(RuntimeError, "RESUME_MAY_HAVE_OFFERED"):
+                pilot.resume_identity(source, source)
+            command.assert_not_called()
+
+    def test_resume_cannot_be_reused_with_another_output(self):
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            patch.object(pilot.env, "command") as command,
+        ):
+            private = Path(directory)
+            (private / "observability-resume.claim").write_text("claimed")
+            with self.assertRaisesRegex(RuntimeError, "RESUME_ALREADY_CLAIMED"):
+                pilot.resume_identity(private, private / "absent")
+            command.assert_not_called()
+
     def test_memory_failure_terminates_owned_child(self):
         child = Mock()
         child.poll.return_value = None

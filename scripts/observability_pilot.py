@@ -69,8 +69,32 @@ def project_logs(text):
     return {"records": rows, "ignored_lines": ignored, "raw_logs_retained": False}
 
 
-def pod_identities(private):
-    pods = json.loads(env.kubectl(private, ["get", "pods", "-o", "json"]))["items"]
+def pod_identities(private, evidence=None, timeout=30):
+    pods = json.loads(env.kubectl(private, ["get", "pods", "-o", "json"], timeout=timeout))["items"]
+    if evidence is not None:
+        snapshot = []
+        for pod in pods:
+            name = pod["metadata"].get("labels", {}).get("app.kubernetes.io/name")
+            if name in WORKERS:
+                statuses = pod.get("status", {}).get("containerStatuses", [])
+                snapshot.append(
+                    {
+                        "worker": name,
+                        "uid": pod["metadata"]["uid"],
+                        "phase": pod.get("status", {}).get("phase"),
+                        "deleting": bool(pod["metadata"].get("deletionTimestamp")),
+                        "containers": [
+                            {
+                                "ready": c.get("ready"),
+                                "restart_count": c.get("restartCount"),
+                                "state": list(c.get("state", {})),
+                            }
+                            for c in statuses
+                        ],
+                    }
+                )
+        with evidence.open("a", encoding="utf-8") as stream:
+            stream.write(json.dumps({"utc": utc(), "workers": snapshot}) + "\n")
     result = {}
     for name in WORKERS:
         matching = [
@@ -95,6 +119,65 @@ def pod_identities(private):
     return result
 
 
+def wait_workers(private, evidence, *, samples=61, sleep=time.sleep):
+    previous, stable = None, 0
+    deadline = time.monotonic() + 120
+    for index in range(samples):
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            break
+        try:
+            current = pod_identities(private, evidence, timeout=min(10, remaining))
+        except RuntimeError as error:
+            if str(error) not in ("WORKER_NOT_STABLE", "WORKER_NOT_UNIQUE"):
+                raise
+            previous, stable = None, 0
+        else:
+            stable = stable + 1 if current == previous else 1
+            previous = current
+            if stable >= 3:
+                return current
+        if index + 1 < samples:
+            sleep(max(0, min(2, deadline - time.monotonic())))
+    raise RuntimeError("WORKER_STARTUP_TIMEOUT")
+
+
+def resume_identity(private, source):
+    # Only the diagnosed pre-offer failure is resumable; never replay a business event.
+    if (private / "observability-resume.claim").exists():
+        raise RuntimeError("RESUME_ALREADY_CLAIMED")
+    protocol = json.loads((source / "protocol.json").read_bytes())
+    if protocol.get("infrastructure_sha") != "e1a46246012acbb858c049e60b7048c4b67524b3":
+        raise RuntimeError("UNREVIEWED_RESUME_REFERENCE")
+    if json.loads((source / "flow-error.json").read_bytes()) != {"error": "WORKER_NOT_STABLE"}:
+        raise RuntimeError("RESUME_NOT_PREFLOW_FAILURE")
+    if any(
+        (source / name).exists()
+        for name in ("event", "functional.json", "http-timings.json", "flow-summary.json")
+    ):
+        raise RuntimeError("RESUME_MAY_HAVE_OFFERED")
+    if not json.loads((source / "shutdown.json").read_bytes()).get("container_stopped"):
+        raise RuntimeError("RESUME_SHUTDOWN_UNCONFIRMED")
+    bootstrap = json.loads((source / "bootstrap/bootstrap.json").read_bytes())
+    identity = json.loads((private / "identity.json").read_bytes())
+    if (
+        not bootstrap.get("complete")
+        or bootstrap.get("namespace_uid") != identity.get("namespace_uid")
+        or identity.get("source") != SOURCE
+    ):
+        raise RuntimeError("RESUME_BOOTSTRAP_IDENTITY")
+    node = json.loads(env.command(["docker", "inspect", CLUSTER + "-control-plane"]))[0]
+    if (
+        node["Id"] != identity["container_id"]
+        or node["Config"]["Labels"].get("io.x-k8s.kind.cluster") != CLUSTER
+        or node["State"]["Running"]
+    ):
+        raise RuntimeError("RESUME_NODE_IDENTITY")
+    if env.command(["docker", "ps", "-q"]).strip():
+        raise RuntimeError("CONCURRENT_CONTAINERS")
+    return bootstrap
+
+
 def flow(private, output):
     identity = json.loads((private / "identity.json").read_bytes())
     node = json.loads(env.command(["docker", "inspect", CLUSTER + "-control-plane"]))[0]
@@ -113,7 +196,7 @@ def flow(private, output):
     ns = json.loads(env.kubectl(private, ["get", "namespace", "fulfillflow", "-o", "json"]))
     if ns["metadata"]["uid"] != identity["namespace_uid"]:
         raise RuntimeError("NAMESPACE_IDENTITY")
-    before = pod_identities(private)
+    before = wait_workers(private, output / "worker-startup.jsonl")
     tool, _ = env.tools()
     config = RuntimeConfig(
         str(tool),
@@ -252,13 +335,17 @@ def stage(name, private, output):
             terminate_child(child)
 
 
-def execute(private, output):
+def execute(private, output, resume_from=None):
     if CLUSTER != EXPECTED_CLUSTER:
         raise RuntimeError("OBSERVABILITY_ENVIRONMENT_REQUIRED")
-    if private.exists() or output.exists() or private.is_relative_to(env.ROOT):
+    if (
+        (private.exists() and resume_from is None)
+        or output.exists()
+        or private.is_relative_to(env.ROOT)
+    ):
         raise RuntimeError("EXCLUSIVE_PATHS_REQUIRED")
     host = guard(5)
-    facts = env.preflight()  # Also refuses existing cluster or any active container.
+    facts = resume_identity(private, resume_from) if resume_from else env.preflight()
     output.mkdir(parents=True, exist_ok=False)
     write(
         output / "protocol.json",
@@ -267,16 +354,25 @@ def execute(private, output):
             "runtime": facts,
             "infrastructure_sha": env.command(["git", "rev-parse", "HEAD"]).strip(),
             "unique_events": 1,
+            "resumed_from": resume_from.name if resume_from else None,
             "mode": "healthy-existing-worker-logs",
             "autoscaling": False,
             "tracing": False,
         },
     )
+    if resume_from:
+        write(private / "observability-resume.claim", {"output": output.name, "utc": utc()})
     complete, error = False, None
     stopped = False
     try:
-        print("Observability: fresh environment (historical volumes preserved)", flush=True)
-        stage("bootstrap", private, output)
+        if resume_from is None:
+            print("Observability: fresh environment (historical volumes preserved)", flush=True)
+            stage("bootstrap", private, output)
+        else:
+            print(
+                "Observability: resuming reviewed pre-offer failure; bootstrap preserved",
+                flush=True,
+            )
         guard(2)
         print("Observability: one healthy event and three worker logs", flush=True)
         stage("flow", private, output)
@@ -324,6 +420,7 @@ def main():
     parser.add_argument("--private", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--stage", choices=("bootstrap", "flow"))
+    parser.add_argument("--resume-from", type=Path)
     args = parser.parse_args()
     private, output = args.private.resolve(), args.output.resolve()
     try:
@@ -339,7 +436,9 @@ def main():
             with lock.open("x"):
                 pass
             try:
-                return execute(private, output)
+                return execute(
+                    private, output, args.resume_from.resolve() if args.resume_from else None
+                )
             finally:
                 lock.unlink()
     except Exception as failure:
