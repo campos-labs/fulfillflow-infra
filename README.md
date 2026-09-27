@@ -14,8 +14,10 @@ sucessora preservou margem de memória e não apresentou erro HTTP; o 503 anteri
 permanece sem causa determinada. A 16/s, 540/540 eventos concluíram com
 crescimento de pendência. A sucessora com duas réplicas concluiu 540/540,
 com participação de ambos os pods e menor pendência amostrada; isso ainda não
-demonstra benefício do autoescalonamento. Ver
-[resultados e próximo passo](RELEASE_PLAN.md#resultado-com-duas-réplicas-fixas).
+demonstra benefício do autoescalonamento. O piloto adaptativo seguinte observou
+subida 1→2 e participação do novo pod, mas omitiu sete ofertas e violou a
+guarda de memória; a progressão está pausada. Ver
+[resultados e próximo passo](RELEASE_PLAN.md#resultado-adaptativo-e-pausa).
 A branch `feature/v1.1-autoscaling-kind` preserva o incremento; não há nova release.
 AKS/ACR continuam opcionais e ainda não foram implantados.
 

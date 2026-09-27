@@ -19,7 +19,9 @@ A sucessora manual preservou 4,55 GiB livres, 600/600 conclusões e consultas
 sem erro. A sucessora a 16/s concluiu 540/540 e apresentou crescimento de
 pendência com margem do host. A sucessora com duas réplicas concluiu 540/540,
 com participação 281/259 e menor pendência amostrada. O piloto KEDA no
-mesmo perfil está preparado para execução manual, ainda não executado. Ver
+mesmo perfil demonstrou subida 1→2, mas encerrou com sete ofertas omitidas e
+margem insuficiente do host. Progressão pausada; ver também
+[resultado adaptativo](#resultado-adaptativo-e-pausa). Ver
 [resultado de capacidade adicional](#resultado-com-duas-réplicas-fixas).
 
 ### Preparação conferida e próximo passo
@@ -1147,6 +1149,61 @@ hashes; a interpretação do controlador também exige `metric-availability.json
 é pertinente ao pico curto, se há lacuna de observação ou se outro perfil
 operacional precisa de justificativa prévia. Nenhum aumento automático de carga,
 alteração de limiar ou campanha formal. Ainda não há resultado desta sucessora.
+
+### Resultado adaptativo e pausa
+
+`keda-capacity-16-c16-01`, infraestrutura
+`f00da1675ef02e723c34c2b0110106b7cbe32168`, encerrou com
+`ADAPTIVE_FUNCTIONAL_OR_ATTRIBUTION_INCOMPLETE`. Conferidos 1.101 arquivos;
+manifesto SHA-256 `0c8bb717c324d195146fa28b8418272a336ac4d8ed5a546ce938c7769563523f`.
+Revisão e assessment locais ao lado da pasta original, sem alterar os registros.
+
+Dos 540 eventos planejados, sete não foram oferecidos por
+`client_concurrency_limit` (16 pedidos em voo). Todos os 533 enviados receberam
+202 e concluíram no prazo; atribuição completa, 445 no pod inicial e 88 no
+novo. Não houve perda demonstrada de evento aceito, falha de atribuição ou
+erro HTTP do observador: 3.204 GETs, todos 200. O veredito funcional global
+reprovou a realização incompleta da oferta. Mediana/p95 observados entre os
+aceitos: 25,609/31,500 s; não incluir ofertas omitidas nesse denominador.
+
+**Escala observada.** Aproximadamente 37,69 s após a primeira oferta,
+a coleta registrou idade 5,306 s e métrica positiva (cinco itens envelhecidos).
+O HPA registrou `SucceededRescale` para duas réplicas às 00:03:51 UTC,
+perto de 41,50 s; o patamar terminou aos 45 s. O novo pod tem primeiro
+DONE correlacionado às 00:03:55,864 UTC, cerca de 46,36 s, e processou
+88 eventos. Pendência máxima 108, idade máxima 6,685 s; primeira amostra
+posterior com pendência zero aos 52,72 s. Duas réplicas Ready foram amostradas
+somente aos 62,75 s: o worker já processava antes disso. Não usar Ready como
+horário exato de início de consumo AMQP. Não atribuir todo o esvaziamento
+à nova réplica: a oferta também caiu para 2/s.
+
+**Limites que impedem progressão:** preflight com 5,22 GiB livres, mas mínimo
+amostrado de 1,43 GiB no host, abaixo da guarda de 2 GiB. O nó manteve ao menos
+5,78 GiB disponíveis; isso não demonstra falta de memória do worker nem explica
+a causa da ocupação no Windows. O controle de energia/intervalos foi válido,
+mas `host-review.valid` não atesta a guarda de memória. Admissão HTTP no
+patamar: média 0,578 s, p95 1,093 s, máximo 1,657 s. Vagas ocupadas por
+mais tempo podem atingir o teto; o registro não isola cliente, admissão,
+coleta adicional ou pressão do host como causa.
+
+A sonda separada de falha da métrica registrou indisponibilidade e restauração;
+as leituras da métrica na série de carga ficaram disponíveis. A reprovação
+interrompeu antes dos 360 s de observação posterior: `post-load.json` não
+foi produzido. O encerramento removeu o controlador e repôs uma réplica;
+isso não comprova descida automática 2→1. Nó parado, volumes preservados,
+pendência/retry/bloqueio zero ao final da fase funcional.
+
+**Decisão:** preservar como demonstração parcial de reação e participação,
+sem validar a campanha nem comparar desempenho com as condições fixas.
+Não repetir a carga, aumentar concorrência ou alterar limiares automaticamente.
+Antes de uma sucessora, esclarecer a margem ao longo da preparação e a
+ocupação do caminho de admissão com os registros existentes; exigir margem
+imediatamente antes da oferta, pois o preflight inicial não a garantiu.
+Separar futuramente oferta completa, conclusão dos aceitos e atribuição no
+resumo do executor para evitar o erro genérico atual. Essas melhorias estão
+propostas, ainda não implementadas. A pausa combinada foi atingida; não há
+novo comando de carga preparado. Não há motivo demonstrado para refatorar a
+aplicação ou migrar a AKS para explicar este resultado.
 
 ### Depois da pausa — ainda não autorizado
 
