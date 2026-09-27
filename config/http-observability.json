@@ -14,5 +14,6 @@
   "memory_entry_gib": 5,
   "memory_runtime_gib": 2,
   "deadline_seconds": 600,
-  "verification_sha": "045e1ca8629409b6abdf2829ef5c93d14cfb60d9"
+  "verification_sha": "045e1ca8629409b6abdf2829ef5c93d14cfb60d9",
+  "ci_run": 36342972254
 }

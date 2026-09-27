@@ -137,7 +137,9 @@ Mypy e os 12 contratos de importação passaram. Transporte OTLP real até o rec
 local passou; imagem construída e imports testados em container sem rede/volumes.
 Os 309 testes de infraestrutura passaram; dois casos adicionais conferem a guarda
 e a preservação da amostra que a violou. A CI da aplicação cobre PostgreSQL e
-RabbitMQ reais; o resultado deve ser conferido no SHA de testes antes da execução.
+RabbitMQ reais. O launcher aguarda até 20 minutos pela CI aprovada do SHA fixado
+antes de iniciar o Kind; falha, referência divergente ou prazo encerrado impedem
+a execução. A espera remota é separada do teto de 600 s de preparação/captura local.
 As leituras locais de margem ficaram abaixo de 5 GiB: não iniciou o Kind. Preferir o launcher
 com as janelas fechadas; reinicialização não é requisito presumido.
 

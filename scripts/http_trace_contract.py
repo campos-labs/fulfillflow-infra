@@ -113,3 +113,15 @@ def verify_trace(snapshot, result):
         "clock_limit": "Do not subtract nested/overlapping spans or infer SQL commit timing.",
         "export_limit": "Receiver acceptance and expected coverage; no claim of general exporter health or overhead.",
     }
+
+
+def ci_verdict(record, expected_sha):
+    if record.get("headSha") != expected_sha:
+        raise RuntimeError("CI_REFERENCE_MISMATCH")
+    if record.get("status") == "completed":
+        if record.get("conclusion") != "success":
+            raise RuntimeError("CI_NOT_APPROVED")
+        return True
+    if record.get("status") not in ("queued", "in_progress", "waiting", "pending", "requested"):
+        raise RuntimeError("CI_STATE_UNKNOWN")
+    return False

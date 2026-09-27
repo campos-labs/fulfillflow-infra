@@ -3,6 +3,8 @@
 import argparse
 import hashlib
 import json
+import os
+import shutil
 import subprocess
 import sys
 import time
@@ -14,7 +16,7 @@ import psutil
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts import scale_environment as env
-from scripts.http_trace_contract import LABEL, clone_api, verify_trace
+from scripts.http_trace_contract import LABEL, ci_verdict, clone_api, verify_trace
 from scripts.scale_contract import CLUSTER, utc, write
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -182,9 +184,44 @@ def network():
     }
 
 
+def await_validation(config):
+    gh = shutil.which("gh") or str(
+        Path(os.environ.get("ProgramFiles", "C:/Program Files")) / "GitHub CLI/gh.exe"
+    )
+    deadline = time.monotonic() + 1200
+    print(
+        "CI: checking the exact application reference before starting Kind (up to 20 minutes)",
+        flush=True,
+    )
+    while True:
+        record = json.loads(
+            env.command(
+                [
+                    gh,
+                    "run",
+                    "view",
+                    str(config["ci_run"]),
+                    "--repo",
+                    "campos-labs/fulfillflow",
+                    "--json",
+                    "status,conclusion,headSha,url",
+                ],
+                timeout=20,
+            )
+        )
+        if ci_verdict(record, config["verification_sha"]):
+            print("CI: approved; checking local memory and environment", flush=True)
+            return record
+        if time.monotonic() >= deadline:
+            raise RuntimeError("CI_WAIT_DEADLINE")
+        time.sleep(min(30, deadline - time.monotonic()))
+
+
 def execute(private, output):
     if CLUSTER != "fulfillflow-observe-01":
         raise RuntimeError("WRONG_ENVIRONMENT")
+    config = json.loads((ROOT / "config/http-observability.json").read_bytes())
+    validation = await_validation(config)
     entry = host_snapshot(5)
     try:
         validate_host(entry)
@@ -199,7 +236,6 @@ def execute(private, output):
     node = json.loads(env.command(["docker", "inspect", identity["container_id"]]))[0]
     if node["Config"]["Labels"].get("io.x-k8s.kind.cluster") != CLUSTER or node["State"]["Running"]:
         raise RuntimeError("NODE_IDENTITY")
-    config = json.loads((ROOT / "config/http-observability.json").read_bytes())
     image = json.loads(env.command(["docker", "image", "inspect", config["image"]]))[0]
     if (
         image["Id"] != config["image_id"]
@@ -219,6 +255,7 @@ def execute(private, output):
             "run_id": runner.run_id,
             "entry": entry,
             "runtime": config,
+            "application_ci": validation,
             "infrastructure_sha": env.command(["git", "-C", ROOT, "rev-parse", "HEAD"]).strip(),
             "namespace_uid": identity["namespace_uid"],
             "query_count": 1,

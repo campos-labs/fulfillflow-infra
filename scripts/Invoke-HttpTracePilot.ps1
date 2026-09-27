@@ -18,7 +18,7 @@ $python = Join-Path $root '.venv\Scripts\python.exe'
 $docker = Join-Path $env:ProgramFiles 'Docker\Docker\resources\bin\docker.exe'
 if (Test-Path -LiteralPath $OutputDirectory) { throw 'Saida ja existe. Preserve e envie para revisao.' }
 if (-not (Test-Path -LiteralPath $python)) { throw 'Python do repositorio indisponivel.' }
-Write-Host 'PREPARACAO: feche Codex, navegadores e IDEs. Docker e tomada; inicio em 45 segundos. Nao requer download.'
+Write-Host 'PREPARACAO: feche Codex, navegadores e IDEs. Docker, internet e tomada; inicio em 45 segundos. A CI sera conferida antes do Kind.'
 Start-Sleep -Seconds 45
 $running = @(& $docker ps --format '{{.Names}}')
 if ($LASTEXITCODE -ne 0) { throw 'Docker indisponivel.' }
@@ -32,7 +32,7 @@ $oldMode = $env:FULFILLFLOW_SCALE_ENVIRONMENT
 $env:FULFILLFLOW_SCALE_ENVIRONMENT = 'observability-v1'
 Push-Location $root
 try {
-    Write-Host 'JANELA CRITICA: uma consulta GET; sem webhook, carga ou escala; APIs historicas preservadas.'
+    Write-Host 'PRE-CHECK DA CI + JANELA RESERVADA: uma consulta GET; APIs historicas preservadas.'
     & $python (Join-Path $PSScriptRoot 'http_trace_pilot.py') --private $PrivateDirectory --output $OutputDirectory
     $result = $LASTEXITCODE
 } finally {

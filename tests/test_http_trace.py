@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.http_trace_contract import clone_api, verify_trace
+from scripts.http_trace_contract import ci_verdict, clone_api, verify_trace
 from scripts.http_trace_pilot import Runner, validate_host
 from scripts.http_trace_receiver import project
 
@@ -88,6 +88,21 @@ def chain():
 
 
 class TraceContracts(unittest.TestCase):
+    def test_ci_waits_and_rejects_failure_or_a_different_reference(self):
+        self.assertFalse(ci_verdict({"status": "in_progress", "headSha": "expected"}, "expected"))
+        self.assertTrue(
+            ci_verdict(
+                {"status": "completed", "headSha": "expected", "conclusion": "success"}, "expected"
+            )
+        )
+        for record in (
+            {"status": "completed", "headSha": "other", "conclusion": "success"},
+            {"status": "completed", "headSha": "expected", "conclusion": "failure"},
+            {"status": "unknown", "headSha": "expected"},
+        ):
+            with self.assertRaises(RuntimeError):
+                ci_verdict(record, "expected")
+
     def test_memory_and_power_are_independent_guards(self):
         validate_host({"available_gib": 5, "required_gib": 5, "power_plugged": True})
         for available, plugged, error in ((4.99, True, "MEMORY"), (8, False, "BATTERY")):

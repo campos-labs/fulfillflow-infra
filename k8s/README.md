@@ -555,8 +555,9 @@ implantação Azure depende da [decisão de continuidade](../RELEASE_PLAN.md#4-c
 A fatia usa [imagem identificada](../config/http-observability.json), já construída
 localmente, e o ambiente privado `observability-01`. Não é bootstrap genérico para
 outro computador. A aplicação instrumentada está em branch própria e não substitui
-a v1.3 congelada. Antes da janela, conferir a CI e a imagem; o executor recusa um
-digest diferente. Build equivalente não é presumido idêntico ao digest registrado.
+a v1.3 congelada. O executor aguarda a CI aprovada do SHA
+fixado (até 20 minutos, usando GitHub CLI autenticado) antes de iniciar o Kind e
+recusa imagem com digest diferente. Build equivalente não é presumido idêntico ao digest registrado.
 
 Na raiz do repositório, em PowerShell 7:
 
@@ -567,8 +568,8 @@ Na raiz do repositório, em PowerShell 7:
 O launcher localiza a configuração privada nos locais normal ou virtualizado do
 Windows; em caso de ausência/ambiguidade, passar `-PrivateDirectory`. A saída padrão
 é `artifacts/observability-http-01`; não sobrescrever para repetir. Há 45 s para fechar
-navegadores, IDEs e assistentes. Manter Docker e tomada; nenhuma transferência externa
-é necessária depois da preparação. A entrada exige 5 GiB livres e a execução mantém
+navegadores, IDEs e assistentes. Manter Docker, internet e tomada. A internet é
+utilizada para consultar a CI; não há novo download nem destino externo de traces. A entrada exige 5 GiB livres e a execução mantém
 a guarda de 2 GiB. O histórico Kind pode ser parado, preservando volumes; outros
 containers ativos impedem a entrada. Não é necessário reiniciar por padrão.
 
