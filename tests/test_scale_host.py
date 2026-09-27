@@ -78,3 +78,41 @@ class HostTests(unittest.TestCase):
     def test_controlled_mode_cannot_silently_use_old_observer(self):
         with self.assertRaisesRegex(RuntimeError, "CONTROLLED_REFERENCE_REQUIRES_REUSE_DIAGNOSTIC"):
             _execute(None, None, diagnostic=True, controlled_host=True)
+
+
+class MemoryGuardTests(unittest.TestCase):
+    def test_low_memory_is_sticky_and_phase_is_preserved(self):
+        with tempfile.TemporaryDirectory() as folder:
+            low = {**row(0), "host_available_bytes": 1 * 2**30}
+            recovered = {**row(1), "host_available_bytes": 4 * 2**30}
+            monitor = HostMonitor(Path(folder), sampler=lambda: recovered)
+            monitor.rows = [low]
+            with self.assertRaisesRegex(RuntimeError, "HOST_MEMORY_BELOW_GUARD"):
+                monitor.require_safe("before_offer")
+            saved = json.loads((Path(folder) / "host-phases.jsonl").read_text())
+            self.assertEqual(saved["phase"], "before_offer")
+            self.assertFalse(saved["safe"])
+
+    def test_unknown_memory_or_stale_monitor_never_passes(self):
+        for previous, current, reason in [
+            (row(0), row(1), "MEMORY_UNAVAILABLE"),
+            (
+                {**row(0), "host_available_bytes": 4 * 2**30},
+                {**row(8), "host_available_bytes": 4 * 2**30},
+                "MONITOR_STALE",
+            ),
+        ]:
+            with self.subTest(reason=reason), tempfile.TemporaryDirectory() as folder:
+                monitor = HostMonitor(Path(folder), sampler=lambda: current)
+                monitor.rows = [previous]
+                with self.assertRaisesRegex(RuntimeError, reason):
+                    monitor.require_safe("post_load")
+
+    def test_same_safe_phase_does_not_grow_journal_each_poll(self):
+        with tempfile.TemporaryDirectory() as folder:
+            current = {**row(1), "host_available_bytes": 4 * 2**30}
+            monitor = HostMonitor(Path(folder), sampler=lambda: current)
+            monitor.rows = [{**row(0), "host_available_bytes": 4 * 2**30}]
+            monitor.require_safe("load_observation")
+            monitor.require_safe("load_observation")
+            self.assertEqual(len((Path(folder) / "host-phases.jsonl").read_text().splitlines()), 1)

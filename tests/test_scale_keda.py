@@ -225,15 +225,80 @@ class CapacityPilotTests(unittest.TestCase):
         pilot = Pilot(capacity_profile=True)
         with (
             patch.object(pilot, "install"),
+            patch.object(pilot, "guard"),
+            patch("pathlib.Path.read_text", return_value='{"post_observation_eligible": false}'),
             patch.object(pilot, "metric_probe"),
             patch("scripts.scale_keda.write"),
             patch("scripts.scale_diagnostic.wait_throttling"),
             patch("scripts.scale_keda.calibration.run_one", return_value=False) as run,
         ):
-            with self.assertRaisesRegex(RuntimeError, "ADAPTIVE_FUNCTIONAL"):
+            with self.assertRaisesRegex(RuntimeError, "ADAPTIVE_ACCEPTED"):
                 pilot.run(Path("private"), Path("output"), {}, {}, "base", {}, 123)
             self.assertEqual(run.call_args.args[1], Path("output/adaptive"))
             self.assertEqual(run.call_args.args[2], 1)
             self.assertIs(run.call_args.kwargs["policy"], pilot)
             self.assertTrue(run.call_args.kwargs["diagnostic"])
             self.assertTrue(run.call_args.kwargs["reuse_terminal_reads"])
+
+
+class PostLoadQualificationTests(unittest.TestCase):
+    def run_case(self, fail_guard=False):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder)
+            (output / "adaptive").mkdir()
+            (output / "adaptive/summary.json").write_text(
+                json.dumps({"post_observation_eligible": True, "offer_complete": False}),
+                encoding="utf-8",
+            )
+            pilot = Pilot(capacity_profile=True)
+            pilot.pin["post_load_observation_seconds"] = 10
+            now = [0]
+
+            def sleep(seconds):
+                now[0] += seconds
+
+            def guard(phase):
+                if fail_guard and phase == "post_load" and now[0] >= 5:
+                    raise RuntimeError("HOST_MEMORY_BELOW_GUARD")
+
+            with (
+                patch.object(pilot, "install"),
+                patch.object(pilot, "metric_probe"),
+                patch.object(pilot, "guard", side_effect=guard),
+                patch.object(pilot, "status", return_value={"metric": {"available": True}}),
+                patch("scripts.scale_diagnostic.wait_throttling", return_value={}),
+                patch("scripts.scale_keda.calibration.run_one", return_value=False),
+                patch("scripts.scale_keda.time.monotonic", side_effect=lambda: now[0]),
+                patch("scripts.scale_keda.time.sleep", side_effect=sleep),
+            ):
+                with self.assertRaisesRegex(
+                    RuntimeError, "HOST_MEMORY" if fail_guard else "PILOT_OFFER_INCOMPLETE"
+                ):
+                    pilot.run(Path("private"), output, {}, {}, "base", {}, 100)
+            outcome = json.loads((output / "post-load-outcome.json").read_text())
+            self.assertEqual(outcome["observation_complete"], not fail_guard)
+            self.assertFalse(outcome["load_qualified"])
+            self.assertEqual(outcome["samples"], 1 if fail_guard else 2)
+            self.assertTrue((output / "post-load.jsonl").exists())
+            if not fail_guard:
+                self.assertFalse(json.loads((output / "pilot-result.json").read_text())["complete"])
+
+    def test_offer_failure_can_preserve_post_load_without_passing_attempt(self):
+        self.run_case()
+
+    def test_host_failure_stops_post_load_and_keeps_partial_samples(self):
+        self.run_case(fail_guard=True)
+
+
+class PolicyRequestSummaryTests(unittest.TestCase):
+    def test_requests_exclude_uninitialized_status_and_distinguish_down_request(self):
+        from scripts.scale_keda import policy_requests
+
+        rows = [{"hpa_status": {"desiredReplicas": v}} for v in (0, 1, 2, 2, 1)]
+        result = policy_requests(rows)
+        self.assertTrue(result["scale_up_request_observed"])
+        self.assertTrue(result["scale_down_request_observed"])
+        self.assertEqual(len(result["sampled_requests"]), 2)
+        self.assertFalse(policy_requests(rows[:-1])["scale_down_request_observed"])

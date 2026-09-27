@@ -509,3 +509,45 @@ class DiagnosticReviewReplicaTests(unittest.TestCase):
                 (folder / "events.json").write_text("[{}]", encoding="utf-8")
                 with self.assertRaisesRegex(ValueError, "CHECKSUM_MISMATCH"):
                     review(root)
+
+
+class ResultDimensionsTests(unittest.TestCase):
+    def test_missing_offer_does_not_erase_completed_accepted_work(self):
+        from scripts.scale_calibration import result_dimensions
+
+        final = [
+            {"acceptance": {"status": 202}, "classification": "completed_in_time"},
+            {"acceptance": None, "classification": "not_offered"},
+        ]
+        result = result_dimensions(
+            final, {"completed_in_time": 1, "not_offered": 1}, {"complete": True}
+        )
+        self.assertFalse(result["offer_complete"])
+        self.assertTrue(result["accepted_completed_in_time"])
+        self.assertTrue(result["post_observation_eligible"])
+        self.assertEqual(result["accepted_events"], 1)
+
+    def test_unknown_acceptance_or_no_accepted_work_cannot_continue(self):
+        from scripts.scale_calibration import result_dimensions
+
+        for status, acceptance in [
+            ("acceptance_unknown", None),
+            ("not_offered", None),
+        ]:
+            result = result_dimensions(
+                [{"acceptance": acceptance, "classification": status}],
+                {status: 1},
+                {"complete": True},
+            )
+            self.assertFalse(result["post_observation_eligible"])
+
+    def test_late_completion_is_a_result_not_a_host_safety_failure(self):
+        from scripts.scale_calibration import result_dimensions
+
+        result = result_dimensions(
+            [{"acceptance": {"status": 202}, "classification": "completed_late"}],
+            {"completed_late": 1},
+            {"complete": True},
+        )
+        self.assertFalse(result["accepted_completed_in_time"])
+        self.assertTrue(result["post_observation_eligible"])

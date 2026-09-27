@@ -117,6 +117,24 @@ def quantity(value):
     return number
 
 
+def policy_requests(records):
+    """Sampled HPA requests before cleanup; not pod readiness or exact transition times."""
+    previous = 1
+    changes = []
+    for sample in records:
+        desired = (sample.get("hpa_status") or {}).get("desiredReplicas")
+        if desired not in (1, 2) or desired == previous:
+            continue
+        changes.append({"from": previous, "to": desired, "observed_utc": sample.get("utc")})
+        previous = desired
+    return {
+        "scale_up_request_observed": any(x["from"] == 1 and x["to"] == 2 for x in changes),
+        "scale_down_request_observed": any(x["from"] == 2 and x["to"] == 1 for x in changes),
+        "sampled_requests": changes,
+        "limit": "HPA desired replicas, not proof of pod readiness or processing; cleanup excluded",
+    }
+
+
 class Pilot:
     def __init__(self, prepare_only=False, capacity_profile=False):
         self.pin = json.loads(CONFIG.read_text())
@@ -128,6 +146,13 @@ class Pilot:
         self.object_uid = None
         self.restart_baseline = {}
         self.metric_samples = []
+        self.host = None
+
+    def guard(self, phase):
+        if self.capacity_profile:
+            if self.host is None:
+                raise RuntimeError("HOST_MONITOR_UNAVAILABLE")
+            self.host.require_safe(phase)
 
     def capacity_settings(self, settings):
         from scripts.scale_diagnostic import characterization_settings
@@ -464,9 +489,12 @@ class Pilot:
 
     def run(self, private, output, settings, values, base, expected, deadline):
         print("KEDA: install and readiness", flush=True)
+        self.guard("keda_installation")
         self.install(private, output)
+        self.guard("metric_probe")
         print("KEDA: metric fault and recovery probe (no business load)", flush=True)
         self.metric_probe(private, output)
+        self.guard("metric_probe_finished")
         if self.prepare_only:
             write(output / "pilot-result.json", {"prepared": True, "load_executed": False})
             return
@@ -495,16 +523,45 @@ class Pilot:
             policy=self,
             diagnostic=self.capacity_profile,
             reuse_terminal_reads=self.capacity_profile,
+            host_guard=self.guard if self.capacity_profile else None,
         )
-        if not ok:
-            raise RuntimeError("ADAPTIVE_FUNCTIONAL_OR_ATTRIBUTION_INCOMPLETE")
+        load_summary = (
+            json.loads((output / "adaptive/summary.json").read_text())
+            if self.capacity_profile
+            else {}
+        )
+        self.guard("before_post_load")
+        if not ok and not load_summary.get("post_observation_eligible", False):
+            raise RuntimeError("ADAPTIVE_ACCEPTED_OR_ATTRIBUTION_INCOMPLETE")
         print("KEDA: post-load observation, 360 seconds", flush=True)
         idle = []
-        until = time.monotonic() + self.pin["post_load_observation_seconds"]
-        while time.monotonic() < until:
-            idle.append(self.status(private))
-            time.sleep(5)
-        write(output / "post-load.json", idle)
+        expected_end = time.monotonic() + self.pin["post_load_observation_seconds"]
+        until = min(deadline, expected_end)
+        post_complete = False
+        try:
+            with (output / "post-load.jsonl").open("x", encoding="utf-8") as stream:
+                while time.monotonic() < until:
+                    self.guard("post_load")
+                    item = self.status(private)
+                    idle.append(item)
+                    stream.write(json.dumps(item) + "\n")
+                    stream.flush()
+                    time.sleep(5)
+            post_complete = time.monotonic() >= expected_end
+        finally:
+            write(output / "post-load.json", idle)
+            write(
+                output / "post-load-outcome.json",
+                {
+                    "observation_complete": post_complete,
+                    "samples": len(idle),
+                    "load_qualified": ok,
+                    **policy_requests(self.metric_samples + idle),
+                    "note": "cleanup replica reset is not automatic scale-down",
+                },
+            )
+        if not post_complete:
+            raise RuntimeError("POST_LOAD_WINDOW_INCOMPLETE")
         observed = self.metric_samples + idle
         unavailable = sum(not r["metric"]["available"] for r in observed)
         write(
@@ -516,12 +573,16 @@ class Pilot:
         write(
             output / "pilot-result.json",
             {
-                "complete": True,
+                "complete": ok,
                 "load_executed": True,
+                "offer_complete": load_summary.get("offer_complete", ok),
+                "post_load_observed": True,
                 "autoscaling_tested": True,
                 "interpretation": "inspect sampled criterion, metric availability and HPA decisions; scaling not required",
             },
         )
+        if not ok:
+            raise RuntimeError("PILOT_OFFER_INCOMPLETE")
 
     def cleanup(self, private):
         obj = get(private, "scaledobject", NAME)

@@ -20,7 +20,8 @@ sem erro. A sucessora a 16/s concluiu 540/540 e apresentou crescimento de
 pendência com margem do host. A sucessora com duas réplicas concluiu 540/540,
 com participação 281/259 e menor pendência amostrada. O piloto KEDA no
 mesmo perfil demonstrou subida 1→2, mas encerrou com sete ofertas omitidas e
-margem insuficiente do host. Progressão pausada; ver também
+margem insuficiente do host. Preparada uma sucessora com guardas por fase,
+sem nova carga executada; ver também
 [resultado adaptativo](#resultado-adaptativo-e-pausa). Ver
 [resultado de capacidade adicional](#resultado-com-duas-réplicas-fixas).
 
@@ -1204,6 +1205,55 @@ resumo do executor para evitar o erro genérico atual. Essas melhorias estão
 propostas, ainda não implementadas. A pausa combinada foi atingida; não há
 novo comando de carga preparado. Não há motivo demonstrado para refatorar a
 aplicação ou migrar a AKS para explicar este resultado.
+
+### Ajustes prospectivos de qualificação e sucessora única
+
+A conferência delimitada `artifacts/keda-capacity-16-c16-01-phase-review.json`
+localizou a primeira amostra abaixo de 2 GiB cerca de 125,95 s antes da primeira
+oferta; amostra a 0,33 s da oferta tinha 1,50 GiB. A violação antecede a
+primeira leitura saudável da sonda de métrica. Os registros não delimitam
+exatamente todas as subfases de preparação nem atribuem consumo a processos.
+As sete omissões ocorreram aproximadamente entre 30,14 e 32,52 s da oferta
+inicial, antes da primeira métrica positiva amostrada e da expansão.
+Não atribuir a falha de margem ou de admissão ao segundo pod.
+
+Precisão temporal: o primeiro DONE do novo pod aos 46,36 s comprova conclusão
+registrada, não início de consumo. Essa conclusão precedeu a primeira amostra
+com duas réplicas Ready; não estabelece readiness falsa naquele instante.
+O p95 de 31,5 s excedeu a guarda anterior de progressão de 30 s, embora todos
+os aceitos tenham concluído antes de 60 s. Preservar ambos os julgamentos.
+
+Implementada `qualification_version=2` no piloto adaptativo: `host-phases.jsonl`
+registra marcos e falhas; a guarda verifica energia, monitor recente e mínimo de
+2 GiB desde o início da monitoração. Conferir na preparação, antes/depois da
+ativação, antes da oferta, durante observação funcional e posterior.
+Violação amostrada encerra cooperativamente na próxima verificação; operação
+em curso pode terminar antes disso. Não é garantia de interrupção instantânea.
+
+O resumo v2 separa oferta completa, aceitação completa, aceitos concluídos no
+prazo e atribuição. Campo legado `functional_passed` continua agregado e deve
+ser lido com essas dimensões. Oferta omitida, isoladamente, pode permitir os
+360 s posteriores com host seguro e conclusão conhecida dos aceitos; o resumo
+global permanece incompleto (`PILOT_OFFER_INCOMPLETE`). Falha de segurança ou
+aceite desconhecido não permite prolongar. Amostras posteriores são gravadas
+incrementalmente e preservadas em interrupção. O resumo distingue solicitações
+amostradas de subida/descida pelo HPA; isso não atesta pods prontos nem
+processamento e exclui a reposição manual no cleanup. Lentidão é resultado a relatar,
+não filtro para escolher somente tentativas favoráveis.
+
+**Uma sucessora permitida:** `keda-capacity-16-c16-02`, launcher local
+`artifacts/Invoke-KedaCapacity02.local.ps1`. Mesmo perfil de 540 eventos, teto
+HTTP 16, política, recursos, aplicação e captura HTTP v2. Preflight inicial
+continua em 5 GiB; não garante a nova guarda nas fases posteriores. Se a margem
+falhar antes das ofertas, encerrar sem carga e retornar o diagnóstico, sem
+retry automático. Janela de trabalho existente de 20 minutos, esperas técnicas
+limitadas e cleanup preservados; observação posterior respeita o prazo restante.
+Não esperar infinitamente, alterar concorrência ou acumular novas tentativas.
+
+Preparar/analisar/testar autonomamente fora da janela; medir por comando único
+com aplicações externas fechadas. Não há repetição manual adicional obrigatória.
+Após esta tentativa, pausar com relatório consolidado para decidir ambiente ou
+protocolo se necessário. Nenhuma releitura altera o julgamento da tentativa 01.
 
 ### Depois da pausa — ainda não autorizado
 

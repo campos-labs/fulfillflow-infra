@@ -149,6 +149,25 @@ def observe(v, item, *, reuse_terminal_reads=False):
         return {**state, "observation_error": error.code}
 
 
+def result_dimensions(final, counts, distribution):
+    accepted = [x for x in final if x["acceptance"] is not None]
+    return {
+        "summary_version": 2,
+        "planned_events": len(final),
+        "accepted_events": len(accepted),
+        "offer_complete": not counts.get("not_offered", 0),
+        "acceptance_complete": len(accepted) == len(final),
+        "accepted_completed_in_time": bool(accepted)
+        and all(x["classification"] == "completed_in_time" for x in accepted),
+        "post_observation_eligible": bool(accepted)
+        and distribution["complete"]
+        and all(
+            x["classification"] in ("completed_in_time", "completed_late", "not_offered")
+            for x in final
+        ),
+    }
+
+
 def run_one(
     private,
     folder,
@@ -161,6 +180,7 @@ def run_one(
     policy=None,
     diagnostic=False,
     reuse_terminal_reads=False,
+    host_guard=None,
 ):
     if reuse_terminal_reads and not diagnostic:
         raise RuntimeError("REUSE_REQUIRES_DIAGNOSTIC")
@@ -175,12 +195,16 @@ def run_one(
     if db_metric(private, values["observer"])["eligible"]:
         raise RuntimeError("INITIAL_BACKLOG")
     before = telemetry.wait_worker_count(private, replicas)
+    if host_guard:
+        host_guard("event_preparation")
     prepared = []
     verifiers = {}
     offsets = schedule(
         settings["stages"], characterization=settings.get("capacity_characterization", False)
     )
     for index in range(len(offsets)):
+        if host_guard:
+            host_guard("event_preparation")
         if time.monotonic() >= work_deadline:
             raise RuntimeError("OPERATIONAL_WINDOW_EXHAUSTED")
         evidence = Evidence(folder / f"event-{index:04d}")
@@ -207,8 +231,12 @@ def run_one(
     child_env = {**os.environ, "CARRIER_ALPHA_WEBHOOK_SECRET": values["alpha"]}
     results = {}
     admissions = {}
+    if host_guard:
+        host_guard("controller_activation")
     if policy:
         policy.begin_load(private, folder)
+    if host_guard:
+        host_guard("before_offer")
 
     def collect():
         sample = telemetry.temporal_sample(
@@ -249,6 +277,8 @@ def run_one(
         )
         with ThreadPoolExecutor(max_workers=16) as observers:
             while time.monotonic() < min(deadline, work_deadline):
+                if host_guard:
+                    host_guard("load_observation")
                 tick = time.monotonic()
                 incoming = records(folder / "admission.jsonl")
                 admissions = {
@@ -345,6 +375,7 @@ def run_one(
             )
         )
         final_metric = db_metric(private, values["observer"])
+        dimensions = result_dimensions(final, counts, distribution)
         passed = distribution["complete"] and all(
             x["classification"] in ("completed_in_time", "completed_late") for x in final
         )
@@ -355,6 +386,7 @@ def run_one(
                 "functional_passed": all(
                     x["classification"] in ("completed_in_time", "completed_late") for x in final
                 ),
+                **dimensions,
                 "attribution_complete": distribution["complete"],
                 "per_pod_completed": distribution["per_pod"],
                 "counts": counts,
@@ -474,6 +506,7 @@ def _execute(
             "diagnostic": {
                 "enabled": diagnostic or adaptive_capture,
                 "condition": "adaptive" if adaptive_capture else "fixed",
+                "qualification_version": 2 if adaptive_capture else None,
                 "fixed_replicas": fixed_replicas if diagnostic else None,
                 "http_diagnostic_metadata_version": 2 if diagnostic or adaptive_capture else None,
                 "load_changed": peak_rate != 8,
@@ -499,9 +532,13 @@ def _execute(
         from scripts.scale_host import HostMonitor
 
         host = HostMonitor(output)
+        if adaptive_capture:
+            extension.host = host
     try:
         if host:
             host.start()
+            if adaptive_capture:
+                host.require_safe("environment_startup")
         environment.command(["docker", "start", CLUSTER + "-control-plane"])
         wait_api(private)
         environment.kubectl(

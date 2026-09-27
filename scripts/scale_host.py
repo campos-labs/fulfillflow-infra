@@ -76,6 +76,7 @@ class HostMonitor:
         self.stop = threading.Event()
         self.thread = None
         self.stream = None
+        self.last_guard_phase = None
 
     def append(self):
         row = self.sampler()
@@ -99,6 +100,40 @@ class HostMonitor:
                 self.append()
         except Exception as error:
             self.error = type(error).__name__
+
+    def require_safe(self, phase):
+        """Prospective adaptive-pilot guard; sampled, checked at operation boundaries."""
+        current = self.sampler()
+        rows = [*self.rows, current]
+        reasons = []
+        if self.error or not self.rows:
+            reasons.append("HOST_MONITOR_UNAVAILABLE")
+        if self.rows and current["monotonic"] - self.rows[-1]["monotonic"] > 5:
+            reasons.append("HOST_MONITOR_STALE")
+        if any(r.get("power_plugged") is not True for r in rows):
+            reasons.append("HOST_AC_NOT_CONFIRMED")
+        available = [r.get("host_available_bytes") for r in rows]
+        if any(type(v) is not int or v < 0 for v in available):
+            reasons.append("HOST_MEMORY_UNAVAILABLE")
+        elif min(available) < 2 * 2**30:
+            reasons.append("HOST_MEMORY_BELOW_GUARD")
+        if phase != self.last_guard_phase or reasons:
+            with (self.output / "host-phases.jsonl").open("a", encoding="utf-8") as stream:
+                stream.write(
+                    json.dumps(
+                        {
+                            **current,
+                            "phase": phase,
+                            "safe": not reasons,
+                            "reasons": reasons,
+                            "minimum_gib": 2,
+                        }
+                    )
+                    + "\n"
+                )
+            self.last_guard_phase = phase
+        if reasons:
+            raise RuntimeError(reasons[0])
 
     def close(self):
         self.stop.set()

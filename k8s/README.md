@@ -632,3 +632,11 @@ launcher local preparado no RELEASE_PLAN para conferir 5 GiB livres e isolar
 a janela. Aguardar também os 360 s de observação após a carga e o encerramento.
 O teste não exige escala: avaliar sinal, disponibilidade da métrica, decisões e
 participação por pod. Parar para revisão, mesmo com `complete=true`.
+
+A sucessora adaptativa com `qualification_version=2` aplica a guarda de 2 GiB
+por fase antes da oferta e nos pontos de controle seguintes; violação anterior
+amostrada impede continuação. `host-phases.jsonl` localiza o bloqueio.
+O launcher `Invoke-KedaCapacity02.local.ps1` identifica uma tentativa, sem retry.
+Oferta incompleta pode preservar observação posterior somente com host seguro,
+aceitos concluídos e atribuição íntegra; não transforma a tentativa em aprovada.
+Conferir `post-load-outcome.json` e registros incrementais mesmo em interrupção.

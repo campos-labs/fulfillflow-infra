@@ -562,6 +562,27 @@ próprio e aguardar a exclusão do HPA antes de repor uma réplica e parar o nó
 Não apagar CRDs, credenciais, volumes nem históricos. A calibração 05 permanece
 referência preparatória com hashes originais; o piloto não é repetição experimental.
 
+**Qualificação da sucessora adaptativa (versão 2).** Separar realização
+da oferta, conclusão dos aceitos, prazo, atribuição e observação da política.
+Registrar fases do host e exigir ao menos 2 GiB livres, energia conectada e
+monitor recente antes da oferta e nos pontos de controle seguintes. Violação
+amostrada permanece impeditiva nessa tentativa; não continuar só porque a
+memória recuperou. Verificações são cooperativas entre operações limitadas,
+não aborto instantâneo. O encerramento preserva volumes e evidências parciais.
+
+Oferta incompleta por itens não enviados pode permitir observação posterior
+se os aceitos têm conclusão conhecida, atribuição completa e host seguro;
+a tentativa continua reprovada pela fidelidade da carga. Aceite desconhecido,
+falha funcional/atribuição ou guarda do host impedem essa continuação.
+Conclusão tardia permanece explicitamente tardia; p95 acima de 30 s e idade
+acima de 5 s são achados que exigem revisão antes de nova campanha, não
+riscos do host que proíbem observar o controlador em segurança.
+Preservar amostras parciais em `post-load.jsonl` e o estado em
+`post-load-outcome.json`. Retorno a uma réplica por cleanup não comprova
+descida automática; descida ociosa não testa retirada durante processamento.
+Primeiro DONE é conclusão registrada, não instante de início; amostra Ready
+não identifica o instante exato da transição.
+
 **Entrada e resultado.** Locust é o gerador preferencial. Distinguir oferta
 planejada/realizada, aceitação confirmada ou desconhecida, rejeição, conclusão e
 pendência; observar conclusão independentemente do ritmo de admissão. Fixar taxa,
