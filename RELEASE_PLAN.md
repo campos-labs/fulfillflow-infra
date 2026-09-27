@@ -254,6 +254,30 @@ precisa conferir as guardas, sem baixar limites para executá-la com o editor ab
 & ./scripts/Invoke-ObservabilityPilot.ps1 -Resume
 ```
 
+A continuação `observability-pilot-02` estabilizou os três workers e criou pedido
+mais remessa. O webhook recebeu HTTP 503 `SERVICE_UNAVAILABLE` na admissão, sem
+confirmação de aceite 202. A memória mínima amostrada foi 5,73 GiB, e o nó foi
+parado. A classificação é oferta realizada com aceite não confirmado; não é prova
+de perda de evento nem de ausência de persistência. Os logs selecionados dos três
+workers ficaram vazios e não resolvem essa incerteza.
+
+A leitura de `/var/log/pods` no container parado, sem nova execução, preservou uma
+projeção de acesso em `artifacts/observability-pilot-02/api-log-review.json`. Na
+janela examinada, o Core registrou readiness 200 e admissão 503; o Tracking registrou
+inicialização, sem acesso de admissão observado. Isso não identifica a exceção
+original nem prova que a requisição não chegou. O código congelado permite traduzir
+falhas HTTP internas em `SERVICE_UNAVAILABLE`; a readiness do Core verifica sua
+própria condição e banco, não a disponibilidade completa do encaminhamento.
+
+**Pausa antes de outro envio:** não reutilizar `-Resume` nem reenviar o webhook.
+A próxima verificação deve consultar o evento já identificado, usando o filtro
+`external_event_id` no caminho público Core → Tracking, sem POST. Se o caminho
+responder, conferir o estado persistido retornado; se não responder, preservar o
+status e a lacuna. Somente depois decidir sobre o último ensaio permitido e uma
+checagem prospectiva de prontidão do encaminhamento. Internet ligada e ausência
+de reinício do notebook não foram identificadas como causa. Não associar este
+503 aos históricos nem alterar a aplicação a partir dessa ocorrência.
+
 ### Continuidade após a exploração
 
 Prometheus e verificações de segurança permanecem possibilidades por lacuna
