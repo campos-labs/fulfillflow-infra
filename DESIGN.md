@@ -598,7 +598,11 @@ Uma execução funcional pequena pode demonstrar cobertura; não quantifica over
 ou superioridade diagnóstica sem condições comparáveis e critérios prévios.
 
 A fatia HTTP autorizada usa APIs Core/Tracking clonadas com nomes e seletores
-exclusivos, mantendo os deployments históricos intactos. A nova imagem aplica
+exclusivos, mantendo os deployments históricos intactos. Os dois endereços internos
+são resolvidos entre clones: Core → Tracking e Tracking → Core. A listagem de eventos
+resolve metadados de transportadora no Core; o retorno não deve depender da API
+histórica. Essa consulta de metadados não tem span próprio na fatia delimitada.
+A nova imagem aplica
 SDK opt-in somente aos GETs de listagem de carrier-events; não modifica schema,
 autenticação, retry, timeout ou dados. O observador consulta um evento conhecido
 no banco do ambiente de observabilidade; não utiliza bancos da campanha de escala.

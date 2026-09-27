@@ -37,6 +37,9 @@ def clone_api(source, role, image):
     }
     if role == "core":
         overrides["TRACKING_BASE_URL"] = "http://httpdiag-tracking:8000"
+    else:
+        # Listing events resolves carrier metadata through Core, including nonempty pages.
+        overrides["CORE_BASE_URL"] = "http://httpdiag-core:8000"
     container["env"] = [e for e in container.get("env", []) if e["name"] not in overrides] + [
         {"name": k, "value": v} for k, v in overrides.items()
     ]

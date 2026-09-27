@@ -7,10 +7,10 @@ a partir de `v1.1.0-rc.1` (`92089b8`). Descoberta offline e dois casos diagnóst
 integrados estão concluídos: fluxo saudável e trabalho publicado aguardando consumo.
 O [índice técnico e registros publicados](docs/evidence/observability/README.md)
 permitem conferir cobertura e limites sem depender dos artefatos locais selecionados.
-Nó parado. A próxima fatia HTTP está implementada em referência isolada com SDK
-OpenTelemetry e imagem local. A preparação `observability-http-01` foi interrompida
-antes da consulta por rejeição do pod receptor; a correção de seccomp foi validada
-por admissão no servidor em dry-run. A consulta no Kind ainda não foi executada.
+Nó parado. A fatia HTTP capturou os quatro spans na tentativa `observability-http-02`,
+mas a consulta recebeu 503. A correlação localizou a resposta em Tracking; foi
+identificado e corrigido o retorno do clone Tracking ao Core histórico. A sucessora
+`observability-http-03` ainda precisa conferir o resultado funcional saudável.
 Sem nova campanha, merge ou release v1.2. As avaliações históricas não são reabertas.
 
 **Comparação de capacidade fixa e adaptativa concluída e consolidada na
@@ -82,7 +82,7 @@ carga adicional para confirmá-los. A coleta atual não mede overhead causal ou
 tracing distribuído, nem resolve os 503 históricos. Scripts permanecem versionados;
 claims e diretórios existentes não devem ser apagados para forçar novo ensaio.
 
-### Fatia HTTP: preparação corrigida, consulta pendente
+### Fatia HTTP: captura correlacionada, correção do retorno ao Core
 
 **Pergunta:** qual trecho de uma chamada conseguimos localizar que antes aparecia
 somente como duração total ou `SERVICE_UNAVAILABLE`? Primeiro, um GET saudável
@@ -159,10 +159,37 @@ a correção. Os oito recursos descartáveis da tentativa, identificados pelo ru
 e com deployments em zero réplicas, foram removidos após a conferência; bancos,
 volumes, deployments históricos e evidências da tentativa foram preservados.
 
-A sucessora usa saída exclusiva `artifacts/observability-http-02` com o mesmo runtime,
-consulta e guardas. Preferir o launcher com as janelas fechadas; reinicialização não
-é requisito presumido. O diagnóstico/limpeza está registrado localmente em
-`artifacts/observability-http-01-recovery.json`; não é um resultado funcional novo.
+**Consulta 02:** uma oferta de GET, 503 em 116 ms observados, quatro spans com mesma
+identidade e parentela conferida, três lotes aceitos e zero rejeitados pelo receptor.
+Tracking respondeu 503; o span cliente do Core classificou `remote_http_error`, e
+Core repassou o status. O resultado funcional continua reprovado; cobertura de trace
+não aprova a consulta. A margem mínima amostrada foi 4,31 GiB, acima da guarda.
+
+A inspeção encontrou `CORE_BASE_URL=http://core:8000` no clone Tracking: somente a
+ida Core → Tracking havia sido redirecionada. `list_inbox` consulta metadados de
+transportadora no Core, inclusive em páginas não vazias. O teste integrado anterior
+usava página vazia sem filtro de transportadora e não exercitava essa dependência.
+A correção direciona também Tracking → Core ao par diagnóstico, sem alterar contratos,
+segredos, dados, recursos ou imagem. O teste de regressão cobre os dois sentidos e
+preservação dos manifests originais. Os 315 testes de infraestrutura, lint, formatação
+e validação estática passaram após a correção. Os quatro spans localizam a fronteira do 503,
+mas não distinguem a operação interna que falhou dentro de Tracking. Não estabelecem
+causas dos 503 históricos nem comprovam superioridade geral do diagnóstico.
+
+A consulta corretiva ainda é necessária: a configuração incorreta foi comprovada,
+mas os spans não preservam a exceção interna que originou o 503. Uma inspeção após
+reiniciar o nó encontrou o endpoint histórico do Core não pronto; esse estado não
+é apresentado como medição contemporânea à consulta 02. As oito configurações
+transitórias da tentativa foram removidas pelo run ID após conferir zero réplicas;
+volumes, dados, specs históricos e evidências continuam preservados, com o nó parado.
+
+A sucessora usa saída exclusiva `artifacts/observability-http-03`, mesmo evento,
+runtime e guardas, com retorno ao clone corrigido. Os diagnósticos locais ficam em
+`artifacts/observability-http-01-recovery.json`,
+`artifacts/observability-http-02-recovery.json` e
+`artifacts/observability-http-02-review.json`. Não são campanhas novas. Preferir o
+launcher com as janelas fechadas enquanto a margem aqui ficar abaixo de 5 GiB;
+reinicialização não é requisito presumido.
 
 **Aceite da fatia:** identificar a mesma chamada nas fronteiras instrumentadas,
 confrontar resposta pública, relatar marcos ausentes e saúde da exportação. Medir

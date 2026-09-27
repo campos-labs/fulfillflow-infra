@@ -197,6 +197,49 @@ class TraceContracts(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     verify_trace(snap, res)
 
+    def test_clones_route_both_directions_inside_the_diagnostic_pair(self):
+        for role, key, historical, target in (
+            ("core", "TRACKING_BASE_URL", "http://tracking:8000", "http://httpdiag-tracking:8000"),
+            ("tracking", "CORE_BASE_URL", "http://core:8000", "http://httpdiag-core:8000"),
+        ):
+            with self.subTest(role=role):
+                source = {
+                    "metadata": {"name": role},
+                    "spec": {
+                        "replicas": 0,
+                        "template": {
+                            "spec": {
+                                "containers": [
+                                    {
+                                        "name": role,
+                                        "env": [
+                                            {"name": key, "value": historical},
+                                            {
+                                                "name": "INTERNAL_API_SECRET",
+                                                "valueFrom": {
+                                                    "secretKeyRef": {"name": role, "key": "secret"}
+                                                },
+                                            },
+                                        ],
+                                    }
+                                ]
+                            }
+                        },
+                    },
+                }
+                before = copy.deepcopy(source)
+                clone = clone_api(source, role, "diagnostic-image")
+                values = clone["spec"]["template"]["spec"]["containers"][0]["env"]
+                self.assertEqual(
+                    [v for v in values if v["name"] == key], [{"name": key, "value": target}]
+                )
+                self.assertEqual(
+                    [v for v in values if v["name"] == "INTERNAL_API_SECRET"],
+                    [before["spec"]["template"]["spec"]["containers"][0]["env"][1]],
+                )
+                self.assertEqual(source, before)
+                self.assertEqual(clone["spec"]["replicas"], 1)
+
     def test_cloning_preserves_original_and_db_owner(self):
         source = {
             "metadata": {"name": "core"},
