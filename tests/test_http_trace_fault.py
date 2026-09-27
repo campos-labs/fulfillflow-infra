@@ -9,7 +9,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from scripts.http_trace_contract import LABEL
-from scripts.http_trace_fault import await_endpoints, run_sequence, verify_fault
+from scripts.http_trace_fault import await_endpoints, await_no_pods, run_sequence, verify_fault
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -83,9 +83,47 @@ class ControlledFailure(unittest.TestCase):
             self.assertEqual(await_endpoints(runner, True)["ready_endpoints"], 1)
         self.assertEqual(runner.kube.call_count, 2)
 
+    def test_terminating_pod_is_not_considered_removed(self):
+        pod = {
+            "metadata": {
+                "uid": "old",
+                "deletionTimestamp": "now",
+                "labels": {"fulfillflow.io/http-run": "run"},
+            }
+        }
+        runner = SimpleNamespace(
+            run_id="run",
+            kube=unittest.mock.Mock(
+                side_effect=[json.dumps({"items": [pod]}), json.dumps({"items": []})]
+            ),
+        )
+        with patch("scripts.http_trace_fault.time.sleep"):
+            self.assertEqual(await_no_pods(runner)["remaining_pods"], 0)
+        self.assertEqual(runner.kube.call_count, 2)
+
+    def test_foreign_pod_aborts_injection(self):
+        runner = SimpleNamespace(
+            run_id="run",
+            kube=lambda args: json.dumps(
+                {"items": [{"metadata": {"uid": "foreign", "labels": {}}}]}
+            ),
+        )
+        with self.assertRaisesRegex(RuntimeError, "FAULT_POD_IDENTITY"):
+            await_no_pods(runner)
+
     def test_expected_failure_is_diagnostic_success_not_functional_success(self):
         snapshot, result = fault_records()
-        self.assertTrue(verify_fault(snapshot, result, {"confirmed": True})["complete"])
+        self.assertTrue(
+            verify_fault(
+                snapshot,
+                result,
+                {
+                    "confirmed": True,
+                    "mechanism": "diagnostic_api_scale_to_zero",
+                    "pod_state": {"remaining_pods": 0},
+                },
+            )["complete"]
+        )
         self.assertFalse(result["complete"])
 
     def test_missing_span_does_not_prove_injected_fault(self):
@@ -107,14 +145,113 @@ class ControlledFailure(unittest.TestCase):
             else:
                 snapshot["records"][2]["parent_span_id"] = "unrelated"
             with self.subTest(mutation=mutation), self.assertRaises(ValueError):
-                verify_fault(snapshot, result, {"confirmed": True})
+                verify_fault(
+                    snapshot,
+                    result,
+                    {
+                        "confirmed": True,
+                        "mechanism": "diagnostic_api_scale_to_zero",
+                        "pod_state": {"remaining_pods": 0},
+                    },
+                )
+
+    def test_endpoints_only_no_longer_confirm_interruption(self):
+        snapshot, result = fault_records()
+        with self.assertRaisesRegex(ValueError, "INDEPENDENTLY_CONFIRMED"):
+            verify_fault(
+                snapshot, result, {"confirmed": True, "endpoint_state": {"ready_endpoints": 0}}
+            )
+
+    def test_complete_sequence_restores_and_checks_new_ready_pod(self):
+        deployment = {
+            "metadata": {"uid": "dep", "labels": {LABEL: "true", "fulfillflow.io/http-run": "run"}},
+            "spec": {
+                "replicas": 1,
+                "selector": {"matchLabels": {"app.kubernetes.io/name": "httpdiag-tracking"}},
+            },
+        }
+        service = {
+            "metadata": {"uid": "svc"},
+            "spec": {"selector": {"app.kubernetes.io/name": "httpdiag-tracking"}},
+        }
+        recreated = False
+
+        def kube(args, **kwargs):
+            nonlocal recreated
+            if args[:2] == ["get", "deployment"]:
+                return json.dumps(deployment)
+            if args[:2] == ["get", "service"]:
+                return json.dumps(service)
+            if args[:2] == ["get", "pods"]:
+                pods = (
+                    []
+                    if deployment["spec"]["replicas"] == 0
+                    else [
+                        {
+                            "metadata": {
+                                "uid": "new" if recreated else "old",
+                                "labels": {"fulfillflow.io/http-run": "run"},
+                            },
+                            "status": {"conditions": [{"type": "Ready", "status": "True"}]},
+                        }
+                    ]
+                )
+                return json.dumps({"items": pods})
+            if args[:2] == ["get", "endpointslice"]:
+                return json.dumps(
+                    {
+                        "items": [
+                            {
+                                "endpoints": [{"conditions": {"ready": True}}]
+                                if deployment["spec"]["replicas"]
+                                else None
+                            }
+                        ]
+                    }
+                )
+            if args[0] == "patch":
+                ops = json.loads(args[-1])
+                self.assertEqual(ops[0]["value"], "dep")
+                self.assertEqual(ops[1]["value"], deployment["spec"]["replicas"])
+                deployment["spec"]["replicas"] = ops[2]["value"]
+                recreated = recreated or ops[2]["value"] == 1
+                return ""
+            if args[0] == "rollout":
+                return ""
+            raise AssertionError(args)
+
+        directory = ROOT / "docs/evidence/observability/http-05"
+        before = (
+            json.loads((directory / "trace-records.json").read_bytes()),
+            json.loads((directory / "functional.json").read_bytes()),
+        )
+        after = copy.deepcopy(before)
+        after[1]["trace_id"] = "after"
+        for row in after[0]["records"]:
+            row["trace_id"] = "after"
+        with tempfile.TemporaryDirectory() as output:
+            runner = SimpleNamespace(
+                output=Path(output), private=Path("private"), run_id="run", kube=kube
+            )
+            capture = unittest.mock.Mock(side_effect=[before, fault_records(), after])
+            with patch(
+                "scripts.http_trace_fault.env.kubectl",
+                side_effect=lambda private, args, **kw: kube(args),
+            ):
+                run_sequence(runner, {}, capture)
+            self.assertTrue(json.loads((Path(output) / "review.json").read_bytes())["complete"])
+            self.assertEqual(
+                json.loads((Path(output) / "restored-pod.json").read_bytes())["uid"], "new"
+            )
+            self.assertEqual(capture.call_count, 3)
+            self.assertEqual(deployment["spec"]["replicas"], 1)
 
     def test_restores_after_capture_failure_even_with_measurement_guard_failure(self):
         service = {
             "metadata": {"uid": "uid", "labels": {LABEL: "true", "fulfillflow.io/http-run": "run"}},
             "spec": {
-                "selector": {"app.kubernetes.io/name": "httpdiag-tracking"},
-                "ports": [{"port": 8000}],
+                "selector": {"matchLabels": {"app.kubernetes.io/name": "httpdiag-tracking"}},
+                "replicas": 1,
             },
         }
         initial = copy.deepcopy(service)
@@ -122,15 +259,26 @@ class ControlledFailure(unittest.TestCase):
 
         def kube(args, **kwargs):
             calls.append(args)
-            if args[:2] == ["get", "service"]:
+            if args[:2] in (["get", "service"], ["get", "deployment"]):
                 return json.dumps(service)
             if args[:2] == ["get", "pods"]:
-                return '{"items": []}'
+                return json.dumps(
+                    {
+                        "items": [
+                            {
+                                "metadata": {
+                                    "uid": "old-pod",
+                                    "labels": {"fulfillflow.io/http-run": "run"},
+                                }
+                            }
+                        ]
+                    }
+                )
             if args[0] == "patch":
                 ops = json.loads(args[-1])
                 self.assertEqual(ops[0]["value"], service["metadata"]["uid"])
-                self.assertEqual(ops[1]["value"], service["spec"]["selector"])
-                service["spec"]["selector"] = ops[2]["value"]
+                self.assertEqual(ops[1]["value"], service["spec"]["replicas"])
+                service["spec"]["replicas"] = ops[2]["value"]
                 return ""
             raise AssertionError(args)
 
@@ -144,6 +292,7 @@ class ControlledFailure(unittest.TestCase):
                 output=Path(directory), private=Path("private"), run_id="run", kube=kube
             )
             with (
+                patch("scripts.http_trace_fault.await_no_pods", return_value={"remaining_pods": 0}),
                 patch(
                     "scripts.http_trace_fault.await_endpoints", return_value={"ready_endpoints": 0}
                 ),

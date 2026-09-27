@@ -390,6 +390,9 @@ def execute(private, output, scenario="healthy"):
             "namespace_uid": identity["namespace_uid"],
             "query_count": 3 if scenario == "transport-fault" else 1,
             "scenario": scenario,
+            "fault_mechanism": "diagnostic_api_scale_to_zero"
+            if scenario == "transport-fault"
+            else None,
             "preparation_health_checks": {
                 "paths": 3,
                 "maximum_rounds": 3,

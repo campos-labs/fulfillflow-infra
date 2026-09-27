@@ -601,8 +601,9 @@ Para a sequência controlada preparada (executar uma vez, em saída inexistente)
 ```
 
 São três GETs do mesmo evento concluído, com diretórios `before`, `fault` e `after`.
-Apenas o seletor do Service `httpdiag-tracking` é interrompido e restaurado; o receptor
-OTLP permanece acessível. `injection.json` registra seletor e endpoints; `restoration.json`
+Somente o Deployment `httpdiag-tracking` passa de uma para zero réplicas e é restaurado;
+o receptor OTLP permanece acessível. `injection.json` registra réplicas, UID e ausência
+de pods/endpoints. `restored-pod.json` identifica o novo pod Ready; `restoration.json`
 confere o spec original. Na fase `fault`, HTTP 503 e três spans com erro `transport`
 são esperados: `functional.complete=false` nessa consulta pode coexistir com aprovação
 do diagnóstico em `fault/review.json`. O resumo final exige as três fases e restauração.

@@ -624,11 +624,16 @@ históricas; zero réplicas dos clones e nó parado encerram a janela. Credencia
 bodies HTTP não integram a evidência, e nenhuma imagem histórica é sobrescrita.
 
 A verificação controlada HTTP usa três consultas únicas ao mesmo evento já concluído:
-saudável → falha conhecida → restauração. Alterar somente o seletor do Service
-`httpdiag-tracking` para um valor exclusivo sem pods; confirmar seletor e ausência
-de endpoints prontos antes da consulta. Restaurar o spec original mesmo se a coleta
-falhar, usando UID e seletor esperado como precondições. Não interromper o receptor
-OTLP nem modificar deployments, dados, timeouts ou instrumentação da aplicação.
+saudável → falha conhecida → restauração. Nas novas execuções, reduzir somente o
+Deployment `httpdiag-tracking` de uma para zero réplicas, com precondições de UID,
+run ID e réplicas. Aguardar ausência de todos os pods desse clone, incluindo os em
+encerramento (até 60 s), e zero endpoints prontos antes da consulta. Zero endpoints
+isoladamente não comprova interrupção. Services, Core, receptor OTLP, workers e APIs
+históricos permanecem intactos. Restaurar o spec original mesmo se a coleta falhar.
+Na sequência aprovada, aguardar rollout (até 120 s), conferir novo UID de pod Ready e
+endpoints disponíveis antes da consulta final. Não mudar dados, timeouts, pooling ou
+instrumentação da aplicação. As tentativas 01/02 com alteração de seletor mantêm seu
+protocolo e julgamento originais; a 02 não produziu a falha pretendida.
 
 Critérios distintos: antes/depois, HTTP 200, resultado funcional e quatro spans;
 durante, HTTP 503, erro de transporte no cliente Core e três spans ligados. Confrontar

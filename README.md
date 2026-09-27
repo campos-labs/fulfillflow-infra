@@ -24,7 +24,8 @@ HTTP concluída com SDK em referência isolada: consulta funcional e quatro span
 correlacionados, sem medição de overhead. O [guia](k8s/README.md#diagnóstico-http-com-tracing)
 orienta a consulta saudável e a sequência controlada de falha/restauração preparada.
 A tentativa controlada 02 recebeu 200 apesar da alteração do Service; o mecanismo
-de interrupção está em reavaliação. Os casos concluídos não exigem repetição.
+de interrupção foi revisto para parar somente a API Tracking clonada, com sucessora
+preparada e ainda não executada. Os casos concluídos não exigem repetição.
 
 
 ## Comece por aqui

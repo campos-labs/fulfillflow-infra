@@ -1,4 +1,4 @@
-"""One known Service interruption; business state is checked before and after only."""
+"""One known diagnostic API interruption; business state is checked before and after only."""
 
 import json
 import time
@@ -11,7 +11,11 @@ NAME = "httpdiag-tracking"
 
 
 def verify_fault(snapshot, result, injection):
-    if not injection.get("confirmed"):
+    if (
+        not injection.get("confirmed")
+        or injection.get("mechanism") != "diagnostic_api_scale_to_zero"
+        or injection.get("pod_state", {}).get("remaining_pods") != 0
+    ):
         raise ValueError("FAULT_NOT_INDEPENDENTLY_CONFIRMED")
     if (
         result.get("complete")
@@ -69,11 +73,11 @@ def verify_fault(snapshot, result, injection):
     }
 
 
-def selector_patch(uid, previous, following):
+def replica_patch(uid, previous, following):
     return [
         {"op": "test", "path": "/metadata/uid", "value": uid},
-        {"op": "test", "path": "/spec/selector", "value": previous},
-        {"op": "replace", "path": "/spec/selector", "value": following},
+        {"op": "test", "path": "/spec/replicas", "value": previous},
+        {"op": "replace", "path": "/spec/replicas", "value": following},
     ]
 
 
@@ -96,6 +100,27 @@ def await_endpoints(runner, available):
     raise RuntimeError("FAULT_ENDPOINTS_NOT_CONVERGED")
 
 
+def diagnostic_pods(runner):
+    pods = json.loads(
+        runner.kube(["get", "pods", "-l", "app.kubernetes.io/name=" + NAME, "-o", "json"])
+    )["items"]
+    if any(
+        p["metadata"].get("labels", {}).get("fulfillflow.io/http-run") != runner.run_id
+        for p in pods
+    ):
+        raise RuntimeError("FAULT_POD_IDENTITY")
+    return pods
+
+
+def await_no_pods(runner):
+    runner.stage = "fault_pod_termination"
+    for _ in range(60):
+        if not diagnostic_pods(runner):
+            return {"utc": utc(), "remaining_pods": 0}
+        time.sleep(1)
+    raise RuntimeError("FAULT_POD_TERMINATION_TIMEOUT")
+
+
 def run_sequence(runner, evidence, capture):
     def query(phase, fault=None):
         directory = runner.output / phase
@@ -107,56 +132,48 @@ def run_sequence(runner, evidence, capture):
         return result
 
     before = query("before")
+    deployment = json.loads(runner.kube(["get", "deployment", NAME, "-o", "json"]))
     service = json.loads(runner.kube(["get", "service", NAME, "-o", "json"]))
-    labels = service["metadata"].get("labels", {})
-    original = service["spec"]["selector"]
+    labels = deployment["metadata"].get("labels", {})
+    original = deployment["spec"]["replicas"]
     if (
         labels.get(LABEL) != "true"
         or labels.get("fulfillflow.io/http-run") != runner.run_id
-        or original != {"app.kubernetes.io/name": NAME}
+        or original != 1
+        or deployment["spec"]["selector"]["matchLabels"] != {"app.kubernetes.io/name": NAME}
     ):
-        raise RuntimeError("FAULT_SERVICE_IDENTITY")
-    uid = service["metadata"]["uid"]
-    isolated = {"fulfillflow.io/absent-http-target": runner.run_id}
-    # A unique selector targets no pod; ports, exporter and deployments are unchanged.
-    if json.loads(
-        runner.kube(
-            [
-                "get",
-                "pods",
-                "-l",
-                "fulfillflow.io/absent-http-target=" + runner.run_id,
-                "-o",
-                "json",
-            ]
-        )
-    )["items"]:
-        raise RuntimeError("FAULT_SELECTOR_NOT_EMPTY")
+        raise RuntimeError("FAULT_DEPLOYMENT_IDENTITY")
+    uid = deployment["metadata"]["uid"]
+    previous_pods = diagnostic_pods(runner)
+    if len(previous_pods) != 1:
+        raise RuntimeError("FAULT_INITIAL_POD_COUNT")
     injection = {
-        "service": NAME,
+        "mechanism": "diagnostic_api_scale_to_zero",
+        "deployment": NAME,
         "uid": uid,
-        "original_selector": original,
-        "fault_selector": isolated,
+        "original_replicas": original,
         "confirmed": False,
+        "previous_pod_uids": [p["metadata"]["uid"] for p in previous_pods],
     }
     try:
         runner.stage = "fault_injection"
-        # Finally also runs if a command fails after the API accepted the patch.
+        # Finally also runs if the command failed after Kubernetes accepted the patch.
         runner.kube(
             [
                 "patch",
-                "service",
+                "deployment",
                 NAME,
                 "--type=json",
                 "-p",
-                json.dumps(selector_patch(uid, original, isolated)),
+                json.dumps(replica_patch(uid, original, 0)),
             ]
         )
-        observed = json.loads(runner.kube(["get", "service", NAME, "-o", "json"]))
+        pod_state = await_no_pods(runner)
         endpoint_state = await_endpoints(runner, False)
+        observed = json.loads(runner.kube(["get", "deployment", NAME, "-o", "json"]))
         injection.update(
-            confirmed=observed["metadata"]["uid"] == uid
-            and observed["spec"]["selector"] == isolated,
+            confirmed=observed["metadata"]["uid"] == uid and observed["spec"]["replicas"] == 0,
+            pod_state=pod_state,
             endpoint_state=endpoint_state,
         )
         write(runner.output / "injection.json", injection)
@@ -164,38 +181,59 @@ def run_sequence(runner, evidence, capture):
             raise RuntimeError("FAULT_NOT_CONFIRMED")
         fault = query("fault", injection)
     finally:
-        # Restoration bypasses measurement guards, but retains UID and selector CAS.
+        # Restore configuration even when the memory/deadline guard stops observation.
         observed = json.loads(
-            env.kubectl(runner.private, ["get", "service", NAME, "-o", "json"], timeout=15)
+            env.kubectl(runner.private, ["get", "deployment", NAME, "-o", "json"], timeout=15)
         )
-        if observed["metadata"]["uid"] != uid or observed["spec"]["selector"] not in (
-            original,
-            isolated,
-        ):
+        if observed["metadata"]["uid"] != uid or observed["spec"]["replicas"] not in (0, original):
             raise RuntimeError("FAULT_RESTORATION_IDENTITY")
-        if observed["spec"]["selector"] == isolated:
+        if observed["spec"]["replicas"] == 0:
             env.kubectl(
                 runner.private,
                 [
                     "patch",
-                    "service",
+                    "deployment",
                     NAME,
                     "--type=json",
                     "-p",
-                    json.dumps(selector_patch(uid, isolated, original)),
+                    json.dumps(replica_patch(uid, 0, original)),
                 ],
                 timeout=15,
             )
         restored = json.loads(
+            env.kubectl(runner.private, ["get", "deployment", NAME, "-o", "json"], timeout=15)
+        )
+        restored_service = json.loads(
             env.kubectl(runner.private, ["get", "service", NAME, "-o", "json"], timeout=15)
         )
-        confirmed = restored["metadata"]["uid"] == uid and restored["spec"] == service["spec"]
+        confirmed = restored["metadata"]["uid"] == uid and restored["spec"] == deployment["spec"]
+        service_unchanged = (
+            restored_service["metadata"]["uid"] == service["metadata"]["uid"]
+            and restored_service["spec"] == service["spec"]
+        )
         write(
             runner.output / "restoration.json",
-            {"utc": utc(), "service": NAME, "original_spec_restored": confirmed},
+            {
+                "utc": utc(),
+                "deployment": NAME,
+                "original_spec_restored": confirmed,
+                "service_unchanged": service_unchanged,
+            },
         )
-        if not confirmed:
+        if not confirmed or not service_unchanged:
             raise RuntimeError("FAULT_RESTORATION_UNCONFIRMED")
+    runner.stage = "fault_recovery_readiness"
+    runner.kube(["rollout", "status", "deployment/" + NAME, "--timeout=120s"], timeout=130)
+    recovered_pods = diagnostic_pods(runner)
+    if len(recovered_pods) != 1 or not any(
+        c.get("type") == "Ready" and c.get("status") == "True"
+        for c in recovered_pods[0].get("status", {}).get("conditions", [])
+    ):
+        raise RuntimeError("FAULT_RECOVERY_POD_NOT_READY")
+    recovered_uid = recovered_pods[0]["metadata"]["uid"]
+    if recovered_uid in injection["previous_pod_uids"]:
+        raise RuntimeError("FAULT_RECOVERY_POD_NOT_REPLACED")
+    write(runner.output / "restored-pod.json", {"utc": utc(), "uid": recovered_uid, "ready": True})
     write(runner.output / "restored-endpoints.json", await_endpoints(runner, True))
     after = query("after")
     if len({r["trace_id"] for r in (before, fault, after)}) != 3:

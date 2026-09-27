@@ -10,10 +10,10 @@ permitem conferir cobertura e limites sem depender dos artefatos locais selecion
 Nó parado. **Fatia HTTP saudável concluída** em `observability-http-05`: uma consulta
 200, nove conferências funcionais aprovadas e quatro spans ligados corretamente.
 [Registros e limites](docs/evidence/observability/README.md#fatia-http-com-opentelemetry)
-estão publicados. **Pausa após a tentativa controlada 02:** a consulta durante a
+estão publicados. **Tentativa controlada 02 preservada:** a consulta durante a
 alteração do Service respondeu 200 e chegou ao Tracking. A falha pretendida não foi
-produzida, apesar de zero endpoints prontos registrados. Rever o mecanismo de
-interrupção antes de outra execução; nenhuma nova carga, AKS, merge ou release.
+produzida, apesar de zero endpoints prontos registrados. Sucessora 03 autorizada com parada somente do clone Tracking,
+confirmação da remoção do pod e restauração; nenhuma nova carga, AKS, merge ou release.
 
 
 **Comparação de capacidade fixa e adaptativa concluída e consolidada na
@@ -259,7 +259,7 @@ Não modificar retroativamente os casos atuais: a espera sequencial está docume
 
 Executar `Invoke-HttpTracePilot.ps1 -Scenario transport-fault` em saída exclusiva.
 O contrato está no DESIGN §8.8 e em `http_trace_fault.py`: três consultas ao evento
-concluído, sem webhook, falha apenas no seletor do Service diagnóstico e restauração
+concluído, sem webhook, falha pela parada da API Tracking clonada e restauração
 em `finally`. Preservar os três resultados funcionais, snapshots de spans, intervenção,
 restauração e julgamento próprio de cada fase. A consulta durante a falha deve ser
 inconclusiva quanto ao estado de negócio, mesmo se o diagnóstico da fronteira aprovar.
@@ -309,10 +309,15 @@ o julgamento original. Fontes locais: `artifacts/observability-http-fault-02/` e
 `artifacts/observability-http-fault-02-offline-review.json`; esta seleção ainda não foi
 publicada como pacote de evidências.
 
-Próxima decisão recomendada: substituir a alteração de seletor por parada temporária
+Decisão autorizada para a sucessora 03: substituir a alteração de seletor por parada temporária
 somente da API Tracking clonada, confirmar término do pod antes da consulta e restaurar
-uma réplica antes da conferência final. Isso altera o mecanismo de injeção e deve ser
-fixado prospectivamente no contrato/executor; ainda não foi implementado nem executado.
+uma réplica antes da conferência final. O mecanismo foi autorizado e implementado prospectivamente no DESIGN/executor.
+A sucessora 03 exige zero pods (incluindo terminating), zero endpoints e, após
+restauração, novo pod Ready antes da terceira consulta. A execução integrada ainda
+está pendente. A revisão exige tanto a intervenção quanto o erro HTTP observado.
+Validação: 329 testes, Ruff e formatação aprovados. O launcher local
+`artifacts/Invoke-HttpFault03.local.ps1` reconcilia por run ID os recursos da 02 antes
+da sucessora, preservando volumes e registros.
 Manter Core, receptor OTLP, workers e APIs históricos intactos. Não alterar pooling,
 latência, retries ou aplicação apenas para fabricar a resposta esperada. Encerrar aqui
 as repetições do mecanismo atual; não ampliar o estudo para investigar rede Kubernetes.
