@@ -128,3 +128,19 @@ def ci_verdict(record, expected_sha):
     if record.get("status") not in ("queued", "in_progress", "waiting", "pending", "requested"):
         raise RuntimeError("CI_STATE_UNKNOWN")
     return False
+
+
+HTTP_HEALTH_PATHS = (
+    ("httpdiag-sink", "httpdiag-core"),
+    ("httpdiag-core", "httpdiag-tracking"),
+    ("httpdiag-tracking", "httpdiag-core"),
+)
+
+
+def peer_health_ready(rows):
+    """All actual caller paths must work; a ready pod alone is not this evidence."""
+    return (
+        len(rows) == len(HTTP_HEALTH_PATHS)
+        and {(r.get("source"), r.get("target")) for r in rows} == set(HTTP_HEALTH_PATHS)
+        and all(r.get("status") == 200 and r.get("error") is None for r in rows)
+    )

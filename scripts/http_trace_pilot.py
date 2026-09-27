@@ -16,7 +16,14 @@ import psutil
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts import scale_environment as env
-from scripts.http_trace_contract import LABEL, ci_verdict, clone_api, verify_trace
+from scripts.http_trace_contract import (
+    HTTP_HEALTH_PATHS,
+    LABEL,
+    ci_verdict,
+    clone_api,
+    peer_health_ready,
+    verify_trace,
+)
 from scripts.scale_contract import CLUSTER, utc, write
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -123,6 +130,62 @@ class Runner:
                 "fulfillflow.io/http-run"
             ] = self.run_id
         return self.kube(["create", "-f", "-"], json.dumps(resource))
+
+
+# No bodies, credentials or arbitrary endpoints are recorded by this pre-query probe.
+HEALTH_PROBE = """
+import json, sys, urllib.request, urllib.error
+source, target = sys.argv[1:]
+assert (source, target) in (("httpdiag-sink", "httpdiag-core"), ("httpdiag-core", "httpdiag-tracking"), ("httpdiag-tracking", "httpdiag-core"))
+row = {"source": source, "target": target, "status": None, "error": None}
+try:
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    with opener.open("http://" + target + ":8000/health/ready", timeout=3) as response:
+        row["status"] = response.status
+except urllib.error.HTTPError as error:
+    row["status"] = error.code
+except urllib.error.URLError as error:
+    row["error"] = type(error.reason).__name__
+    row["errno"] = getattr(error.reason, "errno", None)
+except Exception as error:
+    row["error"] = type(error).__name__
+print(json.dumps(row))
+"""
+
+
+def await_peer_health(runner):
+    """Bounded preparation only; never retry the measured business query."""
+    runner.stage = "peer_health"
+    rounds = []
+    for attempt in range(3):
+        rows = []
+        for source, target in HTTP_HEALTH_PATHS:
+            row = json.loads(
+                runner.kube(
+                    [
+                        "exec",
+                        "deployment/" + source,
+                        "--",
+                        "python",
+                        "-c",
+                        HEALTH_PROBE,
+                        source,
+                        target,
+                    ],
+                    timeout=15,
+                )
+            )
+            rows.append(row)
+            # Preserve partial rounds if a later command fails.
+            write(runner.output / f"peer-health-{attempt + 1}-{source}.json", row)
+        rounds.append({"utc": utc(), "paths": rows})
+        if peer_health_ready(rows):
+            write(runner.output / "peer-health.json", {"rounds": rounds})
+            return
+        if attempt < 2:
+            time.sleep(5)
+    write(runner.output / "peer-health.json", {"rounds": rounds})
+    raise RuntimeError("PEER_HEALTH_UNAVAILABLE")
 
 
 def service(name, port):
@@ -278,6 +341,11 @@ def execute(private, output):
             "infrastructure_sha": env.command(["git", "-C", ROOT, "rev-parse", "HEAD"]).strip(),
             "namespace_uid": identity["namespace_uid"],
             "query_count": 1,
+            "preparation_health_checks": {
+                "paths": 3,
+                "maximum_rounds": 3,
+                "business_query_retries": 0,
+            },
             "business_writes": 0,
             "deadline_seconds": 600,
             "event_id": evidence["event_id"],
@@ -378,6 +446,8 @@ def execute(private, output):
                 for p in pods
             ],
         )
+        print("HTTP tracing: checking peer readiness paths before the single query", flush=True)
+        await_peer_health(runner)
         print("HTTP tracing: one GET, no webhook, then bounded export collection", flush=True)
         # Keep failed observer output too; it contains only the observer's allowlisted result.
         runner.stage = "functional_query"

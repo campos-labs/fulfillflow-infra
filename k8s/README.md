@@ -573,6 +573,12 @@ utilizada para consultar a CI; não há novo download nem destino externo de tra
 a guarda de 2 GiB. O histórico Kind pode ser parado, preservando volumes; outros
 containers ativos impedem a entrada. Não é necessário reiniciar por padrão.
 
+Antes da consulta, o executor verifica `/health/ready` pelos três caminhos reais:
+observador → Core, Core → Tracking e Tracking → Core. Até três rodadas de preparação
+são preservadas em `peer-health*.json`; falha impede a consulta de negócio.
+Não há retry dessa consulta. Pods Ready e disponibilidade pelos Services são
+verificados separadamente.
+
 A janela faz um GET de evento já existente, com quatro spans esperados. Preserva
 `protocol.json`, `functional.json`, `trace-records.json`, `review.json`, inventário,
 margem do host e `summary.json`. Métricas de pods podem estar indisponíveis durante

@@ -9,8 +9,9 @@ O [índice técnico e registros publicados](docs/evidence/observability/README.m
 permitem conferir cobertura e limites sem depender dos artefatos locais selecionados.
 Nó parado. A fatia HTTP capturou os quatro spans na tentativa `observability-http-02`,
 mas a consulta recebeu 503. A correlação localizou a resposta em Tracking; foi
-identificado e corrigido o retorno do clone Tracking ao Core histórico. A sucessora
-`observability-http-03` ainda precisa conferir o resultado funcional saudável.
+identificado e corrigido o retorno do clone Tracking ao Core histórico. A execução direta
+`observability-http-03` registrou outro 503, desta vez como erro de transporte
+Core → Tracking, sem span servidor de Tracking. A captura saudável continua pendente.
 Sem nova campanha, merge ou release v1.2. As avaliações históricas não são reabertas.
 
 **Comparação de capacidade fixa e adaptativa concluída e consolidada na
@@ -190,6 +191,25 @@ runtime e guardas, com retorno ao clone corrigido. Os diagnósticos locais ficam
 `artifacts/observability-http-02-review.json`. Não são campanhas novas. Preferir o
 launcher com as janelas fechadas enquanto a margem aqui ficar abaixo de 5 GiB;
 reinicialização não é requisito presumido.
+
+**Execução direta 03 e preparação da sucessora:** após reinício do Docker/WSL e
+liberação pontual de caches Linux com containers parados, a entrada registrou 5,11 GiB.
+A consulta retornou 503 em aproximadamente 66 ms observados: três spans correlacionados,
+dois lotes aceitos e zero rejeitados. O span cliente do Core registrou `transport`,
+sem resposta HTTP remota ou span servidor de Tracking. Isso difere da resposta remota
+503 da tentativa 02; não comprova uma causa comum. A falta do span, isoladamente,
+não prova ausência de processamento. Nó parado e specs históricos preservados.
+
+A sucessora `observability-http-04` acrescenta preparação limitada de comunicação:
+GET `/health/ready` nos caminhos observador → Core, Core → Tracking e Tracking → Core,
+até três rodadas. Os registros preservam status ou classe/errno de transporte, sem
+bodies nem mensagens brutas. Todos os caminhos devem responder 200 antes da única
+consulta de negócio. A espera de rollout é mantida; não há retry da consulta medida,
+redução de guardas ou mudança de imagem. As consultas de saúde são preparação explícita,
+não eventos de negócio nem spans experimentais. Essa verificação ainda não foi
+executada no Kind; não foi atribuída causa raiz ao transporte da tentativa 03.
+A suíte de 317 testes passou; um teste adicional da sonda HTTP passou na suíte
+focada de 14 casos. Lint e formatação aprovados.
 
 **Aceite da fatia:** identificar a mesma chamada nas fronteiras instrumentadas,
 confrontar resposta pública, relatar marcos ausentes e saúde da exportação. Medir

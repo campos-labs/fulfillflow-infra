@@ -613,6 +613,9 @@ O forwarding da API não valida o JSON contra o schema; não adicionar essa regr
 para instrumentá-lo. O observador valida o resultado público independentemente.
 
 O receptor diagnóstico OTLP é local, limitado e rejeita atributos fora da allowlist.
+Antes da consulta de negócio, conferir `/health/ready` nos três caminhos HTTP
+entre observador e clones, em até três rodadas de preparação registradas. Essa
+verificação não substitui a confirmação funcional nem autoriza retry da consulta.
 A confirmação funcional utiliza o JSON público e a identidade persistida, sem
 consultar spans. Identificar cobertura ausente, rejeições da coleta e métricas
 indisponíveis separadamente. O fim do diagnóstico preserva volumes e configurações

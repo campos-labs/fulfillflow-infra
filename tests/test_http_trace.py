@@ -2,13 +2,23 @@
 
 import base64
 import copy
+import io
+import json
 import tempfile
 import unittest
+import urllib.error
+from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from scripts.http_trace_contract import ci_verdict, clone_api, verify_trace
-from scripts.http_trace_pilot import Runner, sink, validate_host
+from scripts.http_trace_contract import (
+    HTTP_HEALTH_PATHS,
+    ci_verdict,
+    clone_api,
+    peer_health_ready,
+    verify_trace,
+)
+from scripts.http_trace_pilot import HEALTH_PROBE, Runner, await_peer_health, sink, validate_host
 from scripts.http_trace_receiver import project
 
 
@@ -124,6 +134,68 @@ class TraceContracts(unittest.TestCase):
             ],
         )
         self.assertFalse(runner.query_started)
+
+    def test_health_probe_reports_status_and_safe_transport_class(self):
+        for failure, status, kind in (
+            (None, 200, None),
+            (urllib.error.HTTPError("http://hidden", 503, "private", {}, None), 503, None),
+            (
+                urllib.error.URLError(ConnectionRefusedError(111, "private")),
+                None,
+                "ConnectionRefusedError",
+            ),
+        ):
+            opener = Mock()
+            response = Mock(status=200)
+            response.__enter__ = Mock(return_value=response)
+            response.__exit__ = Mock(return_value=False)
+            opener.open.return_value = response
+            opener.open.side_effect = failure
+            stream = io.StringIO()
+            with (
+                patch("urllib.request.build_opener", return_value=opener),
+                patch("sys.argv", ["probe", "httpdiag-core", "httpdiag-tracking"]),
+                redirect_stdout(stream),
+            ):
+                exec(HEALTH_PROBE, {})
+            row = json.loads(stream.getvalue())
+            self.assertEqual(row["status"], status)
+            self.assertEqual(row["error"], kind)
+            self.assertNotIn("private", stream.getvalue())
+            opener.open.assert_called_once_with(
+                "http://httpdiag-tracking:8000/health/ready", timeout=3
+            )
+
+    def test_peer_health_requires_each_caller_direction(self):
+        rows = [
+            {"source": s, "target": t, "status": 200, "error": None} for s, t in HTTP_HEALTH_PATHS
+        ]
+        self.assertTrue(peer_health_ready(rows))
+        self.assertFalse(peer_health_ready(rows[:2]))
+        for status, error in ((503, None), (None, "ConnectionRefusedError"), (200, "timeout")):
+            bad = copy.deepcopy(rows)
+            bad[1].update(status=status, error=error)
+            self.assertFalse(peer_health_ready(bad))
+        self.assertFalse(peer_health_ready([rows[0], rows[0], rows[2]]))
+
+    def test_peer_health_stops_before_business_query_when_unavailable(self):
+        with tempfile.TemporaryDirectory() as directory:
+            runner = Runner(Path(directory), Path(directory))
+            replies = [
+                json.dumps({"source": s, "target": t, "status": 503, "error": None})
+                for s, t in HTTP_HEALTH_PATHS
+            ] * 3
+            with (
+                patch.object(runner, "kube", side_effect=replies) as kube,
+                patch("scripts.http_trace_pilot.time.sleep"),
+            ):
+                with self.assertRaisesRegex(RuntimeError, "PEER_HEALTH_UNAVAILABLE"):
+                    await_peer_health(runner)
+            self.assertEqual(kube.call_count, 9)
+            self.assertFalse(runner.query_started)
+            self.assertEqual(runner.stage, "peer_health")
+            captured = json.loads((Path(directory) / "peer-health.json").read_text())
+            self.assertEqual(len(captured["rounds"]), 3)
 
     def test_ci_waits_and_rejects_failure_or_a_different_reference(self):
         self.assertFalse(ci_verdict({"status": "in_progress", "headSha": "expected"}, "expected"))
