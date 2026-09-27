@@ -22,7 +22,9 @@ reúne cobertura, limites, registros examináveis e conferência offline. O
 [plano](RELEASE_PLAN.md#4-exploração-de-observabilidade) registra uma fatia
 HTTP concluída com SDK em referência isolada: consulta funcional e quatro spans
 correlacionados, sem medição de overhead. O [guia](k8s/README.md#diagnóstico-http-com-tracing)
-orienta a consulta única; os casos concluídos não exigem nova execução.
+orienta a consulta saudável e a sequência controlada de falha/restauração preparada.
+Esta última ainda aguarda execução com margem de memória; os casos concluídos não
+exigem repetição.
 
 
 ## Comece por aqui

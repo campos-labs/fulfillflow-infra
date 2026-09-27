@@ -10,7 +10,8 @@ permitem conferir cobertura e limites sem depender dos artefatos locais selecion
 Nó parado. **Fatia HTTP saudável concluída** em `observability-http-05`: uma consulta
 200, nove conferências funcionais aprovadas e quatro spans ligados corretamente.
 [Registros e limites](docs/evidence/observability/README.md#fatia-http-com-opentelemetry)
-estão publicados. Em preparação: uma sequência controlada saudável → falha de
+estão publicados. Preparada e testada, aguardando margem de memória: uma sequência
+controlada saudável → falha de
 transporte Core → Tracking → restauração, com três GETs sobre o mesmo evento.
 Sem nova carga, AKS, merge ou release v1.2; as tentativas anteriores ficam intactas.
 
@@ -268,6 +269,18 @@ preparatórios não equivalem a falhas controladas e não determinam causas hist
 Ao terminar esta única sequência, consolidar o valor acrescentado e pausar antes de
 outra fronteira de instrumentação. Métricas indisponíveis limitam a avaliação de custo;
 não bloqueiam por si só o diagnóstico funcional.
+
+Preparação local da sequência: protocolo `bb98e9a`, 323 testes aprovados, Ruff e
+validação estática aprovados. Os oito recursos descartáveis da tentativa 05 foram
+retirados após verificar identidade/run ID e zero réplicas; volumes e specs históricos
+preservados. A entrada ficou bloqueada **antes das consultas e da injeção**: depois de
+iniciar/parar o nó para preparação, o host apresentou 3,48 GiB livres. Uma liberação
+de cache com todos os containers parados e seis amostras em 50 segundos terminou em
+3,88 GiB (máximo 3,89), abaixo da guarda de 5 GiB. Nenhum resultado experimental novo.
+Registro local: `artifacts/observability-http-fault-01-host-preparation.json`; nenhum
+container permaneceu ativo. Próxima execução pelo launcher, com assistentes/IDE/browser
+fechados, em saída exclusiva `artifacts/observability-http-fault-01`. Não reiniciar por
+padrão nem reduzir guardas. A falha de consulta permanece não executada.
 
 ### Guardas para qualquer nova execução
 

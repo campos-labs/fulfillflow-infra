@@ -150,8 +150,7 @@ Os oito arquivos têm bytes preservados e [SHA-256 próprios](http-05/manifest.j
 [protocol.json](http-05/protocol.json) identifica código, imagem, dependências e guardas.
 A revisão foi reproduzida offline com `scripts.http_trace_contract.verify_trace`;
 a conferência dos dois casos de workers acima permanece separada. Imagem, bancos,
-segredos e séries completas do host não integram esta seleção. Pausa antes de escolher
-uma perturbação adicional; não repetir a consulta saudável apenas para obter outro tempo.
+segredos e séries completas do host não integram esta seleção. A perturbação de transporte foi especificada posteriormente no DESIGN §8.8; não repetir a consulta saudável apenas para obter outro tempo.
 
 ### Erros preparatórios HTTP preservados
 

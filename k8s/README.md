@@ -579,7 +579,7 @@ são preservadas em `peer-health*.json`; falha impede a consulta de negócio.
 Não há retry dessa consulta. Pods Ready e disponibilidade pelos Services são
 verificados separadamente.
 
-A janela faz um GET de evento já existente, com quatro spans esperados. Preserva
+O cenário padrão `healthy` faz um GET de evento já existente, com quatro spans esperados. Preserva
 `protocol.json`, `functional.json`, `trace-records.json`, `review.json`, inventário,
 margem do host e `summary.json`. Métricas de pods podem estar indisponíveis durante
 startup; essa lacuna fica registrada. O resumo distingue `last_stage` e `query_started`;
@@ -593,3 +593,24 @@ Uma falha de captura não significa falha de processamento. Os recursos criados
 mantêm identidade própria e bloqueiam nova execução automática; não remover claims,
 recursos ou evidências apenas para obter sucesso. A próxima decisão depende da
 informação efetivamente acrescentada pelo diagnóstico, sem repetir cargas anteriores.
+
+Para a sequência controlada preparada (executar uma vez, em saída inexistente):
+
+```powershell
+.\scripts\Invoke-HttpTracePilot.ps1 -Scenario transport-fault -OutputDirectory .\artifacts\observability-http-fault-01
+```
+
+São três GETs do mesmo evento concluído, com diretórios `before`, `fault` e `after`.
+Apenas o seletor do Service `httpdiag-tracking` é interrompido e restaurado; o receptor
+OTLP permanece acessível. `injection.json` registra seletor e endpoints; `restoration.json`
+confere o spec original. Na fase `fault`, HTTP 503 e três spans com erro `transport`
+são esperados: `functional.complete=false` nessa consulta pode coexistir com aprovação
+do diagnóstico em `fault/review.json`. O resumo final exige as três fases e restauração.
+Estado de negócio confirmado antes/depois não equivale a observação independente durante
+a falha, nem demonstra processamento sob interrupção. Não há webhook ou retry das consultas.
+
+Uma execução nova recusa recursos diagnósticos remanescentes; reconcilie-os por run ID
+antes de executar. A preparação autorizada pode liberar cache Linux uma vez com todos os
+containers parados e aguardar a margem; não faz prune, não exclui volumes e não altera
+memória configurada. Nunca limpar cache/reiniciar Docker durante o ensaio. Se a entrada
+continuar abaixo de 5 GiB, reservar o notebook e usar o launcher; não relaxar a guarda.
