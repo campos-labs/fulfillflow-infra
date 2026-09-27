@@ -1,9 +1,11 @@
-# Terraform — extensão Azure opcional
+# Terraform — preparação da portabilidade Azure
 
 Esta configuração de referência não foi implantada e não é necessária para a
-entrega em Kind. O [RELEASE_PLAN](../RELEASE_PLAN.md) reúne critérios para eventual
-extensão; o [DESIGN](../DESIGN.md) define os contratos comuns e o
-[relatório operacional](../docs/OPERATIONAL_EVALUATION.md) delimita o aceite local.
+entrega em Kind. O incremento `feature/v1.3-aks-portability` prepara AKS e ACR na
+mesma nova assinatura paga, sem uso da Student. O [RELEASE_PLAN](../RELEASE_PLAN.md#4-portabilidade-para-aks)
+registra etapas, critérios de custo e pausas; o [DESIGN](../DESIGN.md#89-verificação-de-portabilidade-para-aks)
+define o aceite. Nenhuma consulta autenticada à nova assinatura foi realizada nesta
+preparação documental.
 
 Dois roots independentes usam Terraform **1.13.5** e AzureRM **4.55.0**, com locks
 para Windows/Linux amd64: `bootstrap/` prepara o backend persistente;
@@ -18,7 +20,59 @@ SKUs, versão AKS, capacidade e orçamento exigem conferência antes de provisio
 sem confirmação e referência da aprovação. Essa guarda evita execução acidental;
 alterar o booleano não concede autorização. Nenhum benefício de assinatura ou
 saldo presumido equivale a teto de gasto aprovado. Esta documentação não autoriza
-criação de recursos.
+criação de recursos. [config/environment.json](../config/environment.json) mantém
+somente requisitos públicos de preparação, sem valores de autorização.
+O registro privado da janela pode ficar fora do checkout ou em arquivo local
+com exclusão do Git conferida; não copiá-lo para logs, CI ou pacotes publicados.
+Ainda faltam alvo, configuração, estimativa e autorização do procedimento.
+
+## Descoberta e decisão de provisionamento
+
+A descoberta inicial usa apenas leituras, com assinatura explícita e saídas
+sanitizadas. Não executar `apply`, registrar providers, criar usuários/roles ou
+habilitar produtos para descobrir se a conta os suporta. Se autenticação ou
+permissão impedir uma leitura, registrar a lacuna e a intervenção necessária.
+
+| Conferência | Evidência necessária |
+| --- | --- |
+| Conta e identidade | Assinatura habilitada, tenant, oferta/cobrança e permissões efetivas; separar usuário Entra, assinatura e conta de faturamento |
+| Alocação | Regiões candidatas, providers já registrados, versão AKS GA, quota regional e por família, restrições da SKU e margem para manutenção |
+| Dimensionamento | Requisitos de system pool, capacidade alocável, sistema, runtime, Jobs e volumes; evitar selecionar VM apenas pelo preço ou catálogo |
+| Rede e executor | Egress aprovado, API restrita, ranges sem sobreposição, acesso ao backend e paths permitidos/bloqueados previstos |
+| Imagens e acesso | ACR Basic, modo RBAC/ABAC, push do operador e pull do kubelet; permissões do bootstrap, provisionamento e deploy separadas |
+| Custo e encerramento | Estimativa por recurso/fase, duração, contingência, retenção com data e procedimento de parada/remoção verificável |
+
+**Free é a preferência para o gerenciamento do cluster**, não gratuidade do
+ambiente. Selecionar Base/Free explicitamente no plano futuro (`aks_sku_tier`
+já existe); não confundir com AKS Automatic, cujo tier é Standard. A ausência
+de SLA financeiro é compatível com este laboratório. Standard só tem sentido se
+um requisito identificado o justificar dentro do orçamento.
+
+A documentação de system pools consultada em 2026-09-27 lista pelo menos dois nós,
+SKU de pelo menos quatro vCPUs/4 GB e exclui série B. Confirmar requisitos e
+suporte da combinação na descoberta; não assumir que exemplos/testes que aceitam
+`node_count=1` comprovam viabilidade. Compartilhar o pool de sistema com a aplicação
+é uma concessão de laboratório a justificar, não uma topologia de produção.
+Quota e catálogo não garantem capacidade disponível no momento da criação.
+
+A estimativa inclui nós e discos de SO, PVCs e snapshots se previstos, ACR,
+Load Balancer/IP, tráfego/egress, backend Terraform e eventual telemetria. Distinguir
+custo **ativo**, **cluster parado** e **retenção após remoção**; anotar moeda, região,
+data, preços da oferta, tributos/conversão aplicáveis e horas/dias. Preço público
+é referência, não confirmação da tarifa contratada. Não tratar crédito como
+saldo confirmado ou descontá-lo do teto sem evidência.
+
+Antes da janela, registrar como consultar consumo e alertas de orçamento, além
+de calcular localmente duração × tarifa e custos retidos: Cost Management pode
+ter atraso e budget não desliga recursos. A contingência aprovada no registro
+privado cobre encerramento e incerteza, não novos ensaios. Resumir a viabilidade no RELEASE_PLAN, guardando
+respostas completas sensíveis fora do Git; não criar outro diário duplicado.
+
+CLI/Terraform são preferidos para descoberta técnica, validação, implantação e
+inventário. Portal complementa confirmação de oferta/cobrança, pagamento, MFA e
+capturas úteis. Login e decisões de conta pertencem ao operador. A branch nova não
+corresponde ao subject OIDC de `main`: operação local autorizada ou uma revisão
+explícita da federação devem resolver isso antes do deploy, sem abrir a confiança.
 
 ## Validação local
 
@@ -151,6 +205,21 @@ Encerramento requer plano separado que preserve backend, ACR e evidências, expo
 e verifique dados necessários e detalhe recursos/custos remanescentes. Retenção
 mantém cobrança; remover o AKS ou PVCs não comprova restauração.
 
+Para uma janela curta, preparar captura e encerramento antes de iniciar cobrança.
+Parar apenas deployments/pods não desaloca nós. `az aks stop` é uma possibilidade
+para cluster VMSS compatível, sujeita às restrições do serviço; confirmar estado
+Stopped/deallocated e inventário posterior. A retomada pode falhar por capacidade
+da região. ACR, discos, IPs, backend e telemetria retidos precisam de conferência
+própria, mesmo após stop ou remoção do cluster.
+
+Definir prazo final de retenção e custo até essa data; não deixar ACR/backend
+indefinidamente por estarem protegidos. Antes de remover qualquer recurso
+persistente, conferir evidências exportadas e cópias necessárias. A remoção final
+exige plano específico, com tratamento explícito de `prevent_destroy`. Não
+contornar proteções por destruição genérica, perda de state ou remoção de volumes
+antes dessas conferências. Custos ainda não consolidados permanecem estimados e
+identificados no fechamento.
+
 ## Referências de schema e comportamento
 
 - [AKS no AzureRM 4.55.0](https://github.com/hashicorp/terraform-provider-azurerm/blob/v4.55.0/website/docs/r/kubernetes_cluster.html.markdown)
@@ -159,3 +228,9 @@ mantém cobrança; remover o AKS ou PVCs não comprova restauração.
 - [Backend Azure Blob e autenticação Entra](https://developer.hashicorp.com/terraform/language/backend/azurerm)
 - [Azure CNI e NetworkPolicies](https://learn.microsoft.com/en-us/azure/aks/use-network-policies)
 - [Azure RBAC no AKS e escopo de namespace](https://learn.microsoft.com/en-us/azure/aks/entra-id-authorization)
+- [Tiers de gerenciamento AKS: Free, Standard e Premium](https://learn.microsoft.com/en-us/azure/aks/free-standard-pricing-tiers)
+- [Requisitos dos system node pools](https://learn.microsoft.com/en-us/azure/aks/use-system-pools)
+- [Parada e retomada do AKS](https://learn.microsoft.com/en-us/azure/aks/start-stop-cluster)
+- [Budgets e limites das notificações](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets)
+- [API pública de preços de referência](https://learn.microsoft.com/en-us/rest/api/cost-management/retail-prices/azure-retail-prices)
+- [Integração AKS/OTLP com Azure Monitor (preview)](https://learn.microsoft.com/en-us/azure/azure-monitor/containers/kubernetes-open-protocol)

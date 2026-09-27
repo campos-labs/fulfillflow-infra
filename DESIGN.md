@@ -5,12 +5,14 @@
 Este documento define a arquitetura e os contratos operacionais da entrega em
 Kind: verificação de implantação, restauração delimitada e observação
 posterior do trabalho aceito, entregues na v1.0.0. A seção 8.7 define o mecanismo de
-capacidade fixa/adaptativa implementado e avaliado para a candidata v1.1. AKS/ACR é uma
-configuração de referência opcional, ainda não implantada; não é dependência local.
+capacidade fixa/adaptativa avaliado na v1.1; a seção 8.8 delimita os casos de
+observabilidade da v1.2. A seção 8.9 define a preparação de portabilidade para
+AKS/ACR na v1.3, ainda sem implantação Azure; não é dependência local.
 
 O [RELEASE_PLAN](RELEASE_PLAN.md) registra marcos e decisões pendentes. O relatório
 [de recuperação](docs/OPERATIONAL_EVALUATION.md) e o
-[de capacidade](docs/SCALING_EVALUATION.md) reúnem os protocolos executados,
+[de capacidade](docs/SCALING_EVALUATION.md), junto à
+[avaliação de observabilidade](docs/OBSERVABILITY_EVALUATION.md), reúnem os protocolos executados,
 resultados, limites e evidências de cada avaliação. Um contrato documentado não comprova execução;
 um teste da aplicação não substitui sua verificação no ambiente operacional.
 
@@ -648,6 +650,42 @@ não existe nesta fatia uma leitura independente do caminho interrompido. Não a
 continuidade de processamento, pois o evento já estava concluído. O limite temporal
 continua em 600 segundos e não há retry das três consultas.
 
+### 8.9. Verificação de portabilidade para AKS
+
+A extensão usa ACR e AKS na mesma nova assinatura paga e tenant explicitamente
+identificados. O [plano](RELEASE_PLAN.md#4-portabilidade-para-aks) registra orçamento,
+etapas e pausas; o [guia Terraform](infra/README.md) concentra preparação e operação.
+Preferir AKS Base com tier Free e ACR Basic para o laboratório, sujeitos à
+verificação do ambiente. Não adotar AKS Automatic, novos serviços gerenciados ou
+mudar topologia para obter capacidade sem revisar custo e contrato.
+
+Preservar a topologia funcional da seção 2, uma réplica por processo, banco e
+broker em PVCs novos. Dimensionar o pool segundo suporte efetivo do AKS e capacidade
+alocável; a configuração Kind não aprova número ou SKU de nós Azure. A primeira
+verificação usa a referência congelada `9e3a135`, sem instrumentação adicional,
+KEDA ou restauração automática simultâneos. Importação/reconstrução de imagens
+segue a proveniência da seção 3. Não reutilizar volumes das avaliações anteriores.
+
+O aceite combina resultado por evento e verificações do ambiente: pull por
+identidade, fronteiras de acesso, persistência CSI e efeito das NetworkPolicies.
+Aplicar configuração ou observar readiness não substitui esses resultados. Estado
+persistido após recriação de pod não demonstra backup restaurável ou alta
+disponibilidade. Relatar separadamente falha funcional, impedimento de ambiente e
+lacuna de evidência; não transportar métricas ou conclusões quantitativas do Kind.
+
+Antes de provisionar, definir duração, custo por fase, destinos de evidência,
+retenção e encerramento verificável, preservando state e dados necessários.
+Budgets alertam; limites documentais não bloqueiam cobrança. Stop/start exige
+verificar estados e recursos residuais, sem promessa de capacidade na retomada.
+Revisão do plano de encerramento deve respeitar `prevent_destroy` e não remover
+proteções ou dados históricos como atalho.
+
+Uma extensão HTTP usa referência instrumentada `045e1ca` e configuração própria.
+Portar essa captura e trocar seu backend de exportação são intervenções distintas.
+Novos ensaios de recuperação/escala, instrumentação ou serviços Azure precisam de
+objetivo e protocolo explícitos; o aceite mínimo não compara controladores, nuvens
+ou custos da instrumentação. As evidências e tags das v1.0–v1.2 permanecem intactas.
+
 ## 9. Limites e evolução
 
 O aceite deve identificar o ambiente efetivamente exercitado: Kind ou AKS.
@@ -658,7 +696,7 @@ prolongada ou solução dos incidentes históricos da aplicação/ferramenta de 
 A v1.0.0 entrega recuperação delimitada; a seção 8.7 acrescenta capacidade
 fixa/adaptativa, com comparação concluída no Kind. Os relatórios documentam
 resultados e limites; não há validação de capacidade máxima ou de produção.
-AKS permanece uma referência não implantada. Cluster autoscaler, GitOps,
+A portabilidade AKS está em preparação na seção 8.9, sem implantação. Cluster autoscaler, GitOps,
 canary/blue-green, novos provedores de entrega e instrumentação além da exploração
 delimitada na seção 8.8 exigem uma decisão própria; não são requisitos de fechamento das avaliações existentes.
 O [RELEASE_PLAN](RELEASE_PLAN.md) registra a candidata e as opções de continuidade.

@@ -19,7 +19,11 @@ reproduzíveis. As candidatas são pré-releases da infraestrutura.
 Recuperação e capacidade são avaliações experimentais complementares da mesma
 aplicação, com protocolos separados. A extensão de observabilidade acrescenta
 casos diagnósticos; não testa os três mecanismos conjuntamente. As execuções estão
-encerradas. AKS/ACR permanecem referências opcionais não implantadas.
+encerradas. A branch `feature/v1.3-aks-portability` inicia a preparação de uma
+verificação de portabilidade para AKS, com ACR na mesma nova assinatura paga.
+Ainda não há recursos Azure provisionados nem resultados de nuvem. O
+[plano ativo](RELEASE_PLAN.md#4-portabilidade-para-aks) delimita descoberta,
+controles de custo e pausa antes do provisionamento.
 
 ## Comece por aqui
 
@@ -27,9 +31,9 @@ encerradas. AKS/ACR permanecem referências opcionais não implantadas.
 | --- | --- |
 | Entender método, resultados, limites e fontes | [Recuperação](docs/OPERATIONAL_EVALUATION.md), [capacidade](docs/SCALING_EVALUATION.md) e [observabilidade](docs/OBSERVABILITY_EVALUATION.md) |
 | Entender arquitetura e contratos | [DESIGN](DESIGN.md) |
-| Conferir candidata e opções de continuidade | [RELEASE_PLAN](RELEASE_PLAN.md) |
+| Conferir entregas, incremento ativo e pausas | [RELEASE_PLAN](RELEASE_PLAN.md) |
 | Preparar ou operar o laboratório | [Guia Kubernetes](k8s/README.md) |
-| Examinar a referência Azure | [Guia Terraform](infra/README.md) |
+| Preparar a extensão Azure e seu encerramento | [Guia Terraform](infra/README.md) |
 
 ## Aplicação e limites operacionais
 
