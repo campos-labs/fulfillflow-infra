@@ -378,6 +378,41 @@ nem se tolera falha durante o cenário. Esta é qualificação do encaminhamento
 não alteração retroativa do resultado anterior nem garantia de disponibilidade futura.
 Se falhar novamente, encerrar a continuação, sem terceiro início automático.
 
+### Resultado da pendência e decisão
+
+`observability-pending-02` concluiu na referência `974dbce`: três GETs prospectivos
+200, um webhook 202, Tracking/Order concluídos e Notifications `SENT/NOT_RECEIVED`
+com ausência do worker confirmada. Depois de devolver uma réplica, o mesmo evento
+chegou a `SIMULATED`, com um efeito de cada tipo observado, sem reenvio. O pod de
+Notifications foi substituído; identidades e reinícios dos outros workers não
+mudaram durante o fluxo. Restauração e parada do nó foram confirmadas.
+
+O [resumo conferido](docs/evidence/observability/pending-02-review.json) vincula
+nove registros do evento e três message IDs, além de um registro de inicialização
+do novo worker. A consulta pública localizou trabalho publicado aguardando consumo;
+os logs mostraram sua recepção e conclusão posteriores. Essa combinação demonstra
+cobertura neste cenário, sem depender da ausência de logs como prova de pendência.
+
+**Efeito do procedimento de observação:** Notifications registrou `DONE` às
+10:54:17,021 UTC; o executor só retomou consultas após `rollout status` terminar,
+registrado às 10:54:31,749 UTC. A confirmação veio às 10:54:31,790 UTC. Portanto,
+o intervalo observado de 18,765 s desde o aceite inclui deliberadamente a espera
+por prontidão. Não é duração pura de processamento, nem resultado comparável ao
+ensaio saudável. A diferença UTC entre `simulated_at` e consulta foi 14,775 s,
+com incerteza entre relógios não medida; não representa um commit cronometrado.
+
+**Decisão:** encerrar esta janela e preservar a falha de preparação anterior.
+A correlação já existente responde ao fluxo saudável e à espera antes do consumo,
+sem alterar a aplicação ou instalar tracing. A hipótese de inicialização observada
+justificou qualificar o encaminhamento; o sucesso posterior não prova a causa do
+503 nem elimina os erros históricos. Não repetir para produzir métricas melhores.
+
+Uma próxima instrumentação só acrescenta algo distinto se investigar a fronteira
+HTTP interna, transações ou falhas de consulta com contexto ausente. Isso requer
+escopo próprio, possivelmente referência instrumentada da aplicação v1.3; não é
+uma terceira campanha automática. Não testar AKS, retomar escala ou mudar o
+observador das campanhas congeladas a partir destes achados.
+
 ### Continuidade após a exploração
 
 Prometheus e verificações de segurança permanecem possibilidades por lacuna
