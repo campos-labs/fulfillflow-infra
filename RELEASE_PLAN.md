@@ -2,19 +2,20 @@
 
 ## 1. Estado atual
 
-**Exploração de observabilidade encerrada no escopo executado**, na branch
-`feature/v1.2-observability`, a partir de `v1.1.0-rc.1` (`92089b8`). O
+**Observabilidade consolidada na [v1.2.0-rc.1](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.2.0-rc.1)**,
+com integração de `feature/v1.2-observability` à `main`, a partir de
+`v1.1.0-rc.1` (`92089b8`). O
 [relatório técnico](docs/OBSERVABILITY_EVALUATION.md) consolida correlação dos workers,
 captura HTTP saudável e sequência controlada 200 → 503 → 200, com limites explícitos.
 Dois pacotes e diagramas reproduzíveis permitem examinar os resultados offline.
-Não há nova carga necessária para conferir os casos. **v1.2 ainda sem tag, release
-ou merge**; a próxima decisão é revisar a consolidação antes de publicar uma candidata.
+Não há nova carga necessária para conferir os casos. A [nota da candidata](docs/releases/v1.2.0-rc.1.md)
+e a página da pré-release identificam conteúdo, referências e anexos.
 
 | Referência | Entrega |
 | --- | --- |
 | [v1.0.0](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.0.0) | Recuperação em Kind; [relatório](docs/OPERATIONAL_EVALUATION.md) e dois pacotes preservados |
 | [v1.1.0-rc.1](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.1.0-rc.1) | Comparação fixa/adaptativa concluída, integrada à main; [relatório](docs/SCALING_EVALUATION.md), figuras e três pacotes |
-| v1.2 em revisão | Diagnóstico complementar, [relatório](docs/OBSERVABILITY_EVALUATION.md), [dois pacotes](docs/evidence/observability/README.md) e executores versionados |
+| [v1.2.0-rc.1](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.2.0-rc.1) | Diagnóstico complementar, [relatório](docs/OBSERVABILITY_EVALUATION.md), [dois pacotes](docs/evidence/observability/README.md) e executores versionados |
 | Azure | Referências Terraform/AKS/ACR não implantadas; portabilidade opcional, sem resultado de nuvem |
 
 A aplicação congelada `9e3a135` sustenta recuperação, capacidade e os casos de workers.
@@ -40,10 +41,12 @@ conteúdo dos ZIPs e geração dos diagramas. Os originais selecionados continua
 legíveis no GitHub. A CI confere o pacote offline além das validações existentes;
 não inicia o Kind ou a aplicação. Captura diagnóstica não equivale a custo medido.
 
-Antes de eventual publicação: revisar texto, figuras e CI da referência final.
-A candidata pode usar `v1.2.0-rc.1`; a tag identificará a consolidação, enquanto os
-SHAs executados permanecem nos protocolos. Anexos devem ser cópias exatas dos ZIPs
-versionados. Não mover tags ou substituir pacotes de releases anteriores.
+A tag `v1.2.0-rc.1` identifica a consolidação; os SHAs executados permanecem nos
+protocolos. Os dois ZIPs anexados são cópias exatas dos arquivos versionados, com
+[checksums](docs/evidence/observability/archives/checksums.sha256). A referência
+instrumentada `045e1ca` permanece na branch `codex/v1.3-http-observability` da
+aplicação; este fechamento não a remove nem altera imagens históricas.
+Não mover tags ou substituir pacotes de releases anteriores.
 
 <a id="3-extensões-possíveis"></a>
 <a id="4-exploração-de-observabilidade"></a>

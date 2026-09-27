@@ -5,7 +5,10 @@ A [v1.0.0](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.0.0)
 preserva a avaliação de recuperação em Kind. A
 [v1.1.0-rc.1](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.1.0-rc.1)
 acrescenta nove tentativas de capacidade fixa/adaptativa concluídas, relatório,
-gráficos e evidências. É uma pré-release da infraestrutura.
+gráficos e evidências. A
+[v1.2.0-rc.1](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.2.0-rc.1)
+consolida correlação e diagnóstico HTTP com OpenTelemetry, dois pacotes e figuras
+reproduzíveis. As candidatas são pré-releases da infraestrutura.
 
 | Avaliação | Resultado principal | Relatório |
 | --- | --- | --- |
