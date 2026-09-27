@@ -7,15 +7,16 @@ v1.0.0 usa Kind, uma aplicação congelada e réplicas fixas. Foram conferidas u
 comparação de 20 tentativas e uma avaliação complementar de nove tentativas,
 tratadas separadamente. O último encerramento preservou dados e parou o laboratório.
 
-**Extensão de escala: comparação iniciada e interrompida entre tentativas.**
-A qualificação foi aprovada. Na primeira tentativa adaptativa válida, os 1.020
-aceitos foram confirmados: 666 em até 60 s e 354 depois. O inventário registrou
-1→2→1 pods. A falta de margem de memória impediu iniciar a condição seguinte;
-não há comparação concluída nem ganho causal demonstrado.
-A continuação preserva esse resultado e as oito posições restantes, com espera
-limitada de memória e identificação de sessões. O primeiro bloco perdeu a
-continuidade temporal. Ver [estado e procedimento](RELEASE_PLAN.md#continuação-com-espera-limitada).
-Os 503 de consulta anteriores permanecem sem causa determinada.
+**Extensão de escala: nove tentativas concluídas, em pausa para interpretação.**
+As condições de uma e duas réplicas fixas confirmaram todos os aceitos em
+até 60 s nas três tentativas. A adaptativa confirmou 666, 1.013 e 1.020 dos
+1.020 aceitos no prazo; todos os demais foram confirmados depois. Houve ciclo
+observado 1→2→1 nas três adaptativas, sem vantagem de atendimento sobre uma
+réplica fixa neste perfil. Duas réplicas reduziram a pendência local, com pequena
+diferença na confirmação do fluxo completo. O primeiro bloco foi interrompido;
+os resultados são descritivos, sem generalização ou economia financeira inferida.
+Ver [resultados e limites](RELEASE_PLAN.md#resultado-da-comparação-com-continuação).
+Cinco GETs com 503 foram recuperados e preservados; suas causas permanecem indeterminadas.
 A branch `feature/v1.1-autoscaling-kind` preserva o incremento; não há nova release.
 AKS/ACR continuam opcionais e ainda não foram implantados.
 

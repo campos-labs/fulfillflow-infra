@@ -1415,9 +1415,9 @@ Não há justificativa demonstrada para alterar a aplicação ou migrar para AKS
 
 Implementação: `scripts/scale_comparison.py`, launcher
 `scripts/Invoke-ScaleComparison.ps1` e `config/scale-comparison.json`.
-Estado: qualificação concluída, primeira tentativa adaptativa válida e
-progressão interrompida por memória antes da segunda. Continuação autorizada
-conforme emenda abaixo, sem repetição do resultado válido. Evidência técnica local:
+Estado: nove tentativas válidas concluídas com a emenda de continuação
+abaixo. A primeira tentativa foi preservada, sem repetição; o primeiro bloco
+permanece temporalmente interrompido. Pausa para interpretação, sem nova carga. Evidência técnica local:
 `artifacts/scale-comparison-01/prepare` e `baseline-check-02/result.json` nesse
 mesmo diretório. A primeira conferência parou antes da restauração porque o
 RabbitMQ ainda inicializava após reiniciar o nó. O diagnóstico preservado em
@@ -1527,6 +1527,84 @@ referenciadas: o novo diretório não é um pacote autossuficiente de evidência
 Após nova parada, revisar o motivo; não apagar arquivos, locks ou reiniciar pelo
 launcher original. Ao completar o conjunto, pausar antes de qualquer conclusão
 comparativa ou publicação.
+
+### Resultado da comparação com continuação
+
+Conferência em 2026-09-27: `Invoke-ScaleContinuation.ps1 -Mode Check`
+confirmou nove tentativas preservadas e zero pendentes, com hashes e referências
+íntegros. Resumo original em
+`artifacts/scale-comparison-continuation-01/comparison-summary.json`; conferência
+derivada em `review.json` no mesmo diretório, com hashes dos resultados,
+transições do inventário, distribuição de DONE por pod e requisições 503.
+Os arquivos brutos permanecem locais; o primeiro resultado está referenciado em
+`artifacts/scale-comparison-02/execute/b1-p1-adaptive`, sem cópia substituta.
+Referência do instrumento: `6932632`; coordenador executado: `5ca5878`.
+
+Todas as nove tentativas ofereceram e aceitaram 1.020 eventos. Ao final da
+observação, 8.819 estavam confirmados no prazo e 361 foram confirmados depois,
+sem eventos ainda pendentes/inconclusivos no resumo. Isso não transforma os
+9.180 eventos em 9.180 repetições independentes: há três tentativas por condição.
+
+| Posição/condição | Confirmados em 60 s / aceitos | p95 observado (s) | Pod-segundos existentes | Pico de pendência elegível |
+| --- | ---: | ---: | ---: | ---: |
+| `b1-p1-adaptive` | 666/1020 | 70.656 | 750.047 | 150 |
+| `b1-p2-fixed-2` | 1020/1020 | 54.015 | 900.000 | 13 |
+| `b1-p3-fixed-1` | 1020/1020 | 57.984 | 450.000 | 202 |
+| `b2-p1-fixed-1` | 1020/1020 | 57.859 | 450.000 | 180 |
+| `b2-p2-adaptive` | 1013/1020 | 58.875 | 750.109 | 105 |
+| `b2-p3-fixed-2` | 1020/1020 | 57.609 | 900.000 | 20 |
+| `b3-p1-fixed-2` | 1020/1020 | 57.063 | 900.000 | 15 |
+| `b3-p2-fixed-1` | 1020/1020 | 57.000 | 450.000 | 191 |
+| `b3-p3-adaptive` | 1020/1020 | 57.797 | 749.954 | 123 |
+
+As oito posições restantes ocorreram numa sessão de aproximadamente 105 minutos.
+Os blocos 2 e 3 foram contínuos; o bloco 1 não. As três adaptativas tiveram
+inventário observado 1→2→1; os pods adicionais concluíram respectivamente
+276, 248 e 270 trabalhos, dos quais 228, 211 e 228 durante o patamar de 16/s.
+A primeira conclusão de cada novo pod ficou aproximadamente em 55–56 s desde a
+primeira oferta, com pico encerrando aos 75 s. Esse alinhamento usa UTC dos logs;
+é uma conclusão registrada, não o instante exato de início de processamento.
+O retorno a uma réplica apareceu no inventário em aproximadamente 354–355 s.
+Redução ociosa não demonstra retirada segura durante processamento ativo.
+
+**Leitura descritiva.** A mediana dos picos amostrados de pendência foi 191
+com uma réplica, 15 com duas e 123 com adaptação. As medianas dos p95 de
+confirmação foram 57,859 s, 57,063 s e 58,875 s, respectivamente; não são
+percentis de um conjunto combinado de eventos. A redução da pendência no worker
+não se traduziu em redução proporcional do tempo observado do fluxo completo.
+As medições não isolam o estágio responsável por essa diferença.
+
+Na janela comum de 450 s, a mediana do pod-tempo foi 450, 900 e 750,047
+pod-segundos. A adaptativa manteve aproximadamente 16,7% menos pod-tempo que
+duas réplicas fixas, mas 66,7% mais que uma. Trata-se de presença amostrada de
+pods do worker, não de consumo de CPU, custo monetário ou recursos do cluster
+inteiro. A janela inclui o período de estabilização para redução; essa proporção
+não deve ser extrapolada para outra duração de demanda/ociosidade.
+
+O resultado adaptativo inicial permanece na análise, apesar da interrupção
+posterior e dos 354 tardios. Como verificação de sensibilidade, nos blocos 2 e 3
+contínuos a adaptação teve sete e zero tardios, enquanto ambas as fixas tiveram
+zero; seus p95 foram 58,875/57,797 s, frente a 57,859/57,000 s com uma réplica.
+Não aparece vantagem de atendimento da adaptação nesse subconjunto, sem que isso
+explique causalmente o resultado pior da sessão inicial ou autorize descartá-lo.
+
+**Execução e limites.** Antes de `b1-p3-fixed-1`, a memória começou em
+aproximadamente 4,52 GiB e a espera terminou em cerca de 20 s, após as três
+leituras exigidas. Nas outras sete entradas, aproximadamente 10 s bastaram.
+Nenhuma guarda foi reduzida. Foram preservados cinco GETs 503 recuperados:
+dois `notifications` em `b1-p2-fixed-2`, dois `carrier-events` em `b2-p3-fixed-2`
+e um `notifications` em `b3-p3-adaptive`; não houve erro de transporte no resumo.
+A confirmação posterior não apaga esses erros nem determina sua causa.
+Todos os encerramentos foram confirmados; o nó da campanha está parado.
+
+**Decisão na pausa.** A política reagiu e retirou capacidade, mas não demonstrou
+vantagem de atendimento sobre uma réplica fixa neste perfil. Duas réplicas
+reduziram a pendência local ao manter mais capacidade desde o início. Consolidar
+esses benefícios e limites antes de outra campanha. Não repetir para obter
+resultado favorável, não ajustar retrospectivamente limiares e não iniciar AKS
+ou refatoração da aplicação automaticamente. Três tentativas, host único,
+interrupção do primeiro bloco e confirmação influenciada pelo observador limitam
+inferências causais, equivalência e extrapolação para outras cargas.
 
 <a id="3-extensões-possíveis"></a>
 

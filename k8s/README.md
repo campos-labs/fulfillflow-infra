@@ -679,3 +679,8 @@ privada originais. Depois de interrupção, revisar os registros antes de repeti
 `Execute`: prefixo válido é preservado, tentativa parcial bloqueia retomada.
 O primeiro bloco é explicitamente interrompido; consultar a
 [emenda e seus limites](../RELEASE_PLAN.md#continuação-com-espera-limitada).
+
+Estado da campanha preservada: **nove tentativas concluídas**. `Check` deve
+retornar `attempts_preserved=9` e `remaining=0`; não executar outra carga.
+`Execute` recusa `CAMPAIGN_ALREADY_COMPLETE`. Ver o
+[fechamento e a pausa](../RELEASE_PLAN.md#resultado-da-comparação-com-continuação).
