@@ -94,7 +94,7 @@ def verify_trace(snapshot, result):
             raise ValueError("TRACE_STATUS_OR_DROPS")
         if int(row["end_time_unix_nano"]) < int(row["start_time_unix_nano"]):
             raise ValueError("TRACE_CLOCK")
-    if [e["name"] for e in client["events"]] != ["response_received", "response_validated"]:
+    if [e["name"] for e in client["events"]] != ["response_received", "content_type_validated"]:
         raise ValueError("VALIDATION_BOUNDARY_MISSING")
     return {
         "complete": True,
@@ -106,7 +106,7 @@ def verify_trace(snapshot, result):
             for role, row in (
                 ("observer", observer),
                 ("core_server", core),
-                ("internal_operation_including_validation", client),
+                ("internal_forwarding_including_content_type_check", client),
                 ("tracking_server", tracking),
             )
         },

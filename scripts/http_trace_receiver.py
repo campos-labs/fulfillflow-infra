@@ -56,6 +56,8 @@ def project(payload):
                     "transport",
                     "invalid_response",
                     "remote_problem",
+                    "remote_http_error",
+                    "invalid_content_type",
                     "request_aborted",
                 ):
                     raise ValueError("UNEXPECTED_ERROR")
@@ -63,7 +65,7 @@ def project(payload):
                 for event in span.get("events", []):
                     if event["name"] not in (
                         "response_received",
-                        "response_validated",
+                        "content_type_validated",
                     ) or event.get("attributes"):
                         raise ValueError("UNEXPECTED_EVENT")
                     events.append(

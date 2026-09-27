@@ -603,8 +603,10 @@ SDK opt-in somente aos GETs de listagem de carrier-events; não modifica schema,
 autenticação, retry, timeout ou dados. O observador consulta um evento conhecido
 no banco do ambiente de observabilidade; não utiliza bancos da campanha de escala.
 Quatro spans esperados: observador cliente, Core servidor, operação cliente interna
-(com validação) e Tracking servidor. Tratar eventos de resposta recebida/validada
+(com conferência de Content-Type) e Tracking servidor. Tratar os eventos de resposta recebida/Content-Type conferido
 como marcos da operação HTTP, sem atribuir-lhes commit ou processamento assíncrono.
+O forwarding da API não valida o JSON contra o schema; não adicionar essa regra
+para instrumentá-lo. O observador valida o resultado público independentemente.
 
 O receptor diagnóstico OTLP é local, limitado e rejeita atributos fora da allowlist.
 A confirmação funcional utiliza o JSON público e a identidade persistida, sem

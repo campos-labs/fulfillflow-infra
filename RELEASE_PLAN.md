@@ -89,30 +89,29 @@ através de observador → Core → Tracking. A verificação funcional e os IDs
 continuam independentes dos traces. Não envolver webhook, workers, carga de escala,
 transações SQL instrumentadas ou falha controlada no primeiro passo.
 
-O código congelado oferece um ponto concreto: [ServiceClient](https://github.com/campos-labs/fulfillflow/blob/9e3a135a00db218643633c7165d3106f0c8285e1/src/fulfillflow/http/internal.py)
-repassa request ID e contexto HTTP, mas não cria spans; traduz erros HTTP/timeout
-em indisponibilidade, e a leitura também pode traduzir resposta inválida. A
-[camada Core → Tracking](https://github.com/campos-labs/fulfillflow/blob/9e3a135a00db218643633c7165d3106f0c8285e1/src/fulfillflow/core/tracking_client.py)
-fornece a fronteira. Um span de transporte sozinho pode mostrar HTTP 200 mesmo
-quando a validação posterior da resposta falha; registrar essas categorias
-separadamente, sem expor resposta ou exceção bruta.
+O teste integrado distinguiu dois caminhos do código congelado:
+`ServiceClient.read` valida o schema e atende consultas de clientes tipados; a
+API pública de carrier-events usa `forward_tracking` → `ServiceClient.request`,
+encaminhando status/bytes após conferir Content-Type. A primeira implementação
+capturava o caminho tipado e omitia o span cliente da API real; a suíte integrada
+rejeitou essa cobertura incompleta antes da consulta no Kind. A correção acompanha
+o forwarding sem acrescentar validação de JSON ou mudar o comportamento público.
+Isso refina as categorias observáveis, mas não determina a causa dos 503 antigos.
 
 | Parte | Informação pretendida | Limite/aceite |
 | --- | --- | --- |
 | Observador | Agendamento, início/fim HTTP e contexto enviado | Relógio monotônico próprio, sem atribuir toda espera ao servidor |
-| Core servidor e cliente interno | Rota, destino lógico, duração do hop, status/categoria permitida | Ligar contexto e request ID; separar transporte, resposta remota e validação |
+| Core servidor e cliente interno | Rota, destino lógico, duração do hop, status/categoria permitida | Ligar contexto e request ID; separar transporte, status remoto e Content-Type |
 | Tracking servidor | Entrada/saída da mesma chamada | Ausência de span não prova ausência de execução; conferir captura/exportação |
 | Estado público | GET e conteúdo esperado | Telemetria não substitui resultado funcional |
 
-**Implementação:** spans explícitos com SDK/OTLP HTTP 1.45.0 na aplicação
-[`a5906bf`](https://github.com/campos-labs/fulfillflow/tree/a5906bfdfd3e9d51d30895b3de8822d0c2139a92),
-branch isolada `codex/v1.3-http-observability`, derivada da v1.3 congelada.
-O commit de testes `274a819` acrescenta cobertura das rotas/lifecycles reais sem
-alterar esse runtime. Flag desligada por padrão; apenas duas rotas GET têm spans.
-O span cliente inclui transporte e validação, com marcos `response_received` e
-`response_validated`. Não há autoinstrumentação genérica, SQL, AMQP ou workers.
-O [contrato e identidade da imagem](config/http-observability.json) fixa source,
-lock, SDK e digest; tags históricas permanecem intactas.
+**Implementação:** SDK/OTLP HTTP 1.45.0 em referência própria da branch
+`codex/v1.3-http-observability`, derivada da v1.3 congelada. O
+[manifesto do runtime](config/http-observability.json) fixa source, lock e digest.
+Flag desligada por padrão; apenas duas rotas GET têm spans. O span cliente inclui
+transporte e a conferência existente de Content-Type, com marcos
+`response_received` e `content_type_validated`. Não há autoinstrumentação genérica,
+SQL, AMQP ou workers. A validação funcional permanece no observador.
 
 **Protocolo previamente fixado:** `Invoke-HttpTracePilot.ps1`, saída exclusiva
 `observability-http-01`, uma consulta do observador ao evento já persistido no
@@ -131,8 +130,9 @@ causal. Ao encerrar, solicitar zero réplicas dos clones, conferir os specs
 históricos e parar o nó, preservando volumes e resultados. Recursos do diagnóstico
 permanecem identificados, impedindo repetição automática.
 
-**Verificação preparatória:** 923 testes unitários da aplicação passaram, mais
-68 casos focados incluindo os dez testes PowerShell que exigiam caminho explícito;
+**Verificação preparatória:** na referência inicial, 923 testes unitários da aplicação passaram,
+mais 68 casos focados incluindo os dez testes PowerShell. Após corrigir o caminho
+de captura, os 19 casos focados de forwarding/deadlines/cliente passaram;
 Mypy e os 12 contratos de importação passaram. Transporte OTLP real até o receptor
 local passou; imagem construída e imports testados em container sem rede/volumes.
 Os 309 testes de infraestrutura passaram; dois casos adicionais conferem a guarda

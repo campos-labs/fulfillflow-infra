@@ -74,7 +74,7 @@ def chain():
                     if i < 2
                     else "/internal/v1/tracking/carrier-events",
                 },
-                "events": [{"name": "response_received"}, {"name": "response_validated"}]
+                "events": [{"name": "response_received"}, {"name": "content_type_validated"}]
                 if i == 2
                 else [],
             }
