@@ -2,13 +2,16 @@ param(
     [Parameter(Mandatory=$true)][string]$PrivateDirectory,
     [Parameter(Mandatory=$true)][string]$OutputDirectory,
     [ValidateSet('Prepare','Execute')][string]$Mode = 'Prepare',
-    [switch]$CapacityProfile
+    [switch]$CapacityProfile,
+    [switch]$SustainedProfile
 )
 $ErrorActionPreference = 'Stop'
+if ($SustainedProfile -and -not $CapacityProfile) { throw 'SustainedProfile requires CapacityProfile.' }
 $root = Split-Path -Parent $PSScriptRoot
 if (-not (Test-Path -LiteralPath $PrivateDirectory -PathType Container)) { throw "Private directory unavailable: $PrivateDirectory" }
 $arguments = @((Join-Path $PSScriptRoot 'scale_keda.py'), '--private', $PrivateDirectory, '--output', $OutputDirectory)
 if ($CapacityProfile) { $arguments += '--capacity-profile' }
+if ($SustainedProfile) { $arguments += '--sustained-profile' }
 if ($Mode -eq 'Prepare') { $arguments += '--prepare-only' }
 if ($CapacityProfile) { Write-Host 'JANELA CRITICA: mantenha o notebook na tomada e livre de outras atividades ate o encerramento.' }
 Push-Location $root

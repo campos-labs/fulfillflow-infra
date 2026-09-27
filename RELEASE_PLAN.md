@@ -2,7 +2,7 @@
 
 ## 1. Estado atual
 
-**Piloto adaptativo qualificado; pausa antes de qualquer comparação formal.**
+**Piloto adaptativo qualificado; uma extensão de duração autorizada, ainda não executada.**
 Branch `feature/v1.1-autoscaling-kind`.
 Base: v1.0.0, commit `cb6113e6bbd601a65ee5142de85cadc5bf6ba29d`.
 CI da branch habilitada. Bootstrap dedicado e smoke do instrumento concluídos;
@@ -1306,6 +1306,48 @@ um protocolo novo de demanda sustentada, justificado operacionalmente, com
 limites de execução e instrumentação congelados. Não reduzir limiar ou guardas
 para produzir um resultado favorável. Comparação formal, nova release e nova
 execução de carga permanecem pendentes de decisão.
+
+### Extensão de duração autorizada
+
+Uma tentativa `keda-sustained-16-60-01`, sem repetição automática, por
+`artifacts/Invoke-KedaSustained.local.ps1`. Perfil: 15 s a 2/s, **60 s a 16/s**,
+15 s a 2/s; 1.020 ofertas. Aplicar a exceção explícita do DESIGN; preservar
+HTTP 16, política/limiar, recursos por pod, aplicação e instrumentação.
+
+**Justificativa prévia:** o pico passa a terminar aos 75 s. O primeiro DONE do
+novo pod observado na tentativa 01 ocorreu aos 46,36 s; se esse marco voltasse
+a ocorrer, restariam cerca de 28,64 s de pico (várias amostras de 5 s).
+Na tentativa qualificada 02, a primeira leitura positiva foi aos 48,53 s;
+restariam cerca de 26,47 s para observar sua persistência e eventual reação.
+Esses marcos orientam uma janela exploratória, não predizem reação nem somam
+polling, reconciliação e estabilização como atrasos sequenciais. A tentativa
+01 não se torna controle qualificado. Não pressupor uma fronteira já estimada.
+
+**Leitura predefinida do resultado:**
+
+- Sem critério nas amostras: registrar atendimento e pendência, sem inferir
+  falha do controlador ou inexistência de critério entre amostras.
+- Critério breve ou persistente amostrado sem expansão: confrontar métrica,
+  disponibilidade, status e eventos do HPA; declarar limites da reconstrução.
+- Expansão com primeiro DONE novo durante o pico: comprova participação sob
+  demanda alta; ainda não demonstra benefício frente a uma referência comparável.
+- Participação apenas depois do pico: registrar possível contribuição ao drain,
+  sem quantificar benefício causal. Distinguir solicitação, prontidão e DONE.
+- Descida posterior, se houver: comprova redução observada; não comprova
+  preservação de trabalho durante retirada se já estiver ocioso.
+
+Oferta, conclusão, atribuição e segurança continuam julgamentos separados.
+Aumento do volume implica mais entidades preparadas e consultas totais,
+mesmo com a mesma cadência: registrar margem desde preparação. Exigir 5 GiB
+no preflight e 2 GiB durante monitoração, energia conectada, sem cargas
+concorrentes. Prazo de trabalho de 20 minutos, mais encerramento limitado;
+360 s posteriores somente nas condições já definidas. Sem ajuste ou retry
+após falha para aproveitar esta autorização. Comando manual permite fechar
+ferramentas e reservar o notebook; não atribuir validade ao ato de executar manualmente.
+
+**Pausa obrigatória depois desta tentativa:** decidir entre consolidação dos
+limites observados e planejamento de comparação formal. Não iniciar outra
+carga, AKS, refatoração ou ajuste de limiar automaticamente.
 
 ### Depois da pausa — ainda não autorizado
 

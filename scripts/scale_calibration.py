@@ -200,7 +200,9 @@ def run_one(
     prepared = []
     verifiers = {}
     offsets = schedule(
-        settings["stages"], characterization=settings.get("capacity_characterization", False)
+        settings["stages"],
+        characterization=settings.get("capacity_characterization", False),
+        sustained=settings.get("sustained_adaptive", False),
     )
     for index in range(len(offsets)):
         if host_guard:
@@ -449,7 +451,7 @@ def _execute(
         or not reuse_terminal_reads
         or peak_rate != 16
         or http_concurrency != 16
-        or plateau_seconds != 30
+        or plateau_seconds != (60 if getattr(extension, "sustained_profile", False) else 30)
         or fixed_replicas != 1
     ):
         raise RuntimeError("ADAPTIVE_CAPACITY_PROFILE_NOT_ALLOWED")

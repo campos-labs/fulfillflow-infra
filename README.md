@@ -7,7 +7,7 @@ v1.0.0 usa Kind, uma aplicação congelada e réplicas fixas. Foram conferidas u
 comparação de 20 tentativas e uma avaliação complementar de nove tentativas,
 tratadas separadamente. O último encerramento preservou dados e parou o laboratório.
 
-**Extensão de escala na pausa de reavaliação.** A sucessora adaptativa
+**Extensão de escala: piloto conferido e uma verificação de duração preparada.** A sucessora adaptativa
 concluiu 540/540 eventos no prazo, preservou margem de memória e completou os
 360 s posteriores, mantendo uma réplica. Houve uma leitura breve de métrica
 positiva; não houve expansão nem ciclo 1→2→1 nesta tentativa.
@@ -16,6 +16,8 @@ na guarda de memória. Diagnósticos com duas réplicas fixas mostraram menor
 pendência amostrada; o conjunto ainda não comprova benefício do autoescalonamento.
 O 503 de consulta anterior permanece sem causa determinada. Ver
 [resultado qualificado e decisão da pausa](RELEASE_PLAN.md#sucessora-adaptativa-qualificada-e-pausa).
+Uma tentativa com patamar de 60 s a 16/s está preparada, ainda sem resultado;
+[protocolo e pausa](RELEASE_PLAN.md#extensão-de-duração-autorizada).
 A branch `feature/v1.1-autoscaling-kind` preserva o incremento; não há nova release.
 AKS/ACR continuam opcionais e ainda não foram implantados.
 

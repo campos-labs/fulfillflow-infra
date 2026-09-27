@@ -194,6 +194,56 @@ class CapacityPilotTests(unittest.TestCase):
         self.assertEqual(base["stages"][1]["rate"], 8)
         self.assertEqual(scaled_object(pilot.pin), scaled_object(Pilot().pin))
 
+    def test_sustained_profile_is_exact_and_preserves_policy(self):
+        from scripts.scale_contract import schedule
+
+        base = {
+            "stages": [
+                {"seconds": 15, "rate": 2},
+                {"seconds": 30, "rate": 8},
+                {"seconds": 15, "rate": 2},
+            ]
+        }
+        pilot = Pilot(capacity_profile=True, sustained_profile=True)
+        settings = pilot.capacity_settings(base)
+        offsets = schedule(settings["stages"], characterization=True, sustained=True)
+        self.assertEqual(len(offsets), 1020)
+        self.assertEqual(offsets[-1], 89.5)
+        self.assertTrue(settings["sustained_adaptive"])
+        self.assertEqual(base["stages"][1], {"seconds": 30, "rate": 8})
+        self.assertEqual(scaled_object(pilot.pin), scaled_object(Pilot().pin))
+        with self.assertRaises(ValueError):
+            schedule(settings["stages"], characterization=True)
+        with self.assertRaises(ValueError):
+            schedule(settings["stages"], sustained=True)
+        for seconds in (30, 45, 59, 61):
+            changed = [dict(s) for s in settings["stages"]]
+            changed[1]["seconds"] = seconds
+            with self.assertRaises(ValueError):
+                schedule(changed, characterization=True, sustained=True)
+        with self.assertRaisesRegex(RuntimeError, "SUSTAINED_REQUIRES"):
+            Pilot(sustained_profile=True)
+
+    def test_sustained_execution_requires_matching_duration_before_identity(self):
+        from scripts.scale_calibration import _execute
+
+        args = dict(
+            extension=Pilot(capacity_profile=True, sustained_profile=True),
+            controlled_host=True,
+            reuse_terminal_reads=True,
+            peak_rate=16,
+            http_concurrency=16,
+        )
+        with patch(
+            "scripts.scale_calibration.identity", side_effect=RuntimeError("IDENTITY_SENTINEL")
+        ) as identity:
+            with self.assertRaisesRegex(RuntimeError, "ADAPTIVE_CAPACITY_PROFILE_NOT_ALLOWED"):
+                _execute(Path("unused"), Path("unused-output"), **args)
+            identity.assert_not_called()
+            with self.assertRaisesRegex(RuntimeError, "IDENTITY_SENTINEL"):
+                _execute(Path("unused"), Path("unused-output"), plateau_seconds=60, **args)
+            identity.assert_called_once()
+
     def test_capacity_requires_control_and_disallows_fixed_or_changed_profile(self):
         from scripts.scale_calibration import _execute
 

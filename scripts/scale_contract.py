@@ -23,11 +23,28 @@ QUERY = """SELECT json_build_object(
  FROM message_inbox WHERE type='tracking.apply.v1';"""
 
 
-def schedule(stages: list[dict], *, characterization: bool = False) -> list[float]:
-    if characterization and stages not in [
-        [{"seconds": 15, "rate": 2}, {"seconds": seconds, "rate": rate}, {"seconds": 15, "rate": 2}]
-        for rate, seconds in ((12, 30), (16, 30), (12, 45))
-    ]:
+def schedule(
+    stages: list[dict], *, characterization: bool = False, sustained: bool = False
+) -> list[float]:
+    if sustained and (
+        not characterization
+        or stages
+        != [{"seconds": 15, "rate": 2}, {"seconds": 60, "rate": 16}, {"seconds": 15, "rate": 2}]
+    ):
+        raise ValueError("SUSTAINED_PROFILE_NOT_ALLOWED")
+    if (
+        characterization
+        and not sustained
+        and stages
+        not in [
+            [
+                {"seconds": 15, "rate": 2},
+                {"seconds": seconds, "rate": rate},
+                {"seconds": 15, "rate": 2},
+            ]
+            for rate, seconds in ((12, 30), (16, 30), (12, 45))
+        ]
+    ):
         raise ValueError("CHARACTERIZATION_PROFILE_NOT_ALLOWED")
     if not stages or len(stages) > 5:
         raise ValueError("INVALID_STAGES")
@@ -41,7 +58,7 @@ def schedule(stages: list[dict], *, characterization: bool = False) -> list[floa
         count = math.floor(seconds * rate)
         result.extend(offset + i / rate for i in range(count))
         offset += seconds
-    if not result or len(result) > 600 or offset > 180:
+    if not result or len(result) > (1020 if sustained else 600) or offset > 180:
         raise ValueError("LOAD_LIMIT")
     return result
 

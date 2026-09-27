@@ -31,7 +31,9 @@ def main():
     base = base_url(settings["base"])
     prepared = json.loads((folder / "prepared.json").read_text(encoding="utf-8"))
     offsets = schedule(
-        settings["stages"], characterization=settings.get("capacity_characterization", False)
+        settings["stages"],
+        characterization=settings.get("capacity_characterization", False),
+        sustained=settings.get("sustained_adaptive", False),
     )
     if len(prepared) != len(offsets):
         raise ValueError("PREPARATION_COUNT")

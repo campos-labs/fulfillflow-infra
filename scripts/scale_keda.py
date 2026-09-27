@@ -136,7 +136,10 @@ def policy_requests(records):
 
 
 class Pilot:
-    def __init__(self, prepare_only=False, capacity_profile=False):
+    def __init__(self, prepare_only=False, capacity_profile=False, sustained_profile=False):
+        if sustained_profile and not capacity_profile:
+            raise RuntimeError("SUSTAINED_REQUIRES_CAPACITY_PROFILE")
+        self.sustained_profile = sustained_profile
         self.pin = json.loads(CONFIG.read_text())
         self.prepare_only = prepare_only
         self.capacity_profile = capacity_profile
@@ -167,6 +170,9 @@ class Pilot:
             http_concurrency=16,
             plateau_seconds=30,
         )
+        if self.sustained_profile:
+            result["stages"][1]["seconds"] = 60
+            result["sustained_adaptive"] = True
         return {**result, "purpose": "bounded adaptive capacity pilot; not formal comparison"}
 
     def install(self, private, output):
@@ -506,7 +512,7 @@ class Pilot:
                 wait_throttling(private, output / "throttling-startup.jsonl"),
             )
         print(
-            "KEDA: adaptive workload (540 events)"
+            f"KEDA: adaptive workload ({1020 if self.sustained_profile else 540} events)"
             if self.capacity_profile
             else "KEDA: adaptive workload with unchanged calibration profile",
             flush=True,
@@ -620,7 +626,10 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--capacity-profile", action="store_true")
+    parser.add_argument("--sustained-profile", action="store_true")
     args = parser.parse_args()
+    if args.sustained_profile and not args.capacity_profile:
+        parser.error("--sustained-profile requires --capacity-profile")
     private, output = args.private.resolve(), args.output.resolve()
     if private.is_relative_to(output) or output.is_relative_to(private):
         raise RuntimeError("PRIVATE_OUTPUT_OVERLAP")
@@ -629,7 +638,8 @@ def main():
             calibration._execute(
                 private,
                 output,
-                extension=Pilot(args.prepare_only, args.capacity_profile),
+                extension=Pilot(args.prepare_only, args.capacity_profile, args.sustained_profile),
+                plateau_seconds=60 if args.sustained_profile else 30,
                 controlled_host=args.capacity_profile,
                 reuse_terminal_reads=args.capacity_profile,
                 peak_rate=16 if args.capacity_profile else 8,

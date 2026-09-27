@@ -548,6 +548,17 @@ condição fixa e impede presumir equivalência integral da instrumentação.
 Não exigir aumento de réplicas ou interpretar `autoscaling_tested=true` como
 ciclo 1→2→1 demonstrado. Esta sucessora é piloto, não comparação formal.
 
+**Extensão exploratória de duração.** Opt-in adicional `-SustainedProfile`
+exige `-CapacityProfile` e permite somente 15 s a 2/s, 60 s a 16/s e 15 s a
+2/s: 1.020 eventos em 90 s. O limite histórico de 600 continua nos demais
+perfis; a exceção exige identidade explícita `sustained_adaptive=true` e
+validação da sequência exata. Não altera política, recursos, concorrência,
+prazo por evento, coleta ou verificações funcionais. A duração maior também
+amplia volume, preparação e custo total de observação; não presumir que
+somente o controlador receberá mais pressão. Guardas por fase, prazo global de
+20 minutos e encerramento permanecem; não prolongar automaticamente se faltarem
+360 s para a observação posterior. Esta opção não autoriza outro perfil fixo.
+
 O protocolo separa preparação/falha da métrica da oferta funcional. Injeta
 `SELECT 1/0` somente na consulta do ScaledObject, sem alterar banco ou aplicação,
 registra falha da API de métricas/condições do controlador e restaura a consulta
