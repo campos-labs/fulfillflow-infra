@@ -6,8 +6,8 @@
 `feature/v1.2-observability`, a partir de `v1.1.0-rc.1` (`92089b8`). Contratos em
 [DESIGN §8.8](DESIGN.md#88-exploração-de-observabilidade). A exploração não reabre
 as campanhas concluídas nem promete uma nova campanha ou release. A correlação
-offline foi implementada; a prova integrada está preparada para execução manual
-com o notebook reservado e nova conferência de margem.
+offline foi implementada; duas tentativas e uma inspeção integrada foram
+executadas. A exploração está em pausa no limite de três inícios, com o nó parado.
 
 
 **Comparação de capacidade fixa e adaptativa concluída e consolidada na
@@ -277,6 +277,23 @@ status e a lacuna. Somente depois decidir sobre o último ensaio permitido e uma
 checagem prospectiva de prontidão do encaminhamento. Internet ligada e ausência
 de reinício do notebook não foram identificadas como causa. Não associar este
 503 aos históricos nem alterar a aplicação a partir dessa ocorrência.
+
+A inspeção `observability-inspection-01` foi executada diretamente pelo agente,
+com guarda de entrada atendida e nenhuma oferta nova. O executor
+`scripts/observability_inspect.py` fez um GET com filtro exato de evento e carrier
+pelo caminho Core → Tracking. A resposta foi 200, com lista vazia. Isso estabelece
+que o caminho respondeu e não retornou registro correspondente naquele momento,
+após reiniciar o runtime; não reconstrói o estado no instante do 503 nem identifica
+sua causa. O nó terminou parado e os volumes foram preservados.
+
+**Fechamento desta janela:** foram utilizados os três inícios delimitados, contando
+a inspeção sem oferta. Não houve fluxo saudável completo para avaliar cobertura
+entre os três workers. Antes de outra execução, definir nova janela curta e incluir
+uma consulta prospectiva do encaminhamento como critério de preparação. A saúde
+local do Core e a prontidão dos workers são sinais distintos dessa consulta. Não
+alterar probes, regras de negócio ou aplicação congelada para fazer o ensaio passar.
+OpenTelemetry ainda não foi instalado; a ocorrência sustenta incluir a fronteira
+HTTP na investigação, mas não demonstra que uma plataforma nova seja necessária.
 
 ### Continuidade após a exploração
 
