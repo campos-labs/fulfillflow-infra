@@ -7,17 +7,15 @@ v1.0.0 usa Kind, uma aplicação congelada e réplicas fixas. Foram conferidas u
 comparação de 20 tentativas e uma avaliação complementar de nove tentativas,
 tratadas separadamente. O último encerramento preservou dados e parou o laboratório.
 
-**Extensão de escala em reavaliação.** O piloto KEDA concluiu mantendo uma
-réplica; não demonstrou ciclo 1→2→1 ou ganho de escala. Diagnósticos posteriores
-com uma réplica chegaram a 600/600 eventos no prazo. A verificação manual
-sucessora preservou margem de memória e não apresentou erro HTTP; o 503 anterior
-permanece sem causa determinada. A 16/s, 540/540 eventos concluíram com
-crescimento de pendência. A sucessora com duas réplicas concluiu 540/540,
-com participação de ambos os pods e menor pendência amostrada; isso ainda não
-demonstra benefício do autoescalonamento. O piloto adaptativo seguinte observou
-subida 1→2 e participação do novo pod, mas omitiu sete ofertas e violou a
-guarda de memória; a progressão está pausada. Ver
-[resultados e próximo passo](RELEASE_PLAN.md#resultado-adaptativo-e-pausa).
+**Extensão de escala na pausa de reavaliação.** A sucessora adaptativa
+concluiu 540/540 eventos no prazo, preservou margem de memória e completou os
+360 s posteriores, mantendo uma réplica. Houve uma leitura breve de métrica
+positiva; não houve expansão nem ciclo 1→2→1 nesta tentativa.
+A anterior observou subida e participação do novo pod, mas falhou na oferta e
+na guarda de memória. Diagnósticos com duas réplicas fixas mostraram menor
+pendência amostrada; o conjunto ainda não comprova benefício do autoescalonamento.
+O 503 de consulta anterior permanece sem causa determinada. Ver
+[resultado qualificado e decisão da pausa](RELEASE_PLAN.md#sucessora-adaptativa-qualificada-e-pausa).
 A branch `feature/v1.1-autoscaling-kind` preserva o incremento; não há nova release.
 AKS/ACR continuam opcionais e ainda não foram implantados.
 

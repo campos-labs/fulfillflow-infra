@@ -2,7 +2,7 @@
 
 ## 1. Estado atual
 
-**Exploração de escala retomada com margem conferida; comparação formal pendente.**
+**Piloto adaptativo qualificado; pausa antes de qualquer comparação formal.**
 Branch `feature/v1.1-autoscaling-kind`.
 Base: v1.0.0, commit `cb6113e6bbd601a65ee5142de85cadc5bf6ba29d`.
 CI da branch habilitada. Bootstrap dedicado e smoke do instrumento concluídos;
@@ -20,10 +20,11 @@ sem erro. A sucessora a 16/s concluiu 540/540 e apresentou crescimento de
 pendência com margem do host. A sucessora com duas réplicas concluiu 540/540,
 com participação 281/259 e menor pendência amostrada. O piloto KEDA no
 mesmo perfil demonstrou subida 1→2, mas encerrou com sete ofertas omitidas e
-margem insuficiente do host. Preparada uma sucessora com guardas por fase,
-sem nova carga executada; ver também
-[resultado adaptativo](#resultado-adaptativo-e-pausa). Ver
-[resultado de capacidade adicional](#resultado-com-duas-réplicas-fixas).
+margem insuficiente do host. A sucessora 02 concluiu 540/540, preservou a guarda
+e observou 360 s posteriores, mantendo uma réplica. O critério apareceu
+brevemente, sem solicitação de expansão registrada. Pausa atingida; ver
+[resultado qualificado](#sucessora-adaptativa-qualificada-e-pausa). As execuções
+continuam exploratórias e separadas; não demonstram vantagem causal da política.
 
 ### Preparação conferida e próximo passo
 
@@ -1241,7 +1242,7 @@ amostradas de subida/descida pelo HPA; isso não atesta pods prontos nem
 processamento e exclui a reposição manual no cleanup. Lentidão é resultado a relatar,
 não filtro para escolher somente tentativas favoráveis.
 
-**Uma sucessora permitida:** `keda-capacity-16-c16-02`, launcher local
+**Autorização executada, sem repetição automática:** `keda-capacity-16-c16-02`, launcher local
 `artifacts/Invoke-KedaCapacity02.local.ps1`. Mesmo perfil de 540 eventos, teto
 HTTP 16, política, recursos, aplicação e captura HTTP v2. Preflight inicial
 continua em 5 GiB; não garante a nova guarda nas fases posteriores. Se a margem
@@ -1254,6 +1255,57 @@ Preparar/analisar/testar autonomamente fora da janela; medir por comando único
 com aplicações externas fechadas. Não há repetição manual adicional obrigatória.
 Após esta tentativa, pausar com relatório consolidado para decidir ambiente ou
 protocolo se necessário. Nenhuma releitura altera o julgamento da tentativa 01.
+
+### Sucessora adaptativa qualificada e pausa
+
+`keda-capacity-16-c16-02` concluiu o protocolo em 26/09/2026 (horário local),
+com infra `0a143ef9ddf34de1f7f14c06b4eac766ea759f94` e aplicação congelada
+`9e3a135a00db218643633c7165d3106f0c8285e1`. Conferência offline validou os
+1.107 arquivos do manifesto; SHA-256 do manifesto:
+`b0727113f4bef7a656c226bf3304d1f5aeb468c214230f8507a241578b238c76`.
+Pacote original e resumo calculado `artifacts/keda-capacity-16-c16-02-review.json`
+permanecem locais; não constituem anexos publicados de uma release.
+
+| Dimensão | Resultado | Fonte no pacote original |
+| --- | --- | --- |
+| Oferta e conclusão | 540 planejados, oferecidos, aceitos e concluídos em até 60 s; atribuição integral ao mesmo pod | `adaptive/summary.json`, `worker-attribution.json` dentro de `adaptive/` |
+| Consulta funcional | 3.247 GET, todos 200, sem erro de transporte | Registros por evento em `adaptive/event-*/` |
+| Confirmação observada | Mediana 23,907 s; p95 29,688 s; máximo 31,094 s | Registros por evento; resumo calculado `observed_latency` |
+| Pendência | Máximo amostrado 66; maior idade 5,093 s; final sem pendência/retry/blocked | `adaptive/series.jsonl`, `adaptive/summary.json` |
+| Host | Mínimo 3,740 GiB, guarda de 2 GiB atendida; energia e cadência válidas | `host-conditions.jsonl`, `host-phases.jsonl`, `host-review.json` |
+| Política | 87 leituras de métrica disponíveis; nenhuma solicitação de subida/descida observada | `metric-availability.json`, `post-load-outcome.json` |
+| Encerramento | 360 s posteriores completos, 70 amostras ociosas; nó parado e volumes preservados | `post-load.jsonl`, `shutdown.json` |
+
+A sonda anterior à carga registrou falha de consulta injetada e restauração
+(`metric-fault-probe.json`); não confundir essa fase com indisponibilidade durante
+a carga. Admissão no patamar de 16/s: média HTTP 0,507 s, p95 0,969 s,
+máximo de 15 vagas simultâneas ocupadas em 16, sem omissões.
+
+**Critério observado não equivale a decisão de escala.** Aos 48,53 s desde a
+primeira oferta, depois do pico encerrado aos 45 s, a leitura externa registrou
+cinco pendências com idade elegível. Na amostra seguinte, aos 53,53 s, o valor
+já era zero. O status amostrado do HPA permaneceu em uma réplica desejada
+após inicialização e apresentou `currentMetrics=0`, inclusive na amostra em
+que a consulta externa retornou cinco. As leituras não são atômicas nem
+reconstituem todas as reconciliações: não atribuir a ausência de expansão
+exclusivamente à estabilização ou afirmar falha de observação pelo controlador.
+O sinal foi breve nas amostras; não afirmar que o critério nunca foi atingido.
+
+**Conclusão delimitada:** esta execução qualifica oferta, ambiente, conclusão e
+observação posterior; não demonstra 1→2→1. `autoscaling_tested=true` significa
+política exercitada, não ciclo executado. A subida da tentativa 01 e a ociosidade
+da 02 não podem ser combinadas como um ciclo completo. Capacidade fixa adicional,
+acionamento automático e atendimento no prazo permanecem dimensões distintas.
+Os dados sustentam a hipótese de relevância da duração do sinal e do momento
+de disponibilização de capacidade, sem isolar causalidade nem provar equivalência.
+
+**Decisão da pausa:** preservar o resultado sem repetir até obter expansão.
+Não há correção de aplicação ou necessidade de AKS demonstrada por este piloto.
+Antes de outra carga, decidir se o objetivo é consolidar estes limites ou definir
+um protocolo novo de demanda sustentada, justificado operacionalmente, com
+limites de execução e instrumentação congelados. Não reduzir limiar ou guardas
+para produzir um resultado favorável. Comparação formal, nova release e nova
+execução de carga permanecem pendentes de decisão.
 
 ### Depois da pausa — ainda não autorizado
 
