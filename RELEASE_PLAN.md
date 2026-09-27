@@ -362,6 +362,22 @@ A verificação trata trabalho aguardando consumo, não processamento interrompi
 Não altera aplicação, limiar, recursos por pod ou stack; não mede ganho de desempenho.
 Ao encerrar, avaliar cobertura diagnóstica e lacunas antes de nova execução.
 
+**Falha de preparação preservada:** `observability-pending-01` recebeu 503 no
+primeiro GET prospectivo; não criou entidades, não enviou webhook nem retirou o
+worker. O encerramento confirmou uma réplica e nó parado. Nos logs selecionados,
+Core respondeu 503 em 10:48:57,231 UTC e Tracking registrou startup completo em
+10:48:57,921 UTC. Essa ordem sustenta investigar prontidão durante inicialização,
+sem isolar a exceção ou explicar os 503 de outras campanhas.
+
+**Emenda prospectiva de preparação:** uma única sucessora `observability-pending-02`
+aceita exclusivamente essa falha identificada sem oferta. Mantém evento novo,
+perfil e guardas; até 15 GETs de preparação, agenda de até 30 s mais a requisição
+em curso (máximo 10 s), exigem três respostas 200 vazias consecutivas. Apenas 503
+permite nova consulta nessa fase; todos os registros permanecem. Não se repete POST
+nem se tolera falha durante o cenário. Esta é qualificação do encaminhamento,
+não alteração retroativa do resultado anterior nem garantia de disponibilidade futura.
+Se falhar novamente, encerrar a continuação, sem terceiro início automático.
+
 ### Continuidade após a exploração
 
 Prometheus e verificações de segurança permanecem possibilidades por lacuna

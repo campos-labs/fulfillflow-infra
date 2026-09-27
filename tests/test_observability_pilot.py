@@ -191,6 +191,7 @@ class PilotTests(unittest.TestCase):
                     "error": error,
                 }
                 stack.enter_context(patch.object(pilot, "ObservedVerifier", return_value=verifier))
+                stack.enter_context(patch.object(pilot, "wait_forwarding"))
                 set_worker = stack.enter_context(patch.object(pilot, "set_notifications"))
                 pending_check = stack.enter_context(patch.object(pilot, "observe_pending"))
                 if fail:
@@ -292,6 +293,31 @@ class PilotTests(unittest.TestCase):
         verifier.get.return_value = {**record, "processing": "DONE"}
         with self.assertRaises(pilot.Failure):
             pilot.observe_pending(verifier, "event")
+
+    def test_startup_wait_retries_only_503_and_requires_three_successes(self):
+        verifier = Mock()
+        verifier.transport.records = [{"http_status": 503}]
+        with patch.object(
+            pilot,
+            "check_forwarding",
+            side_effect=[pilot.Failure("HTTP_STATUS_UNEXPECTED"), None, None, None],
+        ) as check:
+            pilot.wait_forwarding(verifier, sleep=Mock())
+            self.assertEqual(check.call_count, 4)
+        verifier.admit.assert_not_called()
+        with patch.object(
+            pilot, "check_forwarding", side_effect=pilot.Failure("HTTP_STATUS_UNEXPECTED")
+        ):
+            with self.assertRaises(pilot.Failure) as error:
+                pilot.wait_forwarding(verifier, sleep=Mock())
+            self.assertEqual(error.exception.code, "FORWARDING_STARTUP_TIMEOUT")
+        verifier.transport.records = [{"http_status": 401}]
+        with patch.object(
+            pilot, "check_forwarding", side_effect=pilot.Failure("HTTP_STATUS_UNEXPECTED")
+        ) as check:
+            with self.assertRaises(pilot.Failure):
+                pilot.wait_forwarding(verifier, sleep=Mock())
+            check.assert_called_once()
 
     def test_pending_window_claim_prevents_another_output(self):
         with (

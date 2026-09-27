@@ -230,12 +230,56 @@ def check_forwarding(verifier):
     verifier.phase = "prepare"
 
 
+def wait_forwarding(verifier, *, sleep=time.sleep):
+    # Read-only startup qualification; never retries admission or any business write.
+    deadline = time.monotonic() + 30
+    stable = 0
+    for _ in range(15):
+        if time.monotonic() >= deadline:
+            break
+        try:
+            check_forwarding(verifier)
+        except Failure as error:
+            records = verifier.transport.records
+            if (
+                error.code != "HTTP_STATUS_UNEXPECTED"
+                or not records
+                or records[-1].get("http_status") != 503
+            ):
+                raise
+            stable = 0
+            verifier.evidence.emit("forwarding_startup_unavailable", http_status=503)
+        else:
+            stable += 1
+            if stable == 3:
+                verifier.evidence.emit("forwarding_stable", consecutive_successes=stable)
+                return
+        sleep(2)
+    raise Failure("FORWARDING_STARTUP_TIMEOUT")
+
+
 def pending_window_identity(private, source):
-    if (private / "pending-window-01.claim").exists():
+    continuation = source.name == "observability-pending-01"
+    claim = "pending-window-02.claim" if continuation else "pending-window-01.claim"
+    if (private / claim).exists():
         raise RuntimeError("WINDOW_ALREADY_CLAIMED")
     summary = json.loads((source / "summary.json").read_bytes())
     functional = json.loads((source / "functional.json").read_bytes())
-    if (
+    if continuation:
+        protocol = json.loads((source / "protocol.json").read_bytes())
+        timings = json.loads((source / "http-timings.json").read_bytes())
+        if (
+            protocol.get("infrastructure_sha") != "f6a31641e4286c89f1793460da6fdfbe8a2f2ffe"
+            or functional.get("webhook_offered") is not False
+            or functional.get("last_operation") != "forwarding_preflight"
+            or set(functional.get("checkpoint", {})) != {"event_id"}
+            or not summary.get("container_stopped")
+            or len(timings) != 1
+            or timings[0].get("method") != "GET"
+            or timings[0].get("http_status") != 503
+        ):
+            raise RuntimeError("UNREVIEWED_PREOFFER_FAILURE")
+    elif (
         not summary.get("complete")
         or not summary.get("container_stopped")
         or not functional.get("success")
@@ -256,7 +300,9 @@ def pending_window_identity(private, source):
     return {
         "source": SOURCE,
         "namespace_uid": identity["namespace_uid"],
-        "healthy_event_id": functional["event_id"],
+        "source_event_id": functional["event_id"],
+        "claim": claim,
+        "preoffer_continuation": continuation,
     }
 
 
@@ -368,7 +414,10 @@ def flow(private, output, pending=False):
             verifier = ObservedVerifier(flow_config, evidence, transport)
             try:
                 evidence.emit("started", event_id=verifier.event_id, unique_events=1)
-                check_forwarding(verifier)
+                if pending:
+                    wait_forwarding(verifier)
+                else:
+                    check_forwarding(verifier)
                 if pending:
                     intervention = True
                     set_notifications(private, output, 0)
@@ -531,7 +580,7 @@ def execute(private, output, resume_from=None, new_window_from=None, pending_fro
     if new_window_from:
         write(private / "healthy-window-02.claim", {"output": output.name, "utc": utc()})
     if pending_from:
-        write(private / "pending-window-01.claim", {"output": output.name, "utc": utc()})
+        write(private / facts["claim"], {"output": output.name, "utc": utc()})
     complete, error = False, None
     stopped = False
     try:
