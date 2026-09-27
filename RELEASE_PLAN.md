@@ -1415,8 +1415,19 @@ Não há justificativa demonstrada para alterar a aplicação ou migrar para AKS
 
 Implementação: `scripts/scale_comparison.py`, launcher
 `scripts/Invoke-ScaleComparison.ps1` e `config/scale-comparison.json`.
-Estado: preparação de código/protocolo; validação viva do novo ambiente e
-qualificação ainda pendentes. Não há resultados formais neste momento.
+Estado: código/protocolo preparados; cluster exclusivo e restauração dos três
+bancos validados sem carga. Qualificação e campanha ainda pendentes; não há
+resultados formais neste momento. Evidência técnica local:
+`artifacts/scale-comparison-01/prepare` e `baseline-check-02/result.json` nesse
+mesmo diretório. A primeira conferência parou antes da restauração porque o
+RabbitMQ ainda inicializava após reiniciar o nó. O diagnóstico preservado em
+`foundation-startup-check/probes.json` mostrou indisponibilidade seguida de
+sucesso; acrescentada espera por SQL e broker reais, limitada a 180 s, antes da
+restauração. A sucessora restaurou e confirmou os seis workloads prontos;
+nó parado, sem ofertas de negócio. Esses checks não são repetições da campanha.
+Validação offline: 245 testes, Ruff, documentos e sintaxe PowerShell aprovados.
+No ambiente já preparado, usar `-Mode Measure`, que qualifica e só depois
+executa a campanha; `-Mode All` permanece reservado a uma preparação nova.
 
 **Pergunta operacional:** sob o mesmo perfil de demanda, como capacidade fixa
 e adaptativa diferem no atendimento observado dentro do prazo e na capacidade
@@ -1458,10 +1469,11 @@ independentes. O executor preserva resultado lento/inconclusivo; condição
 válida não exige que o mecanismo vença ou conclua tudo no prazo.
 
 **Execução limitada:** `-Mode All` prepara o ambiente, executa uma qualificação
-e, somente se aprovada, as nove tentativas. Alternativamente, os modos
+e, somente se aprovada, as nove tentativas. O modo
 `Measure` executa qualificação e campanha após a preparação;
 `Prepare`, `Qualify` e `Execute` permitem separar as janelas sem mudar a revisão.
-Até 20 minutos de trabalho por tentativa mais encerramento limitado; não
+Até 20 minutos de trabalho por tentativa mais encerramento limitado; exigir
+480 s restantes antes de iniciar a oferta para comportar a janela comum. Não
 iniciar terceira tentativa de um bloco após 40 minutos nem outra tentativa da
 campanha após 160 minutos. Planejar até cerca de três horas para a campanha,
 mais preparação/qualificação e encerramentos. A ferramenta não promete

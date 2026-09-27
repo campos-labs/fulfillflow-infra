@@ -606,7 +606,8 @@ Cluster exclusivo `fulfillflow-scale-compare-01`, selecionado apenas por
 próprios; nenhum banco ou volume dos pilotos ou da aplicação é reutilizado.
 O bootstrap registra uma referência dos três bancos, com processos da aplicação
 parados e broker vazio. Antes de cada tentativa, conferir UID do namespace,
-container, fonte e hashes; parar os seis workloads e restaurar os três bancos
+container, fonte, templates de runtime e hashes; conferir SQL/broker reais com
+espera de inicialização limitada, parar os seis workloads e restaurar os três bancos
 somente nesse cluster. Filas não vazias impedem restauração; não purgar.
 Preservar snapshots privados do estado final antes de desligar o nó.
 

@@ -10,6 +10,7 @@ import math
 import os
 import random
 import statistics
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -156,6 +157,28 @@ def queues(private):
     return data
 
 
+def wait_foundations(private, output):
+    """Probe actual services after node restart; cached Ready is not sufficient."""
+    deadline = time.monotonic() + 180
+    with (output / "foundation-startup.jsonl").open("x", encoding="utf-8") as stream:
+        while time.monotonic() < deadline:
+            try:
+                if sql(private, "postgres", "SELECT 1;").strip() != "1":
+                    raise RuntimeError("POSTGRES_NOT_READY")
+                queues(private)
+            except (RuntimeError, subprocess.TimeoutExpired) as error:
+                stream.write(
+                    json.dumps({"utc": utc(), "available": False, "error": type(error).__name__})
+                    + "\n"
+                )
+                stream.flush()
+                time.sleep(3)
+            else:
+                stream.write(json.dumps({"utc": utc(), "available": True}) + "\n")
+                return
+    raise RuntimeError("FOUNDATION_STARTUP_TIMEOUT")
+
+
 def empty_queues(private):
     data = queues(private)
     if any(r["messages"] for r in data):
@@ -216,6 +239,7 @@ def baseline(private):
 
 def restore(private, output):
     marker = baseline(private)
+    wait_foundations(private, output)
     if (
         get(private, "scaledobject", NAME)
         or json.loads(env.kubectl(private, ["get", "hpa", "-o", "json"]))["items"]
@@ -530,6 +554,17 @@ def review_trial(output):
         not in ("completed_in_time", "completed_late", "not_accepted", "not_offered")
         for e in events
     )
+    timings = [
+        row
+        for path in sorted(folder.glob("event-*/http-timings.json"))
+        for row in json.loads(path.read_text())
+    ]
+    result["http_observation"] = {
+        "requests": len(timings),
+        "transport_errors": sum(r["error"] is not None for r in timings),
+        "non_200": sum(r["http_status"] != 200 for r in timings),
+        "limit": "includes recovered failures; later functional success does not erase them",
+    }
     result["condition"] = samples[0]["condition"]
     result["protocol_sha256"] = digest(CONFIG)
     write(output / "comparison-result.json", result)
@@ -550,6 +585,9 @@ def prepare(private, output):
             env.kubectl(
                 private, ["rollout", "status", "statefulset/" + name, "--timeout=180s"], timeout=190
             )
+        startup = output / "initial-foundations"
+        startup.mkdir(exist_ok=False)
+        wait_foundations(private, startup)
         pilot.install(private, output)
         runtime(private, 0)
         empty_queues(private)
@@ -562,6 +600,8 @@ def prepare(private, output):
             "utc": utc(),
         }
         write(private / "comparison-baseline.json", marker)
+        restore(private, output)
+        runtime(private, 0)
         write(
             output / "comparison-prepared.json",
             {
@@ -569,6 +609,7 @@ def prepare(private, output):
                 "baseline_hashes": hashes,
                 "protocol_sha256": digest(CONFIG),
                 "load_executed": False,
+                "restore_verified": True,
             },
         )
     finally:

@@ -157,6 +157,7 @@ class ComparisonTests(unittest.TestCase):
     def test_nonempty_broker_blocks_restore_without_purge(self):
         with (
             patch.object(cmp, "baseline", return_value={}),
+            patch.object(cmp, "wait_foundations"),
             patch.object(cmp, "get", return_value=None),
             patch.object(cmp.env, "kubectl", return_value='{"items":[]}'),
             patch.object(cmp, "runtime"),
@@ -194,6 +195,21 @@ class ComparisonTests(unittest.TestCase):
                 with self.assertRaisesRegex(RuntimeError, "BASELINE_HASH"):
                     cmp.baseline(p)
 
+    def test_foundation_probe_does_not_convert_startup_failure_to_empty_queue(self):
+        with (
+            tempfile.TemporaryDirectory() as tmp,
+            patch.object(cmp, "sql", return_value="1"),
+            patch.object(cmp, "queues", side_effect=[RuntimeError("not running"), []]) as queue,
+            patch.object(cmp.time, "sleep"),
+        ):
+            cmp.wait_foundations(Path("unused"), Path(tmp))
+            rows = [
+                json.loads(x)
+                for x in (Path(tmp) / "foundation-startup.jsonl").read_text().splitlines()
+            ]
+            self.assertEqual([r["available"] for r in rows], [False, True])
+            self.assertEqual(queue.call_count, 2)
+
     def test_expired_observer_does_not_issue_http_or_overwrite_pending(self):
         verifier = Mock()
         with patch("scripts.scale_calibration.time.monotonic", return_value=121):
@@ -203,7 +219,7 @@ class ComparisonTests(unittest.TestCase):
 
 
 class CommonWindowTests(unittest.TestCase):
-    def test_completed_events_do_not_shorten_common_window(self):
+    def run_common_window(self, budget=1000):
         from scripts import scale_calibration as cal
         from scripts.scale_contract import metric
 
@@ -221,6 +237,7 @@ class CommonWindowTests(unittest.TestCase):
             folder = Path(tmp) / "measurement"
 
             def start_child(*args, **kwargs):
+                self.assertGreaterEqual(budget, 480, "load must not start without window budget")
                 item = json.loads((folder / "prepared.json").read_text())[0]
                 records = [
                     {"kind": "dispatch_attempt", "scheduled_monotonic": 0},
@@ -294,7 +311,7 @@ class CommonWindowTests(unittest.TestCase):
                     {"observer": "test", "alpha": "test"},
                     "http://127.0.0.1:18181",
                     {},
-                    1000,
+                    budget,
                     policy=policy,
                     diagnostic=True,
                     reuse_terminal_reads=True,
@@ -306,6 +323,13 @@ class CommonWindowTests(unittest.TestCase):
                 json.loads((folder / "window.json").read_text()),
                 {"start": 0, "end": 450, "seconds": 450},
             )
+
+    def test_completed_events_do_not_shorten_common_window(self):
+        self.run_common_window()
+
+    def test_insufficient_window_budget_stops_before_offer(self):
+        with self.assertRaisesRegex(RuntimeError, "INSUFFICIENT_COMMON_WINDOW_BUDGET"):
+            self.run_common_window(400)
 
 
 if __name__ == "__main__":

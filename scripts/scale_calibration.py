@@ -249,6 +249,11 @@ def run_one(
     if host_guard:
         host_guard("before_offer")
 
+    if formal and work_deadline - time.monotonic() < 480:
+        for verifier in verifiers.values():
+            verifier.evidence.close()
+        raise RuntimeError("INSUFFICIENT_COMMON_WINDOW_BUDGET")
+
     def collect():
         sample = telemetry.temporal_sample(
             private, replicas, lambda: db_metric(private, values["observer"])
@@ -777,6 +782,22 @@ def _execute(
                 (output / "summary.json").write_text(
                     json.dumps(summary, indent=2), encoding="utf-8"
                 )
+        if formal and (output / "comparison-result.json").exists():
+            result = json.loads((output / "comparison-result.json").read_text())
+            summary = json.loads((output / "summary.json").read_text())
+            result["host_conditions_valid"] = bool(host_result and host_result["valid"])
+            result["min_host_available_gib"] = (
+                min(r["host_available_bytes"] for r in host.rows) / 2**30
+                if host and host.rows
+                else None
+            )
+            result["shutdown_confirmed"] = stopped and not cleanup_error
+            if result["execution_valid"] and not summary.get("complete"):
+                result["execution_valid"] = False
+                result["invalid_reasons"].append("FINAL_EXECUTION_OR_HOST_CHECK_FAILED")
+            (output / "comparison-result.json").write_text(
+                json.dumps(result, indent=2), encoding="utf-8"
+            )
         hashes = []
         for path in sorted(output.rglob("*")):
             if path.is_file():

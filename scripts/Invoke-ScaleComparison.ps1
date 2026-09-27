@@ -33,12 +33,13 @@ try {
     if ((Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory / 1MB -lt 5) { throw 'At least 5 GiB free host memory required.' }
     $env:FULFILLFLOW_SCALE_ENVIRONMENT = 'comparison-v1'
     $stages = if ($Mode -eq 'All') { @('prepare','qualify','execute') } elseif ($Mode -eq 'Measure') { @('qualify','execute') } else { @($Mode.ToLowerInvariant()) }
-    Write-Host 'JANELA CRITICA: notebook na tomada e reservado. Preparacao + qualificacao unica + ate 9 tentativas; sem retries.'
+    if ($Mode -eq 'Prepare') { Write-Host 'Preparacao isolada, sem carga de negocio.' }
+    else { Write-Host 'JANELA CRITICA: notebook na tomada e reservado. Qualificacao unica + ate 9 tentativas; sem retries.' }
     foreach ($stage in $stages) {
         & (Join-Path $root '.venv\Scripts\python.exe') (Join-Path $root 'scripts\scale_comparison.py') --private $PrivateDirectory --output (Join-Path $OutputDirectory $stage) --mode $stage
         if ($LASTEXITCODE -ne 0) { throw "Stopped at $stage. Preserve output and return for review; do not repeat automatically." }
     }
-    Write-Host 'Campaign stages finished. Return the output for analysis; no additional campaign authorized.'
+    Write-Host 'Requested stages finished. Preserve evidence; never rerun a completed stage.'
 } finally {
     $env:FULFILLFLOW_SCALE_ENVIRONMENT = $previousEnvironment
     Pop-Location
