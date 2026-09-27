@@ -198,7 +198,8 @@ def flow(private, output):
             "coverage_requires_review": True,
             "tracing_tested": False,
             "source": SOURCE,
-            "new_events": 1,
+            "planned_unique_events": 1,
+            "webhook_offered": result.get("webhook_offered", False),
         },
     )
     if error:
