@@ -12,6 +12,13 @@ Este guia descreve configuração e comandos. Começar pelo [Kind local](#caminh
 Resultados e fontes estão na [avaliação operacional](../docs/OPERATIONAL_EVALUATION.md);
 entregas, pausa e extensões, no [RELEASE_PLAN](../RELEASE_PLAN.md).
 
+**Capacidade fixa/adaptativa: nove tentativas concluídas.** Conferir o
+[relatório de capacidade](../docs/SCALING_EVALUATION.md) e a
+[reprodução offline](#comparação-de-capacidade-fixa-e-adaptativa). Os executores
+permanecem disponíveis, mas a campanha encerrada não autoriza nova carga.
+Não usar `resume`/`pause` da base ou reaplicar o runtime sobre um alvo controlado
+por KEDA/HPA: esses comandos restauram/escalam réplicas sem coordenar o controlador.
+
 `overlays/example` é exclusivamente de validação. A imagem runtime
 `example.azurecr.io.invalid/fulfillflow/runtime@sha256:` seguida de 64 zeros é
 **inválida**, não resolve e não representa publicação no ACR. O seletor
@@ -112,7 +119,7 @@ Na base e em `overlays/example`, requests igualam os limites funcionais: cada AP
 `2`/`2560Mi`, RabbitMQ `500m`/`512Mi`. Total persistente: 5,5 CPU/5376 MiB; cada Job
 adiciona `500m`/`384Mi` enquanto ativo. São valores provisórios para revisão, não
 capacidade de nós comprovada. Rollout usa `maxSurge: 0`, `maxUnavailable: 1`; aceita
-indisponibilidade com uma réplica e não promete HA. Não há HPA ou autoscaling.
+indisponibilidade com uma réplica e não promete HA. Na base v1.0.0 não há HPA; a avaliação de capacidade tem contrato e ambiente próprios.
 
 No alvo AKS, PVCs provisórios: PostgreSQL 32 GiB e RabbitMQ 16 GiB, Azure Disk CSI
 `StandardSSD_LRS`, binding `WaitForFirstConsumer`, reclaim `Retain`, retenção de
@@ -441,3 +448,104 @@ Não usar o contexto corrente implicitamente em uma futura automação.
 
 Essa sequência pertence à extensão opcional AKS; implantação e requisitos Azure
 continuam pendentes. O aceite Kind não a substitui.
+
+
+<a id="calibracao-de-concorrencia"></a>
+## Comparação de capacidade fixa e adaptativa
+
+**Campanha encerrada: nove tentativas preservadas, zero posições pendentes.**
+Consultar [resultados e evidências](../docs/SCALING_EVALUATION.md). Para conferir
+as tabelas sem Docker, credenciais ou cluster, usar o reprodutor publicado:
+
+```powershell
+python docs/evidence/scaling/reproduce.py
+```
+
+Os executores de carga continuam versionados. Sua presença não autoriza repetir
+uma campanha encerrada; os comandos abaixo descrevem o procedimento disponível
+para uma nova execução delimitada, depois de revisar ambiente e protocolo.
+
+### Pré-requisitos de uma nova execução
+
+PowerShell 7, Python 3.12, `uv sync --frozen --group autoscaling`, Docker Linux e
+ferramentas verificadas em `.tools/`. Kind/Kubernetes e imagens auxiliares são
+fixados em `config/`. O bootstrap exige a imagem local
+`fulfillflow-kind-runtime:source-9e3a135a00db`, ID
+`sha256:582a858debe2ff64d481e810b2d5ae5a1aba6a669516bca36a15eb12e77ec072` e fonte congelada.
+Reconstruir a mesma fonte não garante produzir o mesmo ID; uma referência diferente
+exige identificação e nova qualificação, sem contornar essa guarda. Os ZIPs não
+distribuem a imagem. Reprodução das medições em outro computador não foi validada.
+
+Usar checkout limpo, host reservado e conectado à tomada, 5 GiB livres na entrada
+e 2 GiB durante a tentativa. Fazer downloads antes da janela; manter energia,
+rede e perfil estáveis. Não executar builds ou análise interativa durante a carga.
+Os launchers podem parar os dois nós históricos conhecidos, preservando volumes;
+outros containers ativos bloqueiam a entrada. Não encerram aplicativos do operador.
+
+Cluster exclusivo `fulfillflow-scale-compare-01`; não reutilizar nomes, pastas ou
+dados de campanha existente. Diretório privado novo fora do Git contém kubeconfig,
+credenciais geradas, baseline dos três bancos e snapshots. Saída pública nova fica
+em `artifacts/`, ignorada pelo Git até revisão de distribuição. Não copiar credenciais
+históricas nem apagar arquivos/locks para repetir.
+
+### Preparar, qualificar e executar
+
+Na raiz do checkout, após definir dois caminhos novos:
+
+```powershell
+$private = Join-Path $env:LOCALAPPDATA 'FulfillFlowInfra/comparison-new'
+$output = Join-Path $PWD 'artifacts/comparison-new'
+.\scripts\Invoke-ScaleComparison.ps1 -Mode Prepare -PrivateDirectory $private -OutputDirectory $output
+# Somente após preparar e revisar a janela de medição:
+.\scripts\Invoke-ScaleComparison.ps1 -Mode Measure -PrivateDirectory $private -OutputDirectory $output
+```
+
+`Prepare` cria o ambiente dedicado, restaura/verifica o baseline e para o nó.
+`Measure` faz uma qualificação e, se aprovada, até nove tentativas. `Qualify` e
+`Execute` separam essas etapas; `All` as reúne com a preparação. Não executar
+todos esses modos em sequência: etapas concluídas não se repetem. O protocolo
+permanece em [config/scale-comparison.json](../config/scale-comparison.json).
+Guardas, critérios e encerramento estão no [DESIGN](../DESIGN.md#87-capacidade-fixa-e-adaptativa-em-kind).
+Uma saída `complete=true` não é autorização para outra carga.
+
+### Conferir a campanha histórica
+
+O coordenador de continuação é específico das fontes e marcadores originais:
+
+```powershell
+.\scripts\Invoke-ScaleContinuation.ps1 -Mode Check
+```
+
+`Check` não opera Docker nem gera carga, mas exige checkout limpo, diretório privado
+e fontes locais originais. Deve retornar `attempts_preserved=9` e `remaining=0`.
+`Execute` recusa `CAMPAIGN_ALREADY_COMPLETE`; não usá-lo para conferir o resultado.
+Para outro computador, a alternativa disponível é o reprodutor offline dos ZIPs.
+Não trocar marcadores ou copiar a qualificação para simular outro ambiente.
+
+### Ferramentas preparatórias preservadas
+
+| Ferramenta versionada | Finalidade e limite |
+| --- | --- |
+| `Invoke-ScaleCalibration.ps1` | `Check`/`Prepare`/`Calibrate`, cluster piloto `fulfillflow-scale-01`, identidade privada e destino exclusivos |
+| `Invoke-ScaleDiagnostic.ps1` | Condições fixas e diagnóstico HTTP/throttling; aceita somente perfis delimitados pelo contrato histórico |
+| `Invoke-KedaPilot.ps1` | Piloto integrado, falha da métrica sem carga e perfis identificados; não substitui o protocolo formal |
+| `review_scale_pilot.py` / `review_scale_diagnostic.py` | Leitura offline de saídas originais, sempre em destino novo |
+
+Esses programas e testes permanecem no repositório, sem dependência dos launchers
+temporários `artifacts/*.local.ps1`. Opções e protocolos anteriores estão na
+[referência preservada](https://github.com/campos-labs/fulfillflow-infra/blob/58f4483e0fdb2e5273b9b533d9173de494818a3c/k8s/README.md#calibração-de-concorrência--preparação-da-v11).
+Pilotos não entram nos denominadores da comparação. Configuração privada continua
+local e não deve ser anexada a issues, commits ou pacotes públicos.
+
+### Encerramento e evidências
+
+Esperar `JANELA ENCERRADA` e conferir resultado, host e `shutdown.json`. Ausência de
+confirmação exige reconciliar o estado antes de retomar; não matar o processo ou
+excluir o cluster como limpeza automática. Coletar evidências antes de remover o
+controlador, repor réplicas e parar o nó. Preservar volumes, resultados parciais e
+motivos de falha. As guardas não são relaxadas para favorecer uma condição.
+
+O pacote publicado contém as nove tentativas, inclusive a primeira originalmente
+fora da continuação. Credenciais e dumps permanecem privados; leitura dos pacotes
+não equivale a restauração do ambiente. Nova campanha, alteração de aplicação ou
+implantação Azure depende da [decisão de continuidade](../RELEASE_PLAN.md#4-continuidade-condicionada).

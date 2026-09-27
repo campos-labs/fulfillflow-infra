@@ -1,45 +1,45 @@
 # FulfillFlow Infra
 
-[**v1.0.0 — operação e recuperação em Kind**](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.0.0).
+Implantação, recuperação e avaliação de capacidade do FulfillFlow em Kubernetes.
+A [v1.0.0](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.0.0)
+preserva a avaliação de recuperação em Kind. A
+[v1.1.0-rc.1](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.1.0-rc.1)
+acrescenta nove tentativas de capacidade fixa/adaptativa concluídas, relatório,
+gráficos e evidências. É uma pré-release da infraestrutura.
 
-Implantação e recuperação operacional do FulfillFlow em Kubernetes. A entrega
-atual usa Kind, uma aplicação congelada e réplicas fixas. A configuração de
-referência AKS/ACR está preparada para uma extensão futura, ainda não implantada.
+| Avaliação | Resultado principal | Relatório |
+| --- | --- | --- |
+| Recuperação de configuração | Ambos os procedimentos restauraram e confirmaram o trabalho; o acionamento integrado dispensou a solicitação externa separada | [Avaliação operacional](docs/OPERATIONAL_EVALUATION.md) |
+| Capacidade fixa/adaptativa | KEDA executou 1→2→1, sem vantagem de atendimento sobre uma réplica fixa neste perfil; duas réplicas reduziram a pendência local | [Avaliação de capacidade](docs/SCALING_EVALUATION.md) |
 
-**Avaliação operacional concluída em Kind; desenvolvimento e execuções pausados.**
-Foram conferidas uma comparação de 20 tentativas e uma avaliação complementar de nove tentativas,
-tratadas separadamente. O último encerramento preservou dados e parou o laboratório.
+São duas avaliações experimentais complementares da mesma aplicação, com protocolos
+e conjuntos separados. As campanhas estão encerradas; não exigem nova carga para
+conferir os resultados. AKS/ACR permanecem referências opcionais não implantadas.
 
 ## Comece por aqui
 
 | Necessidade | Documento |
 | --- | --- |
-| Entender resultados, conclusões e suas fontes | [Avaliação operacional](docs/OPERATIONAL_EVALUATION.md) |
-| Entender arquitetura e limites da automação | [DESIGN](DESIGN.md) |
-| Consultar entregas, pendências e extensões possíveis | [RELEASE_PLAN](RELEASE_PLAN.md) |
-| Preparar ou operar o laboratório | [Guia Kubernetes](k8s/README.md#caminho-kind-local) |
-| Examinar a configuração Azure ainda não implantada | [Guia Terraform](infra/README.md) |
+| Entender método, resultados, limites e fontes | [Recuperação](docs/OPERATIONAL_EVALUATION.md) e [capacidade](docs/SCALING_EVALUATION.md) |
+| Entender arquitetura e contratos | [DESIGN](DESIGN.md) |
+| Conferir candidata e opções de continuidade | [RELEASE_PLAN](RELEASE_PLAN.md) e [nota da candidata](docs/releases/v1.1.0-rc.1.md) |
+| Preparar ou operar o laboratório | [Guia Kubernetes](k8s/README.md) |
+| Examinar a referência Azure | [Guia Terraform](infra/README.md) |
 
-## Aplicação e mecanismo avaliado
+## Aplicação e limites operacionais
 
 A referência é [FulfillFlow v1.3.0-rc.1](https://github.com/campos-labs/fulfillflow/tree/9e3a135a00db218643633c7165d3106f0c8285e1),
-commit `9e3a135a00db218643633c7165d3106f0c8285e1`. Core, Tracking e Notifications
-possuem API e worker próprios, com três bancos/roles em PostgreSQL e RabbitMQ.
-Notifications registra entrega simulada; não envia mensagens a provedores externos.
-Este repositório consome a aplicação e seus contratos, sem copiar código de negócio.
+SHA `9e3a135a00db218643633c7165d3106f0c8285e1`. Core, Tracking e Notifications têm
+API e worker próprios, com três bancos/roles PostgreSQL e RabbitMQ. Notifications
+registra entrega simulada. Este repositório consome seus contratos, sem copiar
+código de negócio ou comparar versões arquiteturais da aplicação.
 
-A ferramenta verifica revisões e oferece restauração explícita. A política
-automática confirma uma falha de inicialização do `notifications-worker`, confere
-sua identidade e restaura uma configuração conhecida. A comparação mantém
-aplicação, detector e verificador comuns às duas condições; o acionamento explícito
-é realizado por script. Os complementos observam trabalho aguardando consumo e
-abstenção diante de falha de consulta injetada. A política não reverte dados nem
-rearma trabalho `BLOCKED`.
-
-O [relatório](docs/OPERATIONAL_EVALUATION.md) distingue configuração restaurada,
-convergência do workload e conclusão funcional. Aceitação HTTP 202, pod pronto ou
-fila vazia não comprovam, isoladamente, conclusão de negócio. Os resultados não
-estimam capacidade, estabilidade prolongada, alta disponibilidade ou desempenho no AKS.
+A recuperação altera somente configuração elegível de `notifications-worker`;
+não reverte dados nem rearma `BLOCKED`. A avaliação de capacidade varia réplicas
+de `core-worker`, com nós fixos. Os mecanismos não foram exercitados conjuntamente.
+HTTP 202, ACK, fila vazia e pod pronto não comprovam conclusão de negócio. Os
+relatórios distinguem ação operacional, participação do worker e confirmação
+observada, sem inferir HA, capacidade máxima, economia financeira ou desempenho AKS.
 
 ## Validação local
 
@@ -62,18 +62,30 @@ O destino deve ser novo. Para caminhos com espaços ou execução em outro diret
 `-Kubectl` e `-Terraform` são opcionais. Essa validação também roda na CI Linux/Windows:
 testes, renderização, schemas e planos Terraform simulados. Não aplica recursos
 nem executa as séries no Kind. Os comandos operacionais estão no guia Kubernetes;
-a pausa atual não autoriza repetir as séries concluídas.
+as séries concluídas permanecem encerradas. A comparação de capacidade usa
+configuração e destinos próprios; novas cargas dependem de decisão explícita.
 
 ## Organização e evidências
 
-- `infra/`: bootstrap e ambiente Terraform; requisitos de nuvem ainda pendentes.
-- `k8s/`: manifests por fase, overlay Kind, exemplos AKS bloqueados e contratos de secrets.
-- `scripts/`, `tests/`, `config/`: operação, verificações e versões fixadas.
-- `docs/evidence/operational-a/`: seleção versionada de dados e projeções rastreáveis.
-- `artifacts/`: saída local ignorada pelo Git; não presumir acesso por link ao repositório.
+- `infra/` e `k8s/`: configuração e operação dos ambientes.
+- `scripts/`, `tests/`, `config/`: executores, verificações e versões fixadas.
+- `docs/evidence/operational-a/`: evidências preservadas da recuperação, com dois ZIPs.
+- `docs/evidence/scaling/`: três ZIPs com as nove tentativas, índices e reprodução offline.
+- `artifacts/`: originais e saídas locais ignorados pelo Git; não presumir disponibilidade por link.
 
-O [índice de evidências](docs/OPERATIONAL_EVALUATION.md#8-evidências-e-reprodução-da-leitura)
-reúne a leitura guiada e os [dois ZIPs completos](docs/evidence/operational-a/archives)
-dos conjuntos concluídos, com checksums. Pilotos e séries interrompidas permanecem
-locais, com suas exclusões documentadas. A release também reúne os dois ZIPs e
-checksums; restauração de backup independente não foi verificada.
+Os [pacotes de capacidade](docs/evidence/scaling/archives) incluem a primeira
+adaptativa originalmente fora da continuação. O [manifesto](docs/evidence/scaling/manifest.json)
+separa originais, projeções e metadados selecionados. Configurações privadas,
+credenciais, dumps e kubeconfigs não são distribuídos. Scripts dos experimentos
+ficam versionados; os ZIPs permitem ler os resultados sem recriar o laboratório.
+
+Conferência de integridade e estatísticas, sem Docker ou arquivos privados:
+
+```powershell
+python docs/evidence/scaling/reproduce.py
+```
+
+Para tabelas e figuras, consultar a [reprodução da leitura](docs/SCALING_EVALUATION.md#7-evidências-e-reprodução-da-leitura).
+Os arquivos estão versionados, com pacotes também vinculados à pré-release.
+Restauração de backup independente e reprodução das medições em outro computador
+não foram verificadas.

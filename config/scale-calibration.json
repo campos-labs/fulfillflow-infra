@@ -1,0 +1,9 @@
+{
+  "stages": [{"seconds": 15, "rate": 2}, {"seconds": 30, "rate": 8}, {"seconds": 15, "rate": 2}],
+  "http_concurrency": 8,
+  "functional_deadline_seconds": 60,
+  "observation_seconds": 120,
+  "collection_interval_seconds": 5,
+  "replicas": [1, 2],
+  "purpose": "preparatory calibration; not formal comparison or autoscaling acceptance"
+}

@@ -1,0 +1,1 @@
+{"version":1,"seed":260927,"blocks":3,"http_concurrency":32,"stages":[{"seconds":15,"rate":2},{"seconds":60,"rate":16},{"seconds":15,"rate":2}],"functional_deadline_seconds":60,"observation_seconds":120,"window_seconds":450,"collection_interval_seconds":5,"max_sampling_gap_seconds":10,"attempt_minutes":20}

@@ -1,0 +1,19 @@
+{
+  "version": "2.20.2",
+  "manifest_url": "https://github.com/kedacore/keda/releases/download/v2.20.2/keda-2.20.2-core.yaml",
+  "manifest_sha256": "0abd688d4f11f56624bca2d242064c695991465d40c4f348ab6c67f04953c543",
+  "images": {
+    "keda-operator": "ghcr.io/kedacore/keda@sha256:6c2ded1ae8ab5a6b3452e1ff64468ce76de30b2983fd7d5783719c325f806393",
+    "keda-metrics-apiserver": "ghcr.io/kedacore/keda-metrics-apiserver@sha256:3b6c694aed71a5480760062de91e53288e9b8b67d4b6c7e5eac49459e75b96d2"
+  },
+  "architecture": "linux/amd64",
+  "target_query_value": 1,
+  "eligible_age_seconds": 5,
+  "polling_seconds": 5,
+  "scale_up_stabilization_seconds": 15,
+  "scale_down_stabilization_seconds": 300,
+  "min_replicas": 1,
+  "max_replicas": 2,
+  "fault_observation_seconds": 90,
+  "post_load_observation_seconds": 360
+}

@@ -420,11 +420,20 @@ class Verifier:
             raise Failure("INVALID_LOCATION") from None
         return inbox_id, expected
 
-    def tracking(self, inbox_id: str, path: str, shipment_id: str) -> str:
+    def tracking(
+        self,
+        inbox_id: str,
+        path: str,
+        shipment_id: str,
+        *,
+        initial_record: dict[str, Any] | None = None,
+    ) -> str:
         self.phase = "tracking_observation"
         observed_event_id = None
         while True:
-            record = self.get(path)
+            # Reuse only a response from this observation; later polls always fetch anew.
+            record = initial_record if initial_record is not None else self.get(path)
+            initial_record = None
             require(
                 record.get("id") == inbox_id and record.get("external_event_id") == self.event_id
             )
@@ -480,10 +489,15 @@ class Verifier:
             "business_completed", shipment_status="DELIVERED", order_status="FULFILLED"
         )
 
-    def notifications(self, event_id: str) -> str:
+    def notifications(self, event_id: str, *, initial_record: dict[str, Any] | None = None) -> str:
         self.phase = "notifications_observation"
         while True:
-            record = self.get(f"/api/v1/notification-status/{event_id}")
+            record = (
+                initial_record
+                if initial_record is not None
+                else self.get(f"/api/v1/notification-status/{event_id}")
+            )
+            initial_record = None
             require(record.get("tracking_event_id") == event_id and record.get("required") is True)
             publication, processing = record.get("publication"), record.get("processing")
             require(publication in ("PENDING", "LEASED", "SENT", "BLOCKED"))
