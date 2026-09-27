@@ -419,7 +419,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--private", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--stage", choices=("bootstrap", "flow"))
+    parser.add_argument("--stage", choices=("bootstrap", "flow", "inspect"))
     parser.add_argument("--resume-from", type=Path)
     args = parser.parse_args()
     private, output = args.private.resolve(), args.output.resolve()
@@ -430,6 +430,10 @@ def main():
             env.bootstrap(private, output / "bootstrap")
         elif args.stage == "flow":
             flow(private, output)
+        elif args.stage == "inspect":
+            from scripts.observability_inspect import inspect_event
+
+            inspect_event(private, output)
         else:
             lock = env.ROOT / "artifacts/observability-pilot.lock"
             lock.parent.mkdir(parents=True, exist_ok=True)
