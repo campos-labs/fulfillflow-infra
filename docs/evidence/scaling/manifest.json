@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "scope": "Nine completed attempts; offline publication of existing evidence; no new load.",
-  "availability": "Prepared in the repository for candidate review; no tag or GitHub Release created.",
+  "availability": "Versioned evidence for FulfillFlow Infra v1.1.0-rc.1; release ZIP assets mirror the versioned archives.",
   "measurement_reference": "6932632ecc07afbef844f6c7483cfc71d0b5799e",
   "continuation_reference": "5ca58782aa3fd85ba3f91f3f280e96e58fafcb43",
   "application_reference": "9e3a135a00db218643633c7165d3106f0c8285e1",
@@ -268,6 +268,13 @@
       "nature": "derived",
       "sha256": "116a2f720148a643d8e9d8febc4072609f185d1e4951a6e921a26838b1efd8da",
       "method": "reproduce.py; original records inside the three block archives"
+    },
+    {
+      "path": "environment-preflight.json",
+      "nature": "original",
+      "source": "artifacts/scale-comparison-01/prepare/preflight.json",
+      "source_sha256": "d0de94db78b3fa0f5593f5d9536caa24b57a019af90f6691ace4e8d29cdf4587",
+      "sha256": "d0de94db78b3fa0f5593f5d9536caa24b57a019af90f6691ace4e8d29cdf4587"
     }
   ],
   "archives": [

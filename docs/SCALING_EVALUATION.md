@@ -2,6 +2,12 @@
 
 ## 1. Resultado e escopo
 
+A decisão operacional é se a pendência de uma etapa assíncrona justifica manter
+capacidade adicional permanentemente ou disponibilizá-la sob demanda. No FulfillFlow,
+a pendência do worker e a confirmação do fluxo completo representam fronteiras
+diferentes. A avaliação combina atendimento observado, evolução das pendências
+e tempo de manutenção das réplicas; expandir pods não constitui benefício por si só.
+
 A comparação avaliou benefícios e limites do autoescalonamento de um worker
 assíncrono, mantendo aplicação, demanda, recursos por pod e procedimento de
 observação comuns. Foram concluídas nove tentativas em Kind: três com uma réplica,
@@ -19,8 +25,8 @@ O resultado distingue **capacidade adicional, execução da política e atendime
 observado**. Não estabelece que uma réplica seja melhor em todas as dimensões nem
 que KEDA prejudique aplicações assíncronas em geral. São três tentativas por
 condição, num único host, com interrupção temporal do primeiro bloco. Resultados
-desfavoráveis permanecem no conjunto. A comparação está encerrada; a candidata
-FulfillFlow Infra `v1.1.0-rc.1` aguarda revisão, sem tag ou release publicada.
+desfavoráveis permanecem no conjunto. A comparação está encerrada e integra a
+referência FulfillFlow Infra `v1.1.0-rc.1`.
 
 ## 2. Referências e método
 
@@ -37,10 +43,24 @@ FulfillFlow Infra `v1.1.0-rc.1` aguarda revisão, sem tag ou release publicada.
 | Coleta | Locust 2.46.6 `HttpSession`, agenda aberta limitada, observador funcional, SQL/Kubernetes/kubelet e logs por pod; [dependências](../uv.lock) |
 | Protocolo | [Configuração versionada](../config/scale-comparison.json), SHA-256 `64141222163a7ec40fdf913cf99bdfb79da7c26dbfa0d0d673609f0d805076de` |
 
-O SHA da futura tag identifica a consolidação, não substitui as referências
+O SHA da tag identifica a consolidação, não substitui as referências
 executadas. A CI verifica código e configuração; as nove tentativas foram locais.
 Contratos estão no [DESIGN](../DESIGN.md#87-capacidade-fixa-e-adaptativa-em-kind);
 comandos, no [guia Kubernetes](../k8s/README.md#comparação-de-capacidade-fixa-e-adaptativa).
+
+### Caracterização preservada do equipamento
+
+| Registro histórico | Caracterização disponível |
+| --- | --- |
+| [Preflight do preparo](evidence/scaling/environment-preflight.json) | Docker informou 12 CPUs lógicas e 8.165.457.920 bytes de memória (7,605 GiB), cgroup v1 |
+| `measurement/series.jsonl` das nove tentativas | `instrument.host_total_bytes` registrou 16.847.921.152 bytes (15,691 GiB) de memória total visível ao Windows em todas as amostras |
+| Limites não preservados nesses registros | Modelo da CPU, núcleos físicos, RAM nominal instalada, configuração de limites de Docker/WSL e capacidade/allocatable Kubernetes não foram registrados integralmente |
+
+A capacidade informada pelo Docker no preparo não comprova reserva exclusiva nem
+configuração invariável durante a campanha. A memória do Windows é a visível ao
+sistema, não a memória livre ou a RAM nominal dos módulos. As séries preservam
+recursos do nó e memória disponível durante cada tentativa; não substituem os
+parâmetros ausentes. Nenhuma consulta atual foi usada para preencher essas lacunas.
 
 ### Condições, preparação e medidas
 
@@ -70,6 +90,18 @@ Order e Notifications `SIMULATED`, com efeitos únicos. Esta última condição 
 representa entrega externa. Aceite HTTP 202, ACK, fila vazia e Ready não substituem
 essas verificações. O tempo até confirmação inclui agendamento, polling, transporte
 e validações do observador; não é tempo puro de processamento.
+
+Uma resposta inesperada a GET, incluindo 503, é registrada e produz
+`observation_error` naquele ciclo. O observador volta a consultar o mesmo evento
+dentro da janela de observação, sem reenviar o webhook; uma confirmação posterior
+pode encerrar sua observação, preservando o erro no histórico HTTP. Um erro de
+consulta recuperado não invalida automaticamente a tentativa. Falhas de coleta,
+oferta, atribuição, métrica ou condições do host têm critérios próprios de validade;
+tardios, pendências e inconclusões são resultados, não motivos para repetir até
+aprovar. Essa é a regra executada em
+[`observe` e no ciclo de coleta](https://github.com/campos-labs/fulfillflow-infra/blob/6932632ecc07afbef844f6c7483cfc71d0b5799e/scripts/scale_calibration.py#L110)
+e em [`judge`](https://github.com/campos-labs/fulfillflow-infra/blob/6932632ecc07afbef844f6c7483cfc71d0b5799e/scripts/scale_comparison.py#L330),
+sem alteração retrospectiva dos critérios.
 
 Pod-tempo integra, em degraus, **pods existentes do worker**, incluindo os em
 encerramento, nas amostras de uma janela comum. Running, Ready e réplicas desejadas
@@ -162,10 +194,11 @@ ainda podia atender trabalho acumulado, portanto não é todo declarado ocioso.
 A proporção depende da janela e da estabilização adotadas. A redução após o trabalho
 terminar não testa retirada de pod enquanto processa uma mensagem.
 
-Marcos de escala próximos coexistiram com 354, sete e zero confirmações tardias.
-Logo, o momento da expansão, isoladamente, não explica toda a variação. Leituras do
-HPA, inventário e SQL são não atômicas: as figuras não decompõem exatamente atrasos
-de detecção, decisão, inicialização e processamento.
+Os marcos de expansão foram próximos, apesar das 354, sete e zero confirmações
+tardias. Esses registros, isoladamente, não permitem atribuir essa variação ao
+tempo de reação do controlador. Leituras do HPA, inventário e SQL são não atômicas:
+as figuras não decompõem exatamente atrasos de detecção, decisão, inicialização
+e processamento.
 
 ## 5. Validade, sensibilidade e preparação
 

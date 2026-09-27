@@ -1,0 +1,7 @@
+{
+  "cpus": 12,
+  "memory_bytes": 8165457920,
+  "cgroup": "1",
+  "application_sha": "9e3a135a00db218643633c7165d3106f0c8285e1",
+  "image_id": "sha256:582a858debe2ff64d481e810b2d5ae5a1aba6a669516bca36a15eb12e77ec072"
+}

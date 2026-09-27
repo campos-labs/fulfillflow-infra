@@ -2,9 +2,10 @@
 
 Implantação, recuperação e avaliação de capacidade do FulfillFlow em Kubernetes.
 A [v1.0.0](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.0.0)
-preserva a avaliação de recuperação em Kind. A **candidata v1.1.0-rc.1 está preparada
-para revisão**, com nove tentativas de capacidade fixa/adaptativa concluídas,
-relatório, gráficos e evidências; tag e release ainda não publicadas.
+preserva a avaliação de recuperação em Kind. A
+[v1.1.0-rc.1](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.1.0-rc.1)
+acrescenta nove tentativas de capacidade fixa/adaptativa concluídas, relatório,
+gráficos e evidências. É uma pré-release da infraestrutura.
 
 | Avaliação | Resultado principal | Relatório |
 | --- | --- | --- |
@@ -85,6 +86,6 @@ python docs/evidence/scaling/reproduce.py
 ```
 
 Para tabelas e figuras, consultar a [reprodução da leitura](docs/SCALING_EVALUATION.md#7-evidências-e-reprodução-da-leitura).
-Os arquivos estão preparados na branch para revisão. A release de capacidade
-ainda depende de confirmação; restauração de backup independente e reprodução
-das medições em outro computador não foram verificadas.
+Os arquivos estão versionados, com pacotes também vinculados à pré-release.
+Restauração de backup independente e reprodução das medições em outro computador
+não foram verificadas.

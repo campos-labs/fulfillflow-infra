@@ -2,10 +2,10 @@
 
 ## 1. Estado atual
 
-**Comparação de capacidade fixa e adaptativa concluída; consolidação da candidata
-`v1.1.0-rc.1` preparada para revisão.** Branch `feature/v1.1-autoscaling-kind`.
-Nenhuma nova tag ou GitHub Release foi criada. A publicação e o merge aguardam
-confirmação após leitura dos documentos e conferência dos pacotes.
+**Comparação de capacidade fixa e adaptativa concluída e consolidada na
+v1.1.0-rc.1.** O fechamento integra `feature/v1.1-autoscaling-kind` à `main`.
+A [página da pré-release](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.1.0-rc.1)
+identifica tag, commit e anexos; as referências medidas permanecem no relatório.
 
 As nove tentativas foram preservadas, incluindo a primeira adaptativa da sessão
 interrompida. A continuação terminou com zero posições pendentes. Não há nova
@@ -19,7 +19,7 @@ leitura. A imagem, o código da aplicação e o instrumento medido permanecem co
 | Referência | Entrega e situação |
 | --- | --- |
 | [v1.0.0](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.0.0) | Recuperação operacional em Kind; [relatório e evidências](docs/OPERATIONAL_EVALUATION.md) preservados |
-| Candidata v1.1.0-rc.1 | Capacidade fixa/adaptativa, scripts versionados, comparação concluída, gráficos e três pacotes para revisão |
+| [v1.1.0-rc.1](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.1.0-rc.1) | Pré-release de capacidade fixa/adaptativa, scripts versionados, comparação concluída, gráficos e três pacotes |
 | Aplicação consumida | FulfillFlow v1.3.0-rc.1, SHA `9e3a135a00db218643633c7165d3106f0c8285e1`; nenhuma alteração neste fechamento |
 | Azure | Terraform e exemplos AKS/ACR são referências ainda não implantadas; não condicionam o aceite local |
 
@@ -28,25 +28,25 @@ arquitetura. O guia `k8s/README.md` reúne pré-requisitos e comandos. Os relat�
 registram métodos executados, resultados e respectivas evidências. Este documento
 acompanha estado de entrega e decisões futuras, sem duplicar as tabelas analíticas.
 
-## 3. Revisão da candidata
+## 3. Fechamento e verificação
 
-- Conferir o [relatório](docs/SCALING_EVALUATION.md), incluindo as nove tentativas,
-  a interrupção do bloco 1 e a leitura dos blocos contínuos, sem excluir tardios.
-- Conferir os [três pacotes e checksums](docs/evidence/scaling/archives), o
-  [manifesto](docs/evidence/scaling/manifest.json) e a reprodução offline. A
-  qualificação tem seleção de metadados; não é apresentada como pacote bruto integral.
-- Conferir a distinção entre protocolo/SHAs medidos e commit de consolidação;
-  scripts de execução permanecem em `scripts/`, sem depender de launchers `.local.ps1`.
-- Registrar validação da documentação e do reprodutor, revisão visual e inspeção
-  de conteúdo publicável. Conferir CI da referência antes da eventual publicação;
-  CI não executa a comparação no Kind.
-- Depois do aceite explícito, criar `v1.1.0-rc.1` no commit conferido e publicar a
-  release com os mesmos três ZIPs e seus checksums. Revisar antes de integrar a branch.
+O [relatório](docs/SCALING_EVALUATION.md) preserva as nove tentativas, a interrupção
+do bloco 1 e a análise dos blocos contínuos. Os
+[três pacotes e checksums](docs/evidence/scaling/archives) e o
+[manifesto](docs/evidence/scaling/manifest.json) permitem reprodução offline;
+a qualificação tem seleção identificada de metadados. Scripts permanecem em
+`scripts/`, sem depender de launchers `.local.ps1`.
 
-A [nota da candidata](docs/releases/v1.1.0-rc.1.md) está preparada para essa etapa;
-não é registro de uma release já publicada. A versão identifica a infraestrutura,
-independentemente da numeração da aplicação. Não mover tags nem substituir pacotes
-publicados. Uma correção posterior deve ter identidade própria.
+O fechamento inclui revisão visual, inspeção do conteúdo publicável, testes e
+checagem de integridade das evidências. A CI Linux/Windows verifica código,
+documentos, reprodução offline, schemas e planos Terraform simulados; não executa
+a comparação no Kind. Os resultados de CI ficam vinculados ao commit no GitHub.
+
+A [nota da versão](docs/releases/v1.1.0-rc.1.md) resume entrega e limites.
+A tag identifica a consolidação; `6932632` identifica o instrumento medido e
+`5ca5878`, o coordenador da continuação. Os anexos da release são cópias exatas
+dos ZIPs versionados, sem recompactação. Não mover tags nem substituir pacotes
+publicados: uma correção posterior deve ter identidade própria.
 
 <a id="3-extensões-possíveis"></a>
 
