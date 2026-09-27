@@ -1,0 +1,8 @@
+{
+  "historical_deployment_specs_unchanged": true,
+  "historical_deployments_checked": [
+    "core",
+    "tracking"
+  ],
+  "diagnostic_replicas_requested": 0
+}

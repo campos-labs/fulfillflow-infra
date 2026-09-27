@@ -19,8 +19,9 @@ conferir os resultados. AKS/ACR permanecem referências opcionais não implantad
 A branch `feature/v1.2-observability` consolidou dois casos diagnósticos usando
 correlação existente, sem tracing. O [índice técnico e evidências](docs/evidence/observability/README.md)
 reúne cobertura, limites, registros examináveis e conferência offline. O
-[plano](RELEASE_PLAN.md#4-exploração-de-observabilidade) registra a preparação de uma fatia
-HTTP interna com SDK em referência isolada. O [guia](k8s/README.md#diagnóstico-http-com-tracing)
+[plano](RELEASE_PLAN.md#4-exploração-de-observabilidade) registra uma fatia
+HTTP concluída com SDK em referência isolada: consulta funcional e quatro spans
+correlacionados, sem medição de overhead. O [guia](k8s/README.md#diagnóstico-http-com-tracing)
 orienta a consulta única; os casos concluídos não exigem nova execução.
 
 

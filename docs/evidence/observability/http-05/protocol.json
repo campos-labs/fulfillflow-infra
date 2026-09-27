@@ -1,0 +1,52 @@
+{
+  "utc": "2026-09-27T20:21:53.697891+00:00",
+  "run_id": "ae9fff481677462787040b98106f706b",
+  "entry": {
+    "utc": "2026-09-27T20:21:53.548024+00:00",
+    "available_gib": 5.000709533691406,
+    "required_gib": 5,
+    "power_plugged": true
+  },
+  "runtime": {
+    "application_sha": "045e1ca8629409b6abdf2829ef5c93d14cfb60d9",
+    "base_application_sha": "9e3a135a00db218643633c7165d3106f0c8285e1",
+    "application_branch": "codex/v1.3-http-observability",
+    "image": "fulfillflow-httpdiag:source-045e1ca",
+    "image_id": "sha256:aaf3cb4c23800819a8b56dc9710b3ac10e7541a21eac30e63d934f1a48030e34",
+    "runtime_config": "sha256:6b3259b2ced7af17667fc0e1d0dfe19e902713e66c123539ffc603cdc3ebfa14",
+    "dependency_lock_sha256": "766d622c90c5e15c337e7834212c4ee57db792f4742ac34846f8cebd6bbcf04c",
+    "otel_sdk": "1.45.0",
+    "query_count": 1,
+    "business_writes": 0,
+    "cluster": "fulfillflow-observe-01",
+    "namespace": "fulfillflow",
+    "memory_entry_gib": 5,
+    "memory_runtime_gib": 2,
+    "deadline_seconds": 600,
+    "verification_sha": "045e1ca8629409b6abdf2829ef5c93d14cfb60d9",
+    "ci_run": 36342972254
+  },
+  "application_ci": {
+    "conclusion": "success",
+    "headSha": "045e1ca8629409b6abdf2829ef5c93d14cfb60d9",
+    "status": "completed",
+    "url": "https://github.com/campos-labs/fulfillflow/actions/runs/36342972254"
+  },
+  "infrastructure_sha": "d911bc736fbb557641afe077f4a74a3aa95cc012",
+  "namespace_uid": "264fe404-8d5d-467b-b10e-194ae48c5995",
+  "query_count": 1,
+  "preparation_health_checks": {
+    "paths": 3,
+    "maximum_rounds": 3,
+    "business_query_retries": 0
+  },
+  "business_writes": 0,
+  "deadline_seconds": 600,
+  "event_id": "infra-smoke-53cec0ca-6357-43f5-85f6-c0b08d664a20",
+  "scripts": {
+    "http_trace_pilot.py": "cf801b9c4de5f3e6acfa2ffb03db923a03d719a92ca83ab359d22c72ff438ac1",
+    "http_trace_contract.py": "6c776ad42eff62bae00ab5e576004ca4026226d726bb875f36d1b1177eff98cb",
+    "http_trace_receiver.py": "ff6d6cb76ee7d9ab189530466312d3d621357eb6cea29d43b121e136f0f9fc92",
+    "http_trace_observer.py": "872c5c5224db72f5383ab6b4293237ffcac53cbe8735efb62b611e1b5b1589f4"
+  }
+}

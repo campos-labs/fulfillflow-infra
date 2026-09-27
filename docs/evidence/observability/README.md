@@ -1,6 +1,6 @@
 # Correlação e limites da observação
 
-Dois casos diagnósticos em Kind, sobre FulfillFlow `v1.3.0-rc.1`
+Na primeira etapa, dois casos diagnósticos em Kind, sobre FulfillFlow `v1.3.0-rc.1`
 (`9e3a135a00db218643633c7165d3106f0c8285e1`), confirmaram a ligação entre
 estados públicos e registros dos três workers. Não houve instalação de OpenTelemetry
 ou alteração da aplicação. A contribuição é reconstruir o caminho e delimitar a
@@ -114,4 +114,41 @@ diagnóstica delimitada. Não repetir para obter números melhores ou declarar
 superioridade de uma ferramenta que não foi utilizada. Uma extensão deve acrescentar
 informação sobre outra fronteira, com nova referência quando modificar o runtime.
 O [plano](../../../RELEASE_PLAN.md#4-exploração-de-observabilidade) define a lacuna
-HTTP interna e os critérios da próxima fatia; não há nova campanha ou nuvem implícita.
+HTTP interna, concluída abaixo, e os critérios para eventual continuidade;
+não há nova campanha ou nuvem implícita.
+
+
+## Fatia HTTP com OpenTelemetry
+
+Uma nova referência da aplicação (`045e1ca`, derivada da v1.3 congelada) instrumentou
+somente a consulta pública de eventos e seu forwarding para Tracking. A execução
+[HTTP 05](http-05/) utilizou um evento já persistido, sem novo webhook ou escrita de
+negócio, após verificar os três caminhos de saúde. O executor foi `d911bc7`.
+
+| Conferência | Resultado | Fonte |
+| --- | --- | --- |
+| Resultado público independente | 200, `PROCESSED` / `COMPLETED`, nove verificações aprovadas | [functional.json](http-05/functional.json) |
+| Contexto distribuído | Quatro spans: observador → Core servidor → Core cliente → Tracking servidor | [trace-records.json](http-05/trace-records.json) |
+| Cobertura e parentela | Quatro papéis e ligações conferidos; três lotes aceitos, zero rejeitados | [review.json](http-05/review.json) e traces |
+| Preparação e encerramento | Caminhos de saúde 200, specs históricos preservados, nó parado | [peer-health](http-05/peer-health.json), [preservation](http-05/preservation.json), [summary](http-05/summary.json) |
+| Custo da instrumentação | Não medido; API de métricas indisponível | [resources.json](http-05/resources.json) |
+
+O observador registrou cerca de 152 ms; Core servidor 63,6 ms, cliente interno
+45,6 ms e Tracking servidor 42,3 ms. São intervalos aninhados de uma única consulta:
+não somar nem subtrair para atribuir causalmente o restante a rede, banco ou overhead.
+Os spans não medem commits ou processamento dos workers, nem cobrem as consultas de
+metadados que Tracking faz ao Core. Não houve comparação com runtime sem instrumentação.
+
+O ganho demonstrado é localizar fronteiras antes agregadas na duração total. Nas
+tentativas preparatórias, a captura distinguiu resposta remota 503 e erro de transporte
+no cliente Core. Isso não determina causas dos 503 antigos ou demonstra superioridade
+geral do diagnóstico. A tentativa 04 respondeu 200, mas o verificador exigia o status
+inexistente `APPLIED`; corrigiu-se a asserção para o contrato da inbox e executou-se
+05. Os dados anteriores não foram alterados ou retroativamente aprovados.
+
+Os oito arquivos têm bytes preservados e [SHA-256 próprios](http-05/manifest.json).
+[protocol.json](http-05/protocol.json) identifica código, imagem, dependências e guardas.
+A revisão foi reproduzida offline com `scripts.http_trace_contract.verify_trace`;
+a conferência dos dois casos de workers acima permanece separada. Imagem, bancos,
+segredos e séries completas do host não integram esta seleção. Pausa antes de escolher
+uma perturbação adicional; não repetir a consulta saudável apenas para obter outro tempo.

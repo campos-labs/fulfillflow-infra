@@ -7,11 +7,11 @@ a partir de `v1.1.0-rc.1` (`92089b8`). Descoberta offline e dois casos diagnóst
 integrados estão concluídos: fluxo saudável e trabalho publicado aguardando consumo.
 O [índice técnico e registros publicados](docs/evidence/observability/README.md)
 permitem conferir cobertura e limites sem depender dos artefatos locais selecionados.
-Nó parado. A tentativa `observability-http-04` respondeu 200 e capturou quatro spans,
-mas foi reprovada por uma asserção incorreta do observador (`APPLIED` como status da
-inbox). A correção usa o contrato `PROCESSED` / `COMPLETED` e identidades conhecidas;
-a sucessora `observability-http-05` está preparada. As tentativas anteriores não
-são reclassificadas. Sem nova campanha, merge ou release v1.2.
+Nó parado. **Fatia HTTP saudável concluída** em `observability-http-05`: uma consulta
+200, nove conferências funcionais aprovadas e quatro spans ligados corretamente.
+[Registros e limites](docs/evidence/observability/README.md#fatia-http-com-opentelemetry)
+estão publicados. A pausa ocorre antes de escolher uma perturbação adicional; não
+há nova carga, AKS, merge ou release v1.2. As tentativas anteriores permanecem intactas.
 
 **Comparação de capacidade fixa e adaptativa concluída e consolidada na
 v1.1.0-rc.1.** O fechamento integra `feature/v1.1-autoscaling-kind` à `main`.
@@ -82,7 +82,7 @@ carga adicional para confirmá-los. A coleta atual não mede overhead causal ou
 tracing distribuído, nem resolve os 503 históricos. Scripts permanecem versionados;
 claims e diretórios existentes não devem ser apagados para forçar novo ensaio.
 
-### Fatia HTTP: captura correlacionada, correção do retorno ao Core
+### Fatia HTTP: captura saudável concluída
 
 **Pergunta:** qual trecho de uma chamada conseguimos localizar que antes aparecia
 somente como duração total ou `SERVICE_UNAVAILABLE`? Primeiro, um GET saudável
@@ -223,6 +223,23 @@ e ausência de código de erro. Preservar cada conferência como booleano indepe
 dos spans, sem copiar o corpo completo. Testes rejeitam `APPLIED` como status, identidades
 divergentes, trabalho pendente e erro. A tentativa 04 mantém o veredito original:
 a resposta integral não foi preservada e não pode ser revalidada retrospectivamente.
+
+**Fechamento 05:** execução direta após liberação pontual de cache Linux, com todos
+os containers parados antes da preparação e guarda de 5 GiB preservada. Um GET 200,
+`PROCESSED` / `COMPLETED`, identidades e ausência de erro conferidos independentemente.
+Quatro spans, parentela válida, três lotes aceitos e zero rejeitados. O observador
+registrou aproximadamente 152 ms nesta consulta; não é benchmark ou medição de
+latência de processamento assíncrono. Métricas de pods indisponíveis; overhead não
+medido. Clones em zero réplicas, specs históricos intactos e nó parado.
+
+Os [oito registros selecionados e manifesto](docs/evidence/observability/http-05/)
+são cópias exatas, pequenas e examináveis no GitHub. A releitura offline reproduziu
+`review.json` a partir dos spans e do resultado funcional; os hashes foram conferidos.
+319 testes, lint e formatação passaram antes da execução. A nova capacidade distingue
+uma resposta remota de um erro de transporte no hop instrumentado, sem diagnosticar
+a exceção dentro de Tracking ou explicar os 503 das campanhas antigas. Encerrar a
+fatia saudável; escolher uma perturbação controlada somente se houver uma pergunta
+que demande evidência além dessa cobertura.
 
 **Aceite da fatia:** identificar a mesma chamada nas fronteiras instrumentadas,
 confrontar resposta pública, relatar marcos ausentes e saúde da exportação. Medir

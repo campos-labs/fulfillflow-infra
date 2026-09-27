@@ -1,0 +1,27 @@
+{
+  "rounds": [
+    {
+      "utc": "2026-09-27T20:22:50.368006+00:00",
+      "paths": [
+        {
+          "source": "httpdiag-sink",
+          "target": "httpdiag-core",
+          "status": 200,
+          "error": null
+        },
+        {
+          "source": "httpdiag-core",
+          "target": "httpdiag-tracking",
+          "status": 200,
+          "error": null
+        },
+        {
+          "source": "httpdiag-tracking",
+          "target": "httpdiag-core",
+          "status": 200,
+          "error": null
+        }
+      ]
+    }
+  ]
+}
