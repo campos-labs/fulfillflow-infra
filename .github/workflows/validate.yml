@@ -2,7 +2,7 @@ name: Validate infrastructure preparation
 
 on:
   push:
-    branches: [main, feature/v1.1-autoscaling-kind]
+    branches: [main, feature/v1.1-autoscaling-kind, feature/v1.2-observability]
   workflow_dispatch:
 
 permissions:
@@ -54,6 +54,22 @@ jobs:
           uv run --frozen ruff format --check docs/evidence/scaling/reproduce.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           uv run --frozen python docs/evidence/scaling/reproduce.py
+          exit $LASTEXITCODE
+      - name: Verify published observability records
+        shell: pwsh
+        run: |
+          uv run --frozen ruff check docs/evidence/observability/reproduce.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          uv run --frozen ruff format --check docs/evidence/observability/reproduce.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          uv run --frozen python docs/evidence/observability/reproduce.py
+          exit $LASTEXITCODE
+      - name: Reproduce observability discovery without cluster access
+        shell: pwsh
+        run: |
+          uv run --frozen python scripts/observability_discovery.py --output artifacts/observability-discovery.json
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          uv run --frozen python -c "import json; from pathlib import Path; actual=json.loads(Path('artifacts/observability-discovery.json').read_bytes()); expected=json.loads(Path('docs/evidence/observability/discovery-01.json').read_bytes()); assert actual == expected, 'Observability discovery differs from published summary'"
           exit $LASTEXITCODE
       - name: Render, schema validation and Terraform mock plans
         shell: pwsh

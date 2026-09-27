@@ -1,0 +1,97 @@
+{
+  "source_directory": "artifacts/observability-http-fault-03",
+  "infrastructure_sha": "416aef7ecd1002ee0be1e9caadf19bf2f6ea83c2",
+  "files": [
+    {
+      "path": "protocol.json",
+      "bytes": 2319,
+      "sha256": "54c35a3b5dd1a711dcb10c72968f05652b682d4cb49b2b3cff46e4409183467f"
+    },
+    {
+      "path": "injection.json",
+      "bytes": 448,
+      "sha256": "dd563124b6af6d556311aba5ce97f87d91140fe9cdc7992d3766b6301794485a"
+    },
+    {
+      "path": "restoration.json",
+      "bytes": 148,
+      "sha256": "25b32dd6f913fa505ae74fc447edc10e24423d81ef9be2863406f071654db06c"
+    },
+    {
+      "path": "restored-pod.json",
+      "bytes": 114,
+      "sha256": "18b043e93018307ce4fd18e072dca738f2d1028bb2b019adc6445a6c3f3b634d"
+    },
+    {
+      "path": "restored-endpoints.json",
+      "bytes": 72,
+      "sha256": "8de401d8964ba60bd9e47cf483b607c758386cddecc1a474cc6ff9424475cc2e"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 154,
+      "sha256": "aea530d3817f972583f8a4fa0d62b0b48e934f5cf6383eee3e24eb3c66699e9a"
+    },
+    {
+      "path": "preservation.json",
+      "bytes": 160,
+      "sha256": "ceb65631bbc929b1cf49643c36acb7aa9236798bda66d466d0c24615a272a289"
+    },
+    {
+      "path": "resources.json",
+      "bytes": 101,
+      "sha256": "418c1983366ab87aefe6178deb5d0810b1d5b8fd5d9acf163978b84f3fa1c685"
+    },
+    {
+      "path": "review.json",
+      "bytes": 552,
+      "sha256": "05cd9c8458aae60374b38c71d27d6bf5330722f17b225b6edbafa9e849ad2eaa"
+    },
+    {
+      "path": "before/functional.json",
+      "bytes": 838,
+      "sha256": "d4ad173ce7925c967e7fdf7db6c1b5a86c1d716da90d65fc7a55ad481d8e185c"
+    },
+    {
+      "path": "before/trace-records.json",
+      "bytes": 2881,
+      "sha256": "c499186df3f3803bde0962a3ae171a87c1c17cfb5d0722c4362c6756b4c56bb3"
+    },
+    {
+      "path": "before/review.json",
+      "bytes": 500,
+      "sha256": "7ae53a867c98f57e990c70de02c8a41a7e908543f26df283fdc46fd8fd10199f"
+    },
+    {
+      "path": "fault/functional.json",
+      "bytes": 332,
+      "sha256": "ea7f121c6a120327146ae3eef3b81a3f50ee9fb4b81c1a2800694f21db264257"
+    },
+    {
+      "path": "fault/trace-records.json",
+      "bytes": 4822,
+      "sha256": "7a24b8d61db545c13d94d7f45dc34b4623200f58b95e29e98d1efe53f158b850"
+    },
+    {
+      "path": "fault/review.json",
+      "bytes": 291,
+      "sha256": "2ad22710b0454d46138512660c130400404bc198e2e2ad7ad639ed2e3c7dff71"
+    },
+    {
+      "path": "after/functional.json",
+      "bytes": 839,
+      "sha256": "36141ff6fc1d1e728a476b13d57919a7bead5a26e0553619dca78fc44438bec4"
+    },
+    {
+      "path": "after/trace-records.json",
+      "bytes": 7631,
+      "sha256": "0a6ff15a2c94eb2e756d39c812aa8f1193a761aeaa90b617f3e13fe825773698"
+    },
+    {
+      "path": "after/review.json",
+      "bytes": 499,
+      "sha256": "7c4db4741e05ef5e1ca609cf4d7e71cd1726aaf7b22c03a5ff33d5566258116b"
+    }
+  ],
+  "excluded": "Private configuration, images, databases and complete host/startup series remain local."
+}

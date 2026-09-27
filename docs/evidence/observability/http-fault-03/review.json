@@ -1,0 +1,18 @@
+{
+  "complete": true,
+  "query_count": 3,
+  "business_writes": 0,
+  "expected_http_statuses": [
+    200,
+    503,
+    200
+  ],
+  "independent_restoration": true,
+  "state_evidence": "same completed event confirmed before and after; inconclusive during",
+  "diagnostic_value": "transport failure located at Core client while business result remains independently confirmed before/after",
+  "limits": [
+    "Not processing during outage",
+    "No SQL or metadata-call spans",
+    "No historical incident attribution or causal overhead measurement"
+  ]
+}

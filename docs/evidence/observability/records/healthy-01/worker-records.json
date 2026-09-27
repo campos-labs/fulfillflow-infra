@@ -1,0 +1,155 @@
+{
+  "core-worker": {
+    "pod": {
+      "name": "core-worker-cc74b4dbd-2sdkw",
+      "uid": "939b3ecc-e557-46eb-beec-f72dd7bff0b5",
+      "restart_count": 4
+    },
+    "records": [
+      {
+        "message_id": "00171f67-ab0b-4ba9-b258-3ec7b787835b",
+        "category": null,
+        "service": "core",
+        "request_id": "7d48d324-3d54-4726-a632-9c5b6e9ef155",
+        "correlation_id": "3c622aa2-d1f1-4e13-aa03-9eabe1e7e757",
+        "event_id": "5cea84e6-61a3-5f91-8fd3-7d9226e44186",
+        "stage": "receive",
+        "outcome": "PERSISTED",
+        "duration_ms": 5.942,
+        "timestamp": "2026-09-27T10:37:04.104373+00:00"
+      },
+      {
+        "message_id": "00171f67-ab0b-4ba9-b258-3ec7b787835b",
+        "category": null,
+        "service": "core",
+        "request_id": "7d48d324-3d54-4726-a632-9c5b6e9ef155",
+        "correlation_id": "3c622aa2-d1f1-4e13-aa03-9eabe1e7e757",
+        "event_id": "5cea84e6-61a3-5f91-8fd3-7d9226e44186",
+        "stage": "process",
+        "outcome": "DONE",
+        "generation": 0,
+        "attempts": 1,
+        "duration_ms": 31.666,
+        "timestamp": "2026-09-27T10:37:04.305053+00:00"
+      },
+      {
+        "message_id": "2f7dac2a-b8f5-4c47-ac2e-60ff1e3fd1f9",
+        "category": null,
+        "service": "core",
+        "request_id": "7d48d324-3d54-4726-a632-9c5b6e9ef155",
+        "correlation_id": "3c622aa2-d1f1-4e13-aa03-9eabe1e7e757",
+        "event_id": "5cea84e6-61a3-5f91-8fd3-7d9226e44186",
+        "stage": "publish",
+        "outcome": "SENT",
+        "generation": 0,
+        "attempts": 1,
+        "duration_ms": 7.887,
+        "timestamp": "2026-09-27T10:37:04.589142+00:00"
+      },
+      {
+        "message_id": "6cb8c199-edcf-49ce-99f8-29316849c4de",
+        "category": null,
+        "service": "core",
+        "request_id": "7d48d324-3d54-4726-a632-9c5b6e9ef155",
+        "correlation_id": "3c622aa2-d1f1-4e13-aa03-9eabe1e7e757",
+        "event_id": "5cea84e6-61a3-5f91-8fd3-7d9226e44186",
+        "stage": "publish_notifications",
+        "outcome": "SENT",
+        "generation": 0,
+        "attempts": 1,
+        "duration_ms": 5.242,
+        "timestamp": "2026-09-27T10:37:04.701237+00:00"
+      }
+    ],
+    "ignored_lines": 0,
+    "raw_logs_retained": false
+  },
+  "tracking-worker": {
+    "pod": {
+      "name": "tracking-worker-564c9d469d-j47rq",
+      "uid": "dfa8955e-7ff0-46cb-b3cc-681a92238477",
+      "restart_count": 4
+    },
+    "records": [
+      {
+        "message_id": "00171f67-ab0b-4ba9-b258-3ec7b787835b",
+        "category": null,
+        "service": "tracking",
+        "request_id": "7d48d324-3d54-4726-a632-9c5b6e9ef155",
+        "correlation_id": "3c622aa2-d1f1-4e13-aa03-9eabe1e7e757",
+        "event_id": "5cea84e6-61a3-5f91-8fd3-7d9226e44186",
+        "stage": "publish",
+        "outcome": "SENT",
+        "generation": 0,
+        "attempts": 1,
+        "duration_ms": 5.929,
+        "timestamp": "2026-09-27T10:37:04.102527+00:00"
+      },
+      {
+        "message_id": "2f7dac2a-b8f5-4c47-ac2e-60ff1e3fd1f9",
+        "category": null,
+        "service": "tracking",
+        "request_id": "7d48d324-3d54-4726-a632-9c5b6e9ef155",
+        "correlation_id": "3c622aa2-d1f1-4e13-aa03-9eabe1e7e757",
+        "event_id": "5cea84e6-61a3-5f91-8fd3-7d9226e44186",
+        "stage": "receive",
+        "outcome": "PERSISTED",
+        "duration_ms": 6.806,
+        "timestamp": "2026-09-27T10:37:04.590275+00:00"
+      },
+      {
+        "message_id": "2f7dac2a-b8f5-4c47-ac2e-60ff1e3fd1f9",
+        "category": null,
+        "service": "tracking",
+        "request_id": "7d48d324-3d54-4726-a632-9c5b6e9ef155",
+        "correlation_id": "3c622aa2-d1f1-4e13-aa03-9eabe1e7e757",
+        "event_id": "5cea84e6-61a3-5f91-8fd3-7d9226e44186",
+        "stage": "process",
+        "outcome": "DONE",
+        "generation": 0,
+        "attempts": 1,
+        "duration_ms": 14.989,
+        "timestamp": "2026-09-27T10:37:05.021531+00:00"
+      }
+    ],
+    "ignored_lines": 0,
+    "raw_logs_retained": false
+  },
+  "notifications-worker": {
+    "pod": {
+      "name": "notifications-worker-77544c67d4-95sgt",
+      "uid": "5d6e452f-376e-4c7f-ad4e-3b6ec7474c88",
+      "restart_count": 4
+    },
+    "records": [
+      {
+        "message_id": "6cb8c199-edcf-49ce-99f8-29316849c4de",
+        "category": null,
+        "service": "notifications",
+        "request_id": "7d48d324-3d54-4726-a632-9c5b6e9ef155",
+        "correlation_id": "3c622aa2-d1f1-4e13-aa03-9eabe1e7e757",
+        "event_id": "5cea84e6-61a3-5f91-8fd3-7d9226e44186",
+        "stage": "receive",
+        "outcome": "PERSISTED",
+        "duration_ms": 6.04,
+        "timestamp": "2026-09-27T10:37:04.703970+00:00"
+      },
+      {
+        "message_id": "6cb8c199-edcf-49ce-99f8-29316849c4de",
+        "category": null,
+        "service": "notifications",
+        "request_id": "7d48d324-3d54-4726-a632-9c5b6e9ef155",
+        "correlation_id": "3c622aa2-d1f1-4e13-aa03-9eabe1e7e757",
+        "event_id": "5cea84e6-61a3-5f91-8fd3-7d9226e44186",
+        "stage": "process",
+        "outcome": "DONE",
+        "generation": 0,
+        "attempts": 1,
+        "duration_ms": 14.498,
+        "timestamp": "2026-09-27T10:37:04.998575+00:00"
+      }
+    ],
+    "ignored_lines": 0,
+    "raw_logs_retained": false
+  }
+}

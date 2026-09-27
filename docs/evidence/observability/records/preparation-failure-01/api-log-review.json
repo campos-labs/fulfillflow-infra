@@ -1,0 +1,57 @@
+{
+  "selection": "core/tracking access and startup records, 10:48:30..10:49:00 UTC",
+  "records": [
+    {
+      "utc": "2026-09-27T10:48:53.70423583Z",
+      "service": "core",
+      "event": "startup_complete"
+    },
+    {
+      "utc": "2026-09-27T10:48:55.759541194Z",
+      "service": "core",
+      "event": "http_access",
+      "method": "GET",
+      "endpoint": "health",
+      "status": 200
+    },
+    {
+      "utc": "2026-09-27T10:48:55.76166917Z",
+      "service": "core",
+      "event": "http_access",
+      "method": "GET",
+      "endpoint": "health",
+      "status": 200
+    },
+    {
+      "utc": "2026-09-27T10:48:55.877951375Z",
+      "service": "core",
+      "event": "http_access",
+      "method": "GET",
+      "endpoint": "health",
+      "status": 200
+    },
+    {
+      "utc": "2026-09-27T10:48:57.189551007Z",
+      "service": "core",
+      "event": "http_access",
+      "method": "GET",
+      "endpoint": "health",
+      "status": 200
+    },
+    {
+      "utc": "2026-09-27T10:48:57.230979908Z",
+      "service": "core",
+      "event": "http_access",
+      "method": "GET",
+      "endpoint": "carrier-events",
+      "status": 503
+    },
+    {
+      "utc": "2026-09-27T10:48:57.921015697Z",
+      "service": "tracking",
+      "event": "startup_complete"
+    }
+  ],
+  "raw_logs_retained": false,
+  "limit": "Access-log presence/absence does not isolate transport, database, readiness or exception cause."
+}

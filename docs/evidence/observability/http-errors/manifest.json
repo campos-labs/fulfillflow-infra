@@ -1,0 +1,55 @@
+{
+  "purpose": "Preparatory captures, not controlled failure experiments or resolved root causes.",
+  "attempts": [
+    {
+      "source_directory": "artifacts/observability-http-02",
+      "files": [
+        {
+          "path": "02/functional.json",
+          "bytes": 303,
+          "sha256": "9c1d11fa9fc2284217f41a1a3b220728dd73fbe56fdf2607e7b25903e9fbdd79"
+        },
+        {
+          "path": "02/trace-records.json",
+          "bytes": 2978,
+          "sha256": "13701f8100cf961468d04fb5160b373ce4fef7e9ccd2fed3e661cd3ae5424347"
+        },
+        {
+          "path": "02/protocol.json",
+          "bytes": 2027,
+          "sha256": "56ff8e5fcc918d158e557f497e8f7e15d8913e1aba646f1fa4cd3176067c47bf"
+        },
+        {
+          "path": "02/summary.json",
+          "bytes": 180,
+          "sha256": "b19170c072a0e02cb2c1938229a96ead3b1598484eb9b0fc7a0535661e9d4525"
+        }
+      ]
+    },
+    {
+      "source_directory": "artifacts/observability-http-03",
+      "files": [
+        {
+          "path": "03/functional.json",
+          "bytes": 303,
+          "sha256": "b8bfcb14848e270af09ff755e6412ae649ef8fc4da759334d7314f67728e3f46"
+        },
+        {
+          "path": "03/trace-records.json",
+          "bytes": 2013,
+          "sha256": "7215f4844687f1b603945632154b770a9be67f988b4f79a7fe31dadde8eb4fc3"
+        },
+        {
+          "path": "03/protocol.json",
+          "bytes": 2027,
+          "sha256": "2317692cf523b7306043994c613982e4b056e24c7fff673240ac7ea9e14937c7"
+        },
+        {
+          "path": "03/summary.json",
+          "bytes": 180,
+          "sha256": "b19170c072a0e02cb2c1938229a96ead3b1598484eb9b0fc7a0535661e9d4525"
+        }
+      ]
+    }
+  ]
+}

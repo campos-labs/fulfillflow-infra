@@ -1,0 +1,233 @@
+{
+  "records": [
+    {
+      "trace_id": "030b5d274c75d1c4278ef000af4bed6e",
+      "span_id": "9f115ffacdc3ca12",
+      "parent_span_id": null,
+      "start_time_unix_nano": "1790545008395617757",
+      "end_time_unix_nano": "1790545008560578382",
+      "kind": "SPAN_KIND_CLIENT",
+      "service": "httpdiag-observer",
+      "name": "GET /api/v1/carrier-events",
+      "attributes": {
+        "http.request.method": "GET",
+        "http.route": "/api/v1/carrier-events",
+        "http.response.status_code": "200"
+      },
+      "events": [],
+      "status": 0,
+      "dropped_attributes_count": 0,
+      "dropped_events_count": 0
+    },
+    {
+      "trace_id": "030b5d274c75d1c4278ef000af4bed6e",
+      "span_id": "f5926b3c77fd04e6",
+      "parent_span_id": "cae1de45f65118d7",
+      "start_time_unix_nano": "1790545008510747079",
+      "end_time_unix_nano": "1790545008559362420",
+      "kind": "SPAN_KIND_CLIENT",
+      "service": "httpdiag-core",
+      "name": "GET /internal/v1/tracking/carrier-events",
+      "attributes": {
+        "http.request.method": "GET",
+        "http.route": "/internal/v1/tracking/carrier-events",
+        "http.response.status_code": "200"
+      },
+      "events": [
+        {
+          "name": "response_received",
+          "time_unix_nano": "1790545008559339790"
+        },
+        {
+          "name": "content_type_validated",
+          "time_unix_nano": "1790545008559352446"
+        }
+      ],
+      "status": 0,
+      "dropped_attributes_count": 0,
+      "dropped_events_count": 0
+    },
+    {
+      "trace_id": "030b5d274c75d1c4278ef000af4bed6e",
+      "span_id": "cae1de45f65118d7",
+      "parent_span_id": "9f115ffacdc3ca12",
+      "start_time_unix_nano": "1790545008490246226",
+      "end_time_unix_nano": "1790545008559533034",
+      "kind": "SPAN_KIND_SERVER",
+      "service": "httpdiag-core",
+      "name": "GET /api/v1/carrier-events",
+      "attributes": {
+        "http.request.method": "GET",
+        "http.route": "/api/v1/carrier-events",
+        "http.response.status_code": "200"
+      },
+      "events": [],
+      "status": 0,
+      "dropped_attributes_count": 0,
+      "dropped_events_count": 0
+    },
+    {
+      "trace_id": "030b5d274c75d1c4278ef000af4bed6e",
+      "span_id": "cddf7336a635e1eb",
+      "parent_span_id": "f5926b3c77fd04e6",
+      "start_time_unix_nano": "1790545008514077160",
+      "end_time_unix_nano": "1790545008558848680",
+      "kind": "SPAN_KIND_SERVER",
+      "service": "httpdiag-tracking",
+      "name": "GET /internal/v1/tracking/carrier-events",
+      "attributes": {
+        "http.request.method": "GET",
+        "http.route": "/internal/v1/tracking/carrier-events",
+        "http.response.status_code": "200"
+      },
+      "events": [],
+      "status": 0,
+      "dropped_attributes_count": 0,
+      "dropped_events_count": 0
+    },
+    {
+      "trace_id": "17b7ec2159dc7e9e2ea03d686158ca6b",
+      "span_id": "9881fc85f32aa471",
+      "parent_span_id": null,
+      "start_time_unix_nano": "1790545013493405433",
+      "end_time_unix_nano": "1790545013587180004",
+      "kind": "SPAN_KIND_CLIENT",
+      "service": "httpdiag-observer",
+      "name": "GET /api/v1/carrier-events",
+      "attributes": {
+        "http.request.method": "GET",
+        "http.route": "/api/v1/carrier-events",
+        "http.response.status_code": "503"
+      },
+      "events": [],
+      "status": 0,
+      "dropped_attributes_count": 0,
+      "dropped_events_count": 0
+    },
+    {
+      "trace_id": "17b7ec2159dc7e9e2ea03d686158ca6b",
+      "span_id": "c8f2a59051533912",
+      "parent_span_id": "83d3609a70830e58",
+      "start_time_unix_nano": "1790545013583183513",
+      "end_time_unix_nano": "1790545013585469956",
+      "kind": "SPAN_KIND_CLIENT",
+      "service": "httpdiag-core",
+      "name": "GET /internal/v1/tracking/carrier-events",
+      "attributes": {
+        "http.request.method": "GET",
+        "http.route": "/internal/v1/tracking/carrier-events",
+        "error.type": "transport"
+      },
+      "events": [],
+      "status": "STATUS_CODE_ERROR",
+      "dropped_attributes_count": 0,
+      "dropped_events_count": 0
+    },
+    {
+      "trace_id": "17b7ec2159dc7e9e2ea03d686158ca6b",
+      "span_id": "83d3609a70830e58",
+      "parent_span_id": "9881fc85f32aa471",
+      "start_time_unix_nano": "1790545013582378281",
+      "end_time_unix_nano": "1790545013585761967",
+      "kind": "SPAN_KIND_SERVER",
+      "service": "httpdiag-core",
+      "name": "GET /api/v1/carrier-events",
+      "attributes": {
+        "http.request.method": "GET",
+        "http.route": "/api/v1/carrier-events",
+        "http.response.status_code": "503"
+      },
+      "events": [],
+      "status": "STATUS_CODE_ERROR",
+      "dropped_attributes_count": 0,
+      "dropped_events_count": 0
+    },
+    {
+      "trace_id": "0bd463178d4229a06717785ffcf8758f",
+      "span_id": "bfdd2d8be134415b",
+      "parent_span_id": null,
+      "start_time_unix_nano": "1790545021063109353",
+      "end_time_unix_nano": "1790545021192818083",
+      "kind": "SPAN_KIND_CLIENT",
+      "service": "httpdiag-observer",
+      "name": "GET /api/v1/carrier-events",
+      "attributes": {
+        "http.request.method": "GET",
+        "http.route": "/api/v1/carrier-events",
+        "http.response.status_code": "200"
+      },
+      "events": [],
+      "status": 0,
+      "dropped_attributes_count": 0,
+      "dropped_events_count": 0
+    },
+    {
+      "trace_id": "0bd463178d4229a06717785ffcf8758f",
+      "span_id": "9c916db3a0c928cf",
+      "parent_span_id": "d7f229043c0661a2",
+      "start_time_unix_nano": "1790545021157994361",
+      "end_time_unix_nano": "1790545021190384181",
+      "kind": "SPAN_KIND_SERVER",
+      "service": "httpdiag-tracking",
+      "name": "GET /internal/v1/tracking/carrier-events",
+      "attributes": {
+        "http.request.method": "GET",
+        "http.route": "/internal/v1/tracking/carrier-events",
+        "http.response.status_code": "200"
+      },
+      "events": [],
+      "status": 0,
+      "dropped_attributes_count": 0,
+      "dropped_events_count": 0
+    },
+    {
+      "trace_id": "0bd463178d4229a06717785ffcf8758f",
+      "span_id": "d7f229043c0661a2",
+      "parent_span_id": "135d17c31938e280",
+      "start_time_unix_nano": "1790545021155354227",
+      "end_time_unix_nano": "1790545021191087810",
+      "kind": "SPAN_KIND_CLIENT",
+      "service": "httpdiag-core",
+      "name": "GET /internal/v1/tracking/carrier-events",
+      "attributes": {
+        "http.request.method": "GET",
+        "http.route": "/internal/v1/tracking/carrier-events",
+        "http.response.status_code": "200"
+      },
+      "events": [
+        {
+          "name": "response_received",
+          "time_unix_nano": "1790545021191071113"
+        },
+        {
+          "name": "content_type_validated",
+          "time_unix_nano": "1790545021191081169"
+        }
+      ],
+      "status": 0,
+      "dropped_attributes_count": 0,
+      "dropped_events_count": 0
+    },
+    {
+      "trace_id": "0bd463178d4229a06717785ffcf8758f",
+      "span_id": "135d17c31938e280",
+      "parent_span_id": "bfdd2d8be134415b",
+      "start_time_unix_nano": "1790545021154586225",
+      "end_time_unix_nano": "1790545021191278633",
+      "kind": "SPAN_KIND_SERVER",
+      "service": "httpdiag-core",
+      "name": "GET /api/v1/carrier-events",
+      "attributes": {
+        "http.request.method": "GET",
+        "http.route": "/api/v1/carrier-events",
+        "http.response.status_code": "200"
+      },
+      "events": [],
+      "status": 0,
+      "dropped_attributes_count": 0,
+      "dropped_events_count": 0
+    }
+  ],
+  "accepted_batches": 8,
+  "rejected_batches": 0
+}

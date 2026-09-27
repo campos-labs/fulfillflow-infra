@@ -1,0 +1,47 @@
+{
+  "source_directory": "artifacts/observability-http-05",
+  "infrastructure_sha": "d911bc736fbb557641afe077f4a74a3aa95cc012",
+  "files": [
+    {
+      "path": "protocol.json",
+      "bytes": 2138,
+      "sha256": "7173984d11a7ab088b0921c1cb00517e4bbb9d08196643e8b8dd8b474b0a315c"
+    },
+    {
+      "path": "functional.json",
+      "bytes": 839,
+      "sha256": "64f35903a4ded350b03df79e42d33330b835b13ebfc7171e6639f66d0a541d5c"
+    },
+    {
+      "path": "trace-records.json",
+      "bytes": 2881,
+      "sha256": "fb55631334c3050f80823298486b29f23cc6223c35075a8a7dd9aae5c9a15c72"
+    },
+    {
+      "path": "review.json",
+      "bytes": 501,
+      "sha256": "555f5a6b6494d3621b665c1362a9e29ff10ff88ad04ba6251d585783e60fbda8"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 154,
+      "sha256": "aea530d3817f972583f8a4fa0d62b0b48e934f5cf6383eee3e24eb3c66699e9a"
+    },
+    {
+      "path": "preservation.json",
+      "bytes": 160,
+      "sha256": "ceb65631bbc929b1cf49643c36acb7aa9236798bda66d466d0c24615a272a289"
+    },
+    {
+      "path": "resources.json",
+      "bytes": 101,
+      "sha256": "418c1983366ab87aefe6178deb5d0810b1d5b8fd5d9acf163978b84f3fa1c685"
+    },
+    {
+      "path": "peer-health.json",
+      "bytes": 547,
+      "sha256": "d1e2dbb6085d1f013adddf202a7e570b503f03e0f08dc9361c451e482fd509de"
+    }
+  ],
+  "excluded": "Complete host/startup series, private configuration, images and databases remain local."
+}

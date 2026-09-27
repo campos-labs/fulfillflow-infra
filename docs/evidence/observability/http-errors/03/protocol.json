@@ -1,0 +1,47 @@
+{
+  "utc": "2026-09-27T20:05:48.275169+00:00",
+  "run_id": "c635fee7b3364131af15443ef64e5a41",
+  "entry": {
+    "utc": "2026-09-27T20:05:48.100997+00:00",
+    "available_gib": 5.106571197509766,
+    "required_gib": 5,
+    "power_plugged": true
+  },
+  "runtime": {
+    "application_sha": "045e1ca8629409b6abdf2829ef5c93d14cfb60d9",
+    "base_application_sha": "9e3a135a00db218643633c7165d3106f0c8285e1",
+    "application_branch": "codex/v1.3-http-observability",
+    "image": "fulfillflow-httpdiag:source-045e1ca",
+    "image_id": "sha256:aaf3cb4c23800819a8b56dc9710b3ac10e7541a21eac30e63d934f1a48030e34",
+    "runtime_config": "sha256:6b3259b2ced7af17667fc0e1d0dfe19e902713e66c123539ffc603cdc3ebfa14",
+    "dependency_lock_sha256": "766d622c90c5e15c337e7834212c4ee57db792f4742ac34846f8cebd6bbcf04c",
+    "otel_sdk": "1.45.0",
+    "query_count": 1,
+    "business_writes": 0,
+    "cluster": "fulfillflow-observe-01",
+    "namespace": "fulfillflow",
+    "memory_entry_gib": 5,
+    "memory_runtime_gib": 2,
+    "deadline_seconds": 600,
+    "verification_sha": "045e1ca8629409b6abdf2829ef5c93d14cfb60d9",
+    "ci_run": 36342972254
+  },
+  "application_ci": {
+    "conclusion": "success",
+    "headSha": "045e1ca8629409b6abdf2829ef5c93d14cfb60d9",
+    "status": "completed",
+    "url": "https://github.com/campos-labs/fulfillflow/actions/runs/36342972254"
+  },
+  "infrastructure_sha": "a7fcba77ae5144aae9bfb29ba1ec731c0a915964",
+  "namespace_uid": "264fe404-8d5d-467b-b10e-194ae48c5995",
+  "query_count": 1,
+  "business_writes": 0,
+  "deadline_seconds": 600,
+  "event_id": "infra-smoke-53cec0ca-6357-43f5-85f6-c0b08d664a20",
+  "scripts": {
+    "http_trace_pilot.py": "f57b0106429d90c30cdef540dbc7d2d93a46d35407727b458549236f109629ae",
+    "http_trace_contract.py": "836aa97259d590479d188202799330b8feeda2da0eee47eb25ede49cbeaf9298",
+    "http_trace_receiver.py": "ff6d6cb76ee7d9ab189530466312d3d621357eb6cea29d43b121e136f0f9fc92",
+    "http_trace_observer.py": "7bef9ac7474a8e0b67572e4838a55ca1188149393bc6de010820b0811277dd0e"
+  }
+}

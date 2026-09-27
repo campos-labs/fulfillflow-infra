@@ -546,6 +546,108 @@ completar nove posições, recusar nova execução. A reprodução de leitura em
 o cluster; não modifica dados ou o instrumento congelado.
 
 
+### 8.8. Exploração de observabilidade
+
+Resultados executados e evidências: [avaliação de observabilidade](docs/OBSERVABILITY_EVALUATION.md).
+Esta seção preserva os contratos, sem duplicar a análise.
+
+A extensão v1.2 investiga onde o intervalo entre aceite, conclusão por etapa e
+confirmação pelo observador pode ser explicado com evidência correlacionada. Primeiro
+examinar contratos, logs e registros existentes. OpenTelemetry é a opção preferencial
+para uma lacuna que exija tracing; não é condição de sucesso instalar uma plataforma.
+
+Preservar integralmente as referências e resultados de recuperação e capacidade.
+Uma releitura de registros antigos tem identidade própria e alcance diagnóstico;
+não cria novos fatos medidos nem determina causas não preservadas. Identificar
+separadamente correlação por IDs, tracing propagado e inferência temporal.
+
+Verificar a ligação de identidades através de outbox, publicação, inbox e trabalho
+persistido retomado; ID de negócio, mensagem, requisição e trace têm papéis distintos.
+Correlação por ID não exige inventar spans históricos. Propagação durável que exija
+mudar payload assinado, esquema, idempotência ou retries depende de decisão específica.
+
+Conferir cobertura dos marcos por evento conhecido e saúde do caminho de telemetria,
+incluindo falhas, retries, filas e descartes quando esses sinais existirem. Ausência
+de trace não comprova ausência de processamento; erro de exportação não comprova
+perda definitiva. Confrontar a telemetria com verificações funcionais independentes.
+Usar atributos permitidos explicitamente; autoinstrumentação também exige revisão
+de conteúdo antes da captura/exportação.
+
+Declarar a semântica de cada marco: recebimento, decisão de negócio, commit,
+publicação, recepção durável, processamento local e confirmação pelo observador.
+Um campo timestamp ou um log DONE não prova todos esses marcos. Durações monotônicas
+são locais ao processo; alinhamento UTC entre processos tem incerteza e não autoriza
+subtrair relógios sem explicitar limites. Intervalos sobrepostos não são somados.
+Quando o objetivo for localizar atrasos, observar negócio e rollout em paralelo,
+com marcos separados. A espera sequencial de um ensaio funcional não deve ser
+interpretada como atraso interno da aplicação ou comparação de desempenho.
+
+Novos ensaios usam destino próprio, dados sintéticos, uma réplica por processo,
+volume pequeno e encerramento definido. No cenário de pendência autorizado, somente
+Notifications worker passa temporariamente de uma para zero réplicas antes da oferta
+e retorna a uma após confirmar `SENT/NOT_RECEIVED`. É intervenção manual delimitada,
+sem política de autoescalonamento ou restauração de template. Preservar identidade
+do evento e do pod substituído, sem reenviar webhook. Não reutilizar bancos da campanha nem
+acionar restauração/autoescalonamento para testar observabilidade. Credenciais,
+payloads, assinaturas, parâmetros SQL e atributos de alta cardinalidade precisam
+de tratamento explícito antes de exportação; nenhum destino público é implícito.
+
+Autoinstrumentação também altera o runtime: identificar imagem, dependências,
+configuração e custo adicional. Alteração necessária de código/dependências da
+aplicação deve ter referência própria na linha v1.3 e decisão de escopo; não aplicar
+patch oculto na infraestrutura nem editar o checkout da aplicação em uso paralelo.
+Prometheus, dashboards e backends gerenciados só entram por lacuna identificada.
+Uma execução funcional pequena pode demonstrar cobertura; não quantifica overhead
+ou superioridade diagnóstica sem condições comparáveis e critérios prévios.
+
+A fatia HTTP autorizada usa APIs Core/Tracking clonadas com nomes e seletores
+exclusivos, mantendo os deployments históricos intactos. Os dois endereços internos
+são resolvidos entre clones: Core → Tracking e Tracking → Core. A listagem de eventos
+resolve metadados de transportadora no Core; o retorno não deve depender da API
+histórica. Essa consulta de metadados não tem span próprio na fatia delimitada.
+A nova imagem aplica
+SDK opt-in somente aos GETs de listagem de carrier-events; não modifica schema,
+autenticação, retry, timeout ou dados. O observador consulta um evento conhecido
+no banco do ambiente de observabilidade; não utiliza bancos da campanha de escala.
+Quatro spans esperados: observador cliente, Core servidor, operação cliente interna
+(com conferência de Content-Type) e Tracking servidor. Tratar os eventos de resposta recebida/Content-Type conferido
+como marcos da operação HTTP, sem atribuir-lhes commit ou processamento assíncrono.
+O forwarding da API não valida o JSON contra o schema; não adicionar essa regra
+para instrumentá-lo. O observador valida o resultado público independentemente.
+
+O receptor diagnóstico OTLP é local, limitado e rejeita atributos fora da allowlist.
+Antes da consulta de negócio, conferir `/health/ready` nos três caminhos HTTP
+entre observador e clones, em até três rodadas de preparação registradas. Essa
+verificação não substitui a confirmação funcional nem autoriza retry da consulta.
+A confirmação funcional utiliza o JSON público e a identidade persistida, sem
+consultar spans. Na listagem, conferir `PROCESSED` / `COMPLETED` e as identidades
+esperadas; `APPLIED` é resultado de negócio, não status da inbox. Identificar cobertura ausente, rejeições da coleta e métricas
+indisponíveis separadamente. O fim do diagnóstico preserva volumes e configurações
+históricas; zero réplicas dos clones e nó parado encerram a janela. Credenciais e
+bodies HTTP não integram a evidência, e nenhuma imagem histórica é sobrescrita.
+
+A verificação controlada HTTP usa três consultas únicas ao mesmo evento já concluído:
+saudável → falha conhecida → restauração. Nas novas execuções, reduzir somente o
+Deployment `httpdiag-tracking` de uma para zero réplicas, com precondições de UID,
+run ID e réplicas. Aguardar ausência de todos os pods desse clone, incluindo os em
+encerramento (até 60 s), e zero endpoints prontos antes da consulta. Zero endpoints
+isoladamente não comprova interrupção. Services, Core, receptor OTLP, workers e APIs
+históricos permanecem intactos. Restaurar o spec original mesmo se a coleta falhar.
+Na sequência aprovada, aguardar rollout (até 120 s), conferir novo UID de pod Ready e
+endpoints disponíveis antes da consulta final. Não mudar dados, timeouts, pooling ou
+instrumentação da aplicação. As tentativas 01/02 com alteração de seletor mantêm seu
+protocolo e julgamento originais; a 02 não produziu a falha pretendida.
+
+Critérios distintos: antes/depois, HTTP 200, resultado funcional e quatro spans;
+durante, HTTP 503, erro de transporte no cliente Core e três spans ligados. Confrontar
+esse trace com a intervenção registrada, nunca concluir a causa apenas da ausência
+do span Tracking. A indisponibilidade esperada da consulta não reprova o diagnóstico;
+cobertura insuficiente, coleta rejeitada ou restauração não confirmada o reprovam.
+O estado de negócio é confirmado antes/depois e inconclusivo durante a intervenção:
+não existe nesta fatia uma leitura independente do caminho interrompido. Não alegar
+continuidade de processamento, pois o evento já estava concluído. O limite temporal
+continua em 600 segundos e não há retry das três consultas.
+
 ## 9. Limites e evolução
 
 O aceite deve identificar o ambiente efetivamente exercitado: Kind ou AKS.
@@ -557,8 +659,8 @@ A v1.0.0 entrega recuperação delimitada; a seção 8.7 acrescenta capacidade
 fixa/adaptativa, com comparação concluída no Kind. Os relatórios documentam
 resultados e limites; não há validação de capacidade máxima ou de produção.
 AKS permanece uma referência não implantada. Cluster autoscaler, GitOps,
-canary/blue-green, novos provedores de entrega e instrumentação adicional exigem
-uma decisão própria; não são requisitos de fechamento das avaliações existentes.
+canary/blue-green, novos provedores de entrega e instrumentação além da exploração
+delimitada na seção 8.8 exigem uma decisão própria; não são requisitos de fechamento das avaliações existentes.
 O [RELEASE_PLAN](RELEASE_PLAN.md) registra a candidata e as opções de continuidade.
 
 ## 10. Ambiente local e avaliação em Kind

@@ -1,0 +1,63 @@
+{
+  "records": [
+    {
+      "trace_id": "ab389108d37c2b0cfb0ed086ea2e609a",
+      "span_id": "44d6b46548e4669a",
+      "parent_span_id": null,
+      "start_time_unix_nano": "1790539604071560178",
+      "end_time_unix_nano": "1790539604137305363",
+      "kind": "SPAN_KIND_CLIENT",
+      "service": "httpdiag-observer",
+      "name": "GET /api/v1/carrier-events",
+      "attributes": {
+        "http.request.method": "GET",
+        "http.route": "/api/v1/carrier-events",
+        "http.response.status_code": "503"
+      },
+      "events": [],
+      "status": 0,
+      "dropped_attributes_count": 0,
+      "dropped_events_count": 0
+    },
+    {
+      "trace_id": "ab389108d37c2b0cfb0ed086ea2e609a",
+      "span_id": "0c7fb25898206229",
+      "parent_span_id": "a1fd22876608fe73",
+      "start_time_unix_nano": "1790539604133633205",
+      "end_time_unix_nano": "1790539604135770795",
+      "kind": "SPAN_KIND_CLIENT",
+      "service": "httpdiag-core",
+      "name": "GET /internal/v1/tracking/carrier-events",
+      "attributes": {
+        "http.request.method": "GET",
+        "http.route": "/internal/v1/tracking/carrier-events",
+        "error.type": "transport"
+      },
+      "events": [],
+      "status": "STATUS_CODE_ERROR",
+      "dropped_attributes_count": 0,
+      "dropped_events_count": 0
+    },
+    {
+      "trace_id": "ab389108d37c2b0cfb0ed086ea2e609a",
+      "span_id": "a1fd22876608fe73",
+      "parent_span_id": "44d6b46548e4669a",
+      "start_time_unix_nano": "1790539604110600876",
+      "end_time_unix_nano": "1790539604136067537",
+      "kind": "SPAN_KIND_SERVER",
+      "service": "httpdiag-core",
+      "name": "GET /api/v1/carrier-events",
+      "attributes": {
+        "http.request.method": "GET",
+        "http.route": "/api/v1/carrier-events",
+        "http.response.status_code": "503"
+      },
+      "events": [],
+      "status": "STATUS_CODE_ERROR",
+      "dropped_attributes_count": 0,
+      "dropped_events_count": 0
+    }
+  ],
+  "accepted_batches": 2,
+  "rejected_batches": 0
+}

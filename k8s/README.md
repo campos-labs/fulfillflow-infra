@@ -549,3 +549,79 @@ O pacote publicado contém as nove tentativas, inclusive a primeira originalment
 fora da continuação. Credenciais e dumps permanecem privados; leitura dos pacotes
 não equivale a restauração do ambiente. Nova campanha, alteração de aplicação ou
 implantação Azure depende da [decisão de continuidade](../RELEASE_PLAN.md#4-continuidade-condicionada).
+
+### Diagnóstico HTTP com tracing
+
+Método e resultados encerrados: [avaliação de observabilidade](../docs/OBSERVABILITY_EVALUATION.md).
+Para conferir evidências e figuras, usar o reprodutor offline indicado no relatório.
+Os comandos abaixo documentam a operação; não é necessário repetir ensaios para ler os resultados.
+
+Preparação do host: com todos os containers parados, permite-se liberação pontual
+registrada de cache Linux (`sync` + `drop_caches`), espera limitada e nova medição.
+Reiniciar Docker/WSL somente para recuperação operacional necessária, com workloads
+parados; não é rotina de memória. Não limpar cache nem reiniciar durante a medição.
+Manter as guardas de memória; nenhuma preparação garante margem sem nova conferência.
+
+A fatia usa [imagem identificada](../config/http-observability.json), já construída
+localmente, e o ambiente privado `observability-01`. Não é bootstrap genérico para
+outro computador. A aplicação instrumentada está em branch própria e não substitui
+a v1.3 congelada. O executor aguarda a CI aprovada do SHA
+fixado (até 20 minutos, usando GitHub CLI autenticado) antes de iniciar o Kind e
+recusa imagem com digest diferente. Build equivalente não é presumido idêntico ao digest registrado.
+
+Na raiz do repositório, em PowerShell 7:
+
+```powershell
+.\scripts\Invoke-HttpTracePilot.ps1
+```
+
+O launcher localiza a configuração privada nos locais normal ou virtualizado do
+Windows; em caso de ausência/ambiguidade, passar `-PrivateDirectory`. A saída padrão
+é `artifacts/observability-http-01`; não sobrescrever para repetir. Há 45 s para fechar
+navegadores, IDEs e assistentes. Manter Docker, internet e tomada. A internet é
+utilizada para consultar a CI; não há novo download nem destino externo de traces. A entrada exige 5 GiB livres e a execução mantém
+a guarda de 2 GiB. O histórico Kind pode ser parado, preservando volumes; outros
+containers ativos impedem a entrada. Não é necessário reiniciar por padrão.
+
+Antes da consulta, o executor verifica `/health/ready` pelos três caminhos reais:
+observador → Core, Core → Tracking e Tracking → Core. Até três rodadas de preparação
+são preservadas em `peer-health*.json`; falha impede a consulta de negócio.
+Não há retry dessa consulta. Pods Ready e disponibilidade pelos Services são
+verificados separadamente.
+
+O cenário padrão `healthy` faz um GET de evento já existente, com quatro spans esperados. Preserva
+`protocol.json`, `functional.json`, `trace-records.json`, `review.json`, inventário,
+margem do host e `summary.json`. Métricas de pods podem estar indisponíveis durante
+startup; essa lacuna fica registrada. O resumo distingue `last_stage` e `query_started`;
+`command-failures.json` conserva etapa, ferramenta, código e categoria sem stderr bruto.
+O receptor limitado aceita somente atributos
+permitidos, sem URL/query, corpos, credenciais, SQL ou texto de exceções.
+
+No fim, os clones recebem zero réplicas e o nó é parado; conferir
+`summary.container_stopped` e `preservation.historical_deployment_specs_unchanged`.
+Uma falha de captura não significa falha de processamento. Os recursos criados
+mantêm identidade própria e bloqueiam nova execução automática; não remover claims,
+recursos ou evidências apenas para obter sucesso. A próxima decisão depende da
+informação efetivamente acrescentada pelo diagnóstico, sem repetir cargas anteriores.
+
+Para a sequência controlada preparada (executar uma vez, em saída inexistente):
+
+```powershell
+.\scripts\Invoke-HttpTracePilot.ps1 -Scenario transport-fault -OutputDirectory .\artifacts\observability-http-fault-01
+```
+
+São três GETs do mesmo evento concluído, com diretórios `before`, `fault` e `after`.
+Somente o Deployment `httpdiag-tracking` passa de uma para zero réplicas e é restaurado;
+o receptor OTLP permanece acessível. `injection.json` registra réplicas, UID e ausência
+de pods/endpoints. `restored-pod.json` identifica o novo pod Ready; `restoration.json`
+confere o spec original. Na fase `fault`, HTTP 503 e três spans com erro `transport`
+são esperados: `functional.complete=false` nessa consulta pode coexistir com aprovação
+do diagnóstico em `fault/review.json`. O resumo final exige as três fases e restauração.
+Estado de negócio confirmado antes/depois não equivale a observação independente durante
+a falha, nem demonstra processamento sob interrupção. Não há webhook ou retry das consultas.
+
+Uma execução nova recusa recursos diagnósticos remanescentes; reconcilie-os por run ID
+antes de executar. A preparação autorizada pode liberar cache Linux uma vez com todos os
+containers parados e aguardar a margem; não faz prune, não exclui volumes e não altera
+memória configurada. Nunca limpar cache/reiniciar Docker durante o ensaio. Se a entrada
+continuar abaixo de 5 GiB, reservar o notebook e usar o launcher; não relaxar a guarda.

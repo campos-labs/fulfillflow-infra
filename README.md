@@ -1,38 +1,45 @@
 # FulfillFlow Infra
 
-Implantação, recuperação e avaliação de capacidade do FulfillFlow em Kubernetes.
+Implantação, recuperação, capacidade e diagnóstico do FulfillFlow em Kubernetes.
 A [v1.0.0](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.0.0)
 preserva a avaliação de recuperação em Kind. A
 [v1.1.0-rc.1](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.1.0-rc.1)
 acrescenta nove tentativas de capacidade fixa/adaptativa concluídas, relatório,
-gráficos e evidências. É uma pré-release da infraestrutura.
+gráficos e evidências. A
+[v1.2.0-rc.1](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.2.0-rc.1)
+consolida correlação e diagnóstico HTTP com OpenTelemetry, dois pacotes e figuras
+reproduzíveis. As candidatas são pré-releases da infraestrutura.
 
 | Avaliação | Resultado principal | Relatório |
 | --- | --- | --- |
 | Recuperação de configuração | Ambos os procedimentos restauraram e confirmaram o trabalho; o acionamento integrado dispensou a solicitação externa separada | [Avaliação operacional](docs/OPERATIONAL_EVALUATION.md) |
 | Capacidade fixa/adaptativa | KEDA executou 1→2→1, sem vantagem de atendimento sobre uma réplica fixa neste perfil; duas réplicas reduziram a pendência local | [Avaliação de capacidade](docs/SCALING_EVALUATION.md) |
+| Correlação e diagnóstico | IDs reconstruíram o fluxo dos workers; OTel localizou uma falha HTTP controlada, com consulta 200 → 503 → 200 e sem medição de overhead | [Avaliação de observabilidade](docs/OBSERVABILITY_EVALUATION.md) |
 
-São duas avaliações experimentais complementares da mesma aplicação, com protocolos
-e conjuntos separados. As campanhas estão encerradas; não exigem nova carga para
-conferir os resultados. AKS/ACR permanecem referências opcionais não implantadas.
+Recuperação e capacidade são avaliações experimentais complementares da mesma
+aplicação, com protocolos separados. A extensão de observabilidade acrescenta
+casos diagnósticos; não testa os três mecanismos conjuntamente. As execuções estão
+encerradas. AKS/ACR permanecem referências opcionais não implantadas.
 
 ## Comece por aqui
 
 | Necessidade | Documento |
 | --- | --- |
-| Entender método, resultados, limites e fontes | [Recuperação](docs/OPERATIONAL_EVALUATION.md) e [capacidade](docs/SCALING_EVALUATION.md) |
+| Entender método, resultados, limites e fontes | [Recuperação](docs/OPERATIONAL_EVALUATION.md), [capacidade](docs/SCALING_EVALUATION.md) e [observabilidade](docs/OBSERVABILITY_EVALUATION.md) |
 | Entender arquitetura e contratos | [DESIGN](DESIGN.md) |
-| Conferir candidata e opções de continuidade | [RELEASE_PLAN](RELEASE_PLAN.md) e [nota da candidata](docs/releases/v1.1.0-rc.1.md) |
+| Conferir candidata e opções de continuidade | [RELEASE_PLAN](RELEASE_PLAN.md) |
 | Preparar ou operar o laboratório | [Guia Kubernetes](k8s/README.md) |
 | Examinar a referência Azure | [Guia Terraform](infra/README.md) |
 
 ## Aplicação e limites operacionais
 
-A referência é [FulfillFlow v1.3.0-rc.1](https://github.com/campos-labs/fulfillflow/tree/9e3a135a00db218643633c7165d3106f0c8285e1),
+Na recuperação, capacidade e correlação dos workers, a referência é [FulfillFlow v1.3.0-rc.1](https://github.com/campos-labs/fulfillflow/tree/9e3a135a00db218643633c7165d3106f0c8285e1),
 SHA `9e3a135a00db218643633c7165d3106f0c8285e1`. Core, Tracking e Notifications têm
 API e worker próprios, com três bancos/roles PostgreSQL e RabbitMQ. Notifications
 registra entrega simulada. Este repositório consome seus contratos, sem copiar
-código de negócio ou comparar versões arquiteturais da aplicação.
+código de negócio ou comparar versões arquiteturais da aplicação. A fatia HTTP
+usa derivação instrumentada `045e1ca`, com [runtime próprio](config/http-observability.json),
+sem substituir essa referência congelada.
 
 A recuperação altera somente configuração elegível de `notifications-worker`;
 não reverte dados nem rearma `BLOCKED`. A avaliação de capacidade varia réplicas
@@ -71,6 +78,7 @@ configuração e destinos próprios; novas cargas dependem de decisão explícit
 - `scripts/`, `tests/`, `config/`: executores, verificações e versões fixadas.
 - `docs/evidence/operational-a/`: evidências preservadas da recuperação, com dois ZIPs.
 - `docs/evidence/scaling/`: três ZIPs com as nove tentativas, índices e reprodução offline.
+- `docs/evidence/observability/`: dois ZIPs e seleções legíveis, diagramas e conferência offline.
 - `artifacts/`: originais e saídas locais ignorados pelo Git; não presumir disponibilidade por link.
 
 Os [pacotes de capacidade](docs/evidence/scaling/archives) incluem a primeira
@@ -83,9 +91,11 @@ Conferência de integridade e estatísticas, sem Docker ou arquivos privados:
 
 ```powershell
 python docs/evidence/scaling/reproduce.py
+uv run --frozen python docs/evidence/observability/reproduce.py
 ```
 
-Para tabelas e figuras, consultar a [reprodução da leitura](docs/SCALING_EVALUATION.md#7-evidências-e-reprodução-da-leitura).
-Os arquivos estão versionados, com pacotes também vinculados à pré-release.
+Métodos de reprodução: [capacidade](docs/SCALING_EVALUATION.md#7-evidências-e-reprodução-da-leitura)
+e [observabilidade](docs/OBSERVABILITY_EVALUATION.md#7-evidências-e-reprodução-da-leitura).
+A disponibilidade de cada entrega é identificada no plano e nas páginas das releases.
 Restauração de backup independente e reprodução das medições em outro computador
 não foram verificadas.

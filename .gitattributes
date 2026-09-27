@@ -20,3 +20,17 @@ docs/evidence/operational-a/** -text whitespace=blank-at-eol,blank-at-eof,space-
 
 docs/evidence/scaling/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 docs/assets/scaling/*.svg text eol=lf
+
+# Published observability captures retain their original bytes.
+docs/evidence/observability/records/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+docs/evidence/observability/http-05/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+docs/evidence/observability/http-errors/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+docs/evidence/observability/http-fault-03/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Reproducible offline bundles and diagrams.
+docs/evidence/observability/archives/*.zip binary
+docs/assets/observability/*.svg text eol=lf
+docs/evidence/observability/archives/*.sha256 text eol=lf

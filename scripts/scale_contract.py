@@ -12,8 +12,10 @@ SOURCE = "9e3a135a00db218643633c7165d3106f0c8285e1"
 
 
 def cluster_name(mode):
-    if mode not in ("", "comparison-v1"):
+    if mode not in ("", "comparison-v1", "observability-v1"):
         raise RuntimeError("UNKNOWN_SCALE_ENVIRONMENT")
+    if mode == "observability-v1":
+        return "fulfillflow-observe-01"
     return "fulfillflow-scale-compare-01" if mode else "fulfillflow-scale-01"
 
 

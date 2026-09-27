@@ -1,0 +1,99 @@
+{
+  "kind": "reviewed healthy slice; not a performance comparison",
+  "infrastructure_sha": "7829064e83548082ac2a277f109e7cc3a8f7866f",
+  "application_sha": "9e3a135a00db218643633c7165d3106f0c8285e1",
+  "source_directory": "artifacts/observability-healthy-01",
+  "source_availability": "original records local; this summary versioned",
+  "event_id": "infra-smoke-53cec0ca-6357-43f5-85f6-c0b08d664a20",
+  "functional_success": true,
+  "worker_records": 9,
+  "all_records_match_admission_and_business_ids": true,
+  "message_links": [
+    {
+      "message_id": "00171f67-ab0b-4ba9-b258-3ec7b787835b",
+      "stages": [
+        {
+          "service": "tracking",
+          "stage": "publish",
+          "outcome": "SENT"
+        },
+        {
+          "service": "core",
+          "stage": "receive",
+          "outcome": "PERSISTED"
+        },
+        {
+          "service": "core",
+          "stage": "process",
+          "outcome": "DONE"
+        }
+      ]
+    },
+    {
+      "message_id": "2f7dac2a-b8f5-4c47-ac2e-60ff1e3fd1f9",
+      "stages": [
+        {
+          "service": "core",
+          "stage": "publish",
+          "outcome": "SENT"
+        },
+        {
+          "service": "tracking",
+          "stage": "receive",
+          "outcome": "PERSISTED"
+        },
+        {
+          "service": "tracking",
+          "stage": "process",
+          "outcome": "DONE"
+        }
+      ]
+    },
+    {
+      "message_id": "6cb8c199-edcf-49ce-99f8-29316849c4de",
+      "stages": [
+        {
+          "service": "core",
+          "stage": "publish_notifications",
+          "outcome": "SENT"
+        },
+        {
+          "service": "notifications",
+          "stage": "receive",
+          "outcome": "PERSISTED"
+        },
+        {
+          "service": "notifications",
+          "stage": "process",
+          "outcome": "DONE"
+        }
+      ]
+    }
+  ],
+  "http_requests": 13,
+  "get_requests": 9,
+  "http_errors": 0,
+  "acceptance_to_notifications_confirmation_monotonic_seconds": 2.235,
+  "tracking_completed_at_to_public_observation_utc_seconds": 0.918151,
+  "notifications_simulated_at_to_public_observation_utc_seconds": 1.036066,
+  "minimum_available_gib": 4.083587646484375,
+  "maximum_executor_rss_bytes": 29622272,
+  "container_stopped": true,
+  "limits": [
+    "One healthy event; no restart/retry of business work tested.",
+    "Cross-process UTC differences have unmeasured clock uncertainty; persisted fields are not exact commit instants.",
+    "Logs preserve correlation IDs, not distributed spans; no OTel added.",
+    "No baseline for incremental observation cost; no causal performance conclusion.",
+    "Does not explain historical 503s or delays in previous campaigns."
+  ],
+  "source_sha256": {
+    "protocol.json": "c3c899f696a52feabe55c986ffb5578706a9d96a5a8cc37f08f47c804457f8ad",
+    "functional.json": "ce817009a6be9891ea0c461a8d5e4080ada6ee1c0670054997dbf4a7e6d3a855",
+    "flow-summary.json": "ed25eaf9fa3a163afe84661f95366d3c342c84af6c2f0ab8cb3555a82edfae29",
+    "worker-records.json": "1bbb0e6bdee8d76850d3ee35c92d5442f65f7466d6855129bf5a1c6d5200b31d",
+    "http-timings.json": "ed92670fc5511989d110f1de8a091dc047ad7c64fff90aa6d9720052628ba9c2",
+    "event/observations.jsonl": "ebb312f0031a77ca25c1f14ea2ff2ddd35acf4bb46ee9013cdfe5ba282043389",
+    "flow-host.jsonl": "0c026ec17c0d702fd4eed6135bf1e328ac61f267faa704c887d7f00eec50b641",
+    "shutdown.json": "117a1a4164bc1cce6941df853d2f8b0a5bf971e35b0a1947d92535dbc388eb79"
+  }
+}
