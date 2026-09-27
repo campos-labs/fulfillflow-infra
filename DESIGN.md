@@ -546,6 +546,38 @@ completar nove posições, recusar nova execução. A reprodução de leitura em
 o cluster; não modifica dados ou o instrumento congelado.
 
 
+### 8.8. Exploração de observabilidade
+
+A extensão v1.2 investiga onde o intervalo entre aceite, conclusão por etapa e
+confirmação pelo observador pode ser explicado com evidência correlacionada. Primeiro
+examinar contratos, logs e registros existentes. OpenTelemetry é a opção preferencial
+para uma lacuna que exija tracing; não é condição de sucesso instalar uma plataforma.
+
+Preservar integralmente as referências e resultados de recuperação e capacidade.
+Uma releitura de registros antigos tem identidade própria e alcance diagnóstico;
+não cria novos fatos medidos nem determina causas não preservadas. Identificar
+separadamente correlação por IDs, tracing propagado e inferência temporal.
+
+Declarar a semântica de cada marco: recebimento, decisão de negócio, commit,
+publicação, recepção durável, processamento local e confirmação pelo observador.
+Um campo timestamp ou um log DONE não prova todos esses marcos. Durações monotônicas
+são locais ao processo; alinhamento UTC entre processos tem incerteza e não autoriza
+subtrair relógios sem explicitar limites. Intervalos sobrepostos não são somados.
+
+Novos ensaios usam destino próprio, dados sintéticos, uma réplica por processo,
+volume pequeno e encerramento definido. Não reutilizar bancos da campanha nem
+acionar restauração/autoescalonamento para testar observabilidade. Credenciais,
+payloads, assinaturas, parâmetros SQL e atributos de alta cardinalidade precisam
+de tratamento explícito antes de exportação; nenhum destino público é implícito.
+
+Autoinstrumentação também altera o runtime: identificar imagem, dependências,
+configuração e custo adicional. Alteração necessária de código/dependências da
+aplicação deve ter referência própria na linha v1.3 e decisão de escopo; não aplicar
+patch oculto na infraestrutura nem editar o checkout da aplicação em uso paralelo.
+Prometheus, dashboards e backends gerenciados só entram por lacuna identificada.
+Uma execução funcional pequena pode demonstrar cobertura; não quantifica overhead
+ou superioridade diagnóstica sem condições comparáveis e critérios prévios.
+
 ## 9. Limites e evolução
 
 O aceite deve identificar o ambiente efetivamente exercitado: Kind ou AKS.
@@ -557,8 +589,8 @@ A v1.0.0 entrega recuperação delimitada; a seção 8.7 acrescenta capacidade
 fixa/adaptativa, com comparação concluída no Kind. Os relatórios documentam
 resultados e limites; não há validação de capacidade máxima ou de produção.
 AKS permanece uma referência não implantada. Cluster autoscaler, GitOps,
-canary/blue-green, novos provedores de entrega e instrumentação adicional exigem
-uma decisão própria; não são requisitos de fechamento das avaliações existentes.
+canary/blue-green, novos provedores de entrega e instrumentação além da exploração
+delimitada na seção 8.8 exigem uma decisão própria; não são requisitos de fechamento das avaliações existentes.
 O [RELEASE_PLAN](RELEASE_PLAN.md) registra a candidata e as opções de continuidade.
 
 ## 10. Ambiente local e avaliação em Kind

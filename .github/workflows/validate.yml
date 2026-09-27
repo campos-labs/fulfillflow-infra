@@ -2,7 +2,7 @@ name: Validate infrastructure preparation
 
 on:
   push:
-    branches: [main, feature/v1.1-autoscaling-kind]
+    branches: [main, feature/v1.1-autoscaling-kind, feature/v1.2-observability]
   workflow_dispatch:
 
 permissions:

@@ -16,6 +16,10 @@ São duas avaliações experimentais complementares da mesma aplicação, com pr
 e conjuntos separados. As campanhas estão encerradas; não exigem nova carga para
 conferir os resultados. AKS/ACR permanecem referências opcionais não implantadas.
 
+A branch `feature/v1.2-observability` inicia uma exploração delimitada de correlação
+e diagnóstico. Seu [plano e critérios de continuidade](RELEASE_PLAN.md#4-exploração-de-observabilidade)
+são separados das avaliações encerradas; ainda não há tracing integrado validado.
+
 ## Comece por aqui
 
 | Necessidade | Documento |

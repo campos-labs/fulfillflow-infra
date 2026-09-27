@@ -2,14 +2,20 @@
 
 ## 1. Estado atual
 
+**Incremento ativo: descoberta de observabilidade**, na branch
+`feature/v1.2-observability`, a partir de `v1.1.0-rc.1` (`92089b8`). Contratos em
+[DESIGN §8.8](DESIGN.md#88-exploração-de-observabilidade). A exploração não reabre
+as campanhas concluídas nem promete uma nova campanha ou release.
+
+
 **Comparação de capacidade fixa e adaptativa concluída e consolidada na
 v1.1.0-rc.1.** O fechamento integra `feature/v1.1-autoscaling-kind` à `main`.
 A [página da pré-release](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.1.0-rc.1)
 identifica tag, commit e anexos; as referências medidas permanecem no relatório.
 
 As nove tentativas foram preservadas, incluindo a primeira adaptativa da sessão
-interrompida. A continuação terminou com zero posições pendentes. Não há nova
-carga autorizada por este fechamento. Resultados, método, sensibilidade e limites
+interrompida. A continuação terminou com zero posições pendentes. Essas campanhas
+permanecem encerradas; novos ensaios pertencem à exploração delimitada da seção 4. Resultados, método, sensibilidade e limites
 estão no [relatório de capacidade](docs/SCALING_EVALUATION.md); os três ZIPs em
 `docs/evidence/scaling/archives` eliminam a dependência de pastas locais para sua
 leitura. A imagem, o código da aplicação e o instrumento medido permanecem congelados.
@@ -50,20 +56,109 @@ publicados: uma correção posterior deve ter identidade própria.
 
 <a id="3-extensões-possíveis"></a>
 
-## 4. Continuidade condicionada
+## 4. Exploração de observabilidade
 
-O próximo passo pode ser encerrar a evolução neste recorte, investigar observabilidade
-ou verificar portabilidade. Nenhuma alternativa é requisito para concluir a candidata.
-As [questões e critérios técnicos](docs/SCALING_EVALUATION.md#6-interpretação-conjunta-e-continuidade)
-orientam a decisão; não há compromisso de instalar todas as ferramentas.
+**Questão técnica:** quais partes do intervalo entre aceite, conclusão por etapa
+e confirmação pelo observador conseguimos localizar com os sinais disponíveis,
+e qual informação adicional justificaria instrumentação?
 
-**Observabilidade:** se escolhida, iniciar `feature/v1.2-observability` a partir da
-referência revista. Fazer uma verificação pequena de correlação entre aceitação,
-conclusão por etapa e confirmação pelo observador. Continuar somente se acrescentar
-diagnóstico verificável com custo aceitável. Não prometer uma campanha completa,
-uma nova release ou explicação retrospectiva dos 503. Alteração de instrumentação
-ou dependências exige referência própria da aplicação/runtime. Prometheus e
-verificações de segurança permanecem opções justificadas por lacuna concreta.
+### Um incremento, com progressão limitada
+
+1. **Mapa de cobertura sem carga.** Ler a referência congelada e os pacotes
+   publicados. Relacionar marcos, IDs, relógios, fontes e lacunas, incluindo o
+   observador. Usar uma seleção declarada para ilustrar correlação, sem recalcular
+   comparações ou escolher exemplos como estimativa representativa. Registrar
+   quando uma etapa é apenas inferida ou não observável.
+2. **Prova mínima, se houver lacuna verificável.** Preparar o menor mecanismo que
+   responda a essa lacuna, com versões fixadas e testes offline primeiro. Preferir
+   OpenTelemetry quando houver necessidade de tracing; não instalar Operator,
+   Prometheus, Grafana ou serviço gerenciado por padrão. Se apenas a correlação
+   dos logs já responder à questão, consolidar esse resultado sem adicionar stack.
+3. **Verificação local delimitada e decisão.** Quando a referência/runtime e a
+   coleta estiverem identificados, executar até três ensaios funcionais distintos,
+   com até três eventos novos por ensaio, sem carga de capacidade nem falha real
+   de aplicação injetada. Verificar identidade, conclusão e cobertura da observação.
+   Falhas sintéticas do instrumento ficam nos testes offline. Registrar faltas de
+   cobertura e custo de coleta disponível, sem inferir ganho de desempenho.
+
+Orçamento operacional inicial: até 90 minutos de execução integrada, reservando
+15 para encerramento, e no máximo três inícios identificados. Esses tetos não são
+tamanho amostral nem ordem para consumir todas as tentativas. Não repetir até obter
+resultado favorável; uma correção exige causa registrada e destino novo dentro do
+limite. Desenvolvimento, leitura e CI não são janelas de medição.
+
+Antes de qualquer ensaio no notebook, avisar a janela crítica, conferir tomada,
+concorrência de containers e margem do host. Manter as guardas de 5 GiB na entrada
+e 2 GiB durante execução; se não houver margem, preparar comando único para execução
+com aplicativos fechados. Encerrar o ambiente próprio, preservando artefatos e
+volumes. Não reiniciar Docker/WSL nem remover recursos históricos automaticamente.
+
+Preparação, correções pequenas, testes e análise seguem sem aprovação a cada passo.
+Pausar diante de necessidade de alterar a aplicação/contrato, condição insegura,
+nova despesa/destino externo, mudança relevante do desenho ou esgotamento do teto.
+Não pausar apenas por um resultado negativo interpretável.
+
+O mesmo script pode ser iniciado pelo executor ou manualmente. Uma execução manual
+não se torna mais válida por sua forma de início. Ensaio exploratório permanece
+exploratório; uma avaliação comparativa futura requer protocolo congelado antes
+da coleta. Não repetir tudo como confirmação nem reclassificar pilotos depois.
+
+### Critério de continuidade e entrega
+
+Entregar uma matriz curta **questão → sinal atual → lacuna → mecanismo mínimo →
+evidência → limite**, procedimento executável quando houver ensaio e uma decisão:
+
+- **Aprofundar:** existe informação nova sobre uma fronteira relevante, com
+  correlação verificável e custo compatível; propor comparação própria somente
+  se isso responder a uma questão adicional concreta.
+- **Manter como complemento:** a organização dos sinais melhora a leitura, mas
+  não acrescenta diagnóstico suficiente para uma avaliação independente.
+- **Encerrar a exploração:** a informação já está disponível ou o custo/alteração
+  necessária supera o ganho. Preservar o achado sem fabricar uma vantagem.
+
+Não criar outro relatório extenso antes desse resultado. README apenas aponta o
+estado; DESIGN conserva contratos; este plano registra progressão e decisão.
+
+### Descoberta inicial, somente leitura
+
+Na referência da aplicação `9e3a135a`, `config.py` declara `otel_enabled` e valida
+o endpoint; `pyproject.toml` não lista o SDK/exportador OTel e não foi localizada
+inicialização de tracing. O flag não implementa telemetria sozinho.
+[`messaging/telemetry.py`](https://github.com/campos-labs/fulfillflow/blob/9e3a135a00db218643633c7165d3106f0c8285e1/src/fulfillflow/messaging/telemetry.py)
+já emite IDs, serviço, etapa, resultado, UTC e duração. Isso justifica começar
+por cobertura dos registros antes de acrescentar um backend. Não foi executado
+novo ensaio integrado ou validado tracing nesta branch.
+
+A inspeção estrutural dos nove pacotes encontrou diário de admissão, registros
+correlacionados do Core worker, tempos HTTP do observador e amostras de recursos
+do instrumento. Não houve recálculo dos resultados nem nova auditoria dos dados
+brutos. A cobertura inicial orienta a próxima implementação:
+
+| Fronteira | Sinal disponível | Lacuna a verificar |
+| --- | --- | --- |
+| Oferta e aceite | `admission.jsonl` | Resposta de aceite não é conclusão de negócio |
+| Processamento Core | `worker-attribution.json`, IDs, UTC e duração local | Não cobre sozinho conclusão de Tracking/Notifications |
+| Consulta do observador | `http-timings.json`, relógio monotônico e IDs HTTP | Duração HTTP não isola espera no servidor, banco ou agendamento do cliente |
+| Confirmação funcional | `events.json` e `observations.jsonl` | Registro observado não equivale ao instante do commit |
+| Custo do instrumento | `series.jsonl`, CPU/RSS e memória | Amostragem não prova overhead causal nem captura todos os processos breves |
+
+Primeiro correlacionar essas fronteiras sem nova carga. Se faltar um marco
+essencial, definir sua captura prospectiva e o custo antes de habilitar tracing.
+
+Os timestamps também exigem leitura do contrato: no resultado aplicado,
+[`tracking/message_handler.py`](https://github.com/campos-labs/fulfillflow/blob/9e3a135a00db218643633c7165d3106f0c8285e1/src/fulfillflow/tracking/message_handler.py)
+usa `result.decided_at` para criar o evento e relógio local para finalizar a inbox.
+Esses instantes não são automaticamente o horário do commit ou da confirmação HTTP.
+A [propagação de contexto do OpenTelemetry](https://opentelemetry.io/docs/concepts/context-propagation/)
+orienta a correlação entre fronteiras; IDs existentes não são prova de spans
+propagados. Mudanças de instrumentação precisam ser avaliadas como nova referência.
+
+### Continuidade após a exploração
+
+Prometheus e verificações de segurança permanecem possibilidades por lacuna
+concreta, sem integrar automaticamente este incremento. Se o ganho diagnóstico
+for pequeno, registrar complemento breve e voltar à avaliação de viabilidade AKS;
+isso não autoriza provisionamento ou migração automática.
 
 **AKS:** extensão opcional de portabilidade e funcionamento selecionado, com prints
 e evidências do ambiente efetivamente usado. ACR depende da implantação escolhida.
