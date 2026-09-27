@@ -7,12 +7,11 @@ a partir de `v1.1.0-rc.1` (`92089b8`). Descoberta offline e dois casos diagnóst
 integrados estão concluídos: fluxo saudável e trabalho publicado aguardando consumo.
 O [índice técnico e registros publicados](docs/evidence/observability/README.md)
 permitem conferir cobertura e limites sem depender dos artefatos locais selecionados.
-Nó parado. A fatia HTTP capturou os quatro spans na tentativa `observability-http-02`,
-mas a consulta recebeu 503. A correlação localizou a resposta em Tracking; foi
-identificado e corrigido o retorno do clone Tracking ao Core histórico. A execução direta
-`observability-http-03` registrou outro 503, desta vez como erro de transporte
-Core → Tracking, sem span servidor de Tracking. A captura saudável continua pendente.
-Sem nova campanha, merge ou release v1.2. As avaliações históricas não são reabertas.
+Nó parado. A tentativa `observability-http-04` respondeu 200 e capturou quatro spans,
+mas foi reprovada por uma asserção incorreta do observador (`APPLIED` como status da
+inbox). A correção usa o contrato `PROCESSED` / `COMPLETED` e identidades conhecidas;
+a sucessora `observability-http-05` está preparada. As tentativas anteriores não
+são reclassificadas. Sem nova campanha, merge ou release v1.2.
 
 **Comparação de capacidade fixa e adaptativa concluída e consolidada na
 v1.1.0-rc.1.** O fechamento integra `feature/v1.1-autoscaling-kind` à `main`.
@@ -210,6 +209,20 @@ não eventos de negócio nem spans experimentais. Essa verificação ainda não 
 executada no Kind; não foi atribuída causa raiz ao transporte da tentativa 03.
 A suíte de 317 testes passou; um teste adicional da sonda HTTP passou na suíte
 focada de 14 casos. Lint e formatação aprovados.
+
+**Tentativa 04 e correção do instrumento:** os três caminhos de saúde responderam
+200 na primeira rodada; a consulta também respondeu 200, com quatro spans, três
+lotes aceitos e zero rejeitados. O verificador confundia o resultado de negócio
+`APPLIED` com o status da inbox: `InboxStatus` admite `RECEIVED`, `PROCESSED` e
+`REJECTED`. A listagem não expõe o resultado detalhado de negócio. A asserção antiga
+era incompatível com o próprio schema e foi corrigida sem alterar a aplicação.
+
+Na sucessora 05, exigir um item/total, as três identidades conhecidas (evento externo,
+inbox e tracking event), status `PROCESSED`, progresso `COMPLETED`, conclusão registrada
+e ausência de código de erro. Preservar cada conferência como booleano independente
+dos spans, sem copiar o corpo completo. Testes rejeitam `APPLIED` como status, identidades
+divergentes, trabalho pendente e erro. A tentativa 04 mantém o veredito original:
+a resposta integral não foi preservada e não pode ser revalidada retrospectivamente.
 
 **Aceite da fatia:** identificar a mesma chamada nas fronteiras instrumentadas,
 confrontar resposta pública, relatar marcos ausentes e saúde da exportação. Medir

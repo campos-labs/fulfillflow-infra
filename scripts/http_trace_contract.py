@@ -144,3 +144,27 @@ def peer_health_ready(rows):
         and {(r.get("source"), r.get("target")) for r in rows} == set(HTTP_HEALTH_PATHS)
         and all(r.get("status") == 200 and r.get("error") is None for r in rows)
     )
+
+
+def functional_checks(payload, event, inbox, tracking_event):
+    """Check the actual v1.3 list contract; APPLIED is not an inbox status."""
+    if not isinstance(payload, dict):
+        return {"payload_object": False}
+    items = payload.get("items")
+    item = (
+        items[0]
+        if isinstance(items, list) and len(items) == 1 and isinstance(items[0], dict)
+        else {}
+    )
+    return {
+        "total_is_one": type(payload.get("total")) is int and payload["total"] == 1,
+        "item_count_is_one": isinstance(items, list) and len(items) == 1,
+        "event_matches": item.get("external_event_id") == event,
+        "inbox_matches": item.get("id") == inbox,
+        "tracking_event_matches": item.get("tracking_event_id") == tracking_event,
+        "status_processed": item.get("status") == "PROCESSED",
+        "progress_completed": item.get("progress") == "COMPLETED",
+        "completion_recorded": isinstance(item.get("completed_at"), str)
+        and bool(item["completed_at"]),
+        "error_absent": "error_code" in item and item["error_code"] is None,
+    }

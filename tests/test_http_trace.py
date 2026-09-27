@@ -15,6 +15,7 @@ from scripts.http_trace_contract import (
     HTTP_HEALTH_PATHS,
     ci_verdict,
     clone_api,
+    functional_checks,
     peer_health_ready,
     verify_trace,
 )
@@ -196,6 +197,37 @@ class TraceContracts(unittest.TestCase):
             self.assertEqual(runner.stage, "peer_health")
             captured = json.loads((Path(directory) / "peer-health.json").read_text())
             self.assertEqual(len(captured["rounds"]), 3)
+
+    def test_functional_list_contract_uses_processed_not_business_result(self):
+        payload = {
+            "total": 1,
+            "items": [
+                {
+                    "external_event_id": "event",
+                    "id": "inbox",
+                    "tracking_event_id": "tracking",
+                    "status": "PROCESSED",
+                    "progress": "COMPLETED",
+                    "completed_at": "2026-09-27T00:00:00Z",
+                    "error_code": None,
+                }
+            ],
+        }
+        self.assertTrue(all(functional_checks(payload, "event", "inbox", "tracking").values()))
+        for key, value in (
+            ("status", "APPLIED"),
+            ("status", "RECEIVED"),
+            ("progress", "AWAITING_RESULT"),
+            ("id", "wrong"),
+            ("tracking_event_id", "wrong"),
+            ("completed_at", None),
+            ("error_code", "REJECTED"),
+        ):
+            bad = copy.deepcopy(payload)
+            bad["items"][0][key] = value
+            self.assertFalse(all(functional_checks(bad, "event", "inbox", "tracking").values()))
+        for invalid in (None, {}, {"total": 1, "items": []}, {"total": 1, "items": [None]}):
+            self.assertFalse(all(functional_checks(invalid, "event", "inbox", "tracking").values()))
 
     def test_ci_waits_and_rejects_failure_or_a_different_reference(self):
         self.assertFalse(ci_verdict({"status": "in_progress", "headSha": "expected"}, "expected"))

@@ -407,7 +407,11 @@ def execute(private, output):
                 "metadata": {"name": "httpdiag-scripts", "labels": {LABEL: "true"}},
                 "data": {
                     name: (ROOT / "scripts" / name).read_text(encoding="utf-8")
-                    for name in ("http_trace_receiver.py", "http_trace_observer.py")
+                    for name in (
+                        "http_trace_receiver.py",
+                        "http_trace_observer.py",
+                        "http_trace_contract.py",
+                    )
                 },
             }
         )
@@ -461,6 +465,7 @@ def execute(private, output):
                 "/diag/http_trace_observer.py",
                 evidence["event_id"],
                 evidence["checkpoint"]["inbox_event_id"],
+                evidence["checkpoint"]["tracking_event_id"],
             ],
             timeout=30,
             allow_failure=True,

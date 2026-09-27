@@ -6,6 +6,7 @@ import time
 from uuid import uuid4
 
 import httpx
+from http_trace_contract import functional_checks
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
@@ -14,7 +15,7 @@ from opentelemetry.trace import SpanKind
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
 
-def run(event, inbox):
+def run(event, inbox, tracking_event):
     provider = TracerProvider(
         resource=Resource({"service.name": "httpdiag-observer"}), shutdown_on_exit=False
     )
@@ -62,20 +63,16 @@ def run(event, inbox):
             if response.status_code != 200:
                 raise ValueError("PUBLIC_QUERY_FAILED")
             payload = response.json()
-            items = payload.get("items", [])
-            if (
-                payload.get("total") != 1
-                or len(items) != 1
-                or items[0].get("external_event_id") != event
-                or items[0].get("id") != inbox
-                or items[0].get("status") != "APPLIED"
-            ):
+            result["functional_checks"] = functional_checks(payload, event, inbox, tracking_event)
+            if not all(result["functional_checks"].values()):
                 raise ValueError("INDEPENDENT_RESULT_MISMATCH")
             result.update(
                 complete=True,
                 event_id=event,
                 inbox_id=inbox,
-                persisted_status="APPLIED",
+                persisted_status="PROCESSED",
+                progress="COMPLETED",
+                tracking_event_id=tracking_event,
                 request_id_echoed=response.headers.get("X-Request-ID") == request_id,
             )
     except Exception as error:
