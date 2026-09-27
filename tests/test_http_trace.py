@@ -3,8 +3,11 @@
 import base64
 import copy
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
 from scripts.http_trace_contract import clone_api, verify_trace
+from scripts.http_trace_pilot import Runner, validate_host
 from scripts.http_trace_receiver import project
 
 
@@ -85,6 +88,22 @@ def chain():
 
 
 class TraceContracts(unittest.TestCase):
+    def test_memory_and_power_are_independent_guards(self):
+        validate_host({"available_gib": 5, "required_gib": 5, "power_plugged": True})
+        for available, plugged, error in ((4.99, True, "MEMORY"), (8, False, "BATTERY")):
+            with self.assertRaisesRegex(RuntimeError, error):
+                validate_host(
+                    {"available_gib": available, "required_gib": 5, "power_plugged": plugged}
+                )
+
+    def test_failing_runtime_sample_is_preserved_before_cleanup(self):
+        runner = Runner(Path("private"), Path("output"))
+        sample = {"available_gib": 1.9, "required_gib": 2, "power_plugged": True}
+        with patch("scripts.http_trace_pilot.host_snapshot", return_value=sample):
+            with self.assertRaisesRegex(RuntimeError, "MEMORY"):
+                runner.check()
+        self.assertEqual(runner.samples, [sample])
+
     def test_otlp_binary_ids_are_normalized_for_observer_join(self):
         (row,) = project(payload())
         self.assertEqual(row["trace_id"], bytes(range(16)).hex())

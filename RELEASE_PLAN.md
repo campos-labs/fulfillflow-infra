@@ -123,7 +123,7 @@ os bancos proprietários existentes para essa leitura. Um receptor OTLP local
 limitado recebe até 128 spans e rejeita atributos/eventos fora da allowlist.
 Não é um Collector de produção nem uma plataforma de observabilidade.
 
-Janela até 600 s, incluindo startup e coleta; 5 GiB de entrada e 2 GiB durante
+Preparação/captura até 600 s, mais encerramento limitado; 5 GiB de entrada e 2 GiB durante
 os comandos. Capturar resposta pública validada, quatro spans com parentela,
 aceites/rejeições do receptor, inventário, memória e métricas de pods quando
 presentes. A disponibilidade das métricas é registrada; não inferir overhead
@@ -135,7 +135,8 @@ permanecem identificados, impedindo repetição automática.
 68 casos focados incluindo os dez testes PowerShell que exigiam caminho explícito;
 Mypy e os 12 contratos de importação passaram. Transporte OTLP real até o receptor
 local passou; imagem construída e imports testados em container sem rede/volumes.
-Os 309 testes de infraestrutura passaram. A CI da aplicação cobre PostgreSQL e
+Os 309 testes de infraestrutura passaram; dois casos adicionais conferem a guarda
+e a preservação da amostra que a violou. A CI da aplicação cobre PostgreSQL e
 RabbitMQ reais; o resultado deve ser conferido no SHA de testes antes da execução.
 As leituras locais de margem ficaram abaixo de 5 GiB: não iniciou o Kind. Preferir o launcher
 com as janelas fechadas; reinicialização não é requisito presumido.

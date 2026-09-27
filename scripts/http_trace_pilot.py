@@ -9,14 +9,32 @@ import time
 from pathlib import Path
 from uuid import uuid4
 
+import psutil
+
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts import scale_environment as env
 from scripts.http_trace_contract import LABEL, clone_api, verify_trace
-from scripts.observability_pilot import guard
 from scripts.scale_contract import CLUSTER, utc, write
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def host_snapshot(minimum):
+    battery = psutil.sensors_battery()
+    return {
+        "utc": utc(),
+        "available_gib": psutil.virtual_memory().available / 1024**3,
+        "required_gib": minimum,
+        "power_plugged": battery.power_plugged if battery else None,
+    }
+
+
+def validate_host(snapshot):
+    if snapshot["power_plugged"] is False:
+        raise RuntimeError("HOST_ON_BATTERY")
+    if snapshot["available_gib"] < snapshot["required_gib"]:
+        raise RuntimeError("HOST_MEMORY_BELOW_GUARD")
 
 
 class Runner:
@@ -27,7 +45,9 @@ class Runner:
         self.run_id = uuid4().hex
 
     def check(self):
-        self.samples.append(guard(2))
+        sample = host_snapshot(2)
+        self.samples.append(sample)
+        validate_host(sample)
         if time.monotonic() >= self.deadline:
             raise RuntimeError("DIAGNOSTIC_DEADLINE")
 
@@ -165,7 +185,12 @@ def network():
 def execute(private, output):
     if CLUSTER != "fulfillflow-observe-01":
         raise RuntimeError("WRONG_ENVIRONMENT")
-    entry = guard(5)
+    entry = host_snapshot(5)
+    try:
+        validate_host(entry)
+    except RuntimeError:
+        print(json.dumps({"preflight": entry}))
+        raise
     if env.command(["docker", "ps", "-q"]).strip():
         raise RuntimeError("CONCURRENT_CONTAINERS")
     identity = json.loads((private / "identity.json").read_bytes())
@@ -384,7 +409,7 @@ def execute(private, output):
             else type(failure).__name__
         )
     finally:
-        if error and created:
+        if error:
             try:
                 statuses = json.loads(
                     env.kubectl(
@@ -461,9 +486,9 @@ def execute(private, output):
             complete, error = False, error or "RESOURCE_CLEANUP_UNCONFIRMED"
         try:
             env.command(["docker", "stop", "--timeout", "30", identity["container_id"]], timeout=60)
-            stopped = not json.loads(env.command(["docker", "inspect", identity["container_id"]]))[
-                0
-            ]["State"]["Running"]
+            stopped = not json.loads(
+                env.command(["docker", "inspect", identity["container_id"]], timeout=10)
+            )[0]["State"]["Running"]
         except Exception:
             pass
         if not stopped:
