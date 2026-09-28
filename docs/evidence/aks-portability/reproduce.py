@@ -274,6 +274,7 @@ def archive(paths):
     with zipfile.ZipFile(stream, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as out:
         for name, path in sorted(paths.items()):
             info = zipfile.ZipInfo(name, (2026, 9, 28, 0, 0, 0))
+            info.create_system = 3
             info.compress_type = zipfile.ZIP_DEFLATED
             info.external_attr = 0o644 << 16
             out.writestr(info, path.read_bytes())
