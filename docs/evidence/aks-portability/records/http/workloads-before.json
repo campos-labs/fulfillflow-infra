@@ -1,0 +1,56 @@
+[
+  {
+    "name": "core",
+    "uid": "0669ae95-ed22-401c-8917-d1e55e2112fc",
+    "generation": 1,
+    "observed_generation": 1,
+    "replicas": 1,
+    "ready_replicas": 1,
+    "available_replicas": 1
+  },
+  {
+    "name": "core-worker",
+    "uid": "afa223e9-126a-47a4-9ea7-c25253911251",
+    "generation": 1,
+    "observed_generation": 1,
+    "replicas": 1,
+    "ready_replicas": 1,
+    "available_replicas": 1
+  },
+  {
+    "name": "notifications",
+    "uid": "b8834fa0-3aa7-4ad2-9bc8-c8fdd9e27b24",
+    "generation": 1,
+    "observed_generation": 1,
+    "replicas": 1,
+    "ready_replicas": 1,
+    "available_replicas": 1
+  },
+  {
+    "name": "notifications-worker",
+    "uid": "5c32332d-ca64-48a7-ba3a-22a34ea8511d",
+    "generation": 1,
+    "observed_generation": 1,
+    "replicas": 1,
+    "ready_replicas": 1,
+    "available_replicas": 1
+  },
+  {
+    "name": "tracking",
+    "uid": "3b15ffe2-a4a6-4a1c-ad6a-b6d5be9669f8",
+    "generation": 1,
+    "observed_generation": 1,
+    "replicas": 1,
+    "ready_replicas": 1,
+    "available_replicas": 1
+  },
+  {
+    "name": "tracking-worker",
+    "uid": "fcc24dd8-c05b-42e7-9262-542841556be9",
+    "generation": 1,
+    "observed_generation": 1,
+    "replicas": 1,
+    "ready_replicas": 1,
+    "available_replicas": 1
+  }
+]

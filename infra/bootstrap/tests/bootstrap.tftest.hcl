@@ -80,3 +80,29 @@ run "rejects_broad_allowlist" {
   }
   expect_failures = [var.allowed_ipv4_addresses]
 }
+
+run "no_implicit_operator_roles" {
+  command = plan
+  assert {
+    condition     = length(azurerm_role_assignment.operator_state) == 0
+    error_message = "No operator roles may be created by default."
+  }
+}
+run "rejects_missing_operator_identity" {
+  command = plan
+  variables {
+    grant_operator_access = true
+  }
+  expect_failures = [var.grant_operator_access]
+}
+run "scoped_operator_access" {
+  command = plan
+  variables {
+    grant_operator_access = true
+    operator_object_id    = "22222222-2222-2222-2222-222222222222"
+  }
+  assert {
+    condition     = azurerm_role_assignment.operator_state[0].scope == azurerm_storage_account.state.id && azurerm_role_assignment.operator_state[0].role_definition_name == "Storage Blob Data Contributor" && azurerm_role_assignment.operator_state[0].principal_id == "22222222-2222-2222-2222-222222222222" && azurerm_role_assignment.operator_state[0].principal_type == "User"
+    error_message = "Operator role must retain exact purpose, user and resource scope."
+  }
+}

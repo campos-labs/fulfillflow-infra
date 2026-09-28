@@ -9,3 +9,7 @@ retention_days         = 30
 allowed_ipv4_addresses = ["203.0.113.10"]
 cost_approval_confirmed = false
 cost_approval_reference = ""
+
+# Optional scoped operator roles: approval required, never inferred from login.
+grant_operator_access = false
+operator_object_id = null

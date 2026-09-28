@@ -61,7 +61,17 @@ resource "azurerm_storage_container" "state" {
   storage_account_id    = azurerm_storage_account.state.id
   container_access_type = "private"
 
+  depends_on = [azurerm_role_assignment.operator_state]
+
   lifecycle {
     prevent_destroy = true
   }
+}
+
+resource "azurerm_role_assignment" "operator_state" {
+  count                = var.grant_operator_access ? 1 : 0
+  scope                = azurerm_storage_account.state.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = var.operator_object_id
+  principal_type       = "User"
 }

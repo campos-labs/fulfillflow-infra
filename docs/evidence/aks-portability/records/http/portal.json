@@ -1,0 +1,9 @@
+{
+  "file": "portal-workloads-active.png",
+  "sha256": "fe5f43da25085e7ca906a6a34a30259ead156f2764a8375b65d6d2d341717683",
+  "phase": "before worker suspension",
+  "visible_result": "Six fulfillflow deployments ready; namespace filter fulfillflow.",
+  "capture": "Real Azure Portal screenshot; cropped during capture to omit account header.",
+  "limits": "Sidebar and rightmost columns partly clipped by actual browser viewport. Readiness corroborated by workloads-before-suspension CLI JSON; do not interpret loading placeholders as CPU/memory measurements.",
+  "public_file": "../../assets/aks-portability/workloads-active.png"
+}

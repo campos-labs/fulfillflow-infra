@@ -1,0 +1,32 @@
+{
+  "complete": true,
+  "observed_at_utc": "2026-09-28T09:16:23.412405+00:00",
+  "managed_group_removed": true,
+  "execution_resources_absent_from_inventory": true,
+  "retained": [
+    {
+      "name": "ff294923aks01state",
+      "type": "Microsoft.Storage/storageAccounts",
+      "resource_group": "rg-ff-aks01-state"
+    },
+    {
+      "name": "ff294923aks01",
+      "type": "Microsoft.ContainerRegistry/registries",
+      "resource_group": "rg-ff-aks01-runtime"
+    }
+  ],
+  "other_subscription_resources": [
+    {
+      "name": "azure-free-service",
+      "type": "Microsoft.BillingBenefits/freeServices",
+      "resource_group": "azure-signup-rg"
+    },
+    {
+      "name": "NetworkWatcher_brazilsouth",
+      "type": "Microsoft.Network/networkWatchers",
+      "resource_group": "NetworkWatcherRG"
+    }
+  ],
+  "billing_verified": false,
+  "limit": "ARM inventory plus managed-group absence and disk listing; billing data still unavailable. Retained resources incur residual costs."
+}

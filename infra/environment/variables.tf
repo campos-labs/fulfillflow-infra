@@ -93,8 +93,8 @@ variable "node_count" {
   type        = number
   description = "Approved fixed system node count; cluster autoscaler is disabled."
   validation {
-    condition     = var.node_count >= 1 && var.node_count <= 100 && floor(var.node_count) == var.node_count
-    error_message = "Specify a whole node count from 1 to 100."
+    condition     = var.node_count >= 2 && var.node_count <= 100 && floor(var.node_count) == var.node_count
+    error_message = "Specify a whole system node count from 2 to 100."
   }
 }
 
@@ -146,4 +146,23 @@ variable "cost_approval_reference" {
   type        = string
   default     = ""
   description = "Reference to the approved environment/cost record; no personal or secret data."
+}
+
+variable "operator_object_id" {
+  type        = string
+  default     = null
+  description = "Explicit Entra user object ID from the private approved window; no implicit current-user lookup."
+  validation {
+    condition     = var.operator_object_id == null ? true : can(regex("^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$", var.operator_object_id))
+    error_message = "Provide an explicit user object UUID or null."
+  }
+}
+variable "grant_operator_access" {
+  type        = bool
+  default     = false
+  description = "Opt-in ONLY after approval of the exact operator, roles, scopes and retention."
+  validation {
+    condition     = !var.grant_operator_access || var.operator_object_id != null
+    error_message = "Operator access requires an explicit approved user object ID."
+  }
 }

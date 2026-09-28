@@ -4,7 +4,10 @@ tenant_id            = "11111111-1111-1111-1111-111111111111"
 resource_group_name  = "rg-ff-example-state"
 storage_account_name = "ffexamplestate0001"
 container_name       = "tfstate"
-key                  = "environment.tfstate"
+key                  = "aks-portability/example-window/environment.tfstate"
 use_azuread_auth     = true
 # Human bootstrap may use a separately authenticated Azure CLI session.
 # Future provisioning automation must use its own authorized OIDC identity.
+
+# Use a distinct bootstrap.tfstate key under the SAME window prefix for bootstrap.
+# Replace example-window only in private configuration; never reuse historical state.

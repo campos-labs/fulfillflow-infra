@@ -1,0 +1,46 @@
+[
+  {
+    "job": "aks-network-allowed-01",
+    "pod_labels": {
+      "fulfillflow.io/database-client": "true",
+      "fulfillflow.io/window": "aks-portability-01"
+    },
+    "timeout_seconds": 5,
+    "port": 5432,
+    "result": {
+      "connected": true,
+      "errno": 0
+    },
+    "target_uid_before": "b6877e7b-f9f0-4efa-9dbd-303b7e6b4998",
+    "target_uid_after": "b6877e7b-f9f0-4efa-9dbd-303b7e6b4998"
+  },
+  {
+    "job": "aks-network-denied-01",
+    "pod_labels": {
+      "fulfillflow.io/window": "aks-portability-01"
+    },
+    "timeout_seconds": 5,
+    "port": 5432,
+    "result": {
+      "connected": false,
+      "errno": 11
+    },
+    "target_uid_before": "b6877e7b-f9f0-4efa-9dbd-303b7e6b4998",
+    "target_uid_after": "b6877e7b-f9f0-4efa-9dbd-303b7e6b4998"
+  },
+  {
+    "job": "aks-network-allowed-02",
+    "pod_labels": {
+      "fulfillflow.io/database-client": "true",
+      "fulfillflow.io/window": "aks-portability-01"
+    },
+    "timeout_seconds": 5,
+    "port": 5432,
+    "result": {
+      "connected": true,
+      "errno": 0
+    },
+    "target_uid_before": "b6877e7b-f9f0-4efa-9dbd-303b7e6b4998",
+    "target_uid_after": "b6877e7b-f9f0-4efa-9dbd-303b7e6b4998"
+  }
+]

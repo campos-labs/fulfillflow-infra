@@ -1,0 +1,11 @@
+{
+  "complete": false,
+  "stopped_verified": true,
+  "business_events_offered": 0,
+  "scenario": "healthy",
+  "fault_executed": false,
+  "monitor_created": false,
+  "error": "NO_CAPACITY_FOR_DIAGNOSTICS",
+  "diagnostic_cleanup_errors": [],
+  "finished_at_utc": "2026-09-28T08:27:59.492119+00:00"
+}

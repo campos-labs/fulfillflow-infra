@@ -1,0 +1,12 @@
+{
+  "complete": true,
+  "stopped_verified": true,
+  "business_events_offered": 0,
+  "scenario": "healthy",
+  "fault_executed": false,
+  "monitor_created": false,
+  "diagnostic_cleanup_errors": [],
+  "worker_restore_errors": [],
+  "workers_restored_verified": true,
+  "finished_at_utc": "2026-09-28T09:06:11.062643+00:00"
+}

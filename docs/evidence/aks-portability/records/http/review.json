@@ -1,0 +1,14 @@
+{
+  "complete": true,
+  "spans": 4,
+  "parentage_verified": true,
+  "functional_check_independent_of_spans": true,
+  "durations_ms": {
+    "observer": 173.164561,
+    "core_server": 80.814517,
+    "internal_forwarding_including_content_type_check": 62.292061,
+    "tracking_server": 52.596471
+  },
+  "clock_limit": "Do not subtract nested/overlapping spans or infer SQL commit timing.",
+  "export_limit": "Receiver acceptance and expected coverage; no claim of general exporter health or overhead."
+}

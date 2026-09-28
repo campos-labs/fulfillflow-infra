@@ -1,0 +1,17 @@
+{
+  "private_executors": [
+    {
+      "file": "otel-isolated.local.py",
+      "sha256": "342ea14f0d3fa5aead0b9d849d2b6de249270bf886d6c77fa9dea909a71a7bcd"
+    },
+    {
+      "file": "resume-checks02.local.py",
+      "sha256": "3fba719b3b561019f6e91fca2ce127bdcf8617bab56fc2fd806fe59db6036580"
+    },
+    {
+      "file": "otel-block.local.py",
+      "sha256": "22593b9737d6673066b08045e9e58135a091a891cf97b64d10de5c64253f56e0"
+    }
+  ],
+  "limit": "Local orchestrators are identified, not exported: they contain deployment-specific paths and values. Public helpers do not reconstruct the full private invocation automatically."
+}

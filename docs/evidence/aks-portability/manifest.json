@@ -1,0 +1,455 @@
+{
+  "schema": 1,
+  "source_root_alias": "private/aks-authorization-01",
+  "purpose": "Sanitized selections supporting review, not raw private archive or independent re-execution of Azure.",
+  "entries": [
+    {
+      "path": "records/basic/smoke.json",
+      "sha256": "ff41956e95f5e450e3ba4c5f4a201b562537da2fe20c5cde54491b6d10f38367",
+      "bytes": 426,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "smoke-result.json",
+          "sha256": "0da388bb6dfaa2d0a639180f08bec1b28142f55070499d9e4d57cd784879f5ed"
+        }
+      ]
+    },
+    {
+      "path": "records/basic/attempt-01.json",
+      "sha256": "26e3fd4e2aa0ee97da2d6beaba0e8609a91625b3a74c38ce4dba1c33d01a0fea",
+      "bytes": 215,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "continuation-checks-01/summary.json",
+          "sha256": "d468715ee7acfdd92184b9edc3a55234f940a51def9a417a1b27cf97982929d9"
+        }
+      ]
+    },
+    {
+      "path": "records/basic/persistence-before.json",
+      "sha256": "366310685e7faaf875038b4f94621f7461a3d7c1e94bfd7aae3cf590c06241a5",
+      "bytes": 2232,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "continuation-checks-01/persistence-before/capture.json",
+          "sha256": "33f1cb8754e660189cedb7ffc30310ca39cc5d49b5b40e86cf67faf3c103ac7c"
+        }
+      ]
+    },
+    {
+      "path": "records/basic/persistence-after.json",
+      "sha256": "1a62944dc9f1e73e4af20751b76cb62161e4c4506c85bc272d6708248fd619d4",
+      "bytes": 2232,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "continuation-checks-02/persistence-after-resume/capture.json",
+          "sha256": "6c003b4dc1a40b42281d56a58dd9be5626b54580376a4509b320f868897a6b08"
+        }
+      ]
+    },
+    {
+      "path": "records/basic/persistence-review.json",
+      "sha256": "78ea23a12c6c5e5b112fe016b90ee10a45c0a9b14037c582950fffde1201b529",
+      "bytes": 370,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "continuation-checks-02/persistence-review.json",
+          "sha256": "8812f0ae81f2189b00b2e10dd06e7b6e6edf46f2a118807f402e58fcd6de91b5"
+        }
+      ]
+    },
+    {
+      "path": "records/basic/network.json",
+      "sha256": "ea278dbf91e1b29c71e6575962f5a4d01bcd57b4c0e7bb57da86ac4fd288e0c6",
+      "bytes": 515,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "continuation-checks-02/network-review.json",
+          "sha256": "63e87bed33599516308caa57ae644658c9b04709937ec9b85a2672b1e5a199bc"
+        }
+      ]
+    },
+    {
+      "path": "records/basic/attempt-02.json",
+      "sha256": "1954595fc66d63b256e68f7fcc5f4f36c604bc04c4cb133dda13b50d0c0fb753",
+      "bytes": 173,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "continuation-checks-02/summary.json",
+          "sha256": "d156f032cb8bd5c7b5abd61fd80283d15ef30f2080c4d40bc88b717a6b8454e8"
+        }
+      ]
+    },
+    {
+      "path": "records/http/capacity-attempt.json",
+      "sha256": "ea7226fc59b1d2fdacd9411e783c43fdf9e8d32c3479210bc3f7911669f57535",
+      "bytes": 309,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "otel-healthy-01/summary.json",
+          "sha256": "818af4ac44d0320698a7b13accaf2b9a1c798e6a46dc53b4f83cb6cccd4ba3b1"
+        }
+      ]
+    },
+    {
+      "path": "records/http/capacity-diagnosis.json",
+      "sha256": "c3e74e7f494a29f0cb7ed81e96c6ca2b264b6c7385ba3d941ed6cc10b0dff948",
+      "bytes": 653,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "otel-healthy-01/capacity-review-offline.json",
+          "sha256": "e7bba38596ae52405c3ae366cd21de9d910832c9b6c7fc2bd1a4f375c50a417e"
+        }
+      ]
+    },
+    {
+      "path": "records/http/functional.json",
+      "sha256": "0361bcffdb86433ba130c72a7c9134bb56333be2993b1e4acbf7b3a88f52075d",
+      "bytes": 866,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "otel-isolated-01/functional.json",
+          "sha256": "cb46c5cadc18d64c84fec59991810e9f214b28ee37ff9a6276da49d947e9e40f"
+        }
+      ]
+    },
+    {
+      "path": "records/http/trace-records.json",
+      "sha256": "b1a3c5e5facdacec435af3a996d58e1e83f6108ef07f0e3f9e049d322b0d6551",
+      "bytes": 2972,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "otel-isolated-01/trace-records.json",
+          "sha256": "1aae3b828413857e08d58f30880bd9462751240554a020f13444463a632ddc79"
+        }
+      ]
+    },
+    {
+      "path": "records/http/review.json",
+      "sha256": "2ff1671c1e9f85fba071f1cd27fbae45340aff5185a0a93d9feb4785ea386d9e",
+      "bytes": 515,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "otel-isolated-01/review.json",
+          "sha256": "86b2296cfbe4523ec997a46cd5a8b3bb8fbdcbcde5b61b80ac349637e49d12c1"
+        }
+      ]
+    },
+    {
+      "path": "records/http/summary.json",
+      "sha256": "5cb39647e53c8a1a09418b36775010996f9df9bf5492c78629c4d04960ee7b9b",
+      "bytes": 335,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "otel-isolated-01/summary.json",
+          "sha256": "7cb050a2510994fec093c6f04f290b4d3f4f7aca1127afd1f734eeb74879b3fa"
+        }
+      ]
+    },
+    {
+      "path": "records/http/pending-before.json",
+      "sha256": "145c6dd8538d1f307effd8051ed0f810b3230cb709f7068dd6b36ce55356c110",
+      "bytes": 638,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "otel-isolated-01/pending-before-suspension.json",
+          "sha256": "c57199a9c655eb966eeda2de8ab92acdc7a4b50ebc280a9eaa2ea4a3c9cb0c59"
+        }
+      ]
+    },
+    {
+      "path": "records/http/pending-after.json",
+      "sha256": "145c6dd8538d1f307effd8051ed0f810b3230cb709f7068dd6b36ce55356c110",
+      "bytes": 638,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "otel-isolated-01/pending-after-suspension.json",
+          "sha256": "c57199a9c655eb966eeda2de8ab92acdc7a4b50ebc280a9eaa2ea4a3c9cb0c59"
+        }
+      ]
+    },
+    {
+      "path": "records/http/workers.json",
+      "sha256": "89a69cabc14549129c8bc6e7b24b5350e77a8b34fa612fd637a50bdc22885417",
+      "bytes": 348,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "otel-isolated-01/workers-to-restore.json",
+          "sha256": "3365ff5353cc5c110b9c25862e3d746e982443caded0152122ba0093e6971f44"
+        }
+      ]
+    },
+    {
+      "path": "records/closure/summary.json",
+      "sha256": "4cfbec7213088fe89ea0a347aed41ed0e75848d3b583539b4328801ba426331e",
+      "bytes": 1021,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "teardown-01/summary.json",
+          "sha256": "f42312f2b838faa4cb4eb83e1db4f1ba5db0806e75c61739bae2d6a638454896"
+        }
+      ]
+    },
+    {
+      "path": "records/closure/plan-review.json",
+      "sha256": "49445c159bb8d3a69c86a66e58293974ac0f754e631c1ed9456d319b66c38e47",
+      "bytes": 393,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "teardown-01/review.json",
+          "sha256": "96408e7d86a2747d484ee829dfa575df943a062f5f5571ceee2d82a046d5ceae"
+        }
+      ]
+    },
+    {
+      "path": "records/closure/managed-group-exists.json",
+      "sha256": "75dbba8fd110adbe0bda707bcbfe667247f5a2d590c5380781abcde1ac20062d",
+      "bytes": 7,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "teardown-01/managed-group-exists.json",
+          "sha256": "75dbba8fd110adbe0bda707bcbfe667247f5a2d590c5380781abcde1ac20062d"
+        }
+      ]
+    },
+    {
+      "path": "records/closure/disks-after.json",
+      "sha256": "6cc5f0b62a8d505d7c0844c2e90322f4385fe9e6be45addff485c801744aed92",
+      "bytes": 21,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "teardown-01/disks-rest-after.json",
+          "sha256": "6cc5f0b62a8d505d7c0844c2e90322f4385fe9e6be45addff485c801744aed92"
+        }
+      ]
+    },
+    {
+      "path": "records/basic/kind-regression.json",
+      "sha256": "487baf30df4085b44c8ed8feaecc9405464907b9601b8b3491c7799c974e0e09",
+      "bytes": 965,
+      "treatment": "JSON selection; local output paths and API endpoint omitted; ARM IDs replaced by stable SHA-256 when present.",
+      "sources": [
+        {
+          "path": "kind-regression-final.json",
+          "sha256": "487baf30df4085b44c8ed8feaecc9405464907b9601b8b3491c7799c974e0e09"
+        }
+      ]
+    },
+    {
+      "path": "records/http/workloads-before.json",
+      "sha256": "de19b2348033f73e62c098845caf26d0f0d3c0fa881ddef8ad60ac695954b6e7",
+      "bytes": 1324,
+      "treatment": "Allowlisted deployment identities, desired/ready counts and generations; no pod specs or environment variables.",
+      "sources": [
+        {
+          "path": "otel-isolated-01/029-workloads-before-suspension.log",
+          "sha256": "42b5981794592ac800f18dcaa75c9a4278ea3c1d39c42b9f2a0c39c34dd06c78"
+        }
+      ]
+    },
+    {
+      "path": "records/http/workloads-restored.json",
+      "sha256": "4ee907abd8a48447b7f0e43bb1c3ede59288a3194677fd7edc38ac74db990463",
+      "bytes": 1324,
+      "treatment": "Allowlisted deployment identities, desired/ready counts and generations; no pod specs or environment variables.",
+      "sources": [
+        {
+          "path": "otel-isolated-01/101-workloads-after-restoration.log",
+          "sha256": "3fdede460ee2ab016c620a4462465f97a6305de155c4b70892e2702c4722debb"
+        }
+      ]
+    },
+    {
+      "path": "records/basic/pvcs.json",
+      "sha256": "0829b74bd492edd2ec32dc490f444cd989e05717e111abb675313863d8ba7ac0",
+      "bytes": 933,
+      "treatment": "PersistentVolume status, capacity and claim binding projection; no account IDs or credentials.",
+      "sources": [
+        {
+          "path": "continuation-checks-02/volumes.json",
+          "sha256": "668a3be4fb011510deb245f47adae283a3cdb029cc642b371601cd0e65fd5e20"
+        }
+      ]
+    },
+    {
+      "path": "records/basic/cluster.json",
+      "sha256": "9b099695a17cdd97fdab4d7c70b5d263cb3b93212449c9a79901e3c449db3611",
+      "bytes": 731,
+      "treatment": "Allowlisted ARM cluster/pool configuration; identities/endpoints/keys omitted.",
+      "sources": [
+        {
+          "path": "cluster-after-failure.json",
+          "sha256": "1417728d07617a26325130deb77dff158bc376497bca00d1a9f13254a5779d40"
+        }
+      ]
+    },
+    {
+      "path": "records/basic/nodes.json",
+      "sha256": "18fe401d01b739b381377673eec5324cf8eaccc5eb110c8af87c68f6f8cde2ac",
+      "bytes": 991,
+      "treatment": "Node capacity, readiness and software versions only; addresses and provider IDs omitted.",
+      "sources": [
+        {
+          "path": "continuation-checks-02/nodes.json",
+          "sha256": "92d676a46f22650af25b09a659b677265dfdb511fd111915a38e6997514dc3f8"
+        }
+      ]
+    },
+    {
+      "path": "records/basic/network-probes.json",
+      "sha256": "ce8a09de1881c5922cd45f2a14266cca5054b8a38a490a5f3dbf16803a87951a",
+      "bytes": 1232,
+      "treatment": "Probe labels/results and target UID before/after; destination IP and registry host omitted. Single TCP attempt per job, timeout 5 seconds.",
+      "sources": [
+        {
+          "path": "continuation-checks-02/aks-network-allowed-01.yaml",
+          "sha256": "135ca498ebd8f12b15fe34568305be0aab38282642bfd65826df37e456ac8ea3"
+        },
+        {
+          "path": "continuation-checks-02/029-aks-network-allowed-01-logs.log",
+          "sha256": "6018eac0fe5ba7475ca06c562df408f433abdec13ac861897b523267c2e8404e"
+        },
+        {
+          "path": "continuation-checks-02/026-postgres-pod.log",
+          "sha256": "0ae15ddc584be61cc44c25519e508ab98a16e94cf1434d6bc35d3ecf7114af05"
+        },
+        {
+          "path": "continuation-checks-02/030-postgres-pod.log",
+          "sha256": "0ae15ddc584be61cc44c25519e508ab98a16e94cf1434d6bc35d3ecf7114af05"
+        },
+        {
+          "path": "continuation-checks-02/aks-network-denied-01.yaml",
+          "sha256": "244edb97c3d7a9834e351b856d6062336e01ff068ce68acf7de0a6c62278b909"
+        },
+        {
+          "path": "continuation-checks-02/034-aks-network-denied-01-logs.log",
+          "sha256": "23e4d289b275bb33b032240a2f377c28510f19b4ede9d279ed438def1b686500"
+        },
+        {
+          "path": "continuation-checks-02/031-postgres-pod.log",
+          "sha256": "0ae15ddc584be61cc44c25519e508ab98a16e94cf1434d6bc35d3ecf7114af05"
+        },
+        {
+          "path": "continuation-checks-02/035-postgres-pod.log",
+          "sha256": "0ae15ddc584be61cc44c25519e508ab98a16e94cf1434d6bc35d3ecf7114af05"
+        },
+        {
+          "path": "continuation-checks-02/aks-network-allowed-02.yaml",
+          "sha256": "6e54aa4e16e1d6b62b92dd21b6eee7529d5f00ced6ed1c52f263fccee477dc0f"
+        },
+        {
+          "path": "continuation-checks-02/039-aks-network-allowed-02-logs.log",
+          "sha256": "6018eac0fe5ba7475ca06c562df408f433abdec13ac861897b523267c2e8404e"
+        },
+        {
+          "path": "continuation-checks-02/036-postgres-pod.log",
+          "sha256": "0ae15ddc584be61cc44c25519e508ab98a16e94cf1434d6bc35d3ecf7114af05"
+        },
+        {
+          "path": "continuation-checks-02/040-postgres-pod.log",
+          "sha256": "0ae15ddc584be61cc44c25519e508ab98a16e94cf1434d6bc35d3ecf7114af05"
+        }
+      ]
+    },
+    {
+      "path": "records/closure/inventory.json",
+      "sha256": "64b1ade5ba2b177ca0110b9cda87d528516f3e012bf0fb4118e9bcd6d977130a",
+      "bytes": 521,
+      "treatment": "ARM inventory projection; account IDs, tags and unrelated properties omitted.",
+      "sources": [
+        {
+          "path": "teardown-01/resources-after.json",
+          "sha256": "cb89ba8244b517903bcfceece41b1e406b0f0670c2d1c6590c07470e1fdb7080"
+        }
+      ]
+    },
+    {
+      "path": "records/basic/images.json",
+      "sha256": "b6f43c4281c8964835aa57e92c1752bb255cf4aa1ac38ab92e81f32f30611029",
+      "bytes": 904,
+      "treatment": "Image references projected to repository and digest; original source cluster settings are not AKS settings.",
+      "sources": [
+        {
+          "path": "images.private.json",
+          "sha256": "3dd24ffea29761f9ea68a2d53190d1a2687ef2beaa5130e25792d767e2ecf363"
+        },
+        {
+          "path": "otel-image.json",
+          "sha256": "98366681bdc29b2dcacfb853bc319f70706842a249f011e7152bea9992cbe9c1"
+        }
+      ]
+    },
+    {
+      "path": "records/http/portal.json",
+      "sha256": "7a97202c5b8f7e3fddc54a6c679cc594c7dd1b2b33dedb98f303d6cb995a018c",
+      "bytes": 641,
+      "treatment": "Real screenshot clipped at capture; public PNG is byte-for-byte copy, not an AI-generated reconstruction.",
+      "sources": [
+        {
+          "path": "otel-isolated-01/portal-capture.json",
+          "sha256": "1c1409ec34c3b90e7aa2dc9ee0c388e47a42b1a17207fdcb89931600f09bb56b"
+        },
+        {
+          "path": "otel-isolated-01/portal-workloads-active.png",
+          "sha256": "fe5f43da25085e7ca906a6a34a30259ead156f2764a8375b65d6d2d341717683"
+        }
+      ]
+    },
+    {
+      "path": "records/closure/portal.json",
+      "sha256": "c67ecb62490a2470bea05ad341eae59bf3821547b1f3c75c324da3fe22efb994",
+      "bytes": 574,
+      "treatment": "Real screenshot clipped at capture; public PNG is byte-for-byte copy, not an AI-generated reconstruction.",
+      "sources": [
+        {
+          "path": "teardown-01/portal-capture.json",
+          "sha256": "775f00408caabce0243e958f17ab51befa3fbf0940afe9475c7c9d3fa2b819e1"
+        },
+        {
+          "path": "teardown-01/portal-resources-after.png",
+          "sha256": "105959683a3c22fc941e162fb3e4cb37008bc68490586122b84196991f955402"
+        }
+      ]
+    },
+    {
+      "path": "records/execution-sources.json",
+      "sha256": "33c1206016e6bad084d53eaa4190397589ef5ee46d7adaa9eaf28759ad110140",
+      "bytes": 648,
+      "treatment": "Executor hashes only; never expose private orchestrators or authorization files.",
+      "sources": [
+        {
+          "path": "otel-isolated.local.py",
+          "sha256": "342ea14f0d3fa5aead0b9d849d2b6de249270bf886d6c77fa9dea909a71a7bcd"
+        },
+        {
+          "path": "resume-checks02.local.py",
+          "sha256": "3fba719b3b561019f6e91fca2ce127bdcf8617bab56fc2fd806fe59db6036580"
+        },
+        {
+          "path": "otel-block.local.py",
+          "sha256": "22593b9737d6673066b08045e9e58135a091a891cf97b64d10de5c64253f56e0"
+        }
+      ]
+    }
+  ]
+}

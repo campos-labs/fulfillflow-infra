@@ -67,6 +67,10 @@ run "restricted_runtime_structure" {
     error_message = "Use Entra RBAC without local admin or the Azure run-command bypass."
   }
   assert {
+    condition     = azurerm_kubernetes_cluster.runtime.oidc_issuer_enabled
+    error_message = "Preserve the AKS 1.34+ OIDC issuer default instead of planning its removal."
+  }
+  assert {
     condition     = azurerm_kubernetes_cluster.runtime.network_profile[0].network_plugin_mode == "overlay" && azurerm_kubernetes_cluster.runtime.network_profile[0].network_policy == "cilium" && azurerm_kubernetes_cluster.runtime.network_profile[0].network_data_plane == "cilium"
     error_message = "The proposed cluster must provide the policy engine used by manifests."
   }
@@ -181,4 +185,73 @@ run "rejects_fractional_capacity" {
     node_count = 1.5
   }
   expect_failures = [var.node_count]
+}
+
+run "rejects_single_system_node" {
+  command = plan
+  plan_options {
+    target = [azurerm_kubernetes_cluster.runtime]
+  }
+  variables {
+    node_count = 1
+  }
+  expect_failures = [var.node_count]
+}
+
+run "candidate_preserves_surge_and_free_tier" {
+  command = plan
+  plan_options {
+    target = [azurerm_kubernetes_cluster.runtime]
+  }
+  variables {
+    node_vm_size       = "Standard_D4s_v6"
+    kubernetes_version = "1.34.11"
+  }
+  assert {
+    condition     = azurerm_kubernetes_cluster.runtime.sku_tier == "Free" && azurerm_kubernetes_cluster.runtime.default_node_pool[0].upgrade_settings[0].max_surge == "1" && azurerm_kubernetes_cluster.runtime.default_node_pool[0].vm_size == "Standard_D4s_v6"
+    error_message = "The candidate must retain Free, D4s_v6 and one additional upgrade node."
+  }
+}
+
+run "no_implicit_operator_roles" {
+  command = plan
+  plan_options {
+    target = [azurerm_role_assignment.operator_push, azurerm_role_assignment.operator_cluster_user, azurerm_role_assignment.operator_cluster_admin]
+  }
+  assert {
+    condition     = length(azurerm_role_assignment.operator_push) == 0 && length(azurerm_role_assignment.operator_cluster_user) == 0 && length(azurerm_role_assignment.operator_cluster_admin) == 0
+    error_message = "No operator roles may be created by default."
+  }
+}
+run "rejects_missing_operator_identity" {
+  command = plan
+  plan_options {
+    target = [azurerm_role_assignment.operator_push, azurerm_role_assignment.operator_cluster_user, azurerm_role_assignment.operator_cluster_admin]
+  }
+  variables {
+    grant_operator_access = true
+  }
+  expect_failures = [var.grant_operator_access]
+}
+run "scoped_operator_access" {
+  command = plan
+  plan_options {
+    target = [azurerm_role_assignment.operator_push, azurerm_role_assignment.operator_cluster_user, azurerm_role_assignment.operator_cluster_admin]
+  }
+  variables {
+    grant_operator_access = true
+    operator_object_id    = "22222222-2222-2222-2222-222222222222"
+  }
+  assert {
+    condition     = azurerm_role_assignment.operator_push[0].scope == azurerm_container_registry.runtime.id && azurerm_role_assignment.operator_push[0].role_definition_name == "AcrPush" && azurerm_role_assignment.operator_push[0].principal_id == "22222222-2222-2222-2222-222222222222" && azurerm_role_assignment.operator_push[0].principal_type == "User"
+    error_message = "Operator role must retain exact purpose, user and resource scope."
+  }
+  assert {
+    condition     = azurerm_role_assignment.operator_cluster_user[0].scope == azurerm_kubernetes_cluster.runtime.id && azurerm_role_assignment.operator_cluster_user[0].role_definition_name == "Azure Kubernetes Service Cluster User Role" && azurerm_role_assignment.operator_cluster_user[0].principal_id == "22222222-2222-2222-2222-222222222222" && azurerm_role_assignment.operator_cluster_user[0].principal_type == "User"
+    error_message = "Operator role must retain exact purpose, user and resource scope."
+  }
+  assert {
+    condition     = azurerm_role_assignment.operator_cluster_admin[0].scope == azurerm_kubernetes_cluster.runtime.id && azurerm_role_assignment.operator_cluster_admin[0].role_definition_name == "Azure Kubernetes Service RBAC Cluster Admin" && azurerm_role_assignment.operator_cluster_admin[0].principal_id == "22222222-2222-2222-2222-222222222222" && azurerm_role_assignment.operator_cluster_admin[0].principal_type == "User"
+    error_message = "Operator role must retain exact purpose, user and resource scope."
+  }
 }

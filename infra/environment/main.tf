@@ -47,10 +47,12 @@ resource "azurerm_kubernetes_cluster" "runtime" {
   sku_tier            = var.aks_sku_tier
 
   role_based_access_control_enabled = true
-  local_account_disabled            = true
-  private_cluster_enabled           = false
-  run_command_enabled               = false
-  node_os_upgrade_channel           = "None"
+  # AKS 1.34+ enables this at creation; make the service default explicit.
+  oidc_issuer_enabled     = true
+  local_account_disabled  = true
+  private_cluster_enabled = false
+  run_command_enabled     = false
+  node_os_upgrade_channel = "None"
 
   azure_active_directory_role_based_access_control {
     tenant_id          = var.tenant_id
@@ -138,4 +140,28 @@ resource "azurerm_role_assignment" "deployment_namespace_writer" {
   principal_id                     = azurerm_user_assigned_identity.deployment.principal_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+}
+
+resource "azurerm_role_assignment" "operator_push" {
+  count                = var.grant_operator_access ? 1 : 0
+  scope                = azurerm_container_registry.runtime.id
+  role_definition_name = "AcrPush"
+  principal_id         = var.operator_object_id
+  principal_type       = "User"
+}
+
+resource "azurerm_role_assignment" "operator_cluster_user" {
+  count                = var.grant_operator_access ? 1 : 0
+  scope                = azurerm_kubernetes_cluster.runtime.id
+  role_definition_name = "Azure Kubernetes Service Cluster User Role"
+  principal_id         = var.operator_object_id
+  principal_type       = "User"
+}
+
+resource "azurerm_role_assignment" "operator_cluster_admin" {
+  count                = var.grant_operator_access ? 1 : 0
+  scope                = azurerm_kubernetes_cluster.runtime.id
+  role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
+  principal_id         = var.operator_object_id
+  principal_type       = "User"
 }

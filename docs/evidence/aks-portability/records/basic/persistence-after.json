@@ -1,0 +1,51 @@
+{
+  "order_id": "d1060008-f4fa-4d81-b4ea-a2a246fb6fc7",
+  "shipment_id": "f88821ee-c585-4420-b35b-7acb2d56e24d",
+  "event_id": "58a7a83b-25ee-58f5-a5aa-262b3c3f6333",
+  "notification_id": "11bcbe1b-b628-43c4-acac-5173230339e2",
+  "states": {
+    "order": "FULFILLED",
+    "shipment": "DELIVERED",
+    "tracking": "APPLIED",
+    "notification": "SIMULATED"
+  },
+  "cluster_id": "arm-sha256:8c105581dba41d31c069b3fbffbbaf98d07888a18e662160bb08b29e76e0538d",
+  "system_namespace_uid": "821924d7-90b8-4105-babf-8be37418c60e",
+  "window": "aks-portability-01",
+  "namespace": "fulfillflow",
+  "pod_name": "postgres-0",
+  "ready": true,
+  "pod_uid": "b6877e7b-f9f0-4efa-9dbd-303b7e6b4998",
+  "pvc_uid": "9852dcd2-04b0-439d-a284-2f41c03a37b8",
+  "pv_uid": "8ce74ca8-c96c-4e33-a5e8-49efa90bb818",
+  "volume_handle": "arm-sha256:14587a436466c5842324417a908c8f1d01dfcff9545119585c1350ae347aba0f",
+  "storage_driver": "disk.csi.azure.com",
+  "observed_at": "2026-09-28T08:08:27.593653+00:00",
+  "queries": [
+    {
+      "path": "/api/v1/orders/d1060008-f4fa-4d81-b4ea-a2a246fb6fc7",
+      "status": 200,
+      "body_sha256": "e1b8bf68d29143eddfbdc8a769e875827197970203b06d41b27468c456143717",
+      "observed_at": "2026-09-28T08:08:24.265942+00:00"
+    },
+    {
+      "path": "/api/v1/shipments/f88821ee-c585-4420-b35b-7acb2d56e24d",
+      "status": 200,
+      "body_sha256": "53d382ecb56aa4214a99c3dfdabdbebe224fb8f23fd92509de1cbd61b2dde3fc",
+      "observed_at": "2026-09-28T08:08:24.304768+00:00"
+    },
+    {
+      "path": "/api/v1/shipments/f88821ee-c585-4420-b35b-7acb2d56e24d/tracking?page_size=2",
+      "status": 200,
+      "body_sha256": "c445219554189805b0778619c043f06de6ba52f4ee4aa525db19ab22642857e7",
+      "observed_at": "2026-09-28T08:08:24.513629+00:00"
+    },
+    {
+      "path": "/api/v1/notification-status/58a7a83b-25ee-58f5-a5aa-262b3c3f6333",
+      "status": 200,
+      "body_sha256": "778109bdb347eb5e1296864c3b696f5ac06c93976a719f715fdcfe3b9b051f09",
+      "observed_at": "2026-09-28T08:08:24.665394+00:00"
+    }
+  ],
+  "limit": "Sequential selected observations, not atomic snapshot or backup. Cluster ARM ID is supplied; endpoint and namespace UID are checked."
+}

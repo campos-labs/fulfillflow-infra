@@ -1,5 +1,5 @@
 {
-  "status": "local_evaluations_closed_aks_portability_preparation",
+  "status": "local_functional_accepted_cloud_pending",
   "provisioning_authorized": false,
   "application": {
     "repository": "campos-labs/fulfillflow",
@@ -14,22 +14,14 @@
     "offer_verified": false,
     "available_credit_usd": null,
     "credit_expiry": null,
-    "quota_verified": false,
-    "subscription_strategy": "acr_and_aks_same_new_paid_subscription"
+    "quota_verified": false
   },
   "cost": {
-    "policy": "finish_offline_preparation_before_provisioning",
-    "private_window_record_required": true,
-    "required_window_fields": [
-      "approved_budget",
-      "currency",
-      "estimated_active_cost",
-      "estimated_residual_cost",
-      "contingency_reserve",
-      "max_window_duration",
-      "retention_end",
-      "approval_reference"
-    ]
+    "authorized_cap": null,
+    "currency": null,
+    "planned_active_hours": null,
+    "estimate": null,
+    "policy": "finish_offline_preparation_before_provisioning"
   },
   "deployment": {
     "namespace": "fulfillflow",
@@ -40,9 +32,7 @@
     "api_access_approved": false,
     "executor_connectivity": null,
     "secret_delivery": null,
-    "backup_destination": null,
-    "preferred_aks_sku_tier": "Free",
-    "preferred_acr_sku": "Basic"
+    "backup_destination": null
   },
   "local": {
     "platform": "kind",

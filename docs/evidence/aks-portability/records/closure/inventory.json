@@ -1,0 +1,22 @@
+[
+  {
+    "type": "Microsoft.BillingBenefits/freeServices",
+    "name": "azure-free-service",
+    "location": "global"
+  },
+  {
+    "type": "Microsoft.Storage/storageAccounts",
+    "name": "ff294923aks01state",
+    "location": "brazilsouth"
+  },
+  {
+    "type": "Microsoft.ContainerRegistry/registries",
+    "name": "ff294923aks01",
+    "location": "brazilsouth"
+  },
+  {
+    "type": "Microsoft.Network/networkWatchers",
+    "name": "NetworkWatcher_brazilsouth",
+    "location": "brazilsouth"
+  }
+]
