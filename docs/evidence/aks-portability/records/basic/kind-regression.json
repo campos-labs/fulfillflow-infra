@@ -1,0 +1,24 @@
+{
+  "reference": "777900da060419acf559dec56902ef1e326504cf",
+  "release": "v1.2.0-rc.1",
+  "equal": true,
+  "phases": {
+    "foundations": {
+      "equal": true,
+      "reference_sha256": "96d5a2606f4e68be5576a59680d3d627de6c06937d2c6ead56717fcd0b6dbb68",
+      "current_sha256": "96d5a2606f4e68be5576a59680d3d627de6c06937d2c6ead56717fcd0b6dbb68"
+    },
+    "migrations": {
+      "equal": true,
+      "reference_sha256": "bd98cafcf8644409270430b9a4f15d711017c97d2e826505ed8a612644f13296",
+      "current_sha256": "bd98cafcf8644409270430b9a4f15d711017c97d2e826505ed8a612644f13296"
+    },
+    "runtime": {
+      "equal": true,
+      "reference_sha256": "45847f41b0fbcda6acfaea5dc63ba1ecf8407975416f63067ee7087314a1aac5",
+      "current_sha256": "45847f41b0fbcda6acfaea5dc63ba1ecf8407975416f63067ee7087314a1aac5"
+    }
+  },
+  "cluster_contacted": false,
+  "limit": "Render equality does not establish runtime or cross-environment causality."
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "name": "aks-system-37543753-vmss000004",
+    "allocatable": {
+      "cpu": "3860m",
+      "ephemeral-storage": "59763732382",
+      "hugepages-1Gi": "0",
+      "hugepages-2Mi": "0",
+      "memory": "12072712Ki",
+      "pods": "250"
+    },
+    "ready": "True",
+    "node_info": {
+      "kubeletVersion": "v1.34.11",
+      "osImage": "Ubuntu 22.04.5 LTS",
+      "kernelVersion": "5.15.0-1121-azure",
+      "containerRuntimeVersion": "containerd://1.7.34-2"
+    }
+  },
+  {
+    "name": "aks-system-37543753-vmss000005",
+    "allocatable": {
+      "cpu": "3860m",
+      "ephemeral-storage": "59763732382",
+      "hugepages-1Gi": "0",
+      "hugepages-2Mi": "0",
+      "memory": "12072716Ki",
+      "pods": "250"
+    },
+    "ready": "True",
+    "node_info": {
+      "kubeletVersion": "v1.34.11",
+      "osImage": "Ubuntu 22.04.5 LTS",
+      "kernelVersion": "5.15.0-1121-azure",
+      "containerRuntimeVersion": "containerd://1.7.34-2"
+    }
+  }
+]

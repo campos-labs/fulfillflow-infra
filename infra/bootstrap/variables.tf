@@ -79,3 +79,22 @@ variable "cost_approval_reference" {
   default     = ""
   description = "Reference to the approved environment/cost record; no personal or secret data."
 }
+
+variable "operator_object_id" {
+  type        = string
+  default     = null
+  description = "Explicit Entra user object ID from the private approved window; no implicit current-user lookup."
+  validation {
+    condition     = var.operator_object_id == null ? true : can(regex("^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$", var.operator_object_id))
+    error_message = "Provide an explicit user object UUID or null."
+  }
+}
+variable "grant_operator_access" {
+  type        = bool
+  default     = false
+  description = "Opt-in ONLY after approval of the exact operator, roles, scopes and retention."
+  validation {
+    condition     = !var.grant_operator_access || var.operator_object_id != null
+    error_message = "Operator access requires an explicit approved user object ID."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "base_application_sha": "9e3a135a00db218643633c7165d3106f0c8285e1",
+  "instrumented_application_sha": "045e1ca8629409b6abdf2829ef5c93d14cfb60d9",
+  "otel_sdk": "1.45.0",
+  "instrumented_lock_sha256": "766d622c90c5e15c337e7834212c4ee57db792f4742ac34846f8cebd6bbcf04c",
+  "images": [
+    {
+      "repository": "fulfillflow/runtime",
+      "digest": "sha256:582a858debe2ff64d481e810b2d5ae5a1aba6a669516bca36a15eb12e77ec072"
+    },
+    {
+      "repository": "dependencies/postgres",
+      "digest": "sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280"
+    },
+    {
+      "repository": "dependencies/rabbitmq",
+      "digest": "sha256:d1b24a78c1ace826771eb8585d8f30315a64f1aad4d1fe6fcd9b4435cccc16f4"
+    },
+    {
+      "repository": "fulfillflow/httpdiag",
+      "digest": "sha256:aaf3cb4c23800819a8b56dc9710b3ac10e7541a21eac30e63d934f1a48030e34"
+    }
+  ]
+}

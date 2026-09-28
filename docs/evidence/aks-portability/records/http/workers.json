@@ -1,0 +1,17 @@
+[
+  {
+    "name": "core-worker",
+    "uid": "afa223e9-126a-47a4-9ea7-c25253911251",
+    "replicas": 1
+  },
+  {
+    "name": "tracking-worker",
+    "uid": "fcc24dd8-c05b-42e7-9262-542841556be9",
+    "replicas": 1
+  },
+  {
+    "name": "notifications-worker",
+    "uid": "5c32332d-ca64-48a7-ba3a-22a34ea8511d",
+    "replicas": 1
+  }
+]

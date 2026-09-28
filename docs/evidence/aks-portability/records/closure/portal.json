@@ -1,0 +1,14 @@
+{
+  "file": "portal-resources-after.png",
+  "sha256": "105959683a3c22fc941e162fb3e4cb37008bc68490586122b84196991f955402",
+  "phase": "after reviewed teardown",
+  "source": "Azure Portal all resources; no resource filters applied",
+  "crop": "Account and directory header excluded during capture",
+  "visible": [
+    "ACR",
+    "state storage",
+    "regional Network Watcher"
+  ],
+  "primary_evidence": "summary.json, resources-after.json, disks-rest-after.json, managed-group-exists.json",
+  "public_file": "../../assets/aks-portability/resources-after.png"
+}

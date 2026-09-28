@@ -2,7 +2,7 @@ name: Validate infrastructure preparation
 
 on:
   push:
-    branches: [main, feature/v1.1-autoscaling-kind, feature/v1.2-observability]
+    branches: [main, feature/v1.1-autoscaling-kind, feature/v1.2-observability, feature/v1.3-aks-portability]
   workflow_dispatch:
 
 permissions:
@@ -22,6 +22,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.12'
@@ -64,12 +66,26 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           uv run --frozen python docs/evidence/observability/reproduce.py
           exit $LASTEXITCODE
+      - name: Verify AKS evidence without Azure access
+        shell: pwsh
+        run: |
+          uv run --frozen ruff check docs/evidence/aks-portability/reproduce.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          uv run --frozen ruff format --check docs/evidence/aks-portability/reproduce.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          uv run --frozen python docs/evidence/aks-portability/reproduce.py
+          exit $LASTEXITCODE
       - name: Reproduce observability discovery without cluster access
         shell: pwsh
         run: |
           uv run --frozen python scripts/observability_discovery.py --output artifacts/observability-discovery.json
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           uv run --frozen python -c "import json; from pathlib import Path; actual=json.loads(Path('artifacts/observability-discovery.json').read_bytes()); expected=json.loads(Path('docs/evidence/observability/discovery-01.json').read_bytes()); assert actual == expected, 'Observability discovery differs from published summary'"
+          exit $LASTEXITCODE
+      - name: Preserve Kind render from v1.2.0-rc.1
+        shell: pwsh
+        run: |
+          uv run --frozen python scripts/azure/check_kind_regression.py --output artifacts/kind-regression.json
           exit $LASTEXITCODE
       - name: Render, schema validation and Terraform mock plans
         shell: pwsh
@@ -81,6 +97,8 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: validation-${{ matrix.os }}
-          path: artifacts/validation/
+          path: |
+            artifacts/validation/
+            artifacts/kind-regression.json
           if-no-files-found: warn
           retention-days: 7

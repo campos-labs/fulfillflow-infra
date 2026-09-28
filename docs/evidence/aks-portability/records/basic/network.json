@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "target_pod_uid": "b6877e7b-f9f0-4efa-9dbd-303b7e6b4998",
+  "observations": [
+    {
+      "job": "aks-network-allowed-01",
+      "expected_connected": true,
+      "connected": true,
+      "errno": 0
+    },
+    {
+      "job": "aks-network-denied-01",
+      "expected_connected": false,
+      "connected": false,
+      "errno": 11
+    },
+    {
+      "job": "aks-network-allowed-02",
+      "expected_connected": true,
+      "connected": true,
+      "errno": 0
+    }
+  ]
+}

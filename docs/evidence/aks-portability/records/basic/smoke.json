@@ -1,0 +1,14 @@
+{
+  "acceptance_observed": true,
+  "acceptance_verified": true,
+  "duplicate_verified": true,
+  "error": null,
+  "event_id": "infra-smoke-3a37cbb7-a200-49fe-bc5c-8e98d72ef159",
+  "last_operation": "business_observation",
+  "notifications_simulated": true,
+  "order_completed": true,
+  "run_id": "3a37cbb7-a200-49fe-bc5c-8e98d72ef159",
+  "success": true,
+  "tracking_completed": true,
+  "webhook_offered": true
+}

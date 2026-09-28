@@ -18,3 +18,7 @@ pod_cidr                 = "10.244.0.0/16"
 service_cidr             = "10.0.0.0/16"
 cost_approval_confirmed  = false
 cost_approval_reference  = ""
+
+# Optional scoped operator roles: approval required, never inferred from login.
+grant_operator_access = false
+operator_object_id = null

@@ -1,0 +1,34 @@
+{
+  "core": {
+    "inbox": 0,
+    "quarantine": 0,
+    "outbox": 0
+  },
+  "tracking": {
+    "inbox": 0,
+    "quarantine": 0,
+    "outbox": 0,
+    "received": 0
+  },
+  "notifications": {
+    "inbox": 0,
+    "quarantine": 0
+  },
+  "broker": [
+    {
+      "name": "tracking.result.v1.queue",
+      "messages_ready": 0,
+      "messages_unacknowledged": 0
+    },
+    {
+      "name": "tracking.apply.v1.queue",
+      "messages_ready": 0,
+      "messages_unacknowledged": 0
+    },
+    {
+      "name": "shipment.status_changed.v1.queue",
+      "messages_ready": 0,
+      "messages_unacknowledged": 0
+    }
+  ]
+}

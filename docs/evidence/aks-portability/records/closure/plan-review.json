@@ -1,0 +1,10 @@
+{
+  "offline_review": "passed",
+  "approved_deletions": 8,
+  "targeted": true,
+  "full_configuration_convergence": false,
+  "execution_authorized": false,
+  "limits": "Does not inspect AKS-managed resources, retained CSI disks, backups or billing.",
+  "plan_sha256": "003a1cf6e745ce6c13c2665c00fa234f71d040d648fafeb092c7f472db31f8f8",
+  "binary_json_correspondence_verified": true
+}

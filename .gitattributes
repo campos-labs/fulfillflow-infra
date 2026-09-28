@@ -34,3 +34,7 @@ docs/evidence/observability/http-fault-03/** -text whitespace=blank-at-eol,blank
 docs/evidence/observability/archives/*.zip binary
 docs/assets/observability/*.svg text eol=lf
 docs/evidence/observability/archives/*.sha256 text eol=lf
+
+# AKS evidence hashes and reproducible package inputs.
+docs/evidence/aks-portability/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/assets/aks-portability/*.svg -text

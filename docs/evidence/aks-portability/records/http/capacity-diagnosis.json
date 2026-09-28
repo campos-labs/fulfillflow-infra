@@ -1,0 +1,19 @@
+{
+  "diagnosis": "insufficient_cpu_requests_capacity",
+  "free_cpu_per_node": [
+    0.55,
+    0.458
+  ],
+  "total_free_cpu": 1.008,
+  "diagnostic_cpu_requests": [
+    0.05,
+    0.5,
+    0.5
+  ],
+  "total_diagnostic_cpu": 1.05,
+  "diagnostic_resources_created": false,
+  "otel_executed": false,
+  "stopped_verified": true,
+  "interpretation": "Scheduling requests, not measured CPU saturation. No evidence of insufficient memory. Healthy OTel extension gate not met; basic acceptance remains separate.",
+  "recommendation": "Do not repeat unchanged or change node count/requests. Preserve evidence and proceed to reviewed teardown."
+}

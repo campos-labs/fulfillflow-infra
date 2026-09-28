@@ -1,0 +1,10 @@
+{
+  "review": "passed",
+  "pod_recreated": true,
+  "same_volume_and_result": true,
+  "limit": "Preserved result and volume across the recorded interventions; not isolated pod-recreation timing, backup restoration, or explanation of the previous failed query.",
+  "intervening_operations": [
+    "controlled_postgres_pod_recreation",
+    "AKS_stop_start"
+  ]
+}

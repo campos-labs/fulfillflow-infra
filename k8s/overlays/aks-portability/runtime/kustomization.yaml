@@ -1,0 +1,7 @@
+# Render-only candidate. Inherits example guards and synthetic inputs.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../example/runtime
+commonAnnotations:
+  fulfillflow.io/environment: aks-portability-candidate

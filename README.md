@@ -1,52 +1,40 @@
 # FulfillFlow Infra
 
-Implantação, recuperação, capacidade e diagnóstico do FulfillFlow em Kubernetes.
-A [v1.0.0](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.0.0)
-preserva a avaliação de recuperação em Kind. A
-[v1.1.0-rc.1](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.1.0-rc.1)
-acrescenta nove tentativas de capacidade fixa/adaptativa concluídas, relatório,
-gráficos e evidências. A
-[v1.2.0-rc.1](https://github.com/campos-labs/fulfillflow-infra/releases/tag/v1.2.0-rc.1)
-consolida correlação e diagnóstico HTTP com OpenTelemetry, dois pacotes e figuras
-reproduzíveis. As candidatas são pré-releases da infraestrutura.
+Infraestrutura e avaliações operacionais do FulfillFlow em Kubernetes.
+Os relatórios separam resultado, método e limites; o
+[plano de entrega](RELEASE_PLAN.md) identifica versões publicadas e pendências.
 
 | Avaliação | Resultado principal | Relatório |
 | --- | --- | --- |
 | Recuperação de configuração | Ambos os procedimentos restauraram e confirmaram o trabalho; o acionamento integrado dispensou a solicitação externa separada | [Avaliação operacional](docs/OPERATIONAL_EVALUATION.md) |
 | Capacidade fixa/adaptativa | KEDA executou 1→2→1, sem vantagem de atendimento sobre uma réplica fixa neste perfil; duas réplicas reduziram a pendência local | [Avaliação de capacidade](docs/SCALING_EVALUATION.md) |
 | Correlação e diagnóstico | IDs reconstruíram o fluxo dos workers; OTel localizou uma falha HTTP controlada, com consulta 200 → 503 → 200 e sem medição de overhead | [Avaliação de observabilidade](docs/OBSERVABILITY_EVALUATION.md) |
+| Portabilidade AKS | Fluxo funcional, persistência e rede verificados; quatro spans em consulta HTTP isolada; encerramento verificado | [Avaliação de portabilidade](docs/AKS_PORTABILITY_EVALUATION.md) |
 
-Recuperação e capacidade são avaliações experimentais complementares da mesma
-aplicação, com protocolos separados. A extensão de observabilidade acrescenta
-casos diagnósticos; não testa os três mecanismos conjuntamente. As execuções estão
-encerradas. AKS/ACR permanecem referências opcionais não implantadas.
+As avaliações usam a mesma aplicação com protocolos distintos; não foram
+executadas conjuntamente nem transferem resultados quantitativos do Kind para
+AKS. A [v1.3.0-rc.1](docs/releases/v1.3.0-rc.1.md) consolida a portabilidade. O
+[plano de entrega](RELEASE_PLAN.md) identifica as referências preservadas.
 
 ## Comece por aqui
 
 | Necessidade | Documento |
 | --- | --- |
-| Entender método, resultados, limites e fontes | [Recuperação](docs/OPERATIONAL_EVALUATION.md), [capacidade](docs/SCALING_EVALUATION.md) e [observabilidade](docs/OBSERVABILITY_EVALUATION.md) |
+| Entender método, resultados, limites e fontes | [Recuperação](docs/OPERATIONAL_EVALUATION.md), [capacidade](docs/SCALING_EVALUATION.md), [observabilidade](docs/OBSERVABILITY_EVALUATION.md) e [portabilidade](docs/AKS_PORTABILITY_EVALUATION.md) |
 | Entender arquitetura e contratos | [DESIGN](DESIGN.md) |
-| Conferir candidata e opções de continuidade | [RELEASE_PLAN](RELEASE_PLAN.md) |
+| Conferir entregas, incremento ativo e pausas | [RELEASE_PLAN](RELEASE_PLAN.md) |
 | Preparar ou operar o laboratório | [Guia Kubernetes](k8s/README.md) |
-| Examinar a referência Azure | [Guia Terraform](infra/README.md) |
+| Preparar a extensão Azure e seu encerramento | [Guia Terraform](infra/README.md) |
 
 ## Aplicação e limites operacionais
 
-Na recuperação, capacidade e correlação dos workers, a referência é [FulfillFlow v1.3.0-rc.1](https://github.com/campos-labs/fulfillflow/tree/9e3a135a00db218643633c7165d3106f0c8285e1),
-SHA `9e3a135a00db218643633c7165d3106f0c8285e1`. Core, Tracking e Notifications têm
-API e worker próprios, com três bancos/roles PostgreSQL e RabbitMQ. Notifications
-registra entrega simulada. Este repositório consome seus contratos, sem copiar
-código de negócio ou comparar versões arquiteturais da aplicação. A fatia HTTP
-usa derivação instrumentada `045e1ca`, com [runtime próprio](config/http-observability.json),
-sem substituir essa referência congelada.
+A referência funcional é [FulfillFlow v1.3.0-rc.1](https://github.com/campos-labs/fulfillflow/tree/9e3a135a00db218643633c7165d3106f0c8285e1)
+(`9e3a135`); a fatia HTTP usa a derivação `045e1ca`, com
+[runtime próprio](config/http-observability.json). A infraestrutura consome os
+contratos da aplicação; arquitetura e guardas estão no [DESIGN](DESIGN.md).
 
-A recuperação altera somente configuração elegível de `notifications-worker`;
-não reverte dados nem rearma `BLOCKED`. A avaliação de capacidade varia réplicas
-de `core-worker`, com nós fixos. Os mecanismos não foram exercitados conjuntamente.
-HTTP 202, ACK, fila vazia e pod pronto não comprovam conclusão de negócio. Os
-relatórios distinguem ação operacional, participação do worker e confirmação
-observada, sem inferir HA, capacidade máxima, economia financeira ou desempenho AKS.
+HTTP 202, ACK, fila vazia e pod pronto não comprovam conclusão de negócio. As
+avaliações delimitam o que foi confirmado e não demonstram prontidão para produção.
 
 ## Validação local
 
@@ -64,13 +52,10 @@ uv run --frozen ruff format --check scripts tests k8s/prepare_rabbitmq_definitio
 uv run --frozen python scripts/validate.py --output artifacts/validation-local-01
 ```
 
-O destino deve ser novo. Para caminhos com espaços ou execução em outro diretório,
-`scripts/Invoke-Validation.ps1` aceita `-Python` e `-OutputDirectory` absolutos;
-`-Kubectl` e `-Terraform` são opcionais. Essa validação também roda na CI Linux/Windows:
-testes, renderização, schemas e planos Terraform simulados. Não aplica recursos
-nem executa as séries no Kind. Os comandos operacionais estão no guia Kubernetes;
-as séries concluídas permanecem encerradas. A comparação de capacidade usa
-configuração e destinos próprios; novas cargas dependem de decisão explícita.
+O destino deve ser novo. `scripts/Invoke-Validation.ps1` aceita caminhos absolutos
+para Python, saída e ferramentas. A CI Linux/Windows verifica testes, renders,
+schemas e planos Terraform simulados, sem aplicar recursos ou executar campanhas.
+Procedimentos operacionais ficam nos guias; novas cargas exigem decisão própria.
 
 ## Organização e evidências
 
@@ -79,23 +64,18 @@ configuração e destinos próprios; novas cargas dependem de decisão explícit
 - `docs/evidence/operational-a/`: evidências preservadas da recuperação, com dois ZIPs.
 - `docs/evidence/scaling/`: três ZIPs com as nove tentativas, índices e reprodução offline.
 - `docs/evidence/observability/`: dois ZIPs e seleções legíveis, diagramas e conferência offline.
+- `docs/evidence/aks-portability/`: dois ZIPs, seleções sanitizadas, capturas reais e verificação offline.
 - `artifacts/`: originais e saídas locais ignorados pelo Git; não presumir disponibilidade por link.
 
-Os [pacotes de capacidade](docs/evidence/scaling/archives) incluem a primeira
-adaptativa originalmente fora da continuação. O [manifesto](docs/evidence/scaling/manifest.json)
-separa originais, projeções e metadados selecionados. Configurações privadas,
-credenciais, dumps e kubeconfigs não são distribuídos. Scripts dos experimentos
-ficam versionados; os ZIPs permitem ler os resultados sem recriar o laboratório.
+Os índices de evidências descrevem seleção, hashes e reprodução. Credenciais,
+states, dumps e kubeconfigs ficam fora dos pacotes. Executores históricos e
+auxiliares Azure são versionados; os orquestradores locais da janela AKS estão
+identificados por hash. Os ZIPs permitem revisar resultados, não recriam o ambiente.
 
-Conferência de integridade e estatísticas, sem Docker ou arquivos privados:
+Conferência offline, sem Docker ou arquivos privados:
 
 ```powershell
 python docs/evidence/scaling/reproduce.py
 uv run --frozen python docs/evidence/observability/reproduce.py
+python docs/evidence/aks-portability/reproduce.py
 ```
-
-Métodos de reprodução: [capacidade](docs/SCALING_EVALUATION.md#7-evidências-e-reprodução-da-leitura)
-e [observabilidade](docs/OBSERVABILITY_EVALUATION.md#7-evidências-e-reprodução-da-leitura).
-A disponibilidade de cada entrega é identificada no plano e nas páginas das releases.
-Restauração de backup independente e reprodução das medições em outro computador
-não foram verificadas.

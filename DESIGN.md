@@ -1,18 +1,15 @@
 # FulfillFlow Infra — Arquitetura da base operacional
 
-## 1. Estado e autoridade
+<a id="1-estado-e-autoridade"></a>
 
-Este documento define a arquitetura e os contratos operacionais da entrega em
-Kind: verificação de implantação, restauração delimitada e observação
-posterior do trabalho aceito, entregues na v1.0.0. A seção 8.7 define o mecanismo de
-capacidade fixa/adaptativa implementado e avaliado para a candidata v1.1. AKS/ACR é uma
-configuração de referência opcional, ainda não implantada; não é dependência local.
+## 1. Escopo e autoridade
 
-O [RELEASE_PLAN](RELEASE_PLAN.md) registra marcos e decisões pendentes. O relatório
-[de recuperação](docs/OPERATIONAL_EVALUATION.md) e o
-[de capacidade](docs/SCALING_EVALUATION.md) reúnem os protocolos executados,
-resultados, limites e evidências de cada avaliação. Um contrato documentado não comprova execução;
-um teste da aplicação não substitui sua verificação no ambiente operacional.
+Este documento define arquitetura, invariantes e contratos de implantação,
+recuperação, capacidade, observabilidade e portabilidade. Kind é a base local;
+AKS/ACR é uma extensão independente. Estado da entrega e decisões pendentes ficam
+no [RELEASE_PLAN](RELEASE_PLAN.md); métodos executados, resultados e limites,
+nos [relatórios técnicos](README.md#comece-por-aqui). Um contrato documentado
+não comprova execução, e um teste da aplicação não substitui o aceite operacional.
 
 A referência é `campos-labs/fulfillflow`, `v1.3.0-rc.1`, commit
 `9e3a135a00db218643633c7165d3106f0c8285e1`. Seus
@@ -92,8 +89,8 @@ A extensão Azure mantém estes contratos, detalhados em [infra/README](infra/RE
 - AKS com Entra e identidades gerenciadas; pull pela identidade kubelet, sem admin
   ACR; verificar modo RBAC/ABAC antes de atribuir validade a `AcrPull`;
 - CNI Overlay/Cilium, ranges sem sobreposição e API Kubernetes pública restrita a
-  IPv4 `/32`, conforme a configuração preparada. Essa conectividade ainda precisa
-  ser aprovada e verificada com executor de origem estável. Não abrir a API para
+  IPv4 `/32`, conforme a configuração aprovada. Conferir conectividade e origem
+  estável do executor em cada janela; a execução anterior não valida uma nova origem. Não abrir a API para
   contornar conectividade nem presumir acesso privado pelo runner hospedado.
 
 ## 5. Estado, bootstrap e custo
@@ -104,7 +101,8 @@ volumes existentes nem rotaciona senhas. PostgreSQL 18 conserva o layout do Comp
 RabbitMQ conserva nome do nó, hostname e caminho dos dados ao recriar pods.
 
 PVCs têm capacidade e retenção explícitas. O Kind usa local-path; a referência AKS,
-Azure Disk CSI. Exportar e conferir cópia independente antes de remover dados.
+Azure Disk CSI. Exportar e conferir cópia independente antes de remover dados,
+com a exceção explícita para dados sintéticos descartáveis da janela na seção 8.9.
 Existência de PVC ou backup não comprova restauração, que exige ensaio isolado.
 
 Na extensão Azure, Terraform e provider têm versões fixadas e lock versionado.
@@ -418,8 +416,8 @@ observar resultados. Prazos, ordem e denominadores executados ficam no
 
 ### 8.7. Capacidade fixa e adaptativa em Kind
 
-**Contrato implementado e comparação concluída.** A referência executada e os
-resultados estão no [relatório de capacidade](docs/SCALING_EVALUATION.md).
+Referências executadas e resultados estão no
+[relatório de capacidade](docs/SCALING_EVALUATION.md); esta seção define o contrato.
 Esta seção define o mecanismo e as invariantes; não autoriza nova carga.
 Os contratos históricos de calibração/pilotos permanecem na
 [referência anterior à consolidação](https://github.com/campos-labs/fulfillflow-infra/blob/58f4483e0fdb2e5273b9b533d9173de494818a3c/DESIGN.md#87-alvo-de-autoescalonamento-em-kind).
@@ -551,8 +549,8 @@ o cluster; não modifica dados ou o instrumento congelado.
 Resultados executados e evidências: [avaliação de observabilidade](docs/OBSERVABILITY_EVALUATION.md).
 Esta seção preserva os contratos, sem duplicar a análise.
 
-A extensão v1.2 investiga onde o intervalo entre aceite, conclusão por etapa e
-confirmação pelo observador pode ser explicado com evidência correlacionada. Primeiro
+A observabilidade correlaciona aceite, conclusão por etapa e confirmação pelo
+observador, respeitando a semântica de cada sinal. Primeiro
 examinar contratos, logs e registros existentes. OpenTelemetry é a opção preferencial
 para uma lacuna que exija tracing; não é condição de sucesso instalar uma plataforma.
 
@@ -635,8 +633,8 @@ isoladamente não comprova interrupção. Services, Core, receptor OTLP, workers
 históricos permanecem intactos. Restaurar o spec original mesmo se a coleta falhar.
 Na sequência aprovada, aguardar rollout (até 120 s), conferir novo UID de pod Ready e
 endpoints disponíveis antes da consulta final. Não mudar dados, timeouts, pooling ou
-instrumentação da aplicação. As tentativas 01/02 com alteração de seletor mantêm seu
-protocolo e julgamento originais; a 02 não produziu a falha pretendida.
+instrumentação da aplicação. Protocolos e julgamentos de tentativas anteriores
+permanecem preservados no relatório e em suas referências históricas.
 
 Critérios distintos: antes/depois, HTTP 200, resultado funcional e quatro spans;
 durante, HTTP 503, erro de transporte no cliente Core e três spans ligados. Confrontar
@@ -648,25 +646,79 @@ não existe nesta fatia uma leitura independente do caminho interrompido. Não a
 continuidade de processamento, pois o evento já estava concluído. O limite temporal
 continua em 600 segundos e não há retry das três consultas.
 
+### 8.9. Verificação de portabilidade para AKS
+
+Método executado, resultados e evidências estão na
+[avaliação de portabilidade](docs/AKS_PORTABILITY_EVALUATION.md). O
+[guia Terraform](infra/README.md) concentra procedimentos; o
+[plano](RELEASE_PLAN.md) registra autorizações e pendências.
+
+ACR e AKS usam a mesma assinatura paga e tenant identificados em entradas privadas.
+Preferir AKS Base/Free e ACR Basic para o laboratório. Adotar AKS Automatic ou
+mudar região, SKU, topologia ou serviços exige revisão de custo e contrato;
+não usar alternativas automáticas para contornar impedimentos. Número de nós depende de suporte e capacidade alocável;
+a configuração Kind não autoriza dimensionamento Azure.
+
+Configuração pública, overlay e auxiliares ficam em `config/aks-portability.json`,
+`k8s/overlays/aks-portability` e `scripts/azure`. Reaproveitar os roots Terraform
+com backend exclusivo e keys distintas de bootstrap/ambiente por implantação.
+Não reutilizar state ou volumes históricos. `config/environment.json` mantém o
+registro anterior; a CI compara o render Kind com `v1.2.0-rc.1`. Alteração inevitável
+na base compartilhada exige justificativa e revisão do diff, sem trocar a baseline.
+
+O aceite básico preserva a topologia da seção 2, uma réplica por processo e a
+referência `9e3a135`, sem KEDA, restauração automática ou instrumentação adicional
+simultâneos. Imagens seguem a proveniência da seção 3. Confrontar o resultado por
+evento com pull por identidade, fronteiras de acesso, persistência CSI e efeito
+das NetworkPolicies. Readiness não substitui confirmação funcional; preservação
+de volume não demonstra backup restaurável ou HA. Separar falha funcional,
+impedimento do ambiente e lacuna de evidência, sem transferir métricas do Kind.
+
+O emissor OIDC do cluster fica habilitado; isso não habilita Workload Identity nem
+concede acesso Azure aos pods. A federação GitHub é independente. Não desabilitar
+o emissor como correção de drift. Roles opcionais do operador Entra ficam inativas
+até aprovação de escopo e prazo: Blob Data Contributor no state, AcrPush no ACR,
+Cluster User e RBAC Cluster Admin no cluster dedicado. Não ampliar permissões à
+assinatura nem usar Shared Key ou credenciais administrativas locais como atalho.
+As roles de deploy são independentes das permissões do operador.
+
+Antes de provisionar, definir duração, custo por fase, destinos de evidência, retenção e
+encerramento verificável. Budgets apenas alertam. Conferir estados e recursos
+residuais após stop/start, sem garantir capacidade na retomada. Respeitar
+`prevent_destroy` e preservar state sensível fora do Git. Dados sintéticos e
+discos novos podem ser descartados após aceite e conferência das evidências,
+state, configuração e referências de reprodução; dump completo não é requisito
+normal desta janela. Falha inesperada ou inconsistência interrompe a remoção
+para decidir preservação específica e custo residual, sem criar armazenamento
+extra automaticamente.
+
+A extensão HTTP usa `045e1ca` e configuração própria: portar a captura e trocar o
+backend de exportação são intervenções distintas. Suspender workers para liberar
+capacidade exige protocolo e autorização específicos, ausência de pendências no
+banco/broker, captura do funcionamento completo e preservação de réplicas/IDs.
+Restaurar e conferir prontidão inclusive em falha; não reduzir requests nem ampliar
+nós/SKU nesse diagnóstico. Consulta de evento já concluído com workers suspensos
+não comprova coexistência ou processamento durante a intervenção.
+
+Novos ensaios e serviços exigem objetivo e protocolo próprios. O aceite básico
+não compara controladores, nuvens ou overhead; referências e evidências anteriores
+permanecem congeladas.
+
 ## 9. Limites e evolução
 
-O aceite deve identificar o ambiente efetivamente exercitado: Kind ou AKS.
-O aceite local não encerra as verificações específicas da nuvem. Nenhum dos dois
-marcos, isoladamente, demonstra HA, SLA de produção, capacidade, estabilidade
-prolongada ou solução dos incidentes históricos da aplicação/ferramenta de medição.
+Identificar o ambiente efetivamente exercitado; aceite local não substitui
+verificações de nuvem. Nenhum aceite isolado demonstra HA, SLA de produção,
+capacidade máxima, estabilidade prolongada ou causa de incidentes históricos.
 
-A v1.0.0 entrega recuperação delimitada; a seção 8.7 acrescenta capacidade
-fixa/adaptativa, com comparação concluída no Kind. Os relatórios documentam
-resultados e limites; não há validação de capacidade máxima ou de produção.
-AKS permanece uma referência não implantada. Cluster autoscaler, GitOps,
-canary/blue-green, novos provedores de entrega e instrumentação além da exploração
-delimitada na seção 8.8 exigem uma decisão própria; não são requisitos de fechamento das avaliações existentes.
-O [RELEASE_PLAN](RELEASE_PLAN.md) registra a candidata e as opções de continuidade.
+Cluster autoscaler, GitOps, canary/blue-green, novos provedores de entrega e
+instrumentação fora dos contratos existentes exigem decisão própria. Resultados
+e possibilidades fundamentadas ficam nos relatórios; prioridades e autorizações,
+no plano. Uma opção de continuidade não é requisito implícito da arquitetura.
 
 ## 10. Ambiente local e avaliação em Kind
 
 Kind é o ambiente da avaliação operacional. As condições de cada avaliação usam o mesmo
-ambiente; não misturar tempos locais com resultados futuros de AKS. A aplicação congelada e a topologia
+ambiente; não misturar tempos locais com resultados de AKS. A aplicação congelada e a topologia
 de serviços não mudam. O overlay `k8s/overlays/kind-local`
 usa um único nó, local-path com Retain,
 credenciais próprias e imagem carregada localmente com `imagePullPolicy: Never`.

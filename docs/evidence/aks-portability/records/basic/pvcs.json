@@ -1,0 +1,34 @@
+[
+  {
+    "claim_name": "data-postgres-0",
+    "claim_uid": "9852dcd2-04b0-439d-a284-2f41c03a37b8",
+    "pv_name": "pvc-9852dcd2-04b0-439d-a284-2f41c03a37b8",
+    "pv_uid": "8ce74ca8-c96c-4e33-a5e8-49efa90bb818",
+    "phase": "Bound",
+    "capacity": {
+      "storage": "32Gi"
+    },
+    "storage_class": "fulfillflow-retain",
+    "reclaim_policy": "Retain",
+    "driver": "disk.csi.azure.com",
+    "access_modes": [
+      "ReadWriteOnce"
+    ]
+  },
+  {
+    "claim_name": "data-rabbitmq-0",
+    "claim_uid": "b4c39f59-3814-42c3-b020-55cd0e2f30be",
+    "pv_name": "pvc-b4c39f59-3814-42c3-b020-55cd0e2f30be",
+    "pv_uid": "bccbac74-c357-4d2b-a1d3-fceafb6cd694",
+    "phase": "Bound",
+    "capacity": {
+      "storage": "16Gi"
+    },
+    "storage_class": "fulfillflow-retain",
+    "reclaim_policy": "Retain",
+    "driver": "disk.csi.azure.com",
+    "access_modes": [
+      "ReadWriteOnce"
+    ]
+  }
+]

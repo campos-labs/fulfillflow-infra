@@ -55,3 +55,6 @@ coverage.xml
 Thumbs.db
 .idea/
 .vscode/
+
+# Local backend activation; template remains versioned.
+/infra/bootstrap/backend.tf
